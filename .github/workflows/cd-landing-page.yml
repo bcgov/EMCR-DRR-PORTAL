@@ -1,0 +1,76 @@
+name: cd-landing-page
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+       description: Please select the environment for Landing Page
+       required: true
+       default: 'dev'
+       type: choice
+       options:
+       - dev
+       - test
+       - training
+       - prod
+
+env:
+  IMAGE_NAME: drr-landing-page
+  WORKING_DIRECTORY: ./src/landing-page/src
+  INDEX_FILE: index.html
+  ENV_FILE: dev_values.yaml
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set working directory
+        id: LandingDir
+        run: |
+          if [[ "${{ github.event.inputs.environment }}" == "dev" ]];then
+              echo "::set-output name=Landing_INDEX_FILE::project-dev.html"
+              echo "::set-output name=ENV_FILE::dev_values.yaml"
+          elif [[ "${{ github.event.inputs.environment }}" == "test" ]];then
+              echo "::set-output name=Landing_INDEX_FILE::project-test.html"
+              echo "::set-output name=ENV_FILE::test_values.yaml"
+          elif [[ "${{ github.event.inputs.environment }}" == "training" ]];then
+              echo "::set-output name=Landing_INDEX_FILE::project-training.html"
+              echo "::set-output name=ENV_FILE::train_values.yaml"
+          elif [[ "${{ github.event.inputs.environment }}" == "prod" ]];then
+              echo "::set-output name=Landing_INDEX_FILE::prod-index.html"
+              echo "::set-output name=ENV_FILE::prod_values.yaml"
+          fi
+
+      - uses: actions/checkout@v3
+
+      - name: Log into registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ secrets.OCP4_REGISTRY }}
+          username: ${{ secrets.OCP4_USERNAME }}
+          password: ${{ secrets.OCP4_PASSWORD }}
+
+      - name: Set the index page according to the environment
+        working-directory: ${{env.WORKING_DIRECTORY}}
+        run: |
+          cd html
+          ls -ltr
+          mv ${{steps.LandingDir.outputs.Landing_INDEX_FILE}} ${{env.INDEX_FILE}}
+          ls -ltr
+          cat index.html |grep  "link-light-blue register-dfa-link"
+
+
+      - name: Build Image
+        working-directory: ${{env.WORKING_DIRECTORY}}
+        run: |
+          docker build -t ${{env.IMAGE_NAME}} .
+
+      - name: Tag Image
+        run: |
+          docker tag ${{env.IMAGE_NAME}} ${{ secrets.OCP4_REGISTRY }}/${{env.IMAGE_NAME}}:${{ github.event.inputs.environment }}
+          #docker tag from_image to_image_name:dev/test/train
+
+      - name: Docker Push
+        run: |
+          docker push ${{ secrets.OCP4_REGISTRY }}/${{env.IMAGE_NAME}}:${{ github.event.inputs.environment }}
