@@ -23,7 +23,7 @@ namespace EMCR.DRR.API.Controllers
 
         private readonly IMapper mapper;
 
-        public ProfileController(IConfiguration configuration, IMapper mapper)
+        public ProfileController(IMapper mapper)
         {
             this.mapper = mapper;
         }

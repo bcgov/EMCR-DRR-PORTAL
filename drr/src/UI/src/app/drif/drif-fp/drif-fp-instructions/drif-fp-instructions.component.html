@@ -1,0 +1,53 @@
+<div class="instructions-container" *transloco="let t">
+  <h1>{{ t("fpFormHeader") }} - {{ t(fundingStream ?? "") }}</h1>
+  <h2>{{ t("proponentInstructions") }}</h2>
+  <p>
+    Complete all mandatory sections of the full proposal form with details of
+    your proposed project before submitting to the Disaster Mitigation and
+    Adaptation Programs (DMAP) team at the Ministry of Emergency Management and
+    Climate Readiness (EMCR).
+  </p>
+
+  <p>Fields marked with an asterisk (*) are mandatory.</p>
+  <p>
+    The following documents must be submitted as part of this full proposal:
+  </p>
+  <ol>
+    <li>Detailed project workplan</li>
+    <li>Project schedule (unless included in workplan)</li>
+    <li>Detailed cost estimate</li>
+    <li>
+      Site plan (not required for Stream 1: Foundational and Non-Structural
+      Projects)
+    </li>
+  </ol>
+
+  <p>A preliminary design must be submitted if applicable.</p>
+
+  <p>
+    A Council Resolution and/or a Band Council Resolution from all proponents,
+    or the appropriate authorization/endorsement as determined by the eligible
+    First Nations proponent’s governance structure must be submitted as part of
+    this full proposal if available or later via email to abc&#64;xyz.com when
+    available.
+  </p>
+
+  <p>
+    The EMCR DMAP team may request additional information, including engagement
+    with local First Nations before the project begins (see Section 5.5 of DRIF
+    Program Guide). Projects may require permits or approvals from local,
+    regional, or provincial government agencies. It is the proponent’s
+    responsibility to ensure that any approvals and permits are identified
+    and/or obtained. The Province may request documentation of permits or
+    approvals.
+  </p>
+
+  <div style="display: flex; justify-content: space-between; margin-top: 2rem">
+    <button mat-stroked-button color="primary" (click)="goBack()">
+      {{ t("cancel") }}
+    </button>
+    <button mat-flat-button color="primary" (click)="continue()">
+      {{ t("continue") }}
+    </button>
+  </div>
+</div>

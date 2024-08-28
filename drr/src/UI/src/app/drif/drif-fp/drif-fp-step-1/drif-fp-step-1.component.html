@@ -1,0 +1,234 @@
+<div class="drr-step-container" *transloco="let t">
+  <form [formGroup]="proponentAndProjectInformationForm">
+    <mat-label class="drr-label">{{ t("primaryProjectContact") }}</mat-label>
+
+    <div class="contacts-container">
+      <drr-input
+        [id]="'projectContact_firstName'"
+        [label]="t('firstName')"
+        [rxFormControl]="
+          proponentAndProjectInformationForm
+            .get('projectContact')
+            ?.get('firstName')
+        "
+        [maxlength]="40"
+      ></drr-input>
+      <drr-input
+        [id]="'projectContact_lastName'"
+        [label]="t('lastName')"
+        [rxFormControl]="
+          proponentAndProjectInformationForm
+            .get('projectContact')
+            ?.get('lastName')
+        "
+        [maxlength]="40"
+      ></drr-input>
+      <drr-input
+        [id]="'projectContact_title'"
+        [label]="t('title')"
+        [rxFormControl]="
+          proponentAndProjectInformationForm.get('projectContact')?.get('title')
+        "
+        [maxlength]="40"
+      ></drr-input>
+      <drr-input
+        [id]="'projectContact_department'"
+        [label]="t('department')"
+        [rxFormControl]="
+          proponentAndProjectInformationForm
+            .get('projectContact')
+            ?.get('department')
+        "
+        [maxlength]="40"
+      ></drr-input>
+      <drr-input
+        [id]="'projectContact_phone'"
+        [label]="t('phone')"
+        [rxFormControl]="
+          proponentAndProjectInformationForm.get('projectContact')?.get('phone')
+        "
+        [maxlength]="10"
+        [type]="'tel'"
+      ></drr-input>
+      <drr-input
+        [id]="'projectContact_email'"
+        [label]="t('email')"
+        [rxFormControl]="
+          proponentAndProjectInformationForm.get('projectContact')?.get('email')
+        "
+        [maxlength]="40"
+        [type]="'email'"
+      ></drr-input>
+    </div>
+    <div formArrayName="additionalContacts">
+      <div
+        *ngFor="
+          let projectContact of getFormArray('additionalContacts').controls;
+          let i = index
+        "
+        [formGroupName]="i"
+      >
+        <mat-label class="drr-label">{{
+          t("additionalContact") + " " + (i + 1)
+        }}</mat-label>
+        <div class="contacts-container">
+          <drr-input
+            [id]="'projectContact_firstName_' + i"
+            [label]="t('firstName')"
+            [rxFormControl]="
+              getArrayFormControl('firstName', 'additionalContacts', i)
+            "
+            [maxlength]="40"
+          ></drr-input>
+          <drr-input
+            [id]="'projectContact_lastName_' + i"
+            [label]="t('lastName')"
+            [rxFormControl]="
+              getArrayFormControl('lastName', 'additionalContacts', i)
+            "
+            [maxlength]="40"
+          ></drr-input>
+          <drr-input
+            [id]="'projectContact_title_' + i"
+            [label]="t('title')"
+            [rxFormControl]="
+              getArrayFormControl('title', 'additionalContacts', i)
+            "
+            [maxlength]="40"
+          ></drr-input>
+          <drr-input
+            [id]="'projectContact_department_' + i"
+            [label]="t('department')"
+            [rxFormControl]="
+              getArrayFormControl('department', 'additionalContacts', i)
+            "
+            [maxlength]="40"
+          ></drr-input>
+          <drr-input
+            [id]="'projectContact_phone_' + i"
+            [label]="t('phone')"
+            [rxFormControl]="
+              getArrayFormControl('phone', 'additionalContacts', i)
+            "
+            [maxlength]="10"
+            [type]="'tel'"
+          ></drr-input>
+          <drr-input
+            class="project-contact-email"
+            [id]="'projectContact_email_' + i"
+            [label]="t('email')"
+            [rxFormControl]="
+              getArrayFormControl('email', 'additionalContacts', i)
+            "
+            [maxlength]="40"
+            [type]="'email'"
+          ></drr-input>
+
+          <button
+            *ngIf="i > 0"
+            class="remove-contact-button"
+            mat-mini-fab
+            color="warn"
+            (click)="removeAdditionalContact(i)"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <button
+        *ngIf="getFormArray('additionalContacts').length < 2"
+        id="addProjectContact"
+        mat-stroked-button
+        type="button"
+        color="primary"
+        (click)="addAdditionalContact()"
+      >
+        <mat-icon>add</mat-icon>
+        {{ t("addAdditionalContact") }}
+      </button>
+    </div>
+
+    <mat-label class="drr-label" style="margin-top: 2rem">{{
+      t("partneringProponents")
+    }}</mat-label>
+
+    <div formArrayName="partneringProponentsArray">
+      <div
+        class="proponent-container"
+        *ngFor="
+          let proponent of getFormArray('partneringProponentsArray').controls;
+          let i = index
+        "
+        [formGroupName]="i"
+      >
+        <drr-input
+          class="drr-single-input"
+          [id]="'proponent_' + i"
+          [label]="t('partneringProponentNameText')"
+          [rxFormControl]="
+            getArrayFormControl('value', 'partneringProponentsArray', i)
+          "
+          [maxlength]="100"
+        ></drr-input>
+        <button mat-mini-fab color="warn" (click)="removeProponent(i)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+
+      <button
+        id="addProponent"
+        style="margin-top: 1rem"
+        [style.padding]="isMobile ? '24px 16px' : ''"
+        mat-stroked-button
+        type="button"
+        color="primary"
+        (click)="addProponent()"
+      >
+        <mat-icon>add</mat-icon>
+        {{ t("addProponent") }}
+      </button>
+    </div>
+
+    <mat-label style="margin-top: 1rem" class="drr-label">{{
+      t("regionalProject")
+    }}</mat-label>
+    <mat-label>{{ t("regionalProjectText") }}</mat-label>
+    <mat-label style="margin-top: 1rem"
+      >{{ t("regionalProjectQuestion") }}*</mat-label
+    >
+    <drr-radio-button
+      [rxFormControl]="
+        proponentAndProjectInformationForm.get('regionalProject')
+      "
+    ></drr-radio-button>
+    <drr-textarea
+      [id]="'regionalProjectComments'"
+      [label]="t('regionalProjectComments')"
+      [maxlength]="2000"
+      [rxFormControl]="
+        proponentAndProjectInformationForm.get('regionalProjectComments')
+      "
+      [useFloatingLabel]="false"
+    ></drr-textarea>
+
+    <mat-label class="drr-label">{{ t("projectTitle") }}</mat-label>
+    <drr-input
+      style="margin-top: 0.5rem"
+      class="drr-single-input"
+      [id]="'projectTitle'"
+      [label]="t('projectTitleText')"
+      [rxFormControl]="proponentAndProjectInformationForm.get('projectTitle')"
+      [maxlength]="100"
+    ></drr-input>
+
+    <mat-label class="drr-label">{{ t("projectType") }}</mat-label>
+    <drr-textarea
+      [id]="'scopeStatement'"
+      [label]="t('projectTypeText')"
+      [maxlength]="2000"
+      [rxFormControl]="proponentAndProjectInformationForm.get('scopeStatement')"
+      [useFloatingLabel]="false"
+    ></drr-textarea>
+  </form>
+</div>

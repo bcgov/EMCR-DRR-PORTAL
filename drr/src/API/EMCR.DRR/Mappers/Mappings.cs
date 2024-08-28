@@ -10,24 +10,44 @@ namespace EMCR.DRR.API.Mappers
     {
         public Mappings()
         {
-            CreateMap<DraftEoiApplication, EoiApplication>();
+            CreateMap<DraftEoiApplication, EoiApplication>()
+                .ForMember(dest => dest.AuthorizedRepresentativeStatement, opt => opt.Ignore())
+                .ForMember(dest => dest.FOIPPAConfirmation, opt => opt.Ignore())
+                .ForMember(dest => dest.InformationAccuracyStatement, opt => opt.Ignore())
+                ;
+
+            CreateMap<DraftFpApplication, FpApplication>()
+                ;
 
             CreateMap<Managers.Intake.Application, Submission>()
+                .ForMember(dest => dest.ApplicationType, opt => opt.MapFrom(src => DRRApplicationTypeMapper(src.ApplicationTypeName)))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => DRRApplicationStatusMapper(src.Status)))
                 .ForMember(dest => dest.FundingRequest, opt => opt.MapFrom(src => src.FundingRequest.ToString()))
                 .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => src.ModifiedOn))
+                .ForMember(dest => dest.ExistingFpId, opt => opt.MapFrom(src => src.FpId))
                 .ForMember(dest => dest.PartneringProponents, opt => opt.MapFrom(src => src.PartneringProponents.Select(p => p.Name)))
                 ;
 
             CreateMap<Managers.Intake.DeclarationInfo, DeclarationInfo>()
+                .ForMember(dest => dest.ApplicationType, opt => opt.MapFrom(src => DRRApplicationTypeMapper(src.ApplicationTypeName)))
                 ;
 
-            CreateMap<DeclarationInfo, DeclarationInfo>()
-                ;
 
             CreateMap<AccountDetails, ProfileDetails>()
                 .ReverseMap()
                 ;
+        }
+
+        private ApplicationType DRRApplicationTypeMapper(string type)
+        {
+            switch (type)
+            {
+                case "EOI":
+                    return ApplicationType.EOI;
+                case "Full Proposal":
+                    return ApplicationType.FP;
+                default: return ApplicationType.EOI;
+            }
         }
 
         private SubmissionPortalStatus DRRApplicationStatusMapper(Managers.Intake.ApplicationStatus status)

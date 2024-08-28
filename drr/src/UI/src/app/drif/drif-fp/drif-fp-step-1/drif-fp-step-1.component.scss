@@ -1,0 +1,39 @@
+.contacts-container {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+.proponent-container {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.remove-contact-button {
+  margin-top: 8px;
+}
+
+@media (max-width: 768px) {
+  .contacts-container:has(button.remove-contact-button) {
+    .remove-contact-button {
+      margin-top: 28px;
+    }
+
+    .project-contact-email:nth-child(2n) {
+      width: calc(100% - 64px);
+    }
+  }
+
+  .proponent-container {
+    align-items: center;
+
+    & button {
+      margin: 28px;
+    }
+  }
+}

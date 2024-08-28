@@ -1,0 +1,114 @@
+<div class="drr-step-container" *transloco="let t">
+  <form [formGroup]="projectPlanForm">
+    <span style="display: flex; align-items: center">
+      <mat-icon style="color: #96c0e6" [inline]="true">info</mat-icon>
+      <i style="margin-left: 1rem">{{ t("projectPlanDisclaimer") }}</i>
+    </span>
+    <mat-label class="drr-label" style="margin-top: 1rem">{{
+      t("projectDates")
+    }}</mat-label>
+    <div class="project-dates-container">
+      <drr-datepicker
+        [label]="t('startDate')"
+        [rxFormControl]="projectPlanForm.get('startDate')"
+        [min]="minStartDate"
+        [minErrorLabel]="t('minStartDateError')"
+      ></drr-datepicker>
+
+      <drr-datepicker
+        [label]="t('endDate')"
+        [rxFormControl]="projectPlanForm.get('endDate')"
+        [min]="minEndDate"
+        [minErrorLabel]="t('minEndDateError')"
+      ></drr-datepicker>
+    </div>
+
+    <mat-label class="drr-label" style="margin-top: 1rem">{{
+      t("projectDescription")
+    }}</mat-label>
+    <drr-textarea
+      [label]="t('projectDescriptionText')"
+      [maxlength]="2000"
+      [rxFormControl]="projectPlanForm.get('projectDescription')"
+    ></drr-textarea>
+
+    <mat-label class="drr-label">{{ t("proposedActivities") }}</mat-label>
+    <mat-label>{{ t("proposedActivitiesText") }}</mat-label>
+    <span style="display: flex; align-items: center">
+      <mat-icon style="color: #96c0e6" [inline]="true">info</mat-icon>
+      <i style="margin-left: 1rem">{{ t("proposedActivitiesDisclaimer") }}</i>
+    </span>
+    <div class="proposed-activity-container">
+      <div
+        class="proposed-activities-item"
+        *ngFor="
+          let activity of getActivitiesFormArray().controls;
+          let i = index
+        "
+      >
+        <drr-input
+          [label]="t('activityName')"
+          [rxFormControl]="activity.get('activityName')"
+          [maxlength]="100"
+        ></drr-input>
+        <drr-datepicker
+          [label]="t('startDate')"
+          [rxFormControl]="activity.get('activityStart')"
+          [min]="minStartDate"
+          [minErrorLabel]="t('minStartDateError')"
+        ></drr-datepicker>
+        <drr-datepicker
+          [label]="t('endDate')"
+          [rxFormControl]="activity.get('activityEnd')"
+          [min]="minEndDate"
+          [minErrorLabel]="t('minEndDateError')"
+        ></drr-datepicker>
+        <drr-input
+          [label]="t('relatedMilestone')"
+          [rxFormControl]="activity.get('relatedMilestone')"
+          [maxlength]="100"
+        ></drr-input>
+        <button
+          *ngIf="i > 0"
+          mat-mini-fab
+          color="warn"
+          (click)="removeActivity(i)"
+          type="button"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+
+      <button
+        (click)="addActivity()"
+        mat-stroked-button
+        type="button"
+        color="primary"
+      >
+        <mat-icon>add</mat-icon>
+        {{ t("addActivity") }}
+      </button>
+    </div>
+
+    <mat-label class="drr-label" style="margin-top: 1rem">{{
+      t("verification")
+    }}</mat-label>
+    <drr-chip-autocomplete
+      [label]="t('verificationMethods')"
+      [rxFormControl]="projectPlanForm.get('verificationMethods')"
+      [options]="verificationMethodOptions"
+    ></drr-chip-autocomplete>
+    <drr-textarea
+      [label]="t('verificationMethodsComments')"
+      [maxlength]="2000"
+      [rxFormControl]="projectPlanForm.get('verificationMethodsComments')"
+    ></drr-textarea>
+
+    <mat-label class="drr-label">{{ t("projectAlternates") }}</mat-label>
+    <drr-textarea
+      [label]="t('projectAlternatesText')"
+      [maxlength]="2000"
+      [rxFormControl]="projectPlanForm.get('projectAlternateOptions')"
+    ></drr-textarea>
+  </form>
+</div>

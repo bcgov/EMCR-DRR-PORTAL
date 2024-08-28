@@ -360,11 +360,13 @@ button:focus {
 .drr-radio-group {
   display: flex;
   flex-direction: column;
+  margin-bottom: 10px;
 }
 
 .drr-label {
   font-size: 16px;
   font-weight: bold;
+  margin-bottom: 0.5rem;
 }
 
 .drr-step-container {

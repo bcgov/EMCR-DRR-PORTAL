@@ -1,0 +1,19 @@
+<div class="submission-details-container" *transloco="let t">
+  <div class="submission-details-header">
+    <h1>{{ t("submissionDetails", { id: id }) }}</h1>
+    <span>
+      <button mat-stroked-button color="primary" (click)="goBack()">
+        {{ t("back") }}
+      </button>
+      <button
+        *ngIf="!fpId"
+        mat-raised-button
+        color="primary"
+        (click)="createFP()"
+      >
+        {{ t("createFP") }}
+      </button>
+    </span>
+  </div>
+  <drr-summary [eoiApplicationForm]="eoiApplicationForm"></drr-summary>
+</div>

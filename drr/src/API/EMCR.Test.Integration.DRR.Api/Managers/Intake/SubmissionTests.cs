@@ -22,6 +22,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
         private readonly IMapper mapper;
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
 #pragma warning disable CS8619 // Nullability of reference types in value doesn't match target type.
+#pragma warning disable CS8604 // Possible null reference argument.
         public SubmissionTests()
         {
             var host = EMBC.Tests.Integration.DRR.Application.Host;
@@ -33,7 +34,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
         public async Task CanCreateEOIApplication()
         {
             var application = CreateNewTestEOIApplication();
-            var id = await manager.Handle(new DrifEoiSaveApplicationCommand { application = mapper.Map<EoiApplication>(application), UserInfo = GetTestUserInfo() });
+            var id = await manager.Handle(new EoiSaveApplicationCommand { application = mapper.Map<EoiApplication>(application), UserInfo = GetTestUserInfo() });
             id.ShouldNotBeEmpty();
         }
 
@@ -46,7 +47,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             application.FOIPPAConfirmation = true;
             application.InformationAccuracyStatement = true;
 
-            var id = await manager.Handle(new DrifEoiSubmitApplicationCommand { application = application, UserInfo = GetTestUserInfo() });
+            var id = await manager.Handle(new EoiSubmitApplicationCommand { application = application, UserInfo = GetTestUserInfo() });
             id.ShouldNotBeEmpty();
 
             var savedApplication = (await manager.Handle(new DrrApplicationsQuery { Id = id, BusinessId = GetTestUserInfo().BusinessId })).Items.SingleOrDefault();
@@ -57,6 +58,42 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             savedApplication.Status.ShouldBe(ApplicationStatus.Submitted);
             savedApplication.AdditionalContact1.ShouldNotBeNull();
             savedApplication.SubmittedDate.ShouldNotBeNull();
+        }
+
+        [Test]
+        public async Task CanQueryApplications()
+        {
+            var application = CreateNewTestEOIApplication();
+            var id = await manager.Handle(new EoiSaveApplicationCommand { application = mapper.Map<EoiApplication>(application), UserInfo = GetTestUserInfo() });
+            id.ShouldNotBeEmpty();
+
+            var secondApplication = mapper.Map<EoiApplication>(CreateNewTestEOIApplication());
+            secondApplication.Status = SubmissionPortalStatus.UnderReview;
+            secondApplication.AuthorizedRepresentativeStatement = true;
+            secondApplication.FOIPPAConfirmation = true;
+            secondApplication.InformationAccuracyStatement = true;
+
+            var secondId = await manager.Handle(new EoiSubmitApplicationCommand { application = secondApplication, UserInfo = GetTestUserInfo() });
+            secondId.ShouldNotBeEmpty();
+
+            var thirdApplication = mapper.Map<EoiApplication>(CreateNewTestEOIApplication());
+            thirdApplication.Status = SubmissionPortalStatus.EligibleInvited;
+            thirdApplication.AuthorizedRepresentativeStatement = true;
+            thirdApplication.FOIPPAConfirmation = true;
+            thirdApplication.InformationAccuracyStatement = true;
+
+            var thirdId = await manager.Handle(new EoiSubmitApplicationCommand { application = thirdApplication, UserInfo = GetTestUserInfo() });
+            thirdId.ShouldNotBeEmpty();
+
+            var fpId = await manager.Handle(new CreateFpFromEoiCommand { EoiId = thirdId, UserInfo = GetTestUserInfo() });
+            fpId.ShouldNotBeEmpty();
+
+            var applications = (await manager.Handle(new DrrApplicationsQuery { BusinessId = GetTestUserInfo().BusinessId })).Items;
+            var submissions = mapper.Map<IEnumerable<Submission>>(applications);
+            submissions.ShouldContain(s => s.Id == id);
+            submissions.ShouldContain(s => s.Id == secondId);
+            submissions.ShouldContain(s => s.Id == thirdId);
+            submissions.Single(s => s.Id == thirdId).ExistingFpId.ShouldNotBeNull();
         }
 
         [Test]
@@ -74,7 +111,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
                 BusinessName = $"{uniqueSignature}_business-name",
                 UserId = $"{uniqueSignature}_user-bceid"
             };
-            var id = await manager.Handle(new DrifEoiSaveApplicationCommand { application = mapper.Map<EoiApplication>(application), UserInfo = userInfo });
+            var id = await manager.Handle(new EoiSaveApplicationCommand { application = mapper.Map<EoiApplication>(application), UserInfo = userInfo });
             id.ShouldNotBeEmpty();
 
 
@@ -96,7 +133,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
                     null
                 };
 
-            var id = await manager.Handle(new DrifEoiSaveApplicationCommand { application = mapper.Map<EoiApplication>(application), UserInfo = GetTestUserInfo() });
+            var id = await manager.Handle(new EoiSaveApplicationCommand { application = mapper.Map<EoiApplication>(application), UserInfo = GetTestUserInfo() });
             id.ShouldNotBeEmpty();
 
             var savedApplication = (await manager.Handle(new DrrApplicationsQuery { Id = id, BusinessId = GetTestUserInfo().BusinessId })).Items.SingleOrDefault();
@@ -110,14 +147,14 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var application = CreateNewTestEOIApplication();
             application.Status = SubmissionPortalStatus.UnderReview;
             application.ProjectTitle = "First Submission";
-            var id = await manager.Handle(new DrifEoiSubmitApplicationCommand { application = mapper.Map<EoiApplication>(application), UserInfo = GetTestUserInfo() });
+            var id = await manager.Handle(new EoiSubmitApplicationCommand { application = mapper.Map<EoiApplication>(application), UserInfo = GetTestUserInfo() });
             id.ShouldNotBeEmpty();
 
             var secondApplication = CreateNewTestEOIApplication();
             secondApplication.Status = SubmissionPortalStatus.UnderReview;
             secondApplication.ProjectTitle = "Second Submission";
             secondApplication.Submitter = application.Submitter;
-            var secondId = await manager.Handle(new DrifEoiSubmitApplicationCommand { application = mapper.Map<EoiApplication>(secondApplication), UserInfo = GetTestUserInfo() });
+            var secondId = await manager.Handle(new EoiSubmitApplicationCommand { application = mapper.Map<EoiApplication>(secondApplication), UserInfo = GetTestUserInfo() });
             secondId.ShouldNotBeEmpty();
 
             var host = EMBC.Tests.Integration.DRR.Application.Host;
@@ -127,9 +164,80 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var submitters = ctx.contacts.Where(c => c.drr_userid == TestUserId).ToList();
             submitters.Count.ShouldBeGreaterThan(1);
         }
+
+        [Test]
+        public async Task CanCreateFpFromEoi()
+        {
+            var eoi = mapper.Map<EoiApplication>(CreateNewTestEOIApplication());
+            eoi.Status = SubmissionPortalStatus.EligibleInvited;
+            eoi.AuthorizedRepresentativeStatement = true;
+            eoi.FOIPPAConfirmation = true;
+            eoi.InformationAccuracyStatement = true;
+
+            var eoiId = await manager.Handle(new EoiSubmitApplicationCommand { application = eoi, UserInfo = GetTestUserInfo() });
+            eoiId.ShouldNotBeEmpty();
+
+            var fpId = await manager.Handle(new CreateFpFromEoiCommand { EoiId = eoiId, UserInfo = GetTestUserInfo() });
+            fpId.ShouldNotBeEmpty();
+
+            var fullProposal = (await manager.Handle(new DrrApplicationsQuery { Id = fpId, BusinessId = GetTestUserInfo().BusinessId })).Items.SingleOrDefault();
+            fullProposal.Id.ShouldBe(fpId);
+        }
+
+        [Test]
+        public async Task CanUpdateFp()
+        {
+            var eoi = mapper.Map<EoiApplication>(CreateNewTestEOIApplication());
+            eoi.Status = SubmissionPortalStatus.EligibleInvited;
+            eoi.AuthorizedRepresentativeStatement = true;
+            eoi.FOIPPAConfirmation = true;
+            eoi.InformationAccuracyStatement = true;
+
+            var eoiId = await manager.Handle(new EoiSubmitApplicationCommand { application = eoi, UserInfo = GetTestUserInfo() });
+            eoiId.ShouldNotBeEmpty();
+
+            var fpId = await manager.Handle(new CreateFpFromEoiCommand { EoiId = eoiId, UserInfo = GetTestUserInfo() });
+            fpId.ShouldNotBeEmpty();
+
+            var fullProposal = (await manager.Handle(new DrrApplicationsQuery { Id = fpId, BusinessId = GetTestUserInfo().BusinessId })).Items.SingleOrDefault();
+            fullProposal.Id.ShouldBe(fpId);
+            fullProposal.EoiId.ShouldBe(eoiId);
+
+            var fpToUpdate = FillInFullProposal(mapper.Map<DraftFpApplication>(fullProposal));
+            await manager.Handle(new FpSaveApplicationCommand { application = mapper.Map<FpApplication>(fpToUpdate), UserInfo = GetTestUserInfo() });
+
+            var updatedFp = (await manager.Handle(new DrrApplicationsQuery { Id = fpId, BusinessId = GetTestUserInfo().BusinessId })).Items.SingleOrDefault();
+            updatedFp.RegionalProject.ShouldBe(true);
+            updatedFp.Standards.ShouldContain(s => s.Name == "Standard 1");
+            updatedFp.Professionals.ShouldContain(p => p.Name == "professional1");
+            updatedFp.LocalGovernmentEndorsement.ShouldBe(EMCR.DRR.Managers.Intake.YesNoOption.NotApplicable);
+
+            fpToUpdate = FillInFullProposal(mapper.Map<DraftFpApplication>(updatedFp));
+
+            await manager.Handle(new FpSaveApplicationCommand { application = mapper.Map<FpApplication>(fpToUpdate), UserInfo = GetTestUserInfo() });
+
+            var twiceUpdatedFp = (await manager.Handle(new DrrApplicationsQuery { Id = fpId, BusinessId = GetTestUserInfo().BusinessId })).Items.SingleOrDefault();
+
+            twiceUpdatedFp.Professionals.Count().ShouldBe(fpToUpdate.Professionals.Count());
+            twiceUpdatedFp.Standards.Count().ShouldBe(fpToUpdate.Standards.Count());
+            twiceUpdatedFp.ProposedActivities.Count().ShouldBe(fpToUpdate.ProposedActivities.Count());
+            twiceUpdatedFp.VerificationMethods.Count().ShouldBe(fpToUpdate.VerificationMethods.Count());
+            twiceUpdatedFp.AffectedParties.Count().ShouldBe(fpToUpdate.AffectedParties.Count());
+            twiceUpdatedFp.CostReductions.Count().ShouldBe(fpToUpdate.CostReductions.Count());
+            twiceUpdatedFp.CoBenefits.Count().ShouldBe(fpToUpdate.CoBenefits.Count());
+            //twiceUpdatedFp.IncreasedResiliency.Count().ShouldBe(fpToUpdate.IncreasedResiliency.Count());
+            twiceUpdatedFp.ComplexityRisks.Count().ShouldBe(fpToUpdate.ComplexityRisks.Count());
+            twiceUpdatedFp.ReadinessRisks.Count().ShouldBe(fpToUpdate.ReadinessRisks.Count());
+            twiceUpdatedFp.SensitivityRisks.Count().ShouldBe(fpToUpdate.SensitivityRisks.Count());
+            twiceUpdatedFp.CapacityRisks.Count().ShouldBe(fpToUpdate.CapacityRisks.Count());
+            ////twiceUpdatedFp.TransferRisks.Count().ShouldBe(fpToUpdate.TransferRisks.Count());
+            twiceUpdatedFp.YearOverYearFunding.Count().ShouldBe(fpToUpdate.YearOverYearFunding.Count());
+            //twiceUpdatedFp.CostConsiderations.Count().ShouldBe(fpToUpdate.CostConsiderations.Count());
+        }
+
+#pragma warning restore CS8604 // Possible null reference argument.
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 #pragma warning restore CS8619 // Nullability of reference types in value doesn't match target type.
-
         private DraftEoiApplication CreateNewTestEOIApplication()
         {
             var uniqueSignature = TestPrefix + "-" + Guid.NewGuid().ToString().Substring(0, 4);
@@ -227,6 +335,90 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
                 //FOIPPAConfirmation = true,
                 //AuthorizedRepresentativeStatement = true
             };
+        }
+
+        private DraftFpApplication FillInFullProposal(DraftFpApplication application)
+        {
+            application.RegionalProject = true;
+            application.RegionalProjectComments = "regional comments";
+
+            application.ProjectAuthority = true;
+            application.ProjectAuthorityComments = "authority and ownership comments";
+            application.OperationAndMaintenance = EMCR.DRR.Controllers.YesNoOption.Yes;
+            application.OperationAndMaintenanceComments = "operation and maint. comments";
+            application.FirstNationsEndorsement = EMCR.DRR.Controllers.YesNoOption.No;
+            application.LocalGovernmentEndorsement = EMCR.DRR.Controllers.YesNoOption.NotApplicable;
+            application.AuthorizationOrEndorsementComments = "authority or endorsement comments";
+
+            application.ProjectDescription = "Project Description";
+            application.ProposedActivities = new[]
+            {
+                new EMCR.DRR.Controllers.ProposedActivity {StartDate = DateTime.UtcNow, EndDate = DateTime.UtcNow.AddDays(5), Name = "autotest-proposed-activity-name", RelatedMilestone = "some milestone" }
+            };
+            application.VerificationMethods = new[] { "autotest-verification-method" };
+            application.VerificationMethodsComments = "verification method comments";
+            application.ProjectAlternateOptions = "some alternate options";
+
+            application.EngagedWithFirstNationsComments = "first nations comments";
+            application.OtherEngagement = EMCR.DRR.Controllers.YesNoOption.Yes;
+            application.AffectedParties = new[] { "party 1", "party 2" };
+            application.OtherEngagementComments = "other engagement comments";
+            application.CollaborationComments = "collaboration comments";
+
+            application.ClimateAdaptationScreener = true;
+
+            application.Approvals = false;
+            application.ApprovalsComments = "approvals comments";
+            application.ProfessionalGuidance = false;
+            application.Professionals = new[] { "professional1", "professional2" };
+            application.ProfessionalGuidanceComments = "professional guidance comments";
+            application.StandardsAcceptable = EMCR.DRR.Controllers.YesNoOption.NotApplicable;
+            application.Standards = new[] { "Standard 1", "Standard 2" };
+            application.StandardsComments = "standards comments";
+            application.Regulations = false;
+            application.RegulationsComments = "regulations comments";
+
+            application.PublicBenefit = false;
+            application.PublicBenefitComments = "public benefit comments";
+            application.FutureCostReduction = true;
+            application.CostReductions = new[] { "cost reduction 1", "cost reduction 2" };
+            application.CostReductionComments = "cost reduction comments";
+            application.ProduceCoBenefits = true;
+            application.CoBenefits = new[] { "benefit 1", "benefit 2" };
+            application.CoBenefitComments = "benefit comments";
+            application.IncreasedResiliency = new[] { "benefit 1", "benefit 2" };
+            application.IncreasedResiliencyComments = "resiliency comments";
+
+            application.ComplexityRiskMitigated = true;
+            application.ComplexityRisks = new[] { "complexity risk 1", "complexity risk 2" };
+            application.ComplexityRiskComments = "risk comments";
+            application.ReadinessRiskMitigated = true;
+            application.ReadinessRisks = new[] { "readiness risk 1", "readiness risk 2" };
+            application.ReadinessRiskComments = "readiness comments";
+            application.SensitivityRiskMitigated = true;
+            application.SensitivityRisks = new[] { "sensitivity risk 1", "sensitivity risk 2" };
+            application.SensitivityRiskComments = "sensitivity comments";
+            application.CapacityRiskMitigated = true;
+            application.CapacityRisks = new[] { "capacity risk 1", "capacity risk 2" };
+            application.CapacityRiskComments = "capacity comments";
+            application.RiskTransferMigigated = true;
+            application.TransferRisks = new[] { "transfer risk 1", "transfer risk 2" };
+            application.TransferRisksComments = "transfer comments";
+
+            application.YearOverYearFunding = new[] { new EMCR.DRR.Controllers.YearOverYearFunding { Amount = 100, Year = "2024/2025" } };
+            application.TotalDrifFundingRequest = 5000;
+            application.DiscrepancyComment = "discrepancy comment";
+            application.CostEffective = false;
+            application.CostEffectiveComments = "cost effective comments";
+            application.PreviousResponse = EMCR.DRR.Controllers.YesNoOption.No;
+            application.PreviousResponseCost = 1200;
+            application.PreviousResponseComments = "previous response comments";
+            application.ActivityCostEffectiveness = "very effective";
+            application.CostConsiderationsApplied = true;
+            application.CostConsiderations = new[] { "cost consideration 1", "cost consideration 2" };
+            application.CostConsiderationsComments = "cost consideration comments";
+
+            return application;
         }
 
         private EMCR.DRR.Controllers.ContactDetails CreateNewTestContact(string uniqueSignature, string namePrefix)

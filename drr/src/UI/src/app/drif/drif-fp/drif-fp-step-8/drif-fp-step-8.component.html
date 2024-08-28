@@ -1,0 +1,65 @@
+<div class="drr-step-container" *transloco="let t">
+  <form [formGroup]="projectOutcomesForm">
+    <mat-label class="drr-label">{{ t("publicUseOrBenefit") }}</mat-label>
+    <drr-radio-button
+      [label]="t('publicBenefit')"
+      [rxFormControl]="projectOutcomesForm.get('publicBenefit')"
+    ></drr-radio-button>
+    <drr-textarea
+      [label]="t('publicBenefitComments')"
+      [maxlength]="2000"
+      [rxFormControl]="projectOutcomesForm.get('publicBenefitComments')"
+      [useFloatingLabel]="false"
+    ></drr-textarea>
+
+    <mat-label class="drr-label">{{ t("futureCostReduction") }}</mat-label>
+    <drr-radio-button
+      [label]="t('costReduction')"
+      [rxFormControl]="projectOutcomesForm.get('futureCostReduction')"
+    ></drr-radio-button>
+    <drr-chip-autocomplete
+      [label]="t('costReductions')"
+      [placeholder]="t('costReductionsPlaceholder')"
+      [options]="costReductionOptions"
+      [rxFormControl]="projectOutcomesForm.get('costReductions')"
+    ></drr-chip-autocomplete>
+    <drr-textarea
+      [label]="t('costReductionComments')"
+      [maxlength]="2000"
+      [rxFormControl]="projectOutcomesForm.get('costReductionComments')"
+      [useFloatingLabel]="false"
+    ></drr-textarea>
+
+    <mat-label class="drr-label">{{ t("coBenefitsTitle") }}</mat-label>
+    <drr-radio-button
+      [label]="t('produceCoBenefits')"
+      [rxFormControl]="projectOutcomesForm.get('produceCoBenefits')"
+    ></drr-radio-button>
+    <drr-chip-autocomplete
+      [label]="t('coBenefits')"
+      [placeholder]="t('coBenefitsPlaceholder')"
+      [options]="coBenefitsOptions"
+      [rxFormControl]="projectOutcomesForm.get('coBenefits')"
+    ></drr-chip-autocomplete>
+    <drr-textarea
+      [label]="t('coBenefitComments')"
+      [maxlength]="2000"
+      [rxFormControl]="projectOutcomesForm.get('coBenefitComments')"
+      [useFloatingLabel]="false"
+    ></drr-textarea>
+
+    <mat-label class="drr-label">{{ t("resiliency") }}</mat-label>
+    <drr-chip-autocomplete
+      [label]="t('increasedResiliency')"
+      [placeholder]="t('increasedResiliencyPlaceholder')"
+      [options]="resiliencyOptions"
+      [rxFormControl]="projectOutcomesForm.get('increasedResiliency')"
+    ></drr-chip-autocomplete>
+    <drr-textarea
+      [label]="t('increasedResiliencyComments')"
+      [maxlength]="2000"
+      [rxFormControl]="projectOutcomesForm.get('increasedResiliencyComments')"
+      [useFloatingLabel]="false"
+    ></drr-textarea>
+  </form>
+</div>

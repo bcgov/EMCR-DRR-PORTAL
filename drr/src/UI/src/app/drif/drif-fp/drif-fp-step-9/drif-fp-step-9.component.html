@@ -1,0 +1,93 @@
+<div class="drr-step-container" *transloco="let t">
+  <form [formGroup]="projectRisksForm">
+    <mat-label class="drr-label">{{ t("projectComplexity") }}</mat-label>
+    <drr-radio-button
+      [label]="t('complexityRiskMitigated')"
+      [rxFormControl]="projectRisksForm.get('complexityRiskMitigated')"
+    ></drr-radio-button>
+    <drr-chip-autocomplete
+      [label]="t('complexityRisks')"
+      [placeholder]="t('complexityRisksPlaceholder')"
+      [options]="complexityRiskOptions"
+      [rxFormControl]="projectRisksForm.get('complexityRisks')"
+    ></drr-chip-autocomplete>
+    <drr-textarea
+      [label]="t('complexityRiskComments')"
+      [maxlength]="2000"
+      [rxFormControl]="projectRisksForm.get('complexityRiskComments')"
+    ></drr-textarea>
+
+    <mat-label class="drr-label">{{ t("projectReadiness") }}</mat-label>
+    <drr-radio-button
+      [label]="t('readinessRiskMitigated')"
+      [rxFormControl]="projectRisksForm.get('readinessRiskMitigated')"
+    ></drr-radio-button>
+    <drr-chip-autocomplete
+      [label]="t('readinessRisks')"
+      [placeholder]="t('readinessRisksPlaceholder')"
+      [options]="readinessRiskOptions"
+      [rxFormControl]="projectRisksForm.get('readinessRisks')"
+    ></drr-chip-autocomplete>
+    <drr-textarea
+      [label]="t('readinessRiskComments')"
+      [maxlength]="2000"
+      [rxFormControl]="projectRisksForm.get('readinessRiskComments')"
+    ></drr-textarea>
+
+    <mat-label class="drr-label">{{ t("projectSensitivity") }}</mat-label>
+    <drr-radio-button
+      [label]="t('sensitivityRiskMitigated')"
+      [rxFormControl]="projectRisksForm.get('sensitivityRiskMitigated')"
+    ></drr-radio-button>
+    <drr-chip-autocomplete
+      [label]="t('sensitivityRisks')"
+      [placeholder]="t('sensitivityRisksPlaceholder')"
+      [options]="sensitivityRiskOptions"
+      [rxFormControl]="projectRisksForm.get('sensitivityRisks')"
+    ></drr-chip-autocomplete>
+    <drr-textarea
+      [label]="t('sensitivityRiskComments')"
+      [maxlength]="2000"
+      [rxFormControl]="projectRisksForm.get('sensitivityRiskComments')"
+    ></drr-textarea>
+
+    <mat-label class="drr-label">{{ t("capacityChallenges") }}</mat-label>
+    <drr-radio-button
+      [label]="t('capacityRiskMitigated')"
+      [rxFormControl]="projectRisksForm.get('capacityRiskMitigated')"
+    ></drr-radio-button>
+    <drr-chip-autocomplete
+      [label]="t('capacityRisks')"
+      [placeholder]="t('capacityRisksPlaceholder')"
+      [options]="capacityRiskOptions"
+      [rxFormControl]="projectRisksForm.get('capacityRisks')"
+    ></drr-chip-autocomplete>
+    <drr-textarea
+      [label]="t('capacityRiskComments')"
+      [maxlength]="2000"
+      [rxFormControl]="projectRisksForm.get('capacityRiskComments')"
+    ></drr-textarea>
+
+    <mat-label class="drr-label">{{ t("riskTransfer") }}</mat-label>
+    <drr-radio-button
+      [label]="t('riskTransferMigigated')"
+      [rxFormControl]="projectRisksForm.get('riskTransferMigigated')"
+    ></drr-radio-button>
+    <mat-label>{{ t("transferRisks") }}</mat-label>
+    <mat-selection-list
+      class="drr-single-input"
+      [formControl]="getFormControl('transferRisks')"
+    >
+      @for (option of transferRisksOptions; track $index) {
+      <mat-list-option [value]="option" togglePosition="before">{{
+        t(option)
+      }}</mat-list-option>
+      }
+    </mat-selection-list>
+    <drr-textarea
+      [label]="t('transferRiskComments')"
+      [maxlength]="2000"
+      [rxFormControl]="projectRisksForm.get('transferRisksComments')"
+    ></drr-textarea>
+  </form>
+</div>

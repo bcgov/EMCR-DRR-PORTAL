@@ -1,1 +1,346 @@
-<p>drif-fp works!</p>
+<ng-container *transloco="let t">
+  <div class="app-stepper-container">
+    <div class="app-stepper-header">
+      <div>
+        <h1 style="margin-bottom: 0.5rem">
+          {{
+            getProjectTitle()
+              ? t("fpFormHeaderFor", { projectTitle: getProjectTitle() })
+              : t("fpFormHeader")
+          }}
+        </h1>
+        <span>
+          {{ t("relatedEoi") }}
+          <a href="{{ getRelatedEOILink() }}" target="_blank">
+            {{ getRelatedEOI() }}
+          </a>
+        </span>
+      </div>
+      <div>
+        <div class="header-actions">
+          <button mat-stroked-button color="primary" (click)="goBack()">
+            {{ t("exitForm") }}
+          </button>
+          <button mat-flat-button color="primary" (click)="save()">
+            <mat-icon>save</mat-icon>
+            Save
+          </button>
+        </div>
+        <div class="save-info">
+          <div style="display: flex; flex-direction: row; gap: 1rem">
+            <i *ngIf="autoSaveCountdown <= 30 && autoSaveCountdown > 0"
+              >Saving in {{ autoSaveCountdown }}
+              {{ autoSaveCountdown === 1 ? "second" : "seconds" }}...
+            </i>
+            <i
+              *ngIf="
+                lastSavedAt &&
+                (autoSaveCountdown === 0 || autoSaveCountdown > 30)
+              "
+              >Saved at {{ lastSavedAt | date : "mediumTime" }}</i
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+    <mat-stepper
+      class="app-stepper"
+      [linear]="false"
+      labelPosition="bottom"
+      (selectionChange)="stepperSelectionChange($event)"
+      [orientation]="stepperOrientation"
+      #stepper
+    >
+      <mat-step
+        [label]="t('proponentAndProjectInformation')"
+        [stepControl]="getFormGroup('proponentAndProjectInformationForm')"
+        [errorMessage]="t('stepError')"
+      >
+        <drif-fp-step-1
+          [proponentAndProjectInformationForm]="
+            getFormGroup('proponentAndProjectInformationForm')
+          "
+        ></drif-fp-step-1>
+        <div class="drr-stepper-action">
+          <button
+            id="next1"
+            mat-flat-button
+            color="primary"
+            matStepperNext
+            type="button"
+          >
+            {{ t("next") }}
+          </button>
+        </div>
+      </mat-step>
+
+      <mat-step
+        [label]="t('ownershipAndAuthorization')"
+        [stepControl]="getFormGroup('ownershipAndAuthorization')"
+        [errorMessage]="t('stepError')"
+      >
+        <drif-fp-step-2
+          [ownershipAndAuthorizationForm]="
+            getFormGroup('ownershipAndAuthorization')
+          "
+        ></drif-fp-step-2>
+        <div class="drr-stepper-actions">
+          <button mat-stroked-button color="primary" matStepperPrevious>
+            {{ t("back") }}
+          </button>
+          <button
+            id="next2"
+            mat-flat-button
+            color="primary"
+            matStepperNext
+            type="button"
+          >
+            {{ t("next") }}
+          </button>
+        </div>
+      </mat-step>
+
+      <mat-step
+        [label]="t('projectArea')"
+        [stepControl]="getFormGroup('projectArea')"
+        [errorMessage]="t('stepError')"
+      >
+        <drif-fp-step-3
+          [projectAreaForm]="getFormGroup('projectArea')"
+        ></drif-fp-step-3>
+        <div class="drr-stepper-actions">
+          <button mat-stroked-button color="primary" matStepperPrevious>
+            {{ t("back") }}
+          </button>
+          <button
+            id="next2"
+            mat-flat-button
+            color="primary"
+            matStepperNext
+            type="button"
+          >
+            {{ t("next") }}
+          </button>
+        </div>
+      </mat-step>
+
+      <mat-step
+        [label]="t('projectPlan')"
+        [stepControl]="getFormGroup('projectPlan')"
+        [errorMessage]="t('stepError')"
+      >
+        <drif-fp-step-4
+          [projectPlanForm]="getFormGroup('projectPlan')"
+        ></drif-fp-step-4>
+        <div class="drr-stepper-actions">
+          <button mat-stroked-button color="primary" matStepperPrevious>
+            {{ t("back") }}
+          </button>
+          <button
+            id="next2"
+            mat-flat-button
+            color="primary"
+            matStepperNext
+            type="button"
+          >
+            {{ t("next") }}
+          </button>
+        </div>
+      </mat-step>
+
+      <mat-step
+        [label]="t('projectEngagement')"
+        [stepControl]="getFormGroup('projectEngagement')"
+        [errorMessage]="t('stepError')"
+      >
+        <drif-fp-step-5
+          [projectEngagementForm]="getFormGroup('projectEngagement')"
+        ></drif-fp-step-5>
+        <div class="drr-stepper-actions">
+          <button mat-stroked-button color="primary" matStepperPrevious>
+            {{ t("back") }}
+          </button>
+          <button
+            id="next2"
+            mat-flat-button
+            color="primary"
+            matStepperNext
+            type="button"
+          >
+            {{ t("next") }}
+          </button>
+        </div>
+      </mat-step>
+
+      <mat-step
+        [label]="t('climateAdaptation')"
+        [stepControl]="getFormGroup('climateAdaptation')"
+        [errorMessage]="t('stepError')"
+      >
+        <drif-fp-step-6
+          [climateAdaptationForm]="getFormGroup('climateAdaptation')"
+        ></drif-fp-step-6>
+        <div class="drr-stepper-actions">
+          <button mat-stroked-button color="primary" matStepperPrevious>
+            {{ t("back") }}
+          </button>
+          <button
+            id="next5"
+            mat-flat-button
+            color="primary"
+            matStepperNext
+            type="button"
+          >
+            {{ t("next") }}
+          </button>
+        </div>
+      </mat-step>
+
+      <mat-step
+        [label]="t('permitsRegulationsAndStandards')"
+        [stepControl]="getFormGroup('permitsRegulationsAndStandards')"
+        [errorMessage]="t('stepError')"
+      >
+        <drif-fp-step-7
+          [permitsRegulationsAndStandardsForm]="
+            getFormGroup('permitsRegulationsAndStandards')
+          "
+        ></drif-fp-step-7>
+        <div class="drr-stepper-actions">
+          <button mat-stroked-button color="primary" matStepperPrevious>
+            {{ t("back") }}
+          </button>
+          <button
+            id="next3"
+            mat-flat-button
+            color="primary"
+            matStepperNext
+            type="button"
+          >
+            {{ t("next") }}
+          </button>
+        </div>
+      </mat-step>
+
+      <mat-step
+        [label]="t('projectOutcomes')"
+        [stepControl]="getFormGroup('projectOutcomes')"
+        [errorMessage]="t('stepError')"
+      >
+        <drif-fp-step-8
+          [projectOutcomesForm]="getFormGroup('projectOutcomes')"
+        ></drif-fp-step-8>
+        <div class="drr-stepper-actions">
+          <button mat-stroked-button color="primary" matStepperPrevious>
+            {{ t("back") }}
+          </button>
+          <button
+            id="next4"
+            mat-flat-button
+            color="primary"
+            matStepperNext
+            type="button"
+          >
+            {{ t("next") }}
+          </button>
+        </div>
+      </mat-step>
+
+      <mat-step
+        [label]="t('projectRisks')"
+        [stepControl]="getFormGroup('projectRisks')"
+        [errorMessage]="t('stepError')"
+      >
+        <drif-fp-step-9
+          [projectRisksForm]="getFormGroup('projectRisks')"
+        ></drif-fp-step-9>
+        <div class="drr-stepper-actions">
+          <button mat-stroked-button color="primary" matStepperPrevious>
+            {{ t("back") }}
+          </button>
+          <button
+            id="next5"
+            mat-flat-button
+            color="primary"
+            matStepperNext
+            type="button"
+          >
+            {{ t("next") }}
+          </button>
+        </div>
+      </mat-step>
+
+      <mat-step
+        [label]="t('budget')"
+        [stepControl]="getFormGroup('budget')"
+        [errorMessage]="t('stepError')"
+      >
+        <drif-fp-step-10
+          [budgetForm]="getFormGroup('budget')"
+        ></drif-fp-step-10>
+        <div class="drr-stepper-actions">
+          <button mat-stroked-button color="primary" matStepperPrevious>
+            {{ t("back") }}
+          </button>
+          <button
+            id="next5"
+            mat-flat-button
+            color="primary"
+            matStepperNext
+            type="button"
+          >
+            {{ t("next") }}
+          </button>
+        </div>
+      </mat-step>
+
+      <mat-step
+        [label]="t('attachments')"
+        [stepControl]="getFormGroup('attachments')"
+        [errorMessage]="t('stepError')"
+      >
+        <drif-fp-step-11
+          [attachmentsForm]="getFormGroup('attachments')"
+        ></drif-fp-step-11>
+        <div class="drr-stepper-actions">
+          <button mat-stroked-button color="primary" matStepperPrevious>
+            {{ t("back") }}
+          </button>
+          <button
+            id="next5"
+            mat-flat-button
+            color="primary"
+            matStepperNext
+            type="button"
+          >
+            {{ t("next") }}
+          </button>
+        </div>
+      </mat-step>
+
+      <mat-step
+        [label]="t('declaration')"
+        [stepControl]="getFormGroup('declaration')"
+        [errorMessage]="t('stepError')"
+      >
+        <drif-fp-step-12
+          [declarationsForm]="getFormGroup('declarations')"
+        ></drif-fp-step-12>
+        <div class="drr-stepper-actions">
+          <button mat-stroked-button color="primary" matStepperPrevious>
+            {{ t("back") }}
+          </button>
+          <button
+            id="submit"
+            mat-flat-button
+            color="primary"
+            type="button"
+            (click)="submit()"
+          >
+            {{ t("submit") }}
+          </button>
+        </div>
+      </mat-step>
+    </mat-stepper>
+  </div>
+</ng-container>

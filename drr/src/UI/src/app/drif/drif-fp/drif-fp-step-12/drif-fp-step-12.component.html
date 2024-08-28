@@ -1,0 +1,87 @@
+<div class="drr-step-container" *transloco="let t">
+  <form [formGroup]="declarationsForm">
+    <mat-label class="drr-label">{{ t("submitter") }}</mat-label>
+    <div class="contacts-container">
+      <drr-input
+        [id]="'submitter_firstName'"
+        [label]="t('firstName')"
+        [rxFormControl]="declarationsForm.get('submitter.firstName')"
+        [maxlength]="40"
+      ></drr-input>
+      <drr-input
+        [id]="'submitter_lastName'"
+        [label]="t('lastName')"
+        [rxFormControl]="declarationsForm.get('submitter.lastName')"
+        [maxlength]="40"
+      ></drr-input>
+      <drr-input
+        [id]="'submitter_title'"
+        [label]="t('title')"
+        [rxFormControl]="declarationsForm.get('submitter.title')"
+        [maxlength]="40"
+      ></drr-input>
+      <drr-input
+        [id]="'submitter_department'"
+        [label]="t('department')"
+        [rxFormControl]="declarationsForm.get('submitter.department')"
+        [maxlength]="40"
+      ></drr-input>
+      <drr-input
+        [id]="'submitter_phone'"
+        [label]="t('phone')"
+        [rxFormControl]="declarationsForm.get('submitter.phone')"
+        [maxlength]="10"
+        [type]="'tel'"
+      ></drr-input>
+      <drr-input
+        [id]="'submitter_email'"
+        [label]="t('email')"
+        [rxFormControl]="declarationsForm.get('submitter.email')"
+        [maxlength]="40"
+        [type]="'email'"
+      ></drr-input>
+    </div>
+
+    <mat-label class="drr-label">
+      {{ t("authorizedRepresentativeStatement") }}
+    </mat-label>
+    <mat-label> {{ authorizedRepresentativeText }} </mat-label>
+    <mat-checkbox
+      id="authorizedRepresentativeStatement"
+      formControlName="authorizedRepresentativeStatement"
+    >
+      {{ t("agree") }}
+    </mat-checkbox>
+    <mat-error
+      *ngIf="
+        declarationsForm.get('authorizedRepresentativeStatement')?.touched &&
+        declarationsForm
+          .get('authorizedRepresentativeStatement')
+          ?.hasError('requiredTrue')
+      "
+    >
+      {{ t("required") }}
+    </mat-error>
+
+    <mat-label class="drr-label">{{
+      t("informationAccuracyStatement")
+    }}</mat-label>
+    <mat-label> {{ accuracyOfInformationText }} </mat-label>
+    <mat-checkbox
+      id="informationAccuracyStatement"
+      formControlName="informationAccuracyStatement"
+    >
+      {{ t("agree") }}
+    </mat-checkbox>
+    <mat-error
+      *ngIf="
+        declarationsForm.get('informationAccuracyStatement')?.touched &&
+        declarationsForm
+          .get('informationAccuracyStatement')
+          ?.hasError('requiredTrue')
+      "
+    >
+      {{ t("required") }}
+    </mat-error>
+  </form>
+</div>

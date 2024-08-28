@@ -30,7 +30,7 @@ export class DrrTextareaComponent {
   @Input() id = '';
   @Input() maxlength = 0;
   @Input() rows = 3;
-  @Input() useTopLabel = true;
+  @Input() useFloatingLabel = true;
 
   private _formControl = this.formBuilder.control('', []) as RxFormControl;
   @Input()

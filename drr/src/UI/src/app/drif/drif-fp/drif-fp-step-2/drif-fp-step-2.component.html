@@ -1,0 +1,77 @@
+<div class="drr-step-container" *transloco="let t">
+  <form [formGroup]="ownershipAndAuthorizationForm">
+    <mat-label class="drr-label">{{ t("fpOwnership") }}</mat-label>
+    <mat-label>{{ t("fpOwnershipQuestion") }}*</mat-label>
+    <drr-radio-button
+      [options]="yesNoBoolOptions"
+      [rxFormControl]="
+        ownershipAndAuthorizationForm.get('ownershipDeclaration')
+      "
+    ></drr-radio-button>
+
+    <drr-textarea
+      [label]="t('fpOwnershipComments')"
+      [maxlength]="2000"
+      [rxFormControl]="
+        ownershipAndAuthorizationForm.get('ownershipDescription')
+      "
+      [useFloatingLabel]="false"
+    ></drr-textarea>
+
+    <mat-label class="drr-label">{{ t("projectAuthority") }}</mat-label>
+    <drr-radio-button
+      [label]="t('projectAuthorityQuestion')"
+      [options]="yesNoBoolOptions"
+      [rxFormControl]="ownershipAndAuthorizationForm.get('projectAuthority')"
+    ></drr-radio-button>
+
+    <drr-radio-button
+      [label]="t('operationAndMaintenanceQuestion')"
+      [options]="allYesNoOptions"
+      [rxFormControl]="
+        ownershipAndAuthorizationForm.get('operationAndMaintenance')
+      "
+    ></drr-radio-button>
+
+    <drr-textarea
+      [id]="'operationAndMaintenanceComments'"
+      [label]="t('operationAndMaintenanceComments')"
+      [maxlength]="2000"
+      [rxFormControl]="
+        ownershipAndAuthorizationForm.get('operationAndMaintenanceComments')
+      "
+      [useFloatingLabel]="false"
+    ></drr-textarea>
+
+    <mat-label class="drr-label">{{
+      t("authorizationOrEndorsement")
+    }}</mat-label>
+    <mat-label>{{ t("authorizationOrEndorsementQuestion") }}</mat-label>
+    <div style="padding: 1rem 0 0 1rem">
+      <drr-radio-button
+        [label]="t('firstNationsEndorsementQuestion')"
+        [options]="allYesNoOptions"
+        [rxFormControl]="
+          ownershipAndAuthorizationForm.get('firstNationsEndorsement')
+        "
+      ></drr-radio-button>
+
+      <drr-radio-button
+        [label]="t('localGovernmentEndorsementQuestion')"
+        [options]="allYesNoOptions"
+        [rxFormControl]="
+          ownershipAndAuthorizationForm.get('localGovernmentEndorsement')
+        "
+      ></drr-radio-button>
+    </div>
+
+    <drr-textarea
+      [label]="t('authorizationOrEndorsementComments')"
+      [maxlength]="2000"
+      [rxFormControl]="
+        ownershipAndAuthorizationForm.get('authorizationOrEndorsementComments')
+      "
+      [useFloatingLabel]="false"
+    ></drr-textarea>
+  </form>
+</div>

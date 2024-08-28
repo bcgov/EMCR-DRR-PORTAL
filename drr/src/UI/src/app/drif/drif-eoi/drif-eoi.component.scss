@@ -1,30 +1,31 @@
 .app-stepper-container {
-  margin: 20px 20px;
-}
-
-.app-stepper {
-  background: transparent;
-  display: flex;
-  flex-direction: column;
-}
-
-.app-stepper-header {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-
-  .header-actions {
-    display: flex;
-    flex-direction: row;
-    gap: 1rem;
-    margin-bottom: 1rem;
+    margin: 1rem;
   }
-
-  .save-info {
+  
+  .app-stepper {
+    background: transparent;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    min-height: 2rem;
   }
-}
+  
+  .app-stepper-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  
+    .header-actions {
+      display: flex;
+      flex-direction: row;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+  
+    .save-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      min-height: 2rem;
+    }
+  }
+  

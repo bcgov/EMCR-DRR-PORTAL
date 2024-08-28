@@ -18,7 +18,7 @@ namespace EMCR.DRR.Controllers
     [Consumes(MediaTypeNames.Application.Json)]
     [Produces(MediaTypeNames.Application.Json)]
     [Authorize]
-    public class DRIFApplicationController : ControllerBase
+    public partial class DRIFApplicationController : ControllerBase
     {
         private readonly ILogger<DRIFApplicationController> logger;
         private readonly IIntakeManager intakeManager;
@@ -46,98 +46,33 @@ namespace EMCR.DRR.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Submission>>> Get()
         {
-            var applications = (await intakeManager.Handle(new DrrApplicationsQuery { BusinessId = GetCurrentBusinessId() })).Items;
-            return Ok(mapper.Map<IEnumerable<Submission>>(applications));
-        }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<DraftEoiApplication>> Get(string id)
-        {
             try
             {
-                var application = (await intakeManager.Handle(new DrrApplicationsQuery { Id = id, BusinessId = GetCurrentBusinessId() })).Items.FirstOrDefault();
-                if (application == null) return NotFound();
-                return Ok(mapper.Map<DraftEoiApplication>(application));
+                var applications = (await intakeManager.Handle(new DrrApplicationsQuery { BusinessId = GetCurrentBusinessId() })).Items;
+                return Ok(mapper.Map<IEnumerable<Submission>>(applications));
             }
             catch (Exception e)
             {
-                return errorParser.Parse(e);
+                return errorParser.Parse(e, logger);
             }
         }
 
-        [HttpGet("Declarations")]
+        [HttpGet("declarations")]
         public async Task<ActionResult<DeclarationResult>> GetDeclarations()
         {
-            var res = await intakeManager.Handle(new DeclarationQuery());
-
-            return Ok(new DeclarationResult { Items = mapper.Map<IEnumerable<DeclarationInfo>>(res.Items) });
-        }
-
-        [HttpPost("EOI")]
-        public async Task<ActionResult<ApplicationResult>> CreateEOIApplication(DraftEoiApplication application)
-        {
-            application.Status = SubmissionPortalStatus.Draft;
-            application.AdditionalContacts = MapAdditionalContacts(application);
-
-            var id = await intakeManager.Handle(new DrifEoiSaveApplicationCommand { application = mapper.Map<EoiApplication>(application), UserInfo = GetCurrentUser() });
-            return Ok(new ApplicationResult { Id = id });
-        }
-
-        [HttpPost("EOI/{id}")]
-        public async Task<ActionResult<ApplicationResult>> UpdateApplication([FromBody] DraftEoiApplication application, string id)
-        {
             try
             {
-                application.Id = id;
-                application.Status = SubmissionPortalStatus.Draft;
-                application.AdditionalContacts = MapAdditionalContacts(application);
-
-                var drr_id = await intakeManager.Handle(new DrifEoiSaveApplicationCommand { application = mapper.Map<EoiApplication>(application), UserInfo = GetCurrentUser() });
-                return Ok(new ApplicationResult { Id = drr_id });
+                var res = await intakeManager.Handle(new DeclarationQuery());
+                return Ok(new DeclarationResult { Items = mapper.Map<IEnumerable<DeclarationInfo>>(res.Items) });
             }
             catch (Exception e)
             {
-                return errorParser.Parse(e);
-            }
-        }
-
-        [HttpPost("EOI/submit")]
-        public async Task<ActionResult<ApplicationResult>> SubmitApplication([FromBody] EoiApplication application)
-        {
-            try
-            {
-                application.Status = SubmissionPortalStatus.UnderReview;
-                application.AdditionalContacts = MapAdditionalContacts(application);
-
-                var drr_id = await intakeManager.Handle(new DrifEoiSubmitApplicationCommand { application = application, UserInfo = GetCurrentUser() });
-                return Ok(new ApplicationResult { Id = drr_id });
-            }
-            catch (Exception e)
-            {
-                return errorParser.Parse(e);
-            }
-        }
-
-        [HttpPost("EOI/{id}/submit")]
-        public async Task<ActionResult<ApplicationResult>> SubmitApplication([FromBody] EoiApplication application, string id)
-        {
-            try
-            {
-                application.Id = id;
-                application.Status = SubmissionPortalStatus.UnderReview;
-                application.AdditionalContacts = MapAdditionalContacts(application);
-
-                var drr_id = await intakeManager.Handle(new DrifEoiSubmitApplicationCommand { application = application, UserInfo = GetCurrentUser() });
-                return Ok(new ApplicationResult { Id = drr_id });
-            }
-            catch (Exception e)
-            {
-                return errorParser.Parse(e);
+                return errorParser.Parse(e, logger);
             }
         }
 
         //Prevent empty additional contact 1, but populated additional contact 2
-        private IEnumerable<ContactDetails> MapAdditionalContacts(DraftEoiApplication application)
+        private IEnumerable<ContactDetails> MapAdditionalContacts(DraftApplication application)
         {
             var additionalContact1 = application.AdditionalContacts.FirstOrDefault();
             var additionalContact2 = application.AdditionalContacts.ElementAtOrDefault(1);
@@ -170,6 +105,7 @@ namespace EMCR.DRR.Controllers
     public class DeclarationInfo
     {
         public required DeclarationType Type { get; set; }
+        public required ApplicationType ApplicationType { get; set; }
         public required string Text { get; set; }
     }
 
@@ -186,7 +122,7 @@ namespace EMCR.DRR.Controllers
     }
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-    public class DraftEoiApplication
+    public class DraftApplication
     {
         public string? Id { get; set; }
         public SubmissionPortalStatus? Status { get; set; }
@@ -228,7 +164,7 @@ namespace EMCR.DRR.Controllers
         public string? RationaleForFunding { get; set; }
         public EstimatedNumberOfPeople? EstimatedPeopleImpacted { get; set; }
         public string? CommunityImpact { get; set; }
-        public IEnumerable<string> InfrastructureImpacted { get; set; }
+        public IEnumerable<string>? InfrastructureImpacted { get; set; }
         public string? DisasterRiskUnderstanding { get; set; }
         public string? AdditionalBackgroundInformation { get; set; }
         public string? AddressRisksAndHazards { get; set; }
@@ -246,6 +182,11 @@ namespace EMCR.DRR.Controllers
         public string? OtherInformation { get; set; }
     }
 
+    public class DraftEoiApplication : DraftApplication
+    {
+        public string? FpId { get; set; }
+    }
+
     public class EoiApplication : DraftEoiApplication
     {
         //Declaration
@@ -254,7 +195,126 @@ namespace EMCR.DRR.Controllers
         public bool? InformationAccuracyStatement { get; set; }
     }
 
+    public class DraftFpApplication : DraftApplication
+    {
+        public string? EoiId { get; set; }
+
+        //Proponent & Project Information - 1
+        public bool? RegionalProject { get; set; }
+        public string? RegionalProjectComments { get; set; }
+
+        //Ownership & Authorization - 2
+        public bool? ProjectAuthority { get; set; }
+        public string? ProjectAuthorityComments { get; set; }
+        public YesNoOption? OperationAndMaintenance { get; set; }
+        public string? OperationAndMaintenanceComments { get; set; }
+        public YesNoOption? FirstNationsEndorsement { get; set; }
+        public YesNoOption? LocalGovernmentEndorsement { get; set; }
+        public string? AuthorizationOrEndorsementComments { get; set; }
+
+        //Project Area - 3
+
+        //Project Plan - 4
+        public string? ProjectDescription { get; set; }
+        public IEnumerable<ProposedActivity>? ProposedActivities { get; set; }
+        public IEnumerable<string>? VerificationMethods { get; set; }
+        public string? VerificationMethodsComments { get; set; }
+        public string? ProjectAlternateOptions { get; set; }
+
+        //Project Engagement - 5
+        public bool? EngagedWithFirstNations { get; set; }
+        public string? EngagedWithFirstNationsComments { get; set; }
+        public YesNoOption? OtherEngagement { get; set; }
+        public IEnumerable<string>? AffectedParties { get; set; }
+        public string? OtherEngagementComments { get; set; }
+        public string? CollaborationComments { get; set; }
+
+        //Climate Adaptation - 6
+        public bool? ClimateAdaptationScreener { get; set; }
+
+        //Permits Regulations & Standards - 7
+        public bool? Approvals { get; set; }
+        public string? ApprovalsComments { get; set; }
+        public bool? ProfessionalGuidance { get; set; }
+        public IEnumerable<string>? Professionals { get; set; } //Missing list in CRM
+        public string? ProfessionalGuidanceComments { get; set; }
+        public YesNoOption? StandardsAcceptable { get; set; }
+        public IEnumerable<string>? Standards { get; set; }
+        public string? StandardsComments { get; set; }
+        public bool? Regulations { get; set; }
+        public string? RegulationsComments { get; set; }
+
+        //Project Outcomes - 8
+        public bool? PublicBenefit { get; set; }
+        public string? PublicBenefitComments { get; set; }
+        public bool? FutureCostReduction { get; set; }
+        public IEnumerable<string>? CostReductions { get; set; }
+        public string? CostReductionComments { get; set; }
+        public bool? ProduceCoBenefits { get; set; }
+        public IEnumerable<string>? CoBenefits { get; set; }
+        public string? CoBenefitComments { get; set; }
+        public IEnumerable<string>? IncreasedResiliency { get; set; } //Missing list in CRM
+        public string? IncreasedResiliencyComments { get; set; }
+
+        //Project Risks - 9
+        public bool? ComplexityRiskMitigated { get; set; }
+        public IEnumerable<string>? ComplexityRisks { get; set; }
+        public string? ComplexityRiskComments { get; set; }
+        public bool? ReadinessRiskMitigated { get; set; }
+        public IEnumerable<string>? ReadinessRisks { get; set; }
+        public string? ReadinessRiskComments { get; set; }
+        public bool? SensitivityRiskMitigated { get; set; }
+        public IEnumerable<string>? SensitivityRisks { get; set; }
+        public string? SensitivityRiskComments { get; set; }
+        public bool? CapacityRiskMitigated { get; set; }
+        public IEnumerable<string>? CapacityRisks { get; set; }
+        public string? CapacityRiskComments { get; set; }
+        public bool? RiskTransferMigigated { get; set; }
+        public IEnumerable<string>? TransferRisks { get; set; } //Missing list in CRM
+        public string? TransferRisksComments { get; set; }
+
+        //Budget - 10
+        public IEnumerable<YearOverYearFunding>? YearOverYearFunding { get; set; }
+        [Range(0, ApplicationValidators.FUNDING_MAX_VAL)]
+        public decimal? TotalDrifFundingRequest { get; set; }
+        public string? DiscrepancyComment { get; set; }
+        public bool? CostEffective { get; set; }
+        public string? CostEffectiveComments { get; set; }
+        public YesNoOption? PreviousResponse { get; set; }
+        public decimal? PreviousResponseCost { get; set; }
+        public string? PreviousResponseComments { get; set; }
+        public string? ActivityCostEffectiveness { get; set; }
+        public bool? CostConsiderationsApplied { get; set; }
+        public IEnumerable<string>? CostConsiderations { get; set; }
+        public string? CostConsiderationsComments { get; set; }
+
+        //Attachments - 11
+        public IEnumerable<Attachment>? Attachments { get; set; }
+
+        //Review & Declaration - 12
+    }
+
+    public class FpApplication : DraftFpApplication
+    {
+
+    }
+
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+
+    public class ProposedActivity
+    {
+        public string? Name { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+        public string? RelatedMilestone { get; set; }
+    }
+
+    public class YearOverYearFunding
+    {
+        public string? Year { get; set; }
+        [Range(0, ApplicationValidators.FUNDING_MAX_VAL)]
+        public decimal? Amount { get; set; }
+    }
 
     public class FundingInformation
     {
@@ -382,6 +442,14 @@ namespace EMCR.DRR.Controllers
         Other,
     }
 
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public enum YesNoOption
+    {
+        No,
+        Yes,
+        NotApplicable
+    }
+
 #pragma warning disable CS8765 // nullability
     public class CollectionStringLengthValid : ValidationAttribute
     {
@@ -390,7 +458,7 @@ namespace EMCR.DRR.Controllers
             if (!(value is IList)) return false;
             foreach (string item in (IList)value)
             {
-                if (item.Length > ApplicationValidators.ACCOUNT_MAX_LENGTH) return false;
+                if (item?.Length > ApplicationValidators.ACCOUNT_MAX_LENGTH) return false;
             }
             return true;
         }

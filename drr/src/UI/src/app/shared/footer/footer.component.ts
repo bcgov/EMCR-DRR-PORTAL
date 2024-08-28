@@ -15,6 +15,7 @@ import { ConfigurationStore } from '../../store/configuration.store';
 })
 export class FooterComponent {
   versionService = inject(VersionService);
+
   configStore = inject(ConfigurationStore);
 
   get homeUrl() {

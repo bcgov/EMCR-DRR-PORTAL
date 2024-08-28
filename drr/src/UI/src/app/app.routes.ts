@@ -1,8 +1,10 @@
 import { Routes } from '@angular/router';
 import { AuthenticationGuard } from './core/guards/authentication.guard';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { DrifSubmissionDetailsComponent } from './drif/drif-eoi-summary/drif-eoi-summary.component';
+import { DrifEoiViewComponent } from './drif/drif-eoi/drif-eoi-view/drif-eoi-view.component';
 import { EOIApplicationComponent } from './drif/drif-eoi/drif-eoi.component';
+import { DrifFpInstructionsComponent } from './drif/drif-fp/drif-fp-instructions/drif-fp-instructions.component';
+import { DrifFpComponent } from './drif/drif-fp/drif-fp.component';
 import { SuccessPageComponent } from './success-page/success-page.component';
 
 export const routes: Routes = [
@@ -25,8 +27,18 @@ export const routes: Routes = [
     ],
   },
   {
-    path: 'submission-details/:id',
-    component: DrifSubmissionDetailsComponent,
+    path: 'drif-fp-instructions/:eoiId',
+    component: DrifFpInstructionsComponent,
+    canActivate: [AuthenticationGuard],
+  },
+  {
+    path: 'drif-fp/:id',
+    component: DrifFpComponent,
+    canActivate: [AuthenticationGuard],
+  },
+  {
+    path: 'eoi-submission-details/:id',
+    component: DrifEoiViewComponent,
     canActivate: [AuthenticationGuard],
   },
   {

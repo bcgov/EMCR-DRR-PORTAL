@@ -1,8 +1,8 @@
-<mat-label *ngIf="isMobile || useTopLabel"
+<mat-label *ngIf="isMobile || useFloatingLabel"
   >{{ label }}{{ getMandatoryMark() }}</mat-label
 >
 <mat-form-field class="drr-textarea">
-  <mat-label *ngIf="!isMobile && !useTopLabel">{{ label }}</mat-label>
+  <mat-label *ngIf="!isMobile && !useFloatingLabel">{{ label }}</mat-label>
   <textarea
     id="{{ id }}"
     matInput

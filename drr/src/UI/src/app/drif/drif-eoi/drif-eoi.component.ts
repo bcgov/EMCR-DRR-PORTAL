@@ -43,20 +43,21 @@ import {
   Hazards,
 } from '../../../model';
 import { ProfileStore } from '../../store/profile.store';
-import { DrifEoiStep1Component } from '../drif-eoi-step-1/drif-eoi-step-1.component';
-import { DrifEoiStep2Component } from '../drif-eoi-step-2/drif-eoi-step-2.component';
-import { DrifEoiStep3Component } from '../drif-eoi-step-3/drif-eoi-step-3.component';
-import { DrifEoiStep4Component } from '../drif-eoi-step-4/drif-eoi-step-4.component';
-import { DrifEoiStep5Component } from '../drif-eoi-step-5/drif-eoi-step-5.component';
-import { DrifEoiStep6Component } from '../drif-eoi-step-6/drif-eoi-step-6.component';
-import { DrifEoiStep7Component } from '../drif-eoi-step-7/drif-eoi-step-7.component';
-import { DrifEoiStep8Component } from '../drif-eoi-step-8/drif-eoi-step-8.component';
+
 import {
   ContactDetailsForm,
   EOIApplicationForm,
   FundingInformationItemForm,
   StringItem,
 } from './drif-eoi-form';
+import { DrifEoiStep1Component } from './drif-eoi-step-1/drif-eoi-step-1.component';
+import { DrifEoiStep2Component } from './drif-eoi-step-2/drif-eoi-step-2.component';
+import { DrifEoiStep3Component } from './drif-eoi-step-3/drif-eoi-step-3.component';
+import { DrifEoiStep4Component } from './drif-eoi-step-4/drif-eoi-step-4.component';
+import { DrifEoiStep5Component } from './drif-eoi-step-5/drif-eoi-step-5.component';
+import { DrifEoiStep6Component } from './drif-eoi-step-6/drif-eoi-step-6.component';
+import { DrifEoiStep7Component } from './drif-eoi-step-7/drif-eoi-step-7.component';
+import { DrifEoiStep8Component } from './drif-eoi-step-8/drif-eoi-step-8.component';
 
 @Component({
   selector: 'drr-drif-eoi',
@@ -132,7 +133,6 @@ export class EOIApplicationComponent {
     return !!this.id;
   }
 
-  isAutoSaveOn = true;
   autoSaveTimer: any;
   autoSaveCountdown = 0;
   autoSaveInterval = 60;
@@ -144,10 +144,6 @@ export class EOIApplicationComponent {
   @HostListener('window:scroll')
   @HostListener('window:touchmove')
   resetAutoSaveTimer() {
-    if (!this.isAutoSaveOn) {
-      return;
-    }
-
     if (!this.formChanged) {
       this.autoSaveCountdown = 0;
       clearInterval(this.autoSaveTimer);
@@ -178,7 +174,7 @@ export class EOIApplicationComponent {
       this.id = id;
 
       this.applicationService
-        .dRIFApplicationGet(id)
+        .dRIFApplicationGetEOI(id)
         .subscribe((application) => {
           const profileData = this.profileStore.getProfile();
 
@@ -262,11 +258,12 @@ export class EOIApplicationComponent {
             'proponentInformation'
           ).get('partneringProponentsArray') as FormArray;
           if (application.partneringProponents?.length! > 0) {
-            partneringProponentsArray.clear();
+            partneringProponentsArray.clear({ emitEvent: false });
           }
           application.partneringProponents?.forEach((proponent) => {
             partneringProponentsArray?.push(
-              this.formBuilder.formGroup(new StringItem({ value: proponent }))
+              this.formBuilder.formGroup(new StringItem({ value: proponent })),
+              { emitEvent: false }
             );
           });
 
@@ -274,11 +271,12 @@ export class EOIApplicationComponent {
             'proponentInformation'
           ).get('additionalContacts') as FormArray;
           if (application.additionalContacts?.length! > 0) {
-            additionalContactsArray.clear();
+            additionalContactsArray.clear({ emitEvent: false });
           }
           application.additionalContacts?.forEach((contact) => {
             additionalContactsArray?.push(
-              this.formBuilder.formGroup(new ContactDetailsForm(contact))
+              this.formBuilder.formGroup(new ContactDetailsForm(contact)),
+              { emitEvent: false }
             );
           });
 
@@ -286,11 +284,14 @@ export class EOIApplicationComponent {
             'fundingInformation'
           ).get('otherFunding') as FormArray;
           if (application.otherFunding?.length! > 0) {
-            fundingInformationItemFormArray.clear();
+            fundingInformationItemFormArray.clear({ emitEvent: false });
           }
           application.otherFunding?.forEach((funding) => {
-            const fundingInformationItemForm = this.formBuilder.formGroup(
-              new FundingInformationItemForm(funding)
+            fundingInformationItemFormArray?.push(
+              this.formBuilder.formGroup(
+                new FundingInformationItemForm(funding)
+              ),
+              { emitEvent: false }
             );
             if (funding.type === FundingType.OtherGrants) {
               fundingInformationItemForm
@@ -304,14 +305,15 @@ export class EOIApplicationComponent {
             'projectDetails'
           ).get('infrastructureImpactedArray') as FormArray;
           if (application.infrastructureImpacted?.some((i) => i)) {
-            infrastructureImpactedArray.clear();
+            infrastructureImpactedArray.clear({ emitEvent: false });
           }
           application.infrastructureImpacted?.forEach((infrastructure) => {
             if (infrastructure) {
               infrastructureImpactedArray?.push(
                 this.formBuilder.formGroup(
                   new StringItem({ value: infrastructure })
-                )
+                ),
+                { emitEvent: false }
               );
             }
           });
@@ -341,6 +343,11 @@ export class EOIApplicationComponent {
 
   ngOnDestroy() {
     clearInterval(this.autoSaveTimer);
+  }
+
+  getProjectTitle() {
+    return this.eoiApplicationForm.get('projectInformation.projectTitle')
+      ?.value;
   }
 
   getFormGroup(groupName: string) {

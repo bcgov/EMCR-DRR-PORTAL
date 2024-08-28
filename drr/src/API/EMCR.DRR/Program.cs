@@ -39,6 +39,17 @@ services.AddCors(opts => opts.AddDefaultPolicy(policy =>
     policy.AllowAnyOrigin();
 
     //policy.WithOrigins("https://dev-drr-emcr.silver.devops.bcgov");
+
+
+    //// try to get array of origins from section array
+    //var corsOrigins = configuration.GetSection("cors:origins").GetChildren().Select(c => c.Value ?? string.Empty).ToArray();
+    //// try to get array of origins from value
+    //if (!corsOrigins.Any()) corsOrigins = configuration.GetValue("cors:origins", string.Empty)?.Split(',') ?? Array.Empty<string>();
+    //corsOrigins = corsOrigins.Where(o => !string.IsNullOrWhiteSpace(o)).ToArray();
+    //if (corsOrigins.Any())
+    //{
+    //    policy.SetIsOriginAllowedToAllowWildcardSubdomains().WithOrigins(corsOrigins);
+    //}
 }));
 services.AddCache(string.Empty)
     .AddDRRDynamics(builder.Configuration);

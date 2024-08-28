@@ -1,6 +1,12 @@
 <div class="app-stepper-container" *transloco="let t">
   <div class="app-stepper-header">
-    <h1>{{ t("formHeader") }}</h1>
+    <h1>
+      {{
+        getProjectTitle()
+          ? t("eoiFormHeaderFor", { projectTitle: getProjectTitle() })
+          : t("eoiFormHeader")
+      }}
+    </h1>
     <div>
       <div class="header-actions">
         <button mat-stroked-button color="primary" (click)="goBack()">

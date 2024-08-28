@@ -1,0 +1,41 @@
+<ng-container *transloco="let t">
+  <mat-form-field style="width: 100%">
+    <mat-label>{{ label }}</mat-label>
+    <mat-hint *ngIf="rxFormControl.disabled">
+      {{ t("autocompleteInfoDisclaimer") }}
+      <span *ngFor="let option of options?.join(' ,')">{{ option }}</span>
+    </mat-hint>
+    <mat-chip-grid
+      #chipGrid
+      [formControl]="rxFormControl"
+      required="{{ isRequired() }}"
+    >
+      @for (option of rxFormControl.value; track $index) {
+      <mat-chip-row (removed)="removeOption($index)">
+        {{ option }}
+        <button matChipRemove [attr.aria-label]="'remove ' + option">
+          <mat-icon>cancel</mat-icon>
+        </button>
+      </mat-chip-row>
+      }
+    </mat-chip-grid>
+    <input
+      placeholder="{{ placeholder }}"
+      #currentInput
+      [formControl]="currentInputControl"
+      [matChipInputFor]="chipGrid"
+      [matAutocomplete]="auto"
+      [ariaMultiLine]="true"
+      [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+      (matChipInputTokenEnd)="addOption($event)"
+    />
+    <mat-autocomplete
+      #auto="matAutocomplete"
+      (optionSelected)="optionSelected($event)"
+    >
+      @for (option of filteredOptions | async; track option) {
+      <mat-option [value]="option">{{ option }}</mat-option>
+      }
+    </mat-autocomplete>
+  </mat-form-field>
+</ng-container>

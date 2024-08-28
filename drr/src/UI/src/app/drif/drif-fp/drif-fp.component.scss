@@ -1,0 +1,40 @@
+.app-stepper-container {
+  margin: 1rem;
+}
+
+.app-stepper {
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-stepper-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  .header-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    align-items: center;
+  }
+
+  .save-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    min-height: 2rem;
+  }
+}
+
+.fp-eoi-info {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+::ng-deep .mat-step-text-label {
+  white-space: normal;
+}

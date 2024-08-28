@@ -8,7 +8,7 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Router, RouterModule } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 import { DrifapplicationService } from '../../../api/drifapplication/drifapplication.service';
-import { Submission } from '../../../model';
+import { FundingStream, Submission } from '../../../model';
 
 @Component({
   selector: 'drr-submission-list',
@@ -56,7 +56,7 @@ export class SubmissionListComponent {
   };
 
   ngOnInit() {
-    this.applicationService.dRIFApplicationGetAll().subscribe((submissions) => {
+    this.applicationService.dRIFApplicationGet().subscribe((submissions) => {
       this.submissions = submissions;
       this.submissionListDataSource = new MatTableDataSource(this.submissions);
       this.paginator.length = submissions.length;
@@ -83,9 +83,30 @@ export class SubmissionListComponent {
   onViewFormClick(submission: Submission, event: Event) {
     event.preventDefault();
 
-    this.router.navigate([
-      submission.status == 'Draft' ? '/drif-eoi' : '/submission-details',
-      submission.id,
-    ]);
+    submission.applicationType === 'EOI'
+      ? this.router.navigate([
+          submission.status == 'Draft'
+            ? '/drif-eoi'
+            : '/eoi-submission-details',
+          submission.id,
+        ])
+      : this.router.navigate([
+          submission.status == 'Draft' ? '/drif-fp' : '/fp-submission-details',
+          submission.id,
+        ]);
+  }
+
+  canCreateFullProposal(submission: Submission) {
+    return submission.status === 'EligibleInvited' && !submission.existingFpId;
+  }
+
+  createFullProposal(submission: Submission, event: Event) {
+    event.preventDefault();
+
+    this.router.navigate(['/drif-fp-instructions', submission.id], {
+      queryParams: {
+        fundingStream: submission.fundingStream,
+      },
+    });
   }
 }

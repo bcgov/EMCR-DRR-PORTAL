@@ -1,0 +1,81 @@
+<div class="drr-step-container" *transloco="let t">
+  <form [formGroup]="permitsRegulationsAndStandardsForm">
+    <mat-label class="drr-label">{{ t("approvals") }}</mat-label>
+    <mat-label>{{ t("approvalsQuestion") }}*</mat-label>
+    <drr-radio-button
+      [rxFormControl]="permitsRegulationsAndStandardsForm.get('approvals')"
+    ></drr-radio-button>
+
+    <drr-textarea
+      [label]="t('approvalsComments')"
+      [maxlength]="2000"
+      [rxFormControl]="
+        permitsRegulationsAndStandardsForm.get('approvalsComments')
+      "
+      [useFloatingLabel]="false"
+    ></drr-textarea>
+
+    <mat-label class="drr-label">{{ t("professionalGuidance") }}</mat-label>
+    <mat-label>{{ t("professionalGuidanceQuestion") }}*</mat-label>
+    <drr-radio-button
+      [rxFormControl]="
+        permitsRegulationsAndStandardsForm.get('professionalGuidance')
+      "
+    ></drr-radio-button>
+
+    <drr-chip-autocomplete
+      [label]="t('professionals')"
+      [placeholder]="t('professionalsPlaceholder')"
+      [options]="professionalGuidanceOptions"
+      [rxFormControl]="permitsRegulationsAndStandardsForm.get('professionals')"
+    ></drr-chip-autocomplete>
+
+    <drr-textarea
+      [label]="t('professionalGuidanceComments')"
+      [maxlength]="2000"
+      [rxFormControl]="
+        permitsRegulationsAndStandardsForm.get('professionalGuidanceComments')
+      "
+      [useFloatingLabel]="false"
+    ></drr-textarea>
+
+    <mat-label class="drr-label">{{ t("standardsAcceptable") }}</mat-label>
+    <mat-label>{{ t("standardsAcceptableQuestion") }}*</mat-label>
+    <drr-radio-button
+      [options]="standardsAcceptableOptions"
+      [rxFormControl]="
+        permitsRegulationsAndStandardsForm.get('standardsAcceptable')
+      "
+    ></drr-radio-button>
+
+    <drr-chip-autocomplete
+      [label]="t('standards')"
+      [placeholder]="t('standardsPlaceholder')"
+      [options]="provincialStandardsOptions"
+      [rxFormControl]="permitsRegulationsAndStandardsForm.get('standards')"
+    ></drr-chip-autocomplete>
+
+    <drr-textarea
+      [label]="t('standardsComments')"
+      [maxlength]="2000"
+      [rxFormControl]="
+        permitsRegulationsAndStandardsForm.get('standardsComments')
+      "
+      [useFloatingLabel]="false"
+    ></drr-textarea>
+
+    <mat-label class="drr-label">{{ t("regulations") }}</mat-label>
+    <mat-label>{{ t("regulationsQuestion") }}*</mat-label>
+    <drr-radio-button
+      [rxFormControl]="permitsRegulationsAndStandardsForm.get('regulations')"
+    ></drr-radio-button>
+    <drr-textarea
+      [label]="t('regulationsComments')"
+      [maxlength]="2000"
+      [rxFormControl]="
+        permitsRegulationsAndStandardsForm.get('regulationsComments')
+      "
+      [useFloatingLabel]="false"
+    ></drr-textarea>
+  </form>
+</div>

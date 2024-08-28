@@ -8,10 +8,19 @@ namespace EMCR.DRR.Managers.Intake
     {
         public IntakeMapperProfile()
         {
-            CreateMap<EoiApplication, Application>()
+            CreateMap<Application, DraftApplication>()
+                .ForMember(dest => dest.AdditionalContacts, opt => opt.MapFrom(src => DRRAdditionalContactMapper(src.AdditionalContact1, src.AdditionalContact2)))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => DRRApplicationStatusMapper(src.Status)))
+                .ForMember(dest => dest.PartneringProponents, opt => opt.MapFrom(src => src.PartneringProponents.Select(p => p.Name)))
+                .ForMember(dest => dest.InfrastructureImpacted, opt => opt.MapFrom(src => src.InfrastructureImpacted.Select(p => p.Name)))
+                ;
+
+            CreateMap<EoiApplication, Application>(MemberList.None)
                 .ForMember(dest => dest.AdditionalContact1, opt => opt.MapFrom(src => src.AdditionalContacts.FirstOrDefault()))
                 .ForMember(dest => dest.AdditionalContact2, opt => opt.MapFrom(src => src.AdditionalContacts.ElementAtOrDefault(1)))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => IntakeStatusMapper(src.Status)))
+                .ForMember(dest => dest.ApplicationTypeName, opt => opt.MapFrom(src => "EOI"))
+                .ForMember(dest => dest.ProgramName, opt => opt.MapFrom(src => "DRIF"))
                 .ReverseMap()
                 .ForMember(dest => dest.AdditionalContacts, opt => opt.MapFrom(src => DRRAdditionalContactMapper(src.AdditionalContact1, src.AdditionalContact2)))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => DRRApplicationStatusMapper(src.Status)))
@@ -19,22 +28,68 @@ namespace EMCR.DRR.Managers.Intake
                 .ForMember(dest => dest.InfrastructureImpacted, opt => opt.MapFrom(src => src.InfrastructureImpacted.Select(p => p.Name)))
                 ;
 
-            CreateMap<DraftEoiApplication, Application>()
+            CreateMap<DraftEoiApplication, Application>(MemberList.None)
                 .ForMember(dest => dest.AdditionalContact1, opt => opt.MapFrom(src => src.AdditionalContacts.FirstOrDefault()))
                 .ForMember(dest => dest.AdditionalContact2, opt => opt.MapFrom(src => src.AdditionalContacts.ElementAtOrDefault(1)))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => IntakeStatusMapper(src.Status)))
+                .ForMember(dest => dest.ApplicationTypeName, opt => opt.MapFrom(src => "EOI"))
+                .ForMember(dest => dest.ProgramName, opt => opt.MapFrom(src => "DRIF"))
                 .ReverseMap()
                 .ForMember(dest => dest.AdditionalContacts, opt => opt.MapFrom(src => DRRAdditionalContactMapper(src.AdditionalContact1, src.AdditionalContact2)))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => DRRApplicationStatusMapper(src.Status)))
                 .ForMember(dest => dest.PartneringProponents, opt => opt.MapFrom(src => src.PartneringProponents.Select(p => p.Name)))
                 .ForMember(dest => dest.InfrastructureImpacted, opt => opt.MapFrom(src => src.InfrastructureImpacted.Select(p => p.Name)))
+                ;
+
+            CreateMap<FpApplication, Application>(MemberList.None)
+                .ForMember(dest => dest.AdditionalContact1, opt => opt.MapFrom(src => src.AdditionalContacts.FirstOrDefault()))
+                .ForMember(dest => dest.AdditionalContact2, opt => opt.MapFrom(src => src.AdditionalContacts.ElementAtOrDefault(1)))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => IntakeStatusMapper(src.Status)))
+                .ForMember(dest => dest.ApplicationTypeName, opt => opt.MapFrom(src => "Full Proposal"))
+                .ForMember(dest => dest.ProgramName, opt => opt.MapFrom(src => "DRIF"))
+                .ReverseMap()
+                .ForMember(dest => dest.AdditionalContacts, opt => opt.MapFrom(src => DRRAdditionalContactMapper(src.AdditionalContact1, src.AdditionalContact2)))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => DRRApplicationStatusMapper(src.Status)))
+                .ForMember(dest => dest.PartneringProponents, opt => opt.MapFrom(src => src.PartneringProponents.Select(p => p.Name)))
+                .ForMember(dest => dest.InfrastructureImpacted, opt => opt.MapFrom(src => src.InfrastructureImpacted.Select(p => p.Name)))
+                .ForMember(dest => dest.Professionals, opt => opt.MapFrom(src => src.Professionals.Select(p => p.Name)))
+                .ForMember(dest => dest.Standards, opt => opt.MapFrom(src => src.Standards.Select(p => p.Name)))
+                .ForMember(dest => dest.VerificationMethods, opt => opt.MapFrom(src => src.VerificationMethods.Select(p => p.Name)))
+                .ForMember(dest => dest.AffectedParties, opt => opt.MapFrom(src => src.AffectedParties.Select(p => p.Name)))
+                .ForMember(dest => dest.CostReductions, opt => opt.MapFrom(src => src.CostReductions.Select(p => p.Name)))
+                .ForMember(dest => dest.CoBenefits, opt => opt.MapFrom(src => src.CoBenefits.Select(p => p.Name)))
+                .ForMember(dest => dest.ComplexityRisks, opt => opt.MapFrom(src => src.ComplexityRisks.Select(p => p.Name)))
+                .ForMember(dest => dest.ReadinessRisks, opt => opt.MapFrom(src => src.ReadinessRisks.Select(p => p.Name)))
+                .ForMember(dest => dest.SensitivityRisks, opt => opt.MapFrom(src => src.SensitivityRisks.Select(p => p.Name)))
+                .ForMember(dest => dest.CapacityRisks, opt => opt.MapFrom(src => src.CapacityRisks.Select(p => p.Name)))
+                ;
+
+            CreateMap<DraftFpApplication, Application>(MemberList.None)
+                .ForMember(dest => dest.AdditionalContact1, opt => opt.MapFrom(src => src.AdditionalContacts.FirstOrDefault()))
+                .ForMember(dest => dest.AdditionalContact2, opt => opt.MapFrom(src => src.AdditionalContacts.ElementAtOrDefault(1)))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => IntakeStatusMapper(src.Status)))
+                .ForMember(dest => dest.ApplicationTypeName, opt => opt.MapFrom(src => "Full Proposal"))
+                .ForMember(dest => dest.ProgramName, opt => opt.MapFrom(src => "DRIF"))
+                .ReverseMap()
+                .ForMember(dest => dest.AdditionalContacts, opt => opt.MapFrom(src => DRRAdditionalContactMapper(src.AdditionalContact1, src.AdditionalContact2)))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => DRRApplicationStatusMapper(src.Status)))
+                .ForMember(dest => dest.PartneringProponents, opt => opt.MapFrom(src => src.PartneringProponents.Select(p => p.Name)))
+                .ForMember(dest => dest.InfrastructureImpacted, opt => opt.MapFrom(src => src.InfrastructureImpacted.Select(p => p.Name)))
+                .ForMember(dest => dest.Professionals, opt => opt.MapFrom(src => src.Professionals.Select(p => p.Name)))
+                .ForMember(dest => dest.Standards, opt => opt.MapFrom(src => src.Standards.Select(p => p.Name)))
+                .ForMember(dest => dest.VerificationMethods, opt => opt.MapFrom(src => src.VerificationMethods.Select(p => p.Name)))
                 ;
 
             CreateMap<Controllers.FundingInformation, FundingInformation>()
                 .ReverseMap()
                 ;
 
+            CreateMap<Controllers.YearOverYearFunding, YearOverYearFunding>()
+                .ReverseMap()
+                ;   
+
             CreateMap<Controllers.ContactDetails, ContactDetails>()
+                .ForMember(dest => dest.BCeId, opt => opt.Ignore())
                 .ReverseMap()
                 ;
 
@@ -46,7 +101,59 @@ namespace EMCR.DRR.Managers.Intake
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src))
                 ;
 
-            CreateMap<Resources.Applications.DeclarationInfo, DeclarationInfo>()
+            CreateMap<string, ProfessionalInfo>()
+               .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src))
+               ;
+
+            CreateMap<string, ProvincialStandard>()
+               .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src))
+               ;
+
+            CreateMap<string, CostReduction>()
+               .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src))
+               ;
+
+            CreateMap<string, CoBenefit>()
+               .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src))
+               ;
+
+            CreateMap<string, IncreasedResiliency>()
+               .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src))
+               ;
+
+            CreateMap<string, VerificationMethod>()
+               .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src))
+               ;
+
+            CreateMap<string, AffectedParty>()
+               .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src))
+               ;
+
+            CreateMap<string, ComplexityRisk>()
+               .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src))
+               ;
+
+            CreateMap<string, ReadinessRisk>()
+               .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src))
+               ;
+
+            CreateMap<string, SensitivityRisk>()
+               .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src))
+               ;
+
+            CreateMap<string, CapacityRisk>()
+               .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src))
+               ;
+
+            CreateMap<string, TransferRisks>()
+               .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src))
+               ;
+
+            CreateMap<Controllers.ProposedActivity, ProposedActivity>()
+                .ReverseMap()
+                ;
+
+            CreateMap<Resources.Applications.EntitiesQueryResult, EntitiesQueryResult>()
                 .ReverseMap()
                 ;
         }

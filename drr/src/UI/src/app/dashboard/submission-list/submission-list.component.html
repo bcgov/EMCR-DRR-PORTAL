@@ -10,12 +10,12 @@
       *ngIf="submissionListDataSource.data.length > 0; else noDataTemplate"
       mat-table
       [dataSource]="submissionListDataSource"
+      matSort
+      (matSortChange)="onSortSubmissionTable($event)"
       class="mat-elevation-z8"
     >
       <ng-container matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef>
-          {{ t("submission-list.id") }}
-        </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Id</th>
         <td mat-cell *matCellDef="let element" style="white-space: nowrap">
           <a (click)="onViewFormClick(element, $event)" href="">
             {{ element.id }}
@@ -24,24 +24,20 @@
       </ng-container>
 
       <ng-container matColumnDef="projectTitle">
-        <th mat-header-cell *matHeaderCellDef>
-          {{ t("submission-list.projectTitle") }}
-        </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Project Title</th>
         <td mat-cell *matCellDef="let element" style="overflow-wrap: anywhere">
           {{ element.projectTitle }}
         </td>
       </ng-container>
 
       <ng-container matColumnDef="status">
-        <th mat-header-cell *matHeaderCellDef>
-          {{ t("submission-list.status") }}
-        </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
         <td mat-cell *matCellDef="let element">{{ t(element.status) }}</td>
       </ng-container>
 
       <ng-container matColumnDef="fundingRequest">
-        <th mat-header-cell *matHeaderCellDef>
-          {{ t("submission-list.fundingRequest") }}
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          Funding Request
         </th>
         <td mat-cell *matCellDef="let element">
           {{ element.fundingRequest | currency }}
@@ -49,17 +45,15 @@
       </ng-container>
 
       <ng-container matColumnDef="modifiedDate">
-        <th mat-header-cell *matHeaderCellDef>
-          {{ t("submission-list.modified") }}
-        </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Modified Date</th>
         <td mat-cell *matCellDef="let element">
           {{ element.modifiedDate | date : "yyyy-MM-dd" }}
         </td>
       </ng-container>
 
       <ng-container matColumnDef="submittedDate">
-        <th mat-header-cell *matHeaderCellDef>
-          {{ t("submission-list.submitted") }}
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          Submitted Date
         </th>
         <td mat-cell *matCellDef="let element">
           {{ element.submittedDate | date : "yyyy-MM-dd" }}
@@ -67,8 +61,8 @@
       </ng-container>
 
       <ng-container matColumnDef="partneringProponents">
-        <th mat-header-cell *matHeaderCellDef>
-          {{ t("submission-list.partneringProponent") }}
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          Partnering Proponents
         </th>
         <td mat-cell *matCellDef="let element" style="overflow-wrap: anywhere">
           <p *ngFor="let proponent of element.partneringProponents">
@@ -78,9 +72,7 @@
       </ng-container>
 
       <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef>
-          {{ t("submission-list.action") }}
-        </th>
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
         <td mat-cell *matCellDef="let element" class="submission-actions">
           <button
             *ngIf="element.status === 'Draft'"
@@ -89,6 +81,14 @@
             (click)="onViewFormClick(element, $event)"
           >
             {{ t("edit") }}
+          </button>
+          <button
+            *ngIf="canCreateFullProposal(element)"
+            mat-raised-button
+            color="accent"
+            (click)="createFullProposal(element, $event)"
+          >
+            {{ t("createFP") }}
           </button>
           <!-- <button mat-raised-button color="warn">{{ t("delete") }}</button>
         <button mat-raised-button color="accent">{{ t("withdraw") }}</button> -->

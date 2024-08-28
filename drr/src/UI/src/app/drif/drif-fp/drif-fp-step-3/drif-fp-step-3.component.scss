@@ -1,0 +1,23 @@
+.impacted-infrastructure-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+  align-items: flex-start;
+}
+
+.impacted-infrastructure-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+
+  drr-input {
+    width: 25vw;
+  }
+
+  button {
+    align-self: flex-start;
+    margin-top: 0.5rem;
+  }
+}

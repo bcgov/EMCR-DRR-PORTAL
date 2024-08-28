@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <title>CRAFT</title>
+    <style>
+      @font-face {
+        font-family: 'MyriadWebPro';
+        src: url('../../../UI/src/assets/fonts/MyriadWebPro.woff2') format('woff2'), url('../../../UI/src/assets/fonts/MyriadWebPro.woff') format('woff');
+        font-style: normal;
+        font-weight: 400;
+      }
+
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+      }
+
+      body {
+        font-family: 'MyriadWebPro', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f5f5f5;
+
+        display: flex;
+        flex-direction: column;
+      }
+
+      .header-container {
+        display: flex;
+        align-items: center;
+        border-bottom: 2px solid #fcba19;
+        background: #036 !important;
+        padding: 1rem;
+      }
+
+      @media (max-width: 768px) {
+        .header-container {
+          display: block;
+        }
+      }
+
+      .heading-text1 {
+        font-size: 30px;
+        color: #ffffff;
+      }
+
+      .landing-container {
+        flex: 1;
+        display: grid;
+        grid-template-rows: 1.5fr 1fr;
+
+        p {
+          font-size: 1rem;
+          margin-bottom: 1rem;
+        }
+      }
+
+      .section-container {
+        padding: 3rem 10rem;
+      }
+
+      .maintenance-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #ececec;
+        padding: 1rem;
+        height: 100%;
+
+        a {
+          font-size: 1rem;
+          color: #007bff;
+          text-decoration: none;
+          margin-bottom: 1rem;
+        }
+      }
+
+      .maintenance-contact {
+        .section-container {
+          display: flex;
+          justify-content: flex-start;
+          padding: 2rem 3rem;
+        }
+
+        align-items: center;
+        background-color: #036;
+        color: #fff;
+        padding: 2rem;
+        height: 100%;
+
+        img {
+          margin-right: 1rem;
+        }
+
+        a {
+          font-size: 1rem;
+          color: #fcba19;
+          text-decoration: none;
+          margin-bottom: 1rem;
+        }
+
+        h2 {
+          font-size: 1.5rem;
+          margin-bottom: 1rem;
+        }
+      }
+
+      .footer-container {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        align-items: center;
+        width: 100%;
+        background-color: #dce2f0;
+        border-top: 2px solid #fcba19;
+        font-weight: 400;
+        font-size: 15px;
+        line-height: 1.6;
+        padding: 1rem 0;
+      }
+
+      .contact-info {
+        margin-left: 1rem;
+      }
+
+      .ul-direction {
+        display: flex;
+        flex-direction: row;
+        list-style: none;
+        flex-wrap: wrap;
+      }
+
+      .link {
+        padding: 0.4rem 0.8rem;
+      }
+
+      .app-version {
+        color: #333333 !important;
+        cursor: pointer;
+      }
+
+      .app-version:hover {
+        text-decoration: underline;
+      }
+
+      @media (max-width: 885px) {
+        .maintenance-contact {
+          .section-container {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+        }
+
+        .section-container {
+          padding: 1rem;
+        }
+
+        .footer-container {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .contact-info {
+          white-space: normal;
+          margin-top: 10px;
+        }
+
+        .ul-direction {
+          text-wrap: wrap;
+        }
+
+        .version-info {
+          flex-direction: row;
+        }
+
+        .link {
+          padding-left: 0px;
+        }
+
+        .divider {
+          display: none;
+        }
+      }
+
+      .divider {
+        color: #333333;
+        border-left: 1px solid;
+        height: 16px;
+        align-self: center;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="header-container">
+        <div>
+          <a (click)="homeClick()" style="cursor: pointer">
+            <img class="img-fluid d-none d-md-block" src="images/bcid-logo-rev-en.svg" width="181" height="45" alt="B.C. Government Logo" />
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <div class="landing-container">
+      <div class="maintenance-container">
+        <div class="section-container">
+          <h2>Community Resilience and Adaptation Funding Tool(CRAFT)</h2>
+          <p>Sorry for the inconvenience but we're currently performing maintenance.</p>
+          <p>We'll be back online shortly!</p>
+        </div>
+      </div>
+      <div class="maintenance-contact">
+        <div class="section-container">
+          <img src="images/contact.svg" width="128" height="128" />
+          <div>
+            <h2>Contact Us</h2>
+            <p>
+              For disaster mitigation funding support, contact:
+              <a href="mailto:EMCR.DisasterMitigation@gov.bc.ca">EMCR.DisasterMitigation@gov.bc.ca</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <div class="footer-container">
+        <div class="contact-info">
+          <span
+            >For disaster mitigation funding support, contact:
+            <br />
+            <a href="mailto:EMCR.DisasterMitigation@gov.bc.ca">EMCR.DisasterMitigation@gov.bc.ca</a>
+          </span>
+        </div>
+        <div>
+          <ul class="ul-direction">
+            <li>
+              <a class="link" href="" title="Home" target="_blank">Home</a>
+            </li>
+            <span class="divider"></span>
+            <li>
+              <a class="link" href="https://www2.gov.bc.ca/gov/content/about-gov-bc-ca" target="_blank" title="Goes to BC Gov Page"> About gov.bc.ca</a>
+            </li>
+            <span class="divider"></span>
+            <li>
+              <a class="link" href="https://www2.gov.bc.ca/gov/content/home/disclaimer" target="_blank" title="Goes to BC Gov Disclaimer Page">Disclaimer</a>
+            </li>
+            <span class="divider"></span>
+            <li>
+              <a class="link" href="https://www2.gov.bc.ca/gov/content/home/privacy" target="_blank" title="Goes to BC Gov Privacy Page">Privacy</a>
+            </li>
+            <span class="divider"></span>
+            <li>
+              <a class="link" href="https://www2.gov.bc.ca/gov/content/home/accessibility" target="_blank" title="Goes to BC Gov Accessibility Page">Accessibility</a>
+            </li>
+            <span class="divider"></span>
+            <li>
+              <a class="link" href="https://www2.gov.bc.ca/gov/content/home/copyright" target="_blank" title="Goes to BC Gov Copyright Page">Copyright</a>
+            </li>
+            <span class="divider"></span>
+            <li>
+              <a class="link" href="https://www2.gov.bc.ca/gov/content/safety/emergency-management/local-emergency-programs/financial" target="_blank" title="Goes to BC Gov Contact Page">About Funding Programs</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

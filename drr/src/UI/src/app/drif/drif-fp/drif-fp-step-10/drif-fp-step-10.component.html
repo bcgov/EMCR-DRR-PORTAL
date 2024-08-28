@@ -1,0 +1,169 @@
+<div class="drr-step-container" *transloco="let t">
+  <form [formGroup]="budgetForm">
+    <mat-label class="drr-label">{{ t("totalProjectCost") }}</mat-label>
+    <drr-currency-input
+      [id]="'totalProjectCost'"
+      class="drr-single-input"
+      [label]="t('totalProjectCost')"
+      [rxFormControl]="budgetForm.get('fundingRequest')"
+    ></drr-currency-input>
+
+    <mat-label class="drr-label">{{ t("estimatedDrifFunding") }}</mat-label>
+    <drr-currency-input
+      class="drr-single-input"
+      [label]="t('fundingRequest')"
+      [rxFormControl]="budgetForm.get('estimatedTotal')"
+    ></drr-currency-input>
+
+    <mat-label class="drr-label">{{
+      t("yearOverYearFundingRequest")
+    }}</mat-label>
+    <mat-label>{{ t("yearOverYearFundingRequestText") }}</mat-label>
+    <div formArrayName="yearOverYearFunding">
+      <div
+        class="array-item-container"
+        *ngFor="
+          let funding of getFormArray('yearOverYearFunding').controls;
+          let i = index
+        "
+        [formGroupName]="i"
+      >
+        <drr-select
+          [label]="t('fiscalYear')"
+          [rxFormControl]="
+            getArrayFormControl('yearOverYearFunding', 'year', i)
+          "
+          [options]="fiscalYearsOptions"
+        ></drr-select>
+        <drr-currency-input
+          [label]="t('amount')"
+          [rxFormControl]="
+            getArrayFormControl('yearOverYearFunding', 'amount', i)
+          "
+        ></drr-currency-input>
+        <button mat-mini-fab color="warn" (click)="removeYear(i)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+      <button
+        style="margin-top: 10px"
+        [style.padding]="isMobile ? '24px 16px' : ''"
+        mat-stroked-button
+        type="button"
+        color="primary"
+        (click)="addYear()"
+      >
+        <mat-icon>add</mat-icon>
+        {{ t("addYear") }}
+      </button>
+    </div>
+
+    <mat-label class="drr-label" style="margin-top: 10px">{{
+      t("totalDrifFundingRequest")
+    }}</mat-label>
+    <drr-currency-input
+      class="drr-single-input"
+      [label]="t('totalDrifFundingRequest')"
+      [rxFormControl]="budgetForm.get('totalDrifFundingRequest')"
+    ></drr-currency-input>
+
+    <mat-label class="drr-label">{{ t("discrepancyComment") }}</mat-label>
+    <drr-textarea
+      [label]="t('discrepancyComment')"
+      [maxlength]="2000"
+      [rxFormControl]="budgetForm.get('discrepancyComment')"
+      [useFloatingLabel]="false"
+    ></drr-textarea>
+
+    <mat-label class="drr-label">{{ t("otherFunding") }}</mat-label>
+    <drr-radio-button
+      [label]="t('haveOtherFunding')"
+      [rxFormControl]="budgetForm.get('haveOtherFunding')"
+    ></drr-radio-button>
+
+    <drr-funding-list
+      [fundingFormArray]="getFormArray('otherFunding')"
+    ></drr-funding-list>
+
+    <mat-label class="drr-label" style="margin-top: 10px">{{
+      getRemainingAmount() > 0
+        ? t("missingFundsLabel")
+        : t("excessFundingLabel")
+    }}</mat-label>
+    <mat-label [style.color]="getRemainingAmount() < 0 ? 'red' : 'initial'">{{
+      getRemainingAmountAbs() | currency
+    }}</mat-label>
+    <mat-hint *ngIf="getRemainingAmount() < 0" style="color: red">{{
+      t("excessFundingText")
+    }}</mat-hint>
+    <mat-hint *ngIf="getRemainingAmount() == 0">{{
+      t("noExcessFundingText")
+    }}</mat-hint>
+
+    <drr-textarea
+      *ngIf="getRemainingAmount() > 0"
+      style="margin-top: 10px"
+      [id]="'intendToSecureFunding'"
+      [label]="t('intendToSecureFunding')"
+      [maxlength]="2000"
+      [rxFormControl]="budgetForm.get('intendToSecureFunding')"
+    ></drr-textarea>
+
+    <mat-label class="drr-label">{{ t("costEffective") }}</mat-label>
+    <drr-radio-button
+      [label]="t('costEffectiveQuestion')"
+      [rxFormControl]="budgetForm.get('costEffective')"
+    ></drr-radio-button>
+    <drr-textarea
+      [label]="t('costEffectiveComments')"
+      [rxFormControl]="budgetForm.get('costEffectiveComments')"
+      [maxlength]="2000"
+      [useFloatingLabel]="false"
+    ></drr-textarea>
+
+    <mat-label class="drr-label">{{ t("previousResponse") }}</mat-label>
+    <drr-radio-button
+      [label]="t('previousResponseQuestion')"
+      [rxFormControl]="budgetForm.get('previousResponse')"
+      [options]="previousResponseOptions"
+    ></drr-radio-button>
+    <drr-currency-input
+      *ngIf="budgetForm.get('previousResponse')?.value === 'Yes'"
+      [label]="t('previousResponseCost')"
+      [rxFormControl]="budgetForm.get('previousResponseCost')"
+    ></drr-currency-input>
+    <drr-textarea
+      [label]="t('previousResponseComments')"
+      [rxFormControl]="budgetForm.get('previousResponseComments')"
+      [maxlength]="2000"
+      [useFloatingLabel]="false"
+    ></drr-textarea>
+
+    <mat-label class="drr-label">{{
+      t("activityCostEffectiveness")
+    }}</mat-label>
+    <drr-textarea
+      [label]="t('activityCostEffectivenessQuestion')"
+      [rxFormControl]="budgetForm.get('activityCostEffectiveness')"
+      [maxlength]="2000"
+      [useFloatingLabel]="false"
+    ></drr-textarea>
+
+    <mat-label class="drr-label">{{ t("costConsiderations") }}</mat-label>
+    <drr-radio-button
+      [label]="t('costConsiderationsApplied')"
+      [rxFormControl]="budgetForm.get('costConsiderationsApplied')"
+    ></drr-radio-button>
+    <drr-chip-autocomplete
+      [label]="t('costConsiderationsQuestions')"
+      [rxFormControl]="budgetForm.get('costConsiderations')"
+      [options]="costConsiderationsOptions"
+    ></drr-chip-autocomplete>
+    <drr-textarea
+      [label]="t('costConsiderationsComments')"
+      [rxFormControl]="budgetForm.get('costConsiderationsComments')"
+      [maxlength]="2000"
+      [useFloatingLabel]="false"
+    ></drr-textarea>
+  </form>
+</div>
