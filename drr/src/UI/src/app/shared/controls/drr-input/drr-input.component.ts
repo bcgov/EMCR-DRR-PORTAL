@@ -67,9 +67,6 @@ export class DrrInputComponent {
   @Input()
   set rxFormControl(rxFormControl: any) {
     this._formControl = rxFormControl as RxFormControl;
-    if (!rxFormControl) {
-      console.log(this.label);
-    }
   }
   get rxFormControl() {
     return this._formControl;

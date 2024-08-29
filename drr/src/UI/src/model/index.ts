@@ -6,26 +6,15 @@
  */
 
 export * from './applicationResult';
-export * from './applicationType';
-export * from './attachment';
 export * from './configuration';
 export * from './contactDetails';
-export * from './dRIFApplicationCreateFPFromEOIParams';
 export * from './declarationInfo';
 export * from './declarationResult';
 export * from './declarationType';
-export * from './documentType';
-export * from './draftApplication';
 export * from './draftEoiApplication';
-export * from './draftEoiApplicationAllOf';
-export * from './draftFpApplication';
-export * from './draftFpApplicationAllOf';
-export * from './entitiesQueryResult';
 export * from './eoiApplication';
 export * from './eoiApplicationAllOf';
 export * from './estimatedNumberOfPeople';
-export * from './fpApplication';
-export * from './fpApplicationAllOf';
 export * from './fundingInformation';
 export * from './fundingStream';
 export * from './fundingType';
@@ -34,9 +23,6 @@ export * from './oidcConfiguration';
 export * from './profileDetails';
 export * from './projectType';
 export * from './proponentType';
-export * from './proposedActivity';
 export * from './submission';
 export * from './submissionPortalStatus';
 export * from './versionInformation';
-export * from './yearOverYearFunding';
-export * from './yesNoOption';

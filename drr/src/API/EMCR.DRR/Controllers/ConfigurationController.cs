@@ -1,10 +1,5 @@
-﻿using AutoMapper;
-using EMCR.DRR.API.Services;
-using EMCR.DRR.Controllers;
-using EMCR.DRR.Managers.Intake;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace EMCR.DRR.API.Controllers
 {
@@ -16,17 +11,11 @@ namespace EMCR.DRR.API.Controllers
     [AllowAnonymous]
     public class ConfigurationController : ControllerBase
     {
-        private readonly ILogger<ConfigurationController> logger;
         private readonly IConfiguration configuration;
-        private readonly IIntakeManager intakeManager;
-        private readonly ErrorParser errorParser;
 
-        public ConfigurationController(ILogger<ConfigurationController> logger, IConfiguration configuration, IIntakeManager intakeManager)
+        public ConfigurationController(IConfiguration configuration)
         {
-            this.logger = logger;
             this.configuration = configuration;
-            this.intakeManager = intakeManager;
-            this.errorParser = new ErrorParser();
         }
 
         /// <summary>
@@ -53,22 +42,6 @@ namespace EMCR.DRR.API.Controllers
 #pragma warning restore CS8601 // Possible null reference assignment.
 
             return Ok(await Task.FromResult(config));
-        }
-
-        [HttpGet("entities")]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<EntitiesQueryResult>> GetEntities()
-        {
-            try
-            {
-                var res = await intakeManager.Handle(new EntitiesQuery());
-                return Ok(res);
-            }
-            catch (Exception e)
-            {
-                return errorParser.Parse(e, logger);
-            }
         }
     }
 

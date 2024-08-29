@@ -19,8 +19,7 @@ import {
   Observable
 } from 'rxjs'
 import type {
-  Configuration,
-  EntitiesQueryResult
+  Configuration
 } from '../../model'
 
 
@@ -51,14 +50,6 @@ export class ConfigurationService {
       `/api/configuration`,options
     );
   }
- configurationGetEntities<TData = EntitiesQueryResult>(
-     options?: HttpClientOptions
-  ): Observable<TData>  {
-    return this.http.get<TData>(
-      `/api/configuration/entities`,options
-    );
-  }
 };
 
 export type ConfigurationGetConfigurationClientResult = NonNullable<Configuration>
-export type ConfigurationGetEntitiesClientResult = NonNullable<EntitiesQueryResult>
