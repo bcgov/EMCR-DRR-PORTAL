@@ -1,5 +1,5 @@
 import { isPlatformBrowser } from '@angular/common';
-import { inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { AuthConfig, OAuthEvent, OAuthService } from 'angular-oauth2-oidc';
 import { firstValueFrom } from 'rxjs';
 import { ProfileService } from '../../../api/profile/profile.service';
@@ -53,7 +53,7 @@ export class AuthService {
       strictDiscoveryDocumentValidation: false,
       showDebugInformation: false,
       requireHttps: true,
-      redirectUri: window.location.origin,
+      redirectUri: window.location.origin + '/dashboard',
       timeoutFactor: 0.7,
       openUri: (uri: string) => {
         const url = new URL(uri);
@@ -89,24 +89,7 @@ export class AuthService {
       },
     });
 
-    await this.oauthService
-      .loadDiscoveryDocumentAndLogin()
-      .then((isLoggedIn) => {
-        if (isLoggedIn) {
-          this.setProfile();
-
-          let redirectState = JSON.parse(
-            this.oauthService.state
-              ? atob(decodeURIComponent(this.oauthService.state))
-              : '{}'
-          );
-          if (
-            redirectState.originalURL &&
-            redirectState.originalURL != window.location.href
-          )
-            window.location.href = redirectState.originalURL;
-        }
-      });
+    await this.oauthService.loadDiscoveryDocument();
   }
 
   async login() {

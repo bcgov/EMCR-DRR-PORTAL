@@ -1,0 +1,131 @@
+<div class="drr-step-container" *transloco="let t">
+  <form [formGroup]="projectDetailsForm">
+    <mat-label class="drr-label">{{ t("rationaleForFunding") }}</mat-label>
+    <drr-textarea
+      [id]="'rationaleForFunding'"
+      [label]="t('rationaleForFundingText')"
+      [maxlength]="2000"
+      [rxFormControl]="getFormControl('rationaleForFunding')"
+      [rows]="10"
+    ></drr-textarea>
+
+    <mat-label class="drr-label">{{ t("estimatedPeopleImpacted") }}</mat-label>
+    <div class="project-details-container">
+      <drr-select
+        class="drr-single-input"
+        [id]="'estimatedPeopleImpacted'"
+        [label]="t('estimatedPeopleImpacted')"
+        [rxFormControl]="getFormControl('estimatedPeopleImpacted')"
+        [options]="estimatedNumberOfPeopleOptions"
+      ></drr-select>
+
+      <mat-label class="drr-label">{{ t("communityImpact") }} </mat-label>
+
+      <drr-textarea
+        [id]="'communityImpact'"
+        [label]="t('communityImpactText')"
+        [maxlength]="2000"
+        [rxFormControl]="getFormControl('communityImpact')"
+        [rows]="10"
+      ></drr-textarea>
+
+      <mat-label class="drr-label"
+        >{{ t("infrastructureImpacted") }}
+      </mat-label>
+
+      <div formArrayName="infrastructureImpactedArray">
+        <div
+          class="infrastructure-container"
+          *ngFor="
+            let proponent of getFormArray('infrastructureImpactedArray')
+              .controls;
+            let i = index
+          "
+          [formGroupName]="i"
+        >
+          <drr-input
+            class="drr-single-input"
+            [id]="'infrastructure_' + i"
+            [label]="t('infrastructureImpactedText')"
+            [rxFormControl]="
+              getArrayFormControl('value', 'infrastructureImpactedArray', i)
+            "
+            [maxlength]="100"
+          ></drr-input>
+          <button
+            *ngIf="i > 0"
+            mat-mini-fab
+            color="warn"
+            (click)="removeInfrastructure(i)"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+
+        <button
+          id="addInfrastructure"
+          mat-stroked-button
+          type="button"
+          color="primary"
+          (click)="addInfrastructure()"
+        >
+          <mat-icon>add</mat-icon>
+          {{ t("addInfrastructure") }}
+        </button>
+      </div>
+
+      <drr-textarea
+        [id]="'disasterRiskUnderstanding'"
+        style="margin-top: 8px"
+        [label]="t('disasterRiskUnderstanding')"
+        [maxlength]="2000"
+        [rxFormControl]="getFormControl('disasterRiskUnderstanding')"
+        [rows]="10"
+      ></drr-textarea>
+
+      <drr-textarea
+        [id]="'additionalBackgroundInformation'"
+        [label]="t('additionalBackgroundInformation')"
+        [maxlength]="2000"
+        [rxFormControl]="getFormControl('additionalBackgroundInformation')"
+        [rows]="10"
+      ></drr-textarea>
+    </div>
+
+    <mat-label class="drr-label">{{ t("proposedSolution") }}</mat-label>
+    <div class="project-details-container">
+      <drr-textarea
+        [id]="'addressRisksAndHazards'"
+        [label]="t('addressRisksAndHazards')"
+        [maxlength]="2000"
+        [rxFormControl]="getFormControl('addressRisksAndHazards')"
+        [rows]="10"
+      ></drr-textarea>
+
+      <drr-textarea
+        [id]="'drifProgramGoalAlignment'"
+        [label]="t('drifProgramGoalAlignment')"
+        [maxlength]="2000"
+        [rxFormControl]="getFormControl('drifProgramGoalAlignment')"
+        [rows]="10"
+      ></drr-textarea>
+
+      <drr-textarea
+        [id]="'additionalSolutionInformation'"
+        [label]="t('additionalSolutionInformation')"
+        [maxlength]="2000"
+        [rxFormControl]="getFormControl('additionalSolutionInformation')"
+        [rows]="10"
+      ></drr-textarea>
+
+      <mat-label class="drr-label">{{ t("rationaleForSolution") }}</mat-label>
+      <drr-textarea
+        [id]="'rationaleForSolution'"
+        [label]="t('rationaleForSolutionText')"
+        [maxlength]="2000"
+        [rxFormControl]="getFormControl('rationaleForSolution')"
+        [rows]="10"
+      ></drr-textarea>
+    </div>
+  </form>
+</div>

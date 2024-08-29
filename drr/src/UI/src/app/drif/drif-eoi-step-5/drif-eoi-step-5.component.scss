@@ -1,0 +1,21 @@
+.project-details-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.infrastructure-container {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 10px;
+}
+
+@media (max-width: 768px) {
+  .infrastructure-container {
+    align-items: center;
+
+    & button {
+      margin-top: 20px;
+    }
+  }
+}

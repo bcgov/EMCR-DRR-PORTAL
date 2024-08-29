@@ -1,5 +1,4 @@
 ﻿using EMCR.DRR.API.Resources.Accounts;
-using EMCR.DRR.API.Resources.Cases;
 using EMCR.DRR.Resources.Applications;
 
 namespace EMCR.DRR.Controllers
@@ -10,7 +9,6 @@ namespace EMCR.DRR.Controllers
         {
             services.AddTransient<IApplicationRepository, ApplicationRepository>();
             services.AddTransient<IAccountRepository, AccountRepository>();
-            services.AddTransient<ICaseRepository, CaseRepository>();
             return services;
         }
     }

@@ -4,11 +4,9 @@
  * DRR API
  * OpenAPI spec version: 1.0.0
  */
-import type { ApplicationType } from './applicationType';
 import type { DeclarationType } from './declarationType';
 
 export interface DeclarationInfo {
-  applicationType?: ApplicationType;
   text?: string;
   type?: DeclarationType;
 }
