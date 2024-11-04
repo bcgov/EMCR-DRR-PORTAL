@@ -83,9 +83,6 @@ export const appConfig: ApplicationConfig = {
         async () => {
           await appConfigurationService.loadConfiguration();
           await authService.init();
-          if (authService.isLoggedIn()) {
-            await authService.setProfile();
-          }
         },
       multi: true,
     },
