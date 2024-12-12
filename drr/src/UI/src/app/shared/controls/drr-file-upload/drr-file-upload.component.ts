@@ -36,7 +36,7 @@ export class DrrFileUploadComponent {
     'xls',
     'xlsx',
     'ppt',
-    'pttx',
+    'pptx',
     'pdf',
     'txt',
     'csv',
