@@ -97,7 +97,6 @@ import { DrifFpStep9Component } from './drif-fp-step-9/drif-fp-step-9.component'
   ],
   providers: [
     RxFormBuilder,
-    HotToastService,
     {
       provide: STEPPER_GLOBAL_OPTIONS,
       useValue: { showError: true },

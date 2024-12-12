@@ -93,7 +93,6 @@ import { DrifEoiStep8Component } from './drif-eoi-step-8/drif-eoi-step-8.compone
   styleUrl: './drif-eoi.component.scss',
   providers: [
     RxFormBuilder,
-    HotToastService,
     {
       provide: STEPPER_GLOBAL_OPTIONS,
       useValue: { showError: true },
