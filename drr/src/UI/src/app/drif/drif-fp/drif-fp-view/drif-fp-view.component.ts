@@ -304,7 +304,10 @@ export class DrifFpViewComponent {
       const permitsArray = this.fullProposalForm.get(
         'permitsRegulationsAndStandards.permits'
       ) as FormArray;
-      if (response.permits?.length! > 0) {
+      if (
+        response.permits?.length! > 0 ||
+        response.meetsEligibilityRequirements === false
+      ) {
         permitsArray.clear({ emitEvent: false });
       }
       response.permits?.forEach((permit) => {

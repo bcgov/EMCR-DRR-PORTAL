@@ -55,19 +55,18 @@
       [options]="professionalGuidanceOptions"
     ></drr-radio-button>
 
+    @if (permitsRegulationsAndStandardsForm.get('professionalGuidance') ?.value
+    === true) {
     <mat-label>{{ t("professionals") }}*</mat-label>
     <drr-select
       [label]="'Qualified Professionals'"
       class="drr-single-input"
-      *ngIf="
-        permitsRegulationsAndStandardsForm.get('professionalGuidance')
-          ?.value === true
-      "
       [rxFormControl]="permitsRegulationsAndStandardsForm.get('professionals')"
       [options]="professionalOptions"
       [isMultiple]="true"
     >
-    </drr-select>
+    </drr-select
+    >}
 
     <drr-textarea
       [label]="t('professionalGuidanceComments')"
