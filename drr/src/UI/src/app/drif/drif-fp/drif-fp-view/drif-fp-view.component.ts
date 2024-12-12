@@ -302,7 +302,7 @@ export class DrifFpViewComponent {
       });
 
       const permitsArray = this.fullProposalForm.get(
-        'permitsRegulationsAndStandards.permits'
+        'permitsRegulationsAndStandards.permitsArray'
       ) as FormArray;
       if (
         response.permits?.length! > 0 ||
