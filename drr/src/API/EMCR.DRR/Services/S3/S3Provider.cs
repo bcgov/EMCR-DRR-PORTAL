@@ -48,7 +48,7 @@ namespace EMCR.DRR.API.Services.S3
             var request = new PutObjectRequest
             {
                 Key = key,
-                ContentType = cmd.File.ContentType,
+                ContentType = !string.IsNullOrEmpty(cmd.File.ContentType) ? cmd.File.ContentType : null,
                 InputStream = new MemoryStream(file.Content),
                 BucketName = bucketName,
                 TagSet = GetTagSet(cmd.FileTag?.Tags ?? []),

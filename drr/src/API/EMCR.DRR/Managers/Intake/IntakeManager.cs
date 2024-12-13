@@ -191,8 +191,10 @@ namespace EMCR.DRR.Managers.Intake
                 throw new BusinessValidationException($"A document with type {cmd.AttachmentInfo.DocumentType.ToDescriptionString()} already exists on the application {cmd.AttachmentInfo.ApplicationId}");
             }
 
-            var documentRes = (await documentRepository.Manage(new CreateDocument { ApplicationId = cmd.AttachmentInfo.ApplicationId, Document = new Document { Name = cmd.AttachmentInfo.File.FileName, DocumentType = cmd.AttachmentInfo.DocumentType, Size = GetFileSize(cmd.AttachmentInfo.File.Content) } }));
-            await s3Provider.HandleCommand(new UploadFileCommand { Key = documentRes.Id, File = cmd.AttachmentInfo.File, Folder = $"drr_application/{documentRes.ApplicationId}" });
+            var newDocId = Guid.NewGuid().ToString();
+
+            await s3Provider.HandleCommand(new UploadFileCommand { Key = newDocId, File = cmd.AttachmentInfo.File, Folder = $"drr_application/{application.CrmId}" });
+            var documentRes = (await documentRepository.Manage(new CreateDocument { NewDocId = newDocId, ApplicationId = cmd.AttachmentInfo.ApplicationId, Document = new Document { Name = cmd.AttachmentInfo.File.FileName, DocumentType = cmd.AttachmentInfo.DocumentType, Size = GetFileSize(cmd.AttachmentInfo.File.Content) } }));
             return documentRes.Id;
         }
 

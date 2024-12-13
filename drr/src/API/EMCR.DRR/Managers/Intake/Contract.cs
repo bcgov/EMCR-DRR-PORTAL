@@ -182,6 +182,7 @@ namespace EMCR.DRR.Managers.Intake
 
     public class Application
     {
+        public string? CrmId { get; set; }
         public string? Id { get; set; }
         public string? FpId { get; set; }
         public string? EoiId { get; set; }
@@ -396,7 +397,7 @@ namespace EMCR.DRR.Managers.Intake
     {
         public required string Name { get; set; }
     }
-    
+
     public class Permit
     {
         public required string Name { get; set; }

@@ -50,7 +50,7 @@ namespace EMCR.DRR.API.Controllers
         {
             var res = (FileQueryResult)(await s3Provider.HandleQuery(new FileQuery { Key = id, Folder = folder }));
             var content = new MemoryStream(res.File.Content);
-            var contentType = res.File.ContentType ?? "application/octet-stream";
+            var contentType = !string.IsNullOrEmpty(res.File.ContentType) ? res.File.ContentType : "application/octet-stream";
 
             if (res.FileTag != null)
             {

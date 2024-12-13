@@ -175,6 +175,7 @@ namespace EMCR.DRR.Resources.Applications
 
                 .ReverseMap()
                 .ValidateMemberList(MemberList.Destination)
+                .ForMember(dest => dest.CrmId, opt => opt.MapFrom(src => src.drr_applicationid.ToString()))
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.drr_name))
                 .ForMember(dest => dest.FpId, opt => opt.MapFrom(src => src.drr_FullProposalApplication != null ? src.drr_FullProposalApplication.drr_name : string.Empty))
                 .ForMember(dest => dest.EoiId, opt => opt.MapFrom(src => src.drr_EOIApplication != null ? src.drr_EOIApplication.drr_name : string.Empty))
