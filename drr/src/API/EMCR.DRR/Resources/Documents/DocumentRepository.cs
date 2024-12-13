@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using EMCR.DRR.Dynamics;
 using EMCR.DRR.Managers.Intake;
+using EMCR.DRR.Resources.Applications;
 using EMCR.Utilities.Extensions;
 using Microsoft.Dynamics.CRM;
 
@@ -50,6 +51,11 @@ namespace EMCR.DRR.API.Resources.Documents
             var bcGovDocument = mapper.Map<bcgov_documenturl>(cmd.Document);
             bcGovDocument.bcgov_documenturlid = Guid.Parse(cmd.NewDocId);
             var application = await ctx.drr_applications.Where(a => a.drr_name == cmd.ApplicationId).SingleOrDefaultAsync();
+            if (application.statuscode != (int)ApplicationStatusOptionSet.DraftProponent)
+            {
+                application.statuscode = (int)ApplicationStatusOptionSet.DraftProponent;
+                ctx.UpdateObject(application);
+            }
             bcGovDocument.bcgov_url = $"drr_application/{application.drr_applicationid}";
             bcGovDocument.bcgov_origincode = (int?)OriginOptionSet.Web;
             bcGovDocument.bcgov_filesize = cmd.Document.Size;
