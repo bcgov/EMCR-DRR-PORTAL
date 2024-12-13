@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { TranslocoModule } from '@ngneat/transloco';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { HotToastService } from '@ngxpert/hot-toast';
 import {
   IFormGroup,
   RxFormBuilder,
@@ -50,6 +51,7 @@ export class DrifFpStep11Component {
   formBuilder = inject(RxFormBuilder);
   attachmentsService = inject(AttachmentService);
   fileService = inject(FileService);
+  hotToast = inject(HotToastService);
 
   @Input() attachmentsForm!: IFormGroup<AttachmentsForm>;
 
@@ -89,7 +91,6 @@ export class DrifFpStep11Component {
   async uploadFiles(event: FileUploadEvent) {
     event.files.forEach(async (file) => {
       if (file == null) {
-        // TODO: show error
         return;
       }
 
@@ -100,7 +101,10 @@ export class DrifFpStep11Component {
           applicationId: this.applicationId,
           documentType: event.documentType,
           name: file.name,
-          contentType: file.type,
+          contentType:
+            file.type === ''
+              ? this.fileService.getCustomContentType(file)
+              : file.type,
           content: base64Content.split(',')[1],
         })
         .subscribe({
@@ -133,7 +137,8 @@ export class DrifFpStep11Component {
             }
           },
           error: () => {
-            // TODO: show error
+            this.hotToast.close();
+            this.hotToast.error('File upload failed');
           },
         });
     });
@@ -201,7 +206,8 @@ export class DrifFpStep11Component {
           }
         },
         error: () => {
-          // TODO: show error
+          this.hotToast.close();
+          this.hotToast.error('File deletion failed');
         },
       });
   }

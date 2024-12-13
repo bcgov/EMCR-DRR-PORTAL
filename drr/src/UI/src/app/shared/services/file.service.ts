@@ -7,6 +7,14 @@ import { AttachmentService } from '../../..';
 export class FileService {
   private attachmentsService = inject(AttachmentService);
 
+  private contentTypes = {
+    kml: 'application/vnd.google-earth.kml+xml',
+    kmz: 'application/vnd.google-earth.kmz',
+    las: 'application/vnd.las',
+    laz: 'application/vnd.laszip',
+    default: 'application/octet-stream',
+  };
+
   downloadFile(fileId: string) {
     this.attachmentsService.attachmentDownloadAttachment(fileId).subscribe({
       next: (response) => {
@@ -35,6 +43,22 @@ export class FileService {
       },
       error: () => {},
     });
+  }
+
+  getCustomContentType(file: File): string {
+    const fileExtension = file.name.split('.').pop();
+    switch (fileExtension) {
+      case 'kml':
+        return this.contentTypes.kml;
+      case 'kmz':
+        return this.contentTypes.kmz;
+      case 'las':
+        return this.contentTypes.las;
+      case 'laz':
+        return this.contentTypes.laz;
+      default:
+        return this.contentTypes.default;
+    }
   }
 
   private base64ToByteArray(base64: string): Uint8Array {
