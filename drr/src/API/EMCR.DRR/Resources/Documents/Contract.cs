@@ -33,6 +33,7 @@ namespace EMCR.DRR.API.Resources.Documents
     public class CreateDocument : ManageDocumentCommand
     {
         public required string ApplicationId { get; set; }
+        public required string NewDocId { get; set; }
         public required Document Document { get; set; }
     }
 

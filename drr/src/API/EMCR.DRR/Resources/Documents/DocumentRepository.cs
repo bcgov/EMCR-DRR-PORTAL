@@ -48,7 +48,7 @@ namespace EMCR.DRR.API.Resources.Documents
         {
             var ctx = dRRContextFactory.Create();
             var bcGovDocument = mapper.Map<bcgov_documenturl>(cmd.Document);
-            bcGovDocument.bcgov_documenturlid = Guid.NewGuid();
+            bcGovDocument.bcgov_documenturlid = Guid.Parse(cmd.NewDocId);
             var application = await ctx.drr_applications.Where(a => a.drr_name == cmd.ApplicationId).SingleOrDefaultAsync();
             bcGovDocument.bcgov_url = $"drr_application/{application.drr_applicationid}";
             bcGovDocument.bcgov_origincode = (int?)OriginOptionSet.Web;
