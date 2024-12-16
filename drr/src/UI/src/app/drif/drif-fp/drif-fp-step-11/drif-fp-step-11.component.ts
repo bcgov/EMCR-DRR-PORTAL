@@ -82,7 +82,9 @@ export class DrifFpStep11Component {
             const resolutionIndex = attachmentsFormArray.controls.findIndex(
               (c) => c.value.documentType === DocumentType.Resolution
             );
-            attachmentsFormArray.removeAt(resolutionIndex);
+            if (resolutionIndex >= 0) {
+              attachmentsFormArray.removeAt(resolutionIndex);
+            }
           }
         }
       });
