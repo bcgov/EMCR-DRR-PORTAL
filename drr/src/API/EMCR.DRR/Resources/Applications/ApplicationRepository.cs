@@ -83,6 +83,7 @@ namespace EMCR.DRR.Resources.Applications
             var resiliencies = (await readCtx.drr_resiliencies.Where(d => d.statecode == (int)EntityState.Active && d.drr_name != "Other").OrderBy(d => d.drr_name).GetAllPagesAsync()).Select(d => d.drr_name).ToList();
             var climateAssessmentToolOptions = (await readCtx.drr_climateassessmenttools.Where(d => d.statecode == (int)EntityState.Active && d.drr_name != "Other").OrderBy(d => d.drr_name).GetAllPagesAsync()).Select(d => d.drr_name).ToList();
             var projectActivities = (await readCtx.drr_projectactivities.Where(d => d.statecode == (int)EntityState.Active && d.drr_name != "Other").OrderBy(d => d.drr_name).GetAllPagesAsync()).Select(d => d.drr_name).ToList();
+            projectActivities = projectActivities.OrderBy(a => a != "Project").ToList(); //Keep list alphabetical, but move "Project" to the front of the list
 
             var standards = new List<Controllers.StandardInfo>();
             foreach (var category in standardCategories)
