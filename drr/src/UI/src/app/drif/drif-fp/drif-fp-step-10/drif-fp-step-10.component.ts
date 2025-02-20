@@ -19,6 +19,7 @@ import { distinctUntilChanged } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import {
   CostCategory,
+  CostEstimateClass,
   CostUnit,
   FundingStream,
   FundingType,
@@ -44,7 +45,6 @@ import { DrrFundingListComponent } from '../../drr-funding-list/drr-funding-list
 import { DrrNumericInputComponent } from '../../../shared/controls/drr-number-input/drr-number-input.component';
 import {
   BudgetForm,
-  CostEstimateClassType,
   CostEstimateForm,
   YearOverYearFundingForm,
 } from '../drif-fp-form';
@@ -99,7 +99,7 @@ export class DrifFpStep10Component {
 
   isMobile = false;
 
-  costEstimateClassOptions: RadioOption[] = Object.keys(CostEstimateClassType)
+  costEstimateClassOptions: RadioOption[] = Object.keys(CostEstimateClass)
     .map((key) => ({
       value: key,
       label: this.translocoService.translate(`costEstimateClassType.${key}`),
@@ -471,20 +471,14 @@ export class DrifFpStep10Component {
     const contingency = this.budgetForm.get('contingency')?.value ?? 0;
     const costEstimateClass = this.budgetForm.get('costEstimateClass')?.value;
 
-    if (
-      costEstimateClass === CostEstimateClassType.ClassA &&
-      contingency > 15
-    ) {
+    if (costEstimateClass === CostEstimateClass.ClassA && contingency > 15) {
       this.budgetForm
         .get('isContingencyPercentageThreasholdMet')
         ?.setValue(false, { emitEvent: false });
       return true;
     }
 
-    if (
-      costEstimateClass === CostEstimateClassType.ClassB &&
-      contingency > 25
-    ) {
+    if (costEstimateClass === CostEstimateClass.ClassB && contingency > 25) {
       this.budgetForm
         .get('isContingencyPercentageThreasholdMet')
         ?.setValue(false, { emitEvent: false });

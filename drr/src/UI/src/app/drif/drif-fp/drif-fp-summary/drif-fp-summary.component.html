@@ -823,22 +823,26 @@
         controlType="radio"
       >
       </drr-summary-item>
-      @if (fullProposalForm.get('projectOutcomes.futureCostReduction')?.value
-      === true) {
-      <drr-summary-item
-        [label]="t('costReductions')"
-        [rxFormControl]="fullProposalForm.get('projectOutcomes.costReductions')"
-        controlType="array"
-        [translate]="false"
-      >
-      </drr-summary-item>
-      <drr-summary-item
-        [label]="t('costReductionComments')"
-        [rxFormControl]="
-          fullProposalForm.get('projectOutcomes.costReductionComments')
-        "
-      >
-      </drr-summary-item>
+      @if (
+        fullProposalForm.get("projectOutcomes.futureCostReduction")?.value ===
+        true
+      ) {
+        <drr-summary-item
+          [label]="t('costReductions')"
+          [rxFormControl]="
+            fullProposalForm.get('projectOutcomes.costReductions')
+          "
+          controlType="array"
+          [translate]="false"
+        >
+        </drr-summary-item>
+        <drr-summary-item
+          [label]="t('costReductionComments')"
+          [rxFormControl]="
+            fullProposalForm.get('projectOutcomes.costReductionComments')
+          "
+        >
+        </drr-summary-item>
       }
 
       <drr-summary-item
@@ -848,21 +852,23 @@
         "
         controlType="radio"
       ></drr-summary-item>
-      @if(fullProposalForm.get('projectOutcomes.produceCoBenefits')?.value ===
-      true) {
-      <drr-summary-item
-        [label]="t('coBenefits')"
-        [rxFormControl]="fullProposalForm.get('projectOutcomes.coBenefits')"
-        controlType="array"
-        [translate]="false"
-      >
-      </drr-summary-item>
-      <drr-summary-item
-        [label]="t('coBenefitComments')"
-        [rxFormControl]="
-          fullProposalForm.get('projectOutcomes.coBenefitComments')
-        "
-      ></drr-summary-item>
+      @if (
+        fullProposalForm.get("projectOutcomes.produceCoBenefits")?.value ===
+        true
+      ) {
+        <drr-summary-item
+          [label]="t('coBenefits')"
+          [rxFormControl]="fullProposalForm.get('projectOutcomes.coBenefits')"
+          controlType="array"
+          [translate]="false"
+        >
+        </drr-summary-item>
+        <drr-summary-item
+          [label]="t('coBenefitComments')"
+          [rxFormControl]="
+            fullProposalForm.get('projectOutcomes.coBenefitComments')
+          "
+        ></drr-summary-item>
       }
 
       <drr-summary-item
@@ -895,22 +901,23 @@
         "
         controlType="radio"
       ></drr-summary-item>
-      @if (fullProposalForm.get('projectRisks.complexityRiskMitigated')?.value
-      === true) {
-
-      <drr-summary-item
-        [label]="t('complexityRisks')"
-        [rxFormControl]="fullProposalForm.get('projectRisks.complexityRisks')"
-        controlType="array"
-        [translate]="false"
-      ></drr-summary-item>
-      <drr-summary-item
-        [label]="t('complexityRiskComments')"
-        [rxFormControl]="
-          fullProposalForm.get('projectRisks.complexityRiskComments')
-        "
-      ></drr-summary-item
-      >}
+      @if (
+        fullProposalForm.get("projectRisks.complexityRiskMitigated")?.value ===
+        true
+      ) {
+        <drr-summary-item
+          [label]="t('complexityRisks')"
+          [rxFormControl]="fullProposalForm.get('projectRisks.complexityRisks')"
+          controlType="array"
+          [translate]="false"
+        ></drr-summary-item>
+        <drr-summary-item
+          [label]="t('complexityRiskComments')"
+          [rxFormControl]="
+            fullProposalForm.get('projectRisks.complexityRiskComments')
+          "
+        ></drr-summary-item>
+      }
       <drr-summary-item
         [label]="t('readinessRiskMitigated')"
         [rxFormControl]="
@@ -918,20 +925,22 @@
         "
         controlType="radio"
       ></drr-summary-item>
-      @if (fullProposalForm.get('projectRisks.readinessRiskMitigated')?.value
-      === true) {
-      <drr-summary-item
-        [label]="t('readinessRisks')"
-        [rxFormControl]="fullProposalForm.get('projectRisks.readinessRisks')"
-        controlType="array"
-        [translate]="false"
-      ></drr-summary-item>
-      <drr-summary-item
-        [label]="t('readinessRiskComments')"
-        [rxFormControl]="
-          fullProposalForm.get('projectRisks.readinessRiskComments')
-        "
-      ></drr-summary-item>
+      @if (
+        fullProposalForm.get("projectRisks.readinessRiskMitigated")?.value ===
+        true
+      ) {
+        <drr-summary-item
+          [label]="t('readinessRisks')"
+          [rxFormControl]="fullProposalForm.get('projectRisks.readinessRisks')"
+          controlType="array"
+          [translate]="false"
+        ></drr-summary-item>
+        <drr-summary-item
+          [label]="t('readinessRiskComments')"
+          [rxFormControl]="
+            fullProposalForm.get('projectRisks.readinessRiskComments')
+          "
+        ></drr-summary-item>
       }
 
       <drr-summary-item
@@ -941,20 +950,24 @@
         "
         controlType="radio"
       ></drr-summary-item>
-      @if (fullProposalForm.get('projectRisks.sensitivityRiskMitigated')?.value
-      === true) {
-      <drr-summary-item
-        [label]="t('sensitivityRisks')"
-        [rxFormControl]="fullProposalForm.get('projectRisks.sensitivityRisks')"
-        controlType="array"
-        [translate]="false"
-      ></drr-summary-item>
-      <drr-summary-item
-        [label]="t('sensitivityRiskComments')"
-        [rxFormControl]="
-          fullProposalForm.get('projectRisks.sensitivityRiskComments')
-        "
-      ></drr-summary-item>
+      @if (
+        fullProposalForm.get("projectRisks.sensitivityRiskMitigated")?.value ===
+        true
+      ) {
+        <drr-summary-item
+          [label]="t('sensitivityRisks')"
+          [rxFormControl]="
+            fullProposalForm.get('projectRisks.sensitivityRisks')
+          "
+          controlType="array"
+          [translate]="false"
+        ></drr-summary-item>
+        <drr-summary-item
+          [label]="t('sensitivityRiskComments')"
+          [rxFormControl]="
+            fullProposalForm.get('projectRisks.sensitivityRiskComments')
+          "
+        ></drr-summary-item>
       }
       <drr-summary-item
         [label]="t('capacityRiskMitigated')"
@@ -963,20 +976,22 @@
         "
         controlType="radio"
       ></drr-summary-item>
-      @if (fullProposalForm.get('projectRisks.capacityRiskMitigated')?.value ===
-      true) {
-      <drr-summary-item
-        [label]="t('capacityRisks')"
-        [rxFormControl]="fullProposalForm.get('projectRisks.capacityRisks')"
-        controlType="array"
-        [translate]="false"
-      ></drr-summary-item>
-      <drr-summary-item
-        [label]="t('capacityRiskComments')"
-        [rxFormControl]="
-          fullProposalForm.get('projectRisks.capacityRiskComments')
-        "
-      ></drr-summary-item>
+      @if (
+        fullProposalForm.get("projectRisks.capacityRiskMitigated")?.value ===
+        true
+      ) {
+        <drr-summary-item
+          [label]="t('capacityRisks')"
+          [rxFormControl]="fullProposalForm.get('projectRisks.capacityRisks')"
+          controlType="array"
+          [translate]="false"
+        ></drr-summary-item>
+        <drr-summary-item
+          [label]="t('capacityRiskComments')"
+          [rxFormControl]="
+            fullProposalForm.get('projectRisks.capacityRiskComments')
+          "
+        ></drr-summary-item>
       }
       <drr-summary-item
         [label]="t('riskTransferMigigated')"
@@ -985,22 +1000,24 @@
         "
         controlType="radio"
       ></drr-summary-item>
-      @if (fullProposalForm.get('projectRisks.riskTransferMigigated')?.value ===
-      true) {
-      <drr-summary-item
-        [label]="t('increasedOrTransferred')"
-        [rxFormControl]="
-          fullProposalForm.get('projectRisks.increasedOrTransferred')
-        "
-        controlType="array"
-        [translate]="false"
-      ></drr-summary-item>
-      <drr-summary-item
-        [label]="t('increasedOrTransferredComments')"
-        [rxFormControl]="
-          fullProposalForm.get('projectRisks.increasedOrTransferredComments')
-        "
-      ></drr-summary-item>
+      @if (
+        fullProposalForm.get("projectRisks.riskTransferMigigated")?.value ===
+        true
+      ) {
+        <drr-summary-item
+          [label]="t('increasedOrTransferred')"
+          [rxFormControl]="
+            fullProposalForm.get('projectRisks.increasedOrTransferred')
+          "
+          controlType="array"
+          [translate]="false"
+        ></drr-summary-item>
+        <drr-summary-item
+          [label]="t('increasedOrTransferredComments')"
+          [rxFormControl]="
+            fullProposalForm.get('projectRisks.increasedOrTransferredComments')
+          "
+        ></drr-summary-item>
       }
     </mat-card-content>
   </mat-card>
@@ -1015,17 +1032,96 @@
         [label]="t('totalProjectCost')"
         [rxFormControl]="fullProposalForm.get('budget.totalProjectCost')"
         controlType="currency"
-      >
-      </drr-summary-item>
+      ></drr-summary-item>
+      @if (isProjectTotalCostChangedCommentRequired()) {
+        <drr-summary-item
+          [label]="t('totalProjectCostChangeComments')"
+          [rxFormControl]="
+            fullProposalForm.get('budget.totalProjectCostChangeComments')
+          "
+        ></drr-summary-item>
+      }
       <drr-summary-item
         [label]="t('eligibleFundingRequest')"
         [rxFormControl]="fullProposalForm.get('budget.eligibleFundingRequest')"
         controlType="currency"
+      ></drr-summary-item>
+      <drr-summary-item
+        [label]="t('costEstimateClass')"
+        [rxFormControl]="fullProposalForm.get('budget.costEstimateClass')"
+      ></drr-summary-item>
+
+      <mat-label class="drr-label">{{ t("detailedCostEstimates") }}</mat-label>
+      <div
+        *ngFor="
+          let control of getRxFormArrayControls('budget', 'costEstimates')
+        "
       >
-      </drr-summary-item>
-      <mat-label class="drr-label">{{
-        t("yearOverYearFundingRequest")
-      }}</mat-label>
+        <div class="cost-estimate-row">
+          <drr-summary-item
+            [label]="t('taskName')"
+            [rxFormControl]="control.get('taskName')"
+          ></drr-summary-item>
+          <drr-summary-item
+            [label]="t('costCategory')"
+            [rxFormControl]="control.get('costCategory')"
+            [controlType]="'select'"
+          ></drr-summary-item>
+          <drr-summary-item
+            [label]="t('resources')"
+            [rxFormControl]="control.get('resources')"
+            [controlType]="'select'"
+          ></drr-summary-item>
+          <drr-summary-item
+            [label]="t('costUnits')"
+            [rxFormControl]="control.get('units')"
+            [controlType]="'select'"
+          ></drr-summary-item>
+          <drr-summary-item
+            [label]="t('quantity')"
+            [rxFormControl]="control.get('quantity')"
+          ></drr-summary-item>
+          <drr-summary-item
+            [label]="t('unitRate')"
+            [rxFormControl]="control.get('unitRate')"
+            controlType="currency"
+          ></drr-summary-item>
+          <drr-summary-item
+            [label]="t('totalCost')"
+            [rxFormControl]="control.get('totalCost')"
+            controlType="currency"
+          ></drr-summary-item>
+        </div>
+        <drr-summary-item
+          class="cost-estimate-description"
+          [label]="t('description')"
+          [rxFormControl]="control.get('description')"
+        ></drr-summary-item>
+      </div>
+
+      <drr-summary-item
+        [label]="t('totalEligibleCosts')"
+        [rxFormControl]="fullProposalForm.get('budget.totalEligibleCosts')"
+        controlType="currency"
+      ></drr-summary-item>
+      <drr-summary-item
+        [label]="t('contingency')"
+        [rxFormControl]="fullProposalForm.get('budget.contingency')"
+        [value]="fullProposalForm.get('budget.contingency')?.value + '%'"
+      ></drr-summary-item>
+      <drr-summary-item
+        [label]="t('fundingRequestDiscrepancy')"
+        [rxFormControl]="
+          fullProposalForm.get('budget.fundingRequestDiscrepancy')
+        "
+        controlType="currency"
+      ></drr-summary-item>
+      <drr-summary-item
+        [label]="t('discrepancyComment')"
+        [rxFormControl]="fullProposalForm.get('budget.discrepancyComment')"
+      ></drr-summary-item>
+
+      <mat-label class="drr-label">Financial Forecasting</mat-label>
       <div
         class="summary-row"
         *ngFor="
@@ -1044,25 +1140,17 @@
         >
         </drr-summary-item>
       </div>
+
       <drr-summary-item
         [label]="t('totalDrifFundingRequest')"
         [rxFormControl]="fullProposalForm.get('budget.totalDrifFundingRequest')"
         controlType="currency"
-      >
-      </drr-summary-item>
-      <drr-summary-item
-        [label]="t('discrepancyComment')"
-        [rxFormControl]="fullProposalForm.get('budget.discrepancyComment')"
-      >
-      </drr-summary-item>
-
+      ></drr-summary-item>
       <drr-summary-item
         [label]="t('haveOtherFunding')"
         [rxFormControl]="fullProposalForm.get('budget.haveOtherFunding')"
         controlType="radio"
-      >
-      </drr-summary-item>
-
+      ></drr-summary-item>
       <mat-label class="drr-label">{{ t("otherFunding") }}</mat-label>
       <div
         class="summary-row"
@@ -1074,32 +1162,24 @@
           [label]="t('amount')"
           [value]="otherFunding.get('amount')?.value | currency"
           [rxFormControl]="otherFunding.get('amount')"
-        >
-        </drr-summary-item>
-
+        ></drr-summary-item>
         <drr-summary-item
           [label]="t('name')"
           [value]="otherFunding.get('name')?.value"
           [rxFormControl]="otherFunding.get('name')"
-        >
-        </drr-summary-item>
-
+        ></drr-summary-item>
         <drr-summary-item
           [label]="t('type')"
           [value]="t(otherFunding.get('type')?.value)"
           [rxFormControl]="otherFunding.get('type')"
-        >
-        </drr-summary-item>
-
+        ></drr-summary-item>
         <drr-summary-item
           [label]="t('otherDescription')"
           [value]="otherFunding.get('otherDescription')?.value"
           [rxFormControl]="otherFunding.get('otherDescription')"
           *ngIf="otherFunding.get('type')?.value === 'OtherGrants'"
-        >
-        </drr-summary-item>
+        ></drr-summary-item>
       </div>
-
       <drr-summary-item
         [label]="
           fullProposalForm.get('budget.remainingAmount')?.value > 0
@@ -1113,21 +1193,16 @@
             : 'initial'
         "
         controlType="currency"
-      >
-      </drr-summary-item>
-
+      ></drr-summary-item>
       <drr-summary-item
         *ngIf="fullProposalForm.get('budget.remainingAmount')?.value > 0"
         [label]="t('intendToSecureFunding')"
         [rxFormControl]="fullProposalForm.get('budget.intendToSecureFunding')"
-      >
-      </drr-summary-item>
-
+      ></drr-summary-item>
       <drr-summary-item
         [label]="t('costEffectiveComments')"
         [rxFormControl]="fullProposalForm.get('budget.costEffectiveComments')"
       ></drr-summary-item>
-
       <drr-summary-item
         [label]="t('previousResponseQuestion')"
         [rxFormControl]="fullProposalForm.get('budget.previousResponse')"
@@ -1135,14 +1210,12 @@
         controlType="radio"
         [translate]="false"
       ></drr-summary-item>
-
       <drr-summary-item
         *ngIf="fullProposalForm.get('budget.previousResponse')?.value === 'Yes'"
         [label]="t('previousResponseCost')"
         [rxFormControl]="fullProposalForm.get('budget.previousResponseCost')"
         controlType="currency"
       ></drr-summary-item>
-
       <drr-summary-item
         *ngIf="
           fullProposalForm.get('budget.previousResponse')?.value === 'Yes' ||
@@ -1154,7 +1227,6 @@
           fullProposalForm.get('budget.previousResponseComments')
         "
       ></drr-summary-item>
-
       <drr-summary-item
         [label]="t('costConsiderationsApplied')"
         [rxFormControl]="
@@ -1162,97 +1234,22 @@
         "
         controlType="radio"
       ></drr-summary-item>
-
-      <drr-summary-item
-        [label]="t('costConsiderationsQuestions')"
-        [rxFormControl]="fullProposalForm.get('budget.costConsiderations')"
-        controlType="array"
-        [translate]="false"
-      ></drr-summary-item>
-
+      @if (
+        fullProposalForm.get("budget.costConsiderationsApplied")?.value === true
+      ) {
+        <drr-summary-item
+          [label]="t('costConsiderationsAppliedComments')"
+          [rxFormControl]="
+            fullProposalForm.get('budget.costConsiderationsAppliedComments')
+          "
+        ></drr-summary-item>
+      }
       <drr-summary-item
         [label]="t('costConsiderationsComments')"
         [rxFormControl]="
           fullProposalForm.get('budget.costConsiderationsComments')
         "
       ></drr-summary-item>
-
-      <div>
-        <mat-label class="drr-label">{{
-          t("detailedCostEstimates")
-        }}</mat-label>
-        <div
-          *ngFor="
-            let control of getRxFormArrayControls('budget', 'costEstimates')
-          "
-        >
-          <div class="cost-estimate-row">
-            <drr-summary-item
-              [label]="t('taskName')"
-              [rxFormControl]="control.get('taskName')"
-            >
-            </drr-summary-item>
-
-            <drr-summary-item
-              [label]="t('costCategory')"
-              [rxFormControl]="control.get('costCategory')"
-              [controlType]="'select'"
-            >
-            </drr-summary-item>
-
-            <drr-summary-item
-              [label]="t('resources')"
-              [rxFormControl]="control.get('resources')"
-              [controlType]="'select'"
-            >
-            </drr-summary-item>
-
-            <drr-summary-item
-              [label]="t('costUnits')"
-              [rxFormControl]="control.get('units')"
-              [controlType]="'select'"
-            >
-            </drr-summary-item>
-
-            <drr-summary-item
-              [label]="t('quantity')"
-              [rxFormControl]="control.get('quantity')"
-            ></drr-summary-item>
-
-            <drr-summary-item
-              [label]="t('unitRate')"
-              [rxFormControl]="control.get('unitRate')"
-              controlType="currency"
-            ></drr-summary-item>
-
-            <drr-summary-item
-              [label]="t('totalCost')"
-              [rxFormControl]="control.get('totalCost')"
-              controlType="currency"
-            ></drr-summary-item>
-          </div>
-          <drr-summary-item
-            class="cost-estimate-description"
-            [label]="t('description')"
-            [rxFormControl]="control.get('description')"
-          >
-          </drr-summary-item>
-        </div>
-        @if (fullProposalForm.get('fundingStream')?.value === 'Stream2') {
-        <drr-summary-item
-          [label]="t('contingency')"
-          [rxFormControl]="fullProposalForm.get('budget.contingency')"
-          [value]="fullProposalForm.get('budget.contingency')?.value + '%'"
-        >
-        </drr-summary-item>
-        }
-        <drr-summary-item
-          [label]="t('totalEligibleCosts')"
-          [rxFormControl]="fullProposalForm.get('budget.totalEligibleCosts')"
-          controlType="currency"
-        >
-        </drr-summary-item>
-      </div>
     </mat-card-content>
   </mat-card>
 
@@ -1266,128 +1263,130 @@
         <mat-label class="drr-label">{{
           t("attachments.DetailedCostEstimate")
         }}</mat-label>
-        @if (getAttachmentByDocumentType('DetailedCostEstimate')) {
-        <div class="summary-row attachment">
-          <drr-summary-item
-            [label]="t('attachments.name')"
-            [rxFormControl]="
-              getAttachmentByDocumentType('DetailedCostEstimate').get('name')
-            "
-          >
-          </drr-summary-item>
-          <drr-summary-item
-            [label]="t('attachments.comments')"
-            [rxFormControl]="
-              getAttachmentByDocumentType('DetailedCostEstimate').get(
-                'comments'
-              )
-            "
-          >
-          </drr-summary-item>
-          <button
-            *ngIf="isReadOnlyView"
-            style="align-self: center"
-            mat-button
-            color="primary"
-            (click)="
-              onDownloadFile(
-                getAttachmentByDocumentType('DetailedCostEstimate').get('id')
-                  ?.value
-              )
-            "
-          >
-            Download
-          </button>
-        </div>
+        @if (getAttachmentByDocumentType("DetailedCostEstimate")) {
+          <div class="summary-row attachment">
+            <drr-summary-item
+              [label]="t('attachments.name')"
+              [rxFormControl]="
+                getAttachmentByDocumentType('DetailedCostEstimate').get('name')
+              "
+            >
+            </drr-summary-item>
+            <drr-summary-item
+              [label]="t('attachments.comments')"
+              [rxFormControl]="
+                getAttachmentByDocumentType('DetailedCostEstimate').get(
+                  'comments'
+                )
+              "
+            >
+            </drr-summary-item>
+            <button
+              *ngIf="isReadOnlyView"
+              style="align-self: center"
+              mat-button
+              color="primary"
+              (click)="
+                onDownloadFile(
+                  getAttachmentByDocumentType('DetailedCostEstimate').get('id')
+                    ?.value
+                )
+              "
+            >
+              Download
+            </button>
+          </div>
         } @else {
-        <div [class.required]="isAttachmentRequired('DetailedCostEstimate')">
-          ({{
-            isAttachmentRequired("DetailedCostEstimate")
-              ? "Required"
-              : "Optional"
-          }})
-        </div>
+          <div [class.required]="isAttachmentRequired('DetailedCostEstimate')">
+            ({{
+              isAttachmentRequired("DetailedCostEstimate")
+                ? "Required"
+                : "Optional"
+            }})
+          </div>
         }
       </div>
       <div>
         <mat-label class="drr-label">{{ t("attachments.SitePlan") }}</mat-label>
-        @if (getAttachmentByDocumentType('SitePlan')) {
-        <div class="summary-row attachment">
-          <drr-summary-item
-            [label]="t('attachments.name')"
-            [rxFormControl]="
-              getAttachmentByDocumentType('SitePlan').get('name')
-            "
-          >
-          </drr-summary-item>
-          <drr-summary-item
-            [label]="t('attachments.comments')"
-            [rxFormControl]="
-              getAttachmentByDocumentType('SitePlan').get('comments')
-            "
-          >
-          </drr-summary-item>
-          <button
-            *ngIf="isReadOnlyView"
-            style="align-self: center"
-            mat-button
-            color="primary"
-            (click)="
-              onDownloadFile(
-                getAttachmentByDocumentType('SitePlan').get('id')?.value
-              )
-            "
-          >
-            Download
-          </button>
-        </div>
+        @if (getAttachmentByDocumentType("SitePlan")) {
+          <div class="summary-row attachment">
+            <drr-summary-item
+              [label]="t('attachments.name')"
+              [rxFormControl]="
+                getAttachmentByDocumentType('SitePlan').get('name')
+              "
+            >
+            </drr-summary-item>
+            <drr-summary-item
+              [label]="t('attachments.comments')"
+              [rxFormControl]="
+                getAttachmentByDocumentType('SitePlan').get('comments')
+              "
+            >
+            </drr-summary-item>
+            <button
+              *ngIf="isReadOnlyView"
+              style="align-self: center"
+              mat-button
+              color="primary"
+              (click)="
+                onDownloadFile(
+                  getAttachmentByDocumentType('SitePlan').get('id')?.value
+                )
+              "
+            >
+              Download
+            </button>
+          </div>
         } @else {
-        <div [class.required]="isAttachmentRequired('SitePlan')">
-          ({{ isAttachmentRequired("SitePlan") ? "Required" : "Optional" }})
-        </div>
+          <div [class.required]="isAttachmentRequired('SitePlan')">
+            ({{ isAttachmentRequired("SitePlan") ? "Required" : "Optional" }})
+          </div>
         }
       </div>
       <div>
         <mat-label class="drr-label">{{
           t("attachments.PreliminaryDesign")
         }}</mat-label>
-        @if (getAttachmentByDocumentType('PreliminaryDesign')) {
-        <div class="summary-row attachment">
-          <drr-summary-item
-            [label]="t('attachments.name')"
-            [rxFormControl]="
-              getAttachmentByDocumentType('PreliminaryDesign').get('name')
-            "
-          >
-          </drr-summary-item>
-          <drr-summary-item
-            [label]="t('attachments.comments')"
-            [rxFormControl]="
-              getAttachmentByDocumentType('PreliminaryDesign').get('comments')
-            "
-          >
-          </drr-summary-item>
-          <button
-            *ngIf="isReadOnlyView"
-            style="align-self: center"
-            mat-button
-            color="primary"
-            (click)="
-              onDownloadFile(
-                getAttachmentByDocumentType('PreliminaryDesign').get('id')
-                  ?.value
-              )
-            "
-          >
-            Download
-          </button>
-        </div>
+        @if (getAttachmentByDocumentType("PreliminaryDesign")) {
+          <div class="summary-row attachment">
+            <drr-summary-item
+              [label]="t('attachments.name')"
+              [rxFormControl]="
+                getAttachmentByDocumentType('PreliminaryDesign').get('name')
+              "
+            >
+            </drr-summary-item>
+            <drr-summary-item
+              [label]="t('attachments.comments')"
+              [rxFormControl]="
+                getAttachmentByDocumentType('PreliminaryDesign').get('comments')
+              "
+            >
+            </drr-summary-item>
+            <button
+              *ngIf="isReadOnlyView"
+              style="align-self: center"
+              mat-button
+              color="primary"
+              (click)="
+                onDownloadFile(
+                  getAttachmentByDocumentType('PreliminaryDesign').get('id')
+                    ?.value
+                )
+              "
+            >
+              Download
+            </button>
+          </div>
         } @else {
-        <div [class.required]="isAttachmentRequired('PreliminaryDesign')">
-          ({{
-            isAttachmentRequired("PreliminaryDesign") ? "Required" : "Optional"
-          }})
-        </div>
+          <div [class.required]="isAttachmentRequired('PreliminaryDesign')">
+            ({{
+              isAttachmentRequired("PreliminaryDesign")
+                ? "Required"
+                : "Optional"
+            }})
+          </div>
         }
       </div>
       <drr-summary-item
@@ -1396,53 +1395,55 @@
         controlType="radio"
       ></drr-summary-item>
       @if (gethaveResolutionDocument()) {
-      <div>
-        <mat-label class="drr-label">{{
-          t("attachments.resolutionDocument")
-        }}</mat-label>
-        @if (getAttachmentByDocumentType('Resolution')) {
-        <div class="summary-row attachment">
-          <drr-summary-item
-            [label]="t('attachments.name')"
-            [rxFormControl]="
-              getAttachmentByDocumentType('Resolution').get('name')
-            "
-          >
-          </drr-summary-item>
-          <drr-summary-item
-            [label]="t('attachments.comments')"
-            [rxFormControl]="
-              getAttachmentByDocumentType('Resolution').get('comments')
-            "
-          >
-          </drr-summary-item>
-          <button
-            *ngIf="isReadOnlyView"
-            style="align-self: center"
-            mat-button
-            color="primary"
-            (click)="
-              onDownloadFile(
-                getAttachmentByDocumentType('Resolution').get('id')?.value
-              )
-            "
-          >
-            Download
-          </button>
+        <div>
+          <mat-label class="drr-label">{{
+            t("attachments.resolutionDocument")
+          }}</mat-label>
+          @if (getAttachmentByDocumentType("Resolution")) {
+            <div class="summary-row attachment">
+              <drr-summary-item
+                [label]="t('attachments.name')"
+                [rxFormControl]="
+                  getAttachmentByDocumentType('Resolution').get('name')
+                "
+              >
+              </drr-summary-item>
+              <drr-summary-item
+                [label]="t('attachments.comments')"
+                [rxFormControl]="
+                  getAttachmentByDocumentType('Resolution').get('comments')
+                "
+              >
+              </drr-summary-item>
+              <button
+                *ngIf="isReadOnlyView"
+                style="align-self: center"
+                mat-button
+                color="primary"
+                (click)="
+                  onDownloadFile(
+                    getAttachmentByDocumentType('Resolution').get('id')?.value
+                  )
+                "
+              >
+                Download
+              </button>
+            </div>
+          } @else {
+            <div [class.required]="isAttachmentRequired('Resolution')">
+              ({{
+                isAttachmentRequired("Resolution") ? "Required" : "Optional"
+              }})
+            </div>
+          }
         </div>
-        } @else {
-        <div [class.required]="isAttachmentRequired('Resolution')">
-          ({{ isAttachmentRequired("Resolution") ? "Required" : "Optional" }})
-        </div>
-        }
-      </div>
       }
       <div style="display: flex; flex-direction: column">
         <mat-label class="drr-label">{{
           t("attachments.otherSupportingDocumentation")
         }}</mat-label>
         @if (getOtherAttachmentsArrayControls().length == 0) {
-        <mat-label>(Optional)</mat-label>
+          <mat-label>(Optional)</mat-label>
         }
         <div
           class="summary-row"

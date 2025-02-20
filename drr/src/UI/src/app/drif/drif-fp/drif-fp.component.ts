@@ -356,6 +356,9 @@ export class DrifFpComponent {
               previousResponseCost: response.previousResponseCost,
               intendToSecureFunding: response.intendToSecureFunding,
               contingency: response.contingency,
+              costEstimateClass: response.costEstimateClass,
+              totalProjectCostChangeComments:
+                response.totalProjectCostChangeComments,
             },
             attachments: {
               haveResolution: response.haveResolution,

@@ -266,6 +266,8 @@ export type DraftFpApplicationAllOf = {
    */
   totalProjectCost?: number;
   /** @nullable */
+  totalProjectCostChangeComments?: string;
+  /** @nullable */
   units?: AreaUnits;
   /** @nullable */
   yearOverYearFunding?: YearOverYearFunding[];

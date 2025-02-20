@@ -13,6 +13,7 @@ import {
   Attachment,
   CostCategory,
   CostEstimate,
+  CostEstimateClass,
   CostUnit,
   DocumentType,
   EstimatedNumberOfPeopleFP,
@@ -267,12 +268,6 @@ export class CostEstimateForm implements CostEstimate {
   }
 }
 
-// TODO: remove after API is updated
-export enum CostEstimateClassType {
-  ClassA = 'ClassA',
-  ClassB = 'ClassB',
-}
-
 export class BudgetForm {
   @prop()
   @required()
@@ -282,7 +277,7 @@ export class BudgetForm {
   totalProjectCostChangeComments?: string;
 
   @prop()
-  costEstimateClass?: CostEstimateClassType;
+  costEstimateClass?: CostEstimateClass;
 
   @prop()
   isContingencyPercentageThreasholdMet?: boolean;

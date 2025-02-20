@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, Input } from '@angular/core';
-import { AbstractControl } from '@angular/forms';
+import { AbstractControl, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -71,7 +71,7 @@ export class DrifFpSummaryComponent {
   getRxGroupFormControl(
     groupName: string,
     nestedGroup: string,
-    controlName: string
+    controlName: string,
   ) {
     return this.getGroup(groupName)
       ?.get(nestedGroup)
@@ -84,10 +84,10 @@ export class DrifFpSummaryComponent {
 
   getAttachmentByDocumentType(documentType: DocumentType) {
     const attachmentsArray = this.fullProposalForm.get(
-      'attachments.attachments'
+      'attachments.attachments',
     ) as RxFormArray;
     const attahcment = attachmentsArray.controls.find(
-      (control) => control.get('documentType')?.value === documentType
+      (control) => control.get('documentType')?.value === documentType,
     ) as RxFormGroup;
 
     return attahcment;
@@ -95,12 +95,12 @@ export class DrifFpSummaryComponent {
 
   getOtherAttachmentsArrayControls() {
     const attachmentsArray = this.fullProposalForm.get(
-      'attachments.attachments'
+      'attachments.attachments',
     ) as RxFormArray;
     return attachmentsArray.controls.filter(
       (control) =>
         control.get('documentType')?.value ===
-        DocumentType.OtherSupportingDocument
+        DocumentType.OtherSupportingDocument,
     );
   }
 
@@ -142,7 +142,7 @@ export class DrifFpSummaryComponent {
 
   getRemainingAmountAbs() {
     return Math.abs(
-      this.fullProposalForm?.get('budget.remainingAmount')?.value ?? 0
+      this.fullProposalForm?.get('budget.remainingAmount')?.value ?? 0,
     );
   }
 
@@ -151,7 +151,7 @@ export class DrifFpSummaryComponent {
       YesNoOption.NotApplicable
       ? this.translocoService.translate('costUnknown')
       : this.translocoService.translate(
-          this.fullProposalForm.get('budget.previousResponse')?.value
+          this.fullProposalForm.get('budget.previousResponse')?.value,
         );
   }
 
@@ -161,7 +161,7 @@ export class DrifFpSummaryComponent {
 
   getProfessionalGuidanceAnswer() {
     const professionalGuidance = this.fullProposalForm.get(
-      'permitsRegulationsAndStandards.professionalGuidance'
+      'permitsRegulationsAndStandards.professionalGuidance',
     )?.value;
 
     switch (professionalGuidance) {
@@ -174,5 +174,11 @@ export class DrifFpSummaryComponent {
       default:
         return professionalGuidance;
     }
+  }
+
+  isProjectTotalCostChangedCommentRequired() {
+    return this.fullProposalForm
+      .get('budget.totalProjectCostChangeComments')
+      ?.hasValidator(Validators.required);
   }
 }
