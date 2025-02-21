@@ -74,19 +74,13 @@
             </mat-card-header>
             <mat-card-content>
               <div class="invoice-container">
-                <drr-input
-                  class="drr-single-input"
-                  [label]="t('invoiceNumber')"
-                  [rxFormControl]="invoice.get('invoiceNumber')"
-                  [maxlength]="200"
-                ></drr-input>
-                <div
-                  style="
-                    display: flex;
-                    justify-content: space-between;
-                    gap: 1rem;
-                  "
-                >
+                <div style="display: flex; gap: 1rem; align-items: flex-end">
+                  <drr-input
+                    style="width: 30rem"
+                    [label]="t('invoiceNumber')"
+                    [rxFormControl]="invoice.get('invoiceNumber')"
+                    [maxlength]="200"
+                  ></drr-input>
                   <drr-datepicker
                     [label]="t('invoiceDate')"
                     [rxFormControl]="invoice.get('invoiceDate')"
@@ -104,6 +98,14 @@
                     [rxFormControl]="invoice.get('paymentDate')"
                   ></drr-datepicker>
                 </div>
+                <div
+                  style="
+                    display: flex;
+                    justify-content: flex-start;
+                    gap: 1rem;
+                    margin-top: 1rem;
+                  "
+                ></div>
                 <div style="display: flex; gap: 1rem">
                   <drr-input
                     class="drr-single-input"
@@ -122,7 +124,14 @@
                   [rxFormControl]="invoice.get('description')"
                   [maxlength]="2000"
                 ></drr-textarea>
-                <div style="display: flex; gap: 1rem">
+                <div
+                  style="
+                    display: flex;
+                    gap: 1rem;
+                    margin-top: 1rem;
+                    align-items: flex-end;
+                  "
+                >
                   <drr-currency-input
                     [label]="t('grossAmount')"
                     [rxFormControl]="invoice.get('grossAmount')"
@@ -139,17 +148,16 @@
                     [label]="t('gstPaid')"
                     [rxFormControl]="invoice.get('gstPaid')"
                   ></drr-currency-input>
+                  <drr-currency-input
+                    class="drr-single-input"
+                    [label]="t('claimAmount')"
+                    [rxFormControl]="invoice.get('claimAmount')"
+                  ></drr-currency-input>
                 </div>
-                <drr-currency-input
-                  class="drr-single-input"
-                  [label]="t('claimAmount')"
-                  [rxFormControl]="invoice.get('claimAmount')"
-                ></drr-currency-input>
               </div>
             </mat-card-content>
             <mat-card-actions [align]="'end'">
               <button
-                *ngIf="i > 0"
                 mat-stroked-button
                 color="warn"
                 (click)="removeInvoice(i)"
