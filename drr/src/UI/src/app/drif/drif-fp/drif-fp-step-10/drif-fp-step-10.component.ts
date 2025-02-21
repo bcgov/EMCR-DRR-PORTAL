@@ -88,9 +88,17 @@ export class DrifFpStep10Component {
   private _fundingStream!: FundingStream;
   @Input()
   set fundingStream(fundingStream: FundingStream) {
+    if (!fundingStream) {
+      return;
+    }
+
     this._fundingStream = fundingStream;
     if (this.isStrucutralProject()) {
       this.setValidatorsForStructuralProject();
+    } else {
+      this.costCategoriesOptions = this.costCategoriesOptions.filter(
+        (option) => option.value !== CostCategory.Contingency,
+      );
     }
   }
   get fundingStream() {
@@ -123,9 +131,6 @@ export class DrifFpStep10Component {
     this.optionsStore.options.costConsiderations?.() ?? [];
 
   costCategoriesOptions: DrrSelectOption[] = Object.values(CostCategory)
-    .filter((value) =>
-      !this.isStrucutralProject() ? value !== CostCategory.Contingency : value,
-    )
     .map((value) => ({
       value,
       label: this.translocoService.translate(value),
