@@ -10,11 +10,11 @@ import {
 import {
   ActivityType,
   Delay,
+  DraftProgressReport,
   EventInformation,
   FundingSignage,
   InterimProjectType,
   PastEvent,
-  ProgressReport,
   ProjectEvent,
   ProjectProgressStatus,
   SignageType,
@@ -275,7 +275,7 @@ export class DeclarationForm {
   }
 }
 
-export class ProgressReportForm implements ProgressReport {
+export class ProgressReportForm implements DraftProgressReport {
   @prop()
   projectType?: InterimProjectType | undefined;
 

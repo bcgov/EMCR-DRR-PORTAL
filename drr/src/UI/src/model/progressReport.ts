@@ -4,29 +4,7 @@
  * DRR API
  * OpenAPI spec version: 1.0.0
  */
-import type { Attachment } from './attachment';
-import type { EventInformation } from './eventInformation';
-import type { InterimProjectType } from './interimProjectType';
-import type { ProgressReportStatus } from './progressReportStatus';
-import type { Workplan } from './workplan';
+import type { DraftProgressReport } from './draftProgressReport';
+import type { ProgressReportAllOf } from './progressReportAllOf';
 
-export interface ProgressReport {
-  /** @nullable */
-  attachments?: Attachment[];
-  /** @nullable */
-  dateApproved?: string;
-  /** @nullable */
-  dateSubmitted?: string;
-  /** @nullable */
-  dueDate?: string;
-  /** @nullable */
-  eventInformation?: EventInformation;
-  /** @nullable */
-  id?: string;
-  /** @nullable */
-  projectType?: InterimProjectType;
-  /** @nullable */
-  status?: ProgressReportStatus;
-  /** @nullable */
-  workplan?: Workplan;
-}
+export type ProgressReport = DraftProgressReport & ProgressReportAllOf;

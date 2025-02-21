@@ -6,7 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 import { IFormGroup, RxFormBuilder } from '@rxweb/reactive-form-validators';
 import { ProjectService } from '../../../../api/project/project.service';
-import { ProgressReport } from '../../../../model';
+import { DraftProgressReport } from '../../../../model';
 import { AttachmentForm } from '../../drif-fp/drif-fp-form';
 import {
   FundingSignageForm,
@@ -84,7 +84,7 @@ export class DrifProgressReportViewComponent {
           this.reportId,
           this.progressReportId,
         )
-        .subscribe((report: ProgressReport) => {
+        .subscribe((report: DraftProgressReport) => {
           report.workplan?.workplanActivities?.map((activity) => {
             const activityForm = this.formBuilder.formGroup(
               new WorkplanActivityForm(activity),

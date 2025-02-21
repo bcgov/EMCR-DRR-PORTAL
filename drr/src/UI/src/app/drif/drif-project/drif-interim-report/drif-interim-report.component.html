@@ -83,16 +83,8 @@
         <mat-card-content style="display: flex; gap: 2rem">
           <div>
             <p>
-              <strong>Claim Type:</strong>
-              {{ interimReport?.projectClaim?.claimType }}
-            </p>
-            <p>
               <strong>Claim Amount:</strong>
               {{ interimReport?.projectClaim?.claimAmount }}
-            </p>
-            <p>
-              <strong>Claim Date:</strong>
-              {{ interimReport?.projectClaim?.claimDate }}
             </p>
           </div>
           <div>
@@ -145,7 +137,7 @@
             <p>
               <strong>Due Date:</strong>
               {{ interimReport?.progressReport?.dueDate }}
-            </p>            
+            </p>
           </div>
         </mat-card-content>
         <mat-card-actions align="end" style="display: flex; gap: 1rem">
@@ -157,7 +149,7 @@
               interimReport?.id,
               'progress-reports',
               interimReport?.progressReport?.id,
-              'edit'
+              'edit',
             ]"
             ><button mat-raised-button color="primary">Edit</button></a
           >

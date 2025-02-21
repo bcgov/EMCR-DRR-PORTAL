@@ -5,4 +5,4 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type DraftProgressReportAllOf = { [key: string]: unknown };
+export type ProgressReportAllOf = { [key: string]: unknown };
