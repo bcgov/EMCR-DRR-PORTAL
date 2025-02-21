@@ -21,6 +21,13 @@ namespace EMCR.DRR.API.Resources.Reports
         public required string Id { get; set; }
     }
 
+    public class CreateProjectReport : ManageReportCommand
+    {
+        public required string ProjectId { get; set; }
+        public required string ReportPeriodName { get; set; }
+        public ReportType ReportType { get; set; }
+    }
+
     public class SaveProgressReport : ManageReportCommand
     {
         public required ProgressReportDetails ProgressReport { get; set; }

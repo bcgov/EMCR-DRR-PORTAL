@@ -92,7 +92,7 @@ namespace EMCR.DRR.API.Resources.Projects
             await Task.WhenAll(loadTasks2);
 
             await Task.WhenAll([
-                ParallelLoadWorkplanActivities(ctx, project, ct),
+                ParallelLoadProgressReports(ctx, project, ct),
                 ParallelLoadReportDetails(ctx, project, ct),
                 ParallelLoadConditions(ctx, project, ct),
                 ]);
@@ -114,11 +114,12 @@ namespace EMCR.DRR.API.Resources.Projects
             });
         }
 
-        private static async Task ParallelLoadWorkplanActivities(DRRContext ctx, drr_project project, CancellationToken ct)
+        private static async Task ParallelLoadProgressReports(DRRContext ctx, drr_project project, CancellationToken ct)
         {
             await project.drr_drr_project_drr_projectprogress_Project.ForEachAsync(5, async report =>
             {
                 ctx.AttachTo(nameof(DRRContext.drr_projectprogresses), report);
+                await ctx.LoadPropertyAsync(report, nameof(drr_projectprogress.drr_ProjectReport), ct);
                 await ctx.LoadPropertyAsync(report, nameof(drr_projectprogress.drr_drr_projectprogress_drr_projectworkplanactivity_ProjectProgressReport), ct);
             });
         }
@@ -129,6 +130,24 @@ namespace EMCR.DRR.API.Resources.Projects
             {
                 ctx.AttachTo(nameof(DRRContext.drr_projectconditions), condition);
                 await ctx.LoadPropertyAsync(condition, nameof(drr_projectcondition.drr_Condition), ct);
+            });
+        }
+
+        private static async Task ParallelLoadForecasts(DRRContext ctx, drr_project project, CancellationToken ct)
+        {
+            await project.drr_drr_project_drr_projectbudgetforecast_Project.ForEachAsync(5, async report =>
+            {
+                ctx.AttachTo(nameof(DRRContext.drr_projectbudgetforecasts), report);
+                await ctx.LoadPropertyAsync(report, nameof(drr_projectbudgetforecast.drr_ProjectReport), ct);
+            });
+        }
+
+        private static async Task ParallelLoadClaims(DRRContext ctx, drr_project project, CancellationToken ct)
+        {
+            await project.drr_drr_project_drr_projectclaim_Project.ForEachAsync(5, async report =>
+            {
+                ctx.AttachTo(nameof(DRRContext.drr_projectclaims), report);
+                await ctx.LoadPropertyAsync(report, nameof(drr_projectclaim.drr_ProjectReport), ct);
             });
         }
 

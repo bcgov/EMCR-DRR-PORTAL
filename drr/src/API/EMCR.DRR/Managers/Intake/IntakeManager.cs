@@ -117,6 +117,7 @@ namespace EMCR.DRR.Managers.Intake
                 SubmitProjectCommand c => await Handle(c),
                 SaveProgressReportCommand c => await Handle(c),
                 SubmitProgressReportCommand c => await Handle(c),
+                CreateInterimReportCommand c => await Handle(c),
                 _ => throw new NotSupportedException($"{cmd.GetType().Name} is not supported")
             };
         }
@@ -397,6 +398,68 @@ namespace EMCR.DRR.Managers.Intake
             return id;
         }
 
+        public async Task<string> Handle(CreateInterimReportCommand cmd)
+        {
+            var canAccess = await CanAccessProject(cmd.ProjectId, cmd.UserInfo.BusinessId);
+            if (!canAccess) throw new ForbiddenException("Not allowed to access this project.");
+            var project = (await projectRepository.Query(new ProjectsQuery { Id = cmd.ProjectId, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
+            if (project == null) throw new NotFoundException("Project not found");
+            if (project.StartDate == null) throw new BusinessValidationException("Invalid Report Start Date");
+
+            var validationRes = await Handle(new ValidateCanCreateReportCommand { ProjectId = cmd.ProjectId, ReportType = cmd.ReportType, UserInfo = cmd.UserInfo });
+            if (!validationRes.CanCreate) throw new BusinessValidationException(validationRes.Description);
+
+            var reportPeriodName = validationRes.Description;
+
+            //if (project.InterimReports == null || project.InterimReports.Count() == 0)
+            //{
+            //    reportPeriodName = GetReportPeriod(project.ReportingScheduleType, project.StartDate.Value);
+            //}
+            //else
+            //{
+            //    var lastReport = project.InterimReports.OrderByDescending(r => r.ReportDate).First();
+            //    if (lastReport.ReportDate == null) throw new BusinessValidationException($"Invalid Report Date for report {lastReport.Id}");
+            //    reportPeriodName = GetNextReportPeriod(project.ReportingScheduleType, lastReport.ReportDate.Value);
+            //}
+
+            var id = (await reportRepository.Manage(new CreateProjectReport { ProjectId = cmd.ProjectId, ReportPeriodName = reportPeriodName, ReportType = cmd.ReportType })).Id;
+            return id;
+        }
+
+        public async Task<ValidateCanCreateReportResult> Handle(ValidateCanCreateReportCommand cmd)
+        {
+            var canAccess = await CanAccessProject(cmd.ProjectId, cmd.UserInfo.BusinessId);
+            if (!canAccess) throw new ForbiddenException("Not allowed to access this project.");
+            var project = (await projectRepository.Query(new ProjectsQuery { Id = cmd.ProjectId, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
+            if (project == null) throw new NotFoundException("Project not found");
+            if (project.StartDate == null) throw new BusinessValidationException("Invalid Report Start Date");
+
+            bool canCreate = false;
+            string description = string.Empty;
+
+            if (project.InterimReports == null || project.InterimReports.Count() == 0)
+            {
+                canCreate = true;
+                description = GetReportPeriod(project.ReportingScheduleType, project.StartDate.Value);
+            }
+            else
+            {
+                var lastReport = project.InterimReports.OrderByDescending(r => r.ReportDate).First();
+                if (lastReport.ReportDate == null) throw new BusinessValidationException($"Invalid Report Date for report {lastReport.Id}");
+                if (lastReport.Status == InterimReportStatus.Approved)
+                {
+                    canCreate = true;
+                    description = GetNextReportPeriod(project.ReportingScheduleType, lastReport.ReportDate.Value);
+                }
+                else
+                {
+                    description = $"Report {GetReportPeriod(project.ReportingScheduleType, lastReport.ReportDate.Value)} has not been approved.";
+                }
+            }
+
+            return new ValidateCanCreateReportResult { CanCreate = canCreate, Description = description };
+        }
+
 
         public async Task<FileQueryResult> Handle(DownloadAttachment cmd)
         {
@@ -515,6 +578,95 @@ namespace EMCR.DRR.Managers.Intake
         private bool ApplicationInEditableStatus(Application application)
         {
             return application.Status == ApplicationStatus.DraftProponent || application.Status == ApplicationStatus.DraftStaff || application.Status == ApplicationStatus.Withdrawn;
+        }
+
+        private string GetNextReportPeriod(ReportingScheduleType? type, DateTime date)
+        {
+            switch (type)
+            {
+                case ReportingScheduleType.Quarterly:
+                    return GetNextFiscalQuarter(GetFiscalQuarterString(date));
+                case ReportingScheduleType.Monthly:
+                    return GetNextMonthString(GetMonthString(date));
+                default: return string.Empty;
+            }
+        }
+
+        private string GetReportPeriod(ReportingScheduleType? type, DateTime date)
+        {
+            switch (type)
+            {
+                case ReportingScheduleType.Quarterly:
+                    return GetFiscalQuarterString(date);
+                case ReportingScheduleType.Monthly:
+                    return GetMonthString(date);
+                default: return string.Empty;
+            }
+        }
+
+        private static string GetMonthString(DateTime date)
+        {
+            string year = date.Year.ToString();
+            int monthNumber = date.Month;
+
+            return $"{year}-Month-{monthNumber}";
+        }
+
+        private static string GetNextMonthString(string monthString)
+        {
+            string[] parts = monthString.Split('-');
+            if (parts.Length != 3 || !int.TryParse(parts[0], out int year) || parts[1] != "Month" || !int.TryParse(parts[2], out int month))
+            {
+                throw new ArgumentException("Invalid month format. Expected format: YYYY-Month-N (e.g., 2025-Month-2)");
+            }
+
+            // Increment month
+            month++;
+
+            // If we exceed Month-12, move to next year and reset to Month-1
+            if (month > 12)
+            {
+                month = 1;
+                year++;
+            }
+
+            return $"{year}-Month-{month}";
+        }
+
+        private static string GetFiscalQuarterString(DateTime date, int fiscalYearStartMonth = 1) //January
+        {
+            int year = date.Year;
+            int monthOffset = (date.Month - fiscalYearStartMonth + 12) % 12;
+            int quarter = (monthOffset / 3) + 1;
+
+            // Adjust the fiscal year if the date falls before the fiscal start month
+            if (date.Month < fiscalYearStartMonth)
+            {
+                year--;
+            }
+
+            return $"{year}-Q{quarter}";
+        }
+
+        private static string GetNextFiscalQuarter(string fiscalQuarter)
+        {
+            string[] parts = fiscalQuarter.Split('-');
+            if (parts.Length != 2 || !int.TryParse(parts[0], out int year) || !parts[1].StartsWith("Q") || !int.TryParse(parts[1].Substring(1), out int quarter))
+            {
+                throw new ArgumentException("Invalid fiscal quarter format. Expected format: YYYY-QN (e.g., 2025-Q2)");
+            }
+
+            // Increment quarter
+            quarter++;
+
+            // If we exceed Q4, move to next year and reset to Q1
+            if (quarter > 4)
+            {
+                quarter = 1;
+                year++;
+            }
+
+            return $"{year}-Q{quarter}";
         }
 
         private async Task<bool> CanAccessApplication(string? id, string? businessId)
