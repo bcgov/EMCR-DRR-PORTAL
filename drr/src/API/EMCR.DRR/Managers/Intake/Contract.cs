@@ -17,6 +17,7 @@ namespace EMCR.DRR.Managers.Intake
         Task<ProgressReportsQueryResponse> Handle(ProgressReportQuery cmd);
         Task<ForecastsQueryResponse> Handle(ForecastQuery cmd);
         Task<StorageQueryResults> Handle(AttachmentQuery cmd);
+        Task<ValidateCanCreateReportResult> Handle(ValidateCanCreateReportCommand cmd);
     }
 
     public class DeclarationQuery
@@ -62,7 +63,7 @@ namespace EMCR.DRR.Managers.Intake
         AuthorizedRepresentative,
         AccuracyOfInformation
     }
-    
+
     public enum FormType
     {
         Application,
@@ -243,11 +244,31 @@ namespace EMCR.DRR.Managers.Intake
         public Controllers.ProgressReport ProgressReport { get; set; } = null!;
         public UserInfo UserInfo { get; set; }
     }
-    
+
     public class SubmitProgressReportCommand : IntakeCommand
     {
         public Controllers.ProgressReport ProgressReport { get; set; } = null!;
         public UserInfo UserInfo { get; set; }
+    }
+
+    public class CreateInterimReportCommand : IntakeCommand
+    {
+        public string ProjectId { get; set; } = null!;
+        public ReportType ReportType { get; set; }
+        public UserInfo UserInfo { get; set; }
+    }
+
+    public class ValidateCanCreateReportCommand
+    {
+        public string ProjectId { get; set; } = null!;
+        public ReportType ReportType { get; set; }
+        public UserInfo UserInfo { get; set; }
+    }
+
+    public class ValidateCanCreateReportResult
+    {
+        public bool CanCreate { get; set; }
+        public string Description { get; set; }
     }
 
     public abstract class AttachmentQuery
@@ -508,7 +529,7 @@ namespace EMCR.DRR.Managers.Intake
         public IEnumerable<PaymentCondition>? Conditions { get; set; }
         public IEnumerable<ContactDetails>? Contacts { get; set; }
         public IEnumerable<InterimReport>? InterimReports { get; set; }
-        public IEnumerable<ProjectClaim>    ? Claims { get; set; }
+        public IEnumerable<ProjectClaim>? Claims { get; set; }
         public IEnumerable<ProgressReport>? ProgressReports { get; set; }
         public IEnumerable<Forecast>? Forecast { get; set; }
         public IEnumerable<ProjectEvent>? Events { get; set; }
@@ -712,6 +733,7 @@ namespace EMCR.DRR.Managers.Intake
     {
         public string? Id { get; set; }
         public DateTime? DueDate { get; set; }
+        public DateTime? ReportDate { get; set; }
         public string? Description { get; set; }
         public InterimReportStatus? Status { get; set; }
         public InterimProjectType? ProjectType { get; set; }
@@ -724,20 +746,40 @@ namespace EMCR.DRR.Managers.Intake
     public class ProjectClaim
     {
         public string? Id { get; set; }
-        public string? ClaimType { get; set; }
-        public DateTime? ClaimDate { get; set; }
+        public string? ContractNumber { get; set; }
+        public DateTime? ReportDate { get; set; }
+        public DateTime? DateApproved { get; set; }
+        public DateTime? DateSubmitted { get; set; }
         public decimal? ClaimAmount { get; set; }
         public ClaimStatus? Status { get; set; }
+    }
+
+    public class ClaimDetails : ProjectClaim
+    {
+        public IEnumerable<Invoice>? Invoices { get; set; }
+        public string? ClaimComment { get; set; }
+        public ContactDetails? AuthorizedRepresentative { get; set; }
+        public bool? AuthorizedRepresentativeStatement { get; set; }
+        public bool? InformationAccuracyStatement { get; set; }
     }
 
     public class ProgressReport
     {
         public string? Id { get; set; }
         public string? CrmId { get; set; }
+        public DateTime? ReportDate { get; set; }
         public DateTime? DateSubmitted { get; set; }
         public DateTime? DateApproved { get; set; }
         public DateTime? DueDate { get; set; }
         public ProgressReportStatus? Status { get; set; }
+    }
+
+    public class ProgressReportDetails : ProgressReport
+    {
+        public InterimProjectType? ProjectType { get; set; }
+        public WorkplanDetails? Workplan { get; set; }
+        public EventInformationDetails? EventInformation { get; set; }
+        public IEnumerable<BcGovDocument>? Attachments { get; set; }
     }
 
     public class ProjectEvent
@@ -773,30 +815,27 @@ namespace EMCR.DRR.Managers.Intake
     public class Forecast
     {
         public string? Id { get; set; }
-        public string? ForecastType { get; set; }
-        public DateTime? ForecastDate { get; set; }
-        public decimal? ForecastAmount { get; set; }
+        public DateTime? ReportDate { get; set; }
+        public DateTime? DateSubmitted { get; set; }
+        public DateTime? DateApproved { get; set; }
+        public decimal? Total { get; set; }
+        public decimal? OriginalForecast { get; set; }
+        public decimal? Variance { get; set; }
         public ForecastStatus? Status { get; set; }
     }
 
-    public class InterimReportDetails : InterimReport
-    {
-    }
-
-    public class ClaimDetails : ProjectClaim
-    {
-
-    }
-
-    public class ProgressReportDetails : ProgressReport
-    {
-        public InterimProjectType? ProjectType { get; set; }
-        public WorkplanDetails? Workplan { get; set; }
-        public EventInformationDetails? EventInformation { get; set; }
-        public IEnumerable<BcGovDocument>? Attachments { get; set; }
-    }
-
     public class ForecastDetails : Forecast
+    {
+        public IEnumerable<ForecastItem>? ForecastItems { get; set; }
+        public string? VarianceComment { get; set; }
+        public IEnumerable<Attachment>? Attachments { get; set; }
+        public ContactDetails? AuthorizedRepresentative { get; set; }
+        public bool? AuthorizedRepresentativeStatement { get; set; }
+        public bool? InformationAccuracyStatement { get; set; }
+    }
+
+
+    public class InterimReportDetails : InterimReport
     {
     }
 
@@ -837,6 +876,36 @@ namespace EMCR.DRR.Managers.Intake
         public DateTime? ActualStartDate { get; set; }
         public DateTime? PlannedCompletionDate { get; set; }
         public DateTime? ActualCompletionDate { get; set; }
+    }
+
+    public class ForecastItem
+    {
+        public string? Id { get; set; }
+        public string? FiscalYear { get; set; }
+        public decimal? ForecastAmount { get; set; }
+        public decimal? TotalProjectedExpenditure { get; set; }
+        public decimal? ClaimsPaidToDate { get; set; }
+        public decimal? ClaimsSubmittedNotPaid { get; set; }
+        public decimal? ClaimsOnThisReport { get; set; }
+        public decimal? RemainingClaims { get; set; }
+    }
+
+    public class Invoice
+    {
+        public string? Id { get; set; }
+        public string? InvoiceNumber { get; set; }
+        public DateTime? Date { get; set; }
+        public DateTime? WorkStartDate { get; set; }
+        public DateTime? WorkEndDate { get; set; }
+        public DateTime? PaymentDate { get; set; }
+        public CostCategory? CostCategory { get; set; }
+        public string? SupplierName { get; set; }
+        public string? Description { get; set; }
+        public decimal? GrossAmount { get; set; }
+        public decimal? TaxRebate { get; set; }
+        public decimal? ClaimAmount { get; set; }
+        public decimal? TotalPST { get; set; }
+        public decimal? TotalGST { get; set; }
     }
 
     public class ActivityType
@@ -1055,10 +1124,12 @@ namespace EMCR.DRR.Managers.Intake
 
     public enum ForecastStatus
     {
-        InReview,
+        NotStarted,
+        Draft,
+        Submitted,
+        UpdateNeeded,
         Approved,
-        Rejected,
-        Skipped,
+        Inactive,
     }
 
     public enum ProponentType
@@ -1144,6 +1215,13 @@ namespace EMCR.DRR.Managers.Intake
         ApprovedInPrinciple,
         Closed,
         Deleted
+    }
+
+    public enum ReportType
+    {
+        OffCycle,
+        Interim,
+        Final,
     }
 
     public enum YesNoOption

@@ -46,6 +46,7 @@ namespace EMCR.DRR.API.Resources.Reports
             {
                 SaveProgressReport c => await HandleSaveProgressReport(c),
                 SubmitProgressReport c => await HandleSubmitProgressReport(c),
+                CreateProjectReport c => await HandleCreateProjectReport(c),
                 _ => throw new NotSupportedException($"{cmd.GetType().Name} is not supported")
             };
         }
@@ -114,6 +115,37 @@ namespace EMCR.DRR.API.Resources.Reports
             return new ManageReportCommandResult { Id = cmd.Id };
         }
 #pragma warning restore CS8604 // Possible null reference argument.
+        public async Task<ManageReportCommandResult> HandleCreateProjectReport(CreateProjectReport cmd)
+        {
+            var ctx = dRRContextFactory.Create();
+            var project = await ctx.drr_projects.Expand(p => p.drr_ProponentName).Where(a => a.drr_name == cmd.ProjectId).SingleOrDefaultAsync();
+            if (project == null) throw new NotFoundException("Project not found");
+            var reportPeriod = await ctx.drr_reportperiods.Where(p => p.drr_name == cmd.ReportPeriodName).SingleOrDefaultAsync();
+            if (reportPeriod == null) throw new NotFoundException("Report Period not found");
+
+            var report = new drr_projectreport
+            {
+                drr_projectreportid = Guid.NewGuid(),
+                drr_Project = project,
+                drr_Proponent = project.drr_ProponentName,
+                drr_periodtype = (int?)Enum.Parse<PeriodTypeOptionSet>(cmd.ReportType.ToString()),
+                drr_projecttype = project.drr_projecttype,
+                drr_ReportPeriod = reportPeriod,
+                drr_reportdate = DateTime.UtcNow,
+            };
+
+            ctx.AddTodrr_projectreports(report);
+            ctx.SetLink(report, nameof(report.drr_Project), project);
+            ctx.SetLink(report, nameof(report.drr_ReportPeriod), reportPeriod);
+            await ctx.SaveChangesAsync();
+
+            ctx.DetachAll();
+
+            var createdReport = await ctx.drr_projectreports.Where(r => r.drr_projectreportid == report.drr_projectreportid).SingleOrDefaultAsync();
+            //return new ManageReportCommandResult { Id = $"DRIF-{createdReport.drr_autonumber}" };
+            return new ManageReportCommandResult { Id = createdReport.drr_name };
+
+        }
 
         private void RemoveOldData(DRRContext ctx, drr_projectprogress existingProgressReport, drr_projectprogress drrProgressReport)
         {
@@ -213,7 +245,7 @@ namespace EMCR.DRR.API.Resources.Reports
                 }
             }
         }
-        
+
         private async static Task AddUpcomingEvents(DRRContext drrContext, drr_projectprogress progressReport, drr_projectprogress oldReport)
         {
             foreach (var upcomingEvent in progressReport.drr_drr_projectprogress_drr_projectevent_ProjectProgress)
@@ -407,6 +439,7 @@ namespace EMCR.DRR.API.Resources.Reports
             var loadTasks = new List<Task>
             {
                 ctx.LoadPropertyAsync(pr, nameof(drr_projectprogress.drr_Project), ct),
+                ctx.LoadPropertyAsync(pr, nameof(drr_projectprogress.drr_ProjectReport), ct),
                 ctx.LoadPropertyAsync(pr, nameof(drr_projectprogress.drr_drr_projectprogress_drr_projectworkplanactivity_ProjectProgressReport), ct),
                 ctx.LoadPropertyAsync(pr, nameof(drr_projectprogress.drr_drr_projectprogress_drr_projectevent_ProjectProgress), ct),
                 ctx.LoadPropertyAsync(pr, nameof(drr_projectprogress.drr_drr_projectprogress_drr_projectpastevent_ProjectProgress), ct),

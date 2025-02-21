@@ -51,7 +51,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
         public async Task QueryProjects_CanFilterById()
         {
             var queryOptions = new QueryOptions { Filter = "programType=DRIF,applicationType=FP,status=*UnderReview\\|EligiblePending" };
-            var queryRes = await manager.Handle(new DrrProjectsQuery { Id = "DRIF-PRJ-1012", BusinessId = GetCRAFTUserInfo().BusinessId, QueryOptions = queryOptions });
+            var queryRes = await manager.Handle(new DrrProjectsQuery { Id = "DRIF-PRJ-1015", BusinessId = GetCRAFTUserInfo().BusinessId, QueryOptions = queryOptions });
             var projects = mapper.Map<IEnumerable<DraftDrrProject>>(queryRes.Items);
             projects.Count().ShouldBe(1);
             //projects.ShouldAllBe(s => s.ProgramType == ProgramType.DRIF);
@@ -87,7 +87,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
         public async Task QueryForecasts_CanFilterById()
         {
             var queryRes = await manager.Handle(new DrrForecastsQuery { Id = "DRIF-FORECAST-1001", BusinessId = GetTestUserInfo().BusinessId });
-            var forecasts = mapper.Map<IEnumerable<EMCR.DRR.Controllers.Forecast>>(queryRes.Items);
+            var forecasts = mapper.Map<IEnumerable<EMCR.DRR.Controllers.DraftForecast>>(queryRes.Items);
             forecasts.Count().ShouldBe(1);
         }
 
@@ -121,6 +121,27 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             updatedProgressReport.EventInformation.PastEvents.Count().ShouldBe(1);
             updatedProgressReport.EventInformation.UpcomingEvents.Count().ShouldBe(1);
         }
+
+        [Test]
+        public async Task ValidateCanCreateReport_ValidationFalse()
+        {
+            var queryOptions = new QueryOptions { Filter = "programType=DRIF,applicationType=FP,status=*UnderReview\\|EligiblePending" };
+            var queryRes = await manager.Handle(new DrrProjectsQuery { Id = "DRIF-PRJ-1015", BusinessId = GetCRAFTUserInfo().BusinessId, QueryOptions = queryOptions });
+            var project = queryRes.Items.SingleOrDefault();
+            var res = await manager.Handle(new ValidateCanCreateReportCommand { ProjectId = project.Id, ReportType = EMCR.DRR.Managers.Intake.ReportType.Interim, UserInfo = GetCRAFTUserInfo() });
+            res.CanCreate.ShouldBe(false);
+            //projects.ShouldAllBe(s => s.ProgramType == ProgramType.DRIF);
+        }
+
+        //[Test]
+        //public async Task CanCreateReport()
+        //{
+        //    var queryOptions = new QueryOptions { Filter = "programType=DRIF,applicationType=FP,status=*UnderReview\\|EligiblePending" };
+        //    var queryRes = await manager.Handle(new DrrProjectsQuery { Id = "DRIF-PRJ-1013", BusinessId = GetCRAFTUserInfo().BusinessId, QueryOptions = queryOptions });
+        //    var project = queryRes.Items.SingleOrDefault();
+        //    var res = await manager.Handle(new CreateInterimReportCommand { ProjectId = project.Id, ReportType = EMCR.DRR.Managers.Intake.ReportType.Interim, UserInfo = GetCRAFTUserInfo() });
+        //    res.ShouldNotBeNullOrEmpty();
+        //}
 
         //[Test]
         //public async Task CanSubmitProgressReport()

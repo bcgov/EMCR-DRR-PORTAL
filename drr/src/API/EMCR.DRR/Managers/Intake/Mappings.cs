@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using EMCR.DRR.API.Model;
-using EMCR.DRR.API.Resources.Projects;
 using EMCR.DRR.Controllers;
 using EMCR.Utilities.Extensions;
 
@@ -19,7 +18,7 @@ namespace EMCR.DRR.Managers.Intake
                 .ForMember(dest => dest.ProjectType, opt => opt.MapFrom(src => src.Stream))
                 .AfterMap((src, dest) =>
                 {
-                    foreach (var prop in typeof(Application).GetProperties())
+                    foreach (var prop in dest.GetType().GetProperties())
                     {
                         if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
                         {
@@ -43,7 +42,7 @@ namespace EMCR.DRR.Managers.Intake
                 .ForMember(dest => dest.ProjectType, opt => opt.MapFrom(src => src.Stream))
                 .AfterMap((src, dest) =>
                 {
-                    foreach (var prop in typeof(Application).GetProperties())
+                    foreach (var prop in dest.GetType().GetProperties())
                     {
                         if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
                         {
@@ -84,7 +83,7 @@ namespace EMCR.DRR.Managers.Intake
                         }
                     }
 
-                    foreach (var prop in typeof(Application).GetProperties())
+                    foreach (var prop in dest.GetType().GetProperties())
                     {
                         if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
                         {
@@ -131,7 +130,7 @@ namespace EMCR.DRR.Managers.Intake
                         }
                     }
 
-                    foreach (var prop in typeof(Application).GetProperties())
+                    foreach (var prop in dest.GetType().GetProperties())
                     {
                         if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
                         {
@@ -163,7 +162,7 @@ namespace EMCR.DRR.Managers.Intake
             CreateMap<DraftDrrProject, Project>(MemberList.None)
                 .AfterMap((src, dest) =>
                 {
-                    foreach (var prop in typeof(Project).GetProperties())
+                    foreach (var prop in dest.GetType().GetProperties())
                     {
                         if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
                         {
@@ -177,7 +176,7 @@ namespace EMCR.DRR.Managers.Intake
             CreateMap<Controllers.PaymentCondition, PaymentCondition>()
                 .AfterMap((src, dest) =>
                 {
-                    foreach (var prop in typeof(PaymentCondition).GetProperties())
+                    foreach (var prop in dest.GetType().GetProperties())
                     {
                         if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
                         {
@@ -188,10 +187,46 @@ namespace EMCR.DRR.Managers.Intake
                 .ReverseMap()
                 ;
 
+            CreateMap<DraftProjectClaim, ProjectClaim>()
+                .AfterMap((src, dest) =>
+                {
+                    foreach (var prop in dest.GetType().GetProperties())
+                    {
+                        if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
+                        {
+                            prop.SetValue(dest, "");
+                        }
+                    }
+                })
+                .ReverseMap()
+                .ReverseMap()
+                ;
+
+            CreateMap<DraftProjectClaim, Controllers.ProjectClaim>()
+                .ForMember(dest => dest.AuthorizedRepresentativeStatement, opt => opt.Ignore())
+                .ForMember(dest => dest.InformationAccuracyStatement, opt => opt.Ignore())
+                .ReverseMap()
+                ;
+
             CreateMap<Controllers.ProjectClaim, ProjectClaim>()
                 .AfterMap((src, dest) =>
                 {
-                    foreach (var prop in typeof(ProjectClaim).GetProperties())
+                    foreach (var prop in dest.GetType().GetProperties())
+                    {
+                        if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
+                        {
+                            prop.SetValue(dest, "");
+                        }
+                    }
+                })
+                .ReverseMap()
+                ;
+
+            CreateMap<DraftProgressReport, ProgressReport>()
+                .ForMember(dest => dest.CrmId, opt => opt.Ignore())
+                .AfterMap((src, dest) =>
+                {
+                    foreach (var prop in dest.GetType().GetProperties())
                     {
                         if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
                         {
@@ -211,7 +246,7 @@ namespace EMCR.DRR.Managers.Intake
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => IntakeProgressReportStatusMapper(src.Status)))
                 .AfterMap((src, dest) =>
                 {
-                    foreach (var prop in typeof(ProgressReport).GetProperties())
+                    foreach (var prop in dest.GetType().GetProperties())
                     {
                         if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
                         {
@@ -223,10 +258,30 @@ namespace EMCR.DRR.Managers.Intake
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => DrrProgressReportStatusMapper(src.Status)))
                 ;
 
+            CreateMap<DraftForecast, Controllers.Forecast>()
+                .ForMember(dest => dest.AuthorizedRepresentativeStatement, opt => opt.Ignore())
+                .ForMember(dest => dest.InformationAccuracyStatement, opt => opt.Ignore())
+                .ReverseMap()
+                ;
+
+            CreateMap<DraftForecast, Forecast>()
+                .AfterMap((src, dest) =>
+                {
+                    foreach (var prop in dest.GetType().GetProperties())
+                    {
+                        if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
+                        {
+                            prop.SetValue(dest, "");
+                        }
+                    }
+                })
+                .ReverseMap()
+                ;
+
             CreateMap<Controllers.Forecast, Forecast>()
                 .AfterMap((src, dest) =>
                 {
-                    foreach (var prop in typeof(Forecast).GetProperties())
+                    foreach (var prop in dest.GetType().GetProperties())
                     {
                         if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
                         {
@@ -240,7 +295,7 @@ namespace EMCR.DRR.Managers.Intake
             CreateMap<Controllers.InterimReport, InterimReport>()
                 .AfterMap((src, dest) =>
                 {
-                    foreach (var prop in typeof(InterimReport).GetProperties())
+                    foreach (var prop in dest.GetType().GetProperties())
                     {
                         if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
                         {
@@ -252,9 +307,11 @@ namespace EMCR.DRR.Managers.Intake
                 ;
 
             CreateMap<Controllers.ProjectClaim, ClaimDetails>()
+                .ForMember(dest => dest.AuthorizedRepresentativeStatement, opt => opt.Ignore())
+                .ForMember(dest => dest.InformationAccuracyStatement, opt => opt.Ignore())
                 .AfterMap((src, dest) =>
                 {
-                    foreach (var prop in typeof(ClaimDetails).GetProperties())
+                    foreach (var prop in dest.GetType().GetProperties())
                     {
                         if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
                         {
@@ -270,7 +327,7 @@ namespace EMCR.DRR.Managers.Intake
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => IntakeProgressReportStatusMapper(src.Status)))
                 .AfterMap((src, dest) =>
                 {
-                    foreach (var prop in typeof(ProgressReportDetails).GetProperties())
+                    foreach (var prop in dest.GetType().GetProperties())
                     {
                         if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
                         {
@@ -282,10 +339,26 @@ namespace EMCR.DRR.Managers.Intake
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => DrrProgressReportStatusMapper(src.Status)))
                 ;
 
-            CreateMap<Controllers.Forecast, ForecastDetails>()
+            CreateMap<Controllers.DraftForecast, ForecastDetails>()
+                .ForMember(dest => dest.AuthorizedRepresentativeStatement, opt => opt.Ignore())
+                .ForMember(dest => dest.InformationAccuracyStatement, opt => opt.Ignore())
                 .AfterMap((src, dest) =>
                 {
-                    foreach (var prop in typeof(ForecastDetails).GetProperties())
+                    foreach (var prop in dest.GetType().GetProperties())
+                    {
+                        if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
+                        {
+                            prop.SetValue(dest, "");
+                        }
+                    }
+                })
+                .ReverseMap()
+                ;
+
+            CreateMap<Controllers.ForecastItem, ForecastItem>()
+                .AfterMap((src, dest) =>
+                {
+                    foreach (var prop in dest.GetType().GetProperties())
                     {
                         if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
                         {
@@ -299,7 +372,7 @@ namespace EMCR.DRR.Managers.Intake
             CreateMap<Controllers.InterimReport, InterimReportDetails>()
                 .AfterMap((src, dest) =>
                 {
-                    foreach (var prop in typeof(InterimReportDetails).GetProperties())
+                    foreach (var prop in dest.GetType().GetProperties())
                     {
                         if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
                         {
@@ -313,7 +386,7 @@ namespace EMCR.DRR.Managers.Intake
             CreateMap<Workplan, WorkplanDetails>()
                 .AfterMap((src, dest) =>
                 {
-                    foreach (var prop in typeof(WorkplanDetails).GetProperties())
+                    foreach (var prop in dest.GetType().GetProperties())
                     {
                         if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
                         {
@@ -327,7 +400,7 @@ namespace EMCR.DRR.Managers.Intake
             CreateMap<EventInformation, EventInformationDetails>()
                 .AfterMap((src, dest) =>
                 {
-                    foreach (var prop in typeof(EventInformationDetails).GetProperties())
+                    foreach (var prop in dest.GetType().GetProperties())
                     {
                         if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
                         {
@@ -343,7 +416,7 @@ namespace EMCR.DRR.Managers.Intake
                 .ForMember(dest => dest.Type, opt => opt.Ignore())
                 .AfterMap((src, dest) =>
                 {
-                    foreach (var prop in typeof(ProjectEventDetails).GetProperties())
+                    foreach (var prop in dest.GetType().GetProperties())
                     {
                         if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
                         {
@@ -357,7 +430,7 @@ namespace EMCR.DRR.Managers.Intake
             CreateMap<PastEvent, PastEventDetails>()
                 .AfterMap((src, dest) =>
                 {
-                    foreach (var prop in typeof(PastEventDetails).GetProperties())
+                    foreach (var prop in dest.GetType().GetProperties())
                     {
                         if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
                         {
@@ -365,6 +438,21 @@ namespace EMCR.DRR.Managers.Intake
                         }
                     }
                 })
+                .ReverseMap()
+                ;
+
+            CreateMap<Controllers.Invoice, Invoice>()
+                .AfterMap((src, dest) =>
+                {
+                    foreach (var prop in dest.GetType().GetProperties())
+                    {
+                        if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
+                        {
+                            prop.SetValue(dest, "");
+                        }
+                    }
+                })
+                .ReverseMap()
                 .ReverseMap()
                 ;
 
@@ -382,7 +470,7 @@ namespace EMCR.DRR.Managers.Intake
                 .AfterMap((src, dest) =>
                 {
                     WorkplanStatusMapper(dest, src);
-                    foreach (var prop in typeof(WorkplanActivityDetails).GetProperties())
+                    foreach (var prop in dest.GetType().GetProperties())
                     {
                         if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
                         {
@@ -407,7 +495,7 @@ namespace EMCR.DRR.Managers.Intake
             CreateMap<Controllers.FundingSignage, FundingSignage>()
                 .AfterMap((src, dest) =>
                 {
-                    foreach (var prop in typeof(FundingSignage).GetProperties())
+                    foreach (var prop in dest.GetType().GetProperties())
                     {
                         if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
                         {
@@ -422,7 +510,7 @@ namespace EMCR.DRR.Managers.Intake
                 .ForMember(dest => dest.Status, opt => opt.Ignore())
                 .AfterMap((src, dest) =>
                 {
-                    foreach (var prop in typeof(ProjectEvent).GetProperties())
+                    foreach (var prop in dest.GetType().GetProperties())
                     {
                         if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
                         {
@@ -432,11 +520,11 @@ namespace EMCR.DRR.Managers.Intake
                 })
                 .ReverseMap()
                 ;
-            
+
             CreateMap<Controllers.FundingInformation, FundingInformation>()
                 .AfterMap((src, dest) =>
                 {
-                    foreach (var prop in typeof(FundingInformation).GetProperties())
+                    foreach (var prop in dest.GetType().GetProperties())
                     {
                         if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
                         {
@@ -450,7 +538,7 @@ namespace EMCR.DRR.Managers.Intake
             CreateMap<Controllers.YearOverYearFunding, YearOverYearFunding>()
                 .AfterMap((src, dest) =>
                 {
-                    foreach (var prop in typeof(YearOverYearFunding).GetProperties())
+                    foreach (var prop in dest.GetType().GetProperties())
                     {
                         if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
                         {
@@ -469,7 +557,7 @@ namespace EMCR.DRR.Managers.Intake
                 .ForMember(dest => dest.BCeId, opt => opt.Ignore())
                 .AfterMap((src, dest) =>
                 {
-                    foreach (var prop in typeof(ContactDetails).GetProperties())
+                    foreach (var prop in dest.GetType().GetProperties())
                     {
                         if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
                         {
@@ -483,7 +571,7 @@ namespace EMCR.DRR.Managers.Intake
             CreateMap<Controllers.StandardInfo, StandardInfo>()
                 .AfterMap((src, dest) =>
                 {
-                    foreach (var prop in typeof(StandardInfo).GetProperties())
+                    foreach (var prop in dest.GetType().GetProperties())
                     {
                         if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
                         {
@@ -503,7 +591,7 @@ namespace EMCR.DRR.Managers.Intake
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Infrastructure))
                 .AfterMap((src, dest) =>
                 {
-                    foreach (var prop in typeof(CriticalInfrastructure).GetProperties())
+                    foreach (var prop in dest.GetType().GetProperties())
                     {
                         if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
                         {
@@ -582,7 +670,7 @@ namespace EMCR.DRR.Managers.Intake
                 .ForMember(dest => dest.ActivityType, opt => opt.MapFrom(src => new ActivityType { Name = src.Activity != null ? src.Activity.Value.ToDescriptionString() : string.Empty, PreCreatedActivity = src.PreCreatedActivity }))
                 .AfterMap((src, dest) =>
                 {
-                    foreach (var prop in typeof(ProposedActivity).GetProperties())
+                    foreach (var prop in dest.GetType().GetProperties())
                     {
                         if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
                         {
@@ -601,7 +689,7 @@ namespace EMCR.DRR.Managers.Intake
                 .ForMember(dest => dest.TaskNumber, opt => opt.Ignore())
                 .AfterMap((src, dest) =>
                 {
-                    foreach (var prop in typeof(CostEstimate).GetProperties())
+                    foreach (var prop in dest.GetType().GetProperties())
                     {
                         if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
                         {
@@ -619,7 +707,7 @@ namespace EMCR.DRR.Managers.Intake
             CreateMap<Attachment, BcGovDocument>()
                 .AfterMap((src, dest) =>
                 {
-                    foreach (var prop in typeof(BcGovDocument).GetProperties())
+                    foreach (var prop in dest.GetType().GetProperties())
                     {
                         if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
                         {

@@ -112,9 +112,8 @@ namespace EMCR.DRR.Controllers
             try
             {
                 await Task.CompletedTask;
-                //var report = (await intakeManager.Handle(new DrrReportsQuery { Id = reportId, BusinessId = GetCurrentBusinessId() })).Items.FirstOrDefault();
-                //if (report == null) return new NotFoundObjectResult(new ProblemDetails { Type = "NotFoundException", Title = "Not Found", Detail = "" });
-                return Ok(new CanCreateReportResult { CanCreate = true, ReportType = createReport.ReportType, Description = $"Q2 2025" });
+                var res = await intakeManager.Handle(new ValidateCanCreateReportCommand { ProjectId = projectId, UserInfo = GetCurrentUser() });
+                return Ok(new CanCreateReportResult { CanCreate = res.CanCreate, ReportType = createReport.ReportType, Description = res.Description });
             }
             catch (Exception e)
             {
@@ -128,9 +127,8 @@ namespace EMCR.DRR.Controllers
             try
             {
                 await Task.CompletedTask;
-                //var report = (await intakeManager.Handle(new DrrReportsQuery { Id = reportId, BusinessId = GetCurrentBusinessId() })).Items.FirstOrDefault();
-                //if (report == null) return new NotFoundObjectResult(new ProblemDetails { Type = "NotFoundException", Title = "Not Found", Detail = "" });
-                return Ok(new CreateReportResult { Id = "new report id" });
+                var id = await intakeManager.Handle(new CreateInterimReportCommand { ProjectId = projectId, UserInfo = GetCurrentUser() });
+                return Ok(new CreateReportResult { Id = id });
             }
             catch (Exception e)
             {
@@ -154,13 +152,13 @@ namespace EMCR.DRR.Controllers
         }
 
         [HttpGet("{projectId}/interim-reports/{reportId}/claims/{claimId}")]
-        public async Task<ActionResult<ProjectClaim>> GetClaim(string projectId, string reportId, string claimId)
+        public async Task<ActionResult<DraftProjectClaim>> GetClaim(string projectId, string reportId, string claimId)
         {
             try
             {
                 var claim = (await intakeManager.Handle(new DrrClaimsQuery { Id = claimId, BusinessId = GetCurrentBusinessId() })).Items.FirstOrDefault();
                 if (claim == null) return new NotFoundObjectResult(new ProblemDetails { Type = "NotFoundException", Title = "Not Found", Detail = "" });
-                return Ok(mapper.Map<ProjectClaim>(claim));
+                return Ok(mapper.Map<DraftProjectClaim>(claim));
             }
             catch (Exception e)
             {
@@ -169,13 +167,13 @@ namespace EMCR.DRR.Controllers
         }
 
         [HttpGet("{projectId}/interim-reports/{reportId}/progress-reports/{progressId}")]
-        public async Task<ActionResult<ProgressReport>> GetProgressReport(string projectId, string reportId, string progressId)
+        public async Task<ActionResult<DraftProgressReport>> GetProgressReport(string projectId, string reportId, string progressId)
         {
             try
             {
                 var pr = (await intakeManager.Handle(new DrrProgressReportsQuery { Id = progressId, BusinessId = GetCurrentBusinessId() })).Items.FirstOrDefault();
                 if (pr == null) return new NotFoundObjectResult(new ProblemDetails { Type = "NotFoundException", Title = "Not Found", Detail = "" });
-                return Ok(mapper.Map<ProgressReport>(pr));
+                return Ok(mapper.Map<DraftProgressReport>(pr));
             }
             catch (Exception e)
             {
@@ -201,7 +199,7 @@ namespace EMCR.DRR.Controllers
         }
 
         [HttpPatch("{projectId}/interim-reports/{reportId}/progress-reports/{progressId}/submit")]
-        public async Task<ActionResult<ProgressReportResult>> SubmitProgressReport([FromBody] DraftProgressReport progressReport, string progressId)
+        public async Task<ActionResult<ProgressReportResult>> SubmitProgressReport([FromBody] ProgressReport progressReport, string progressId)
         {
             try
             {
@@ -218,13 +216,13 @@ namespace EMCR.DRR.Controllers
         }
 
         [HttpGet("{projectId}/interim-reports/{reportId}/forecasts/{forecastId}")]
-        public async Task<ActionResult<Forecast>> GetForecastReport(string projectId, string reportId, string forecastId)
+        public async Task<ActionResult<DraftForecast>> GetForecastReport(string projectId, string reportId, string forecastId)
         {
             try
             {
                 var forecast = (await intakeManager.Handle(new DrrForecastsQuery { Id = forecastId, BusinessId = GetCurrentBusinessId() })).Items.FirstOrDefault();
                 if (forecast == null) return new NotFoundObjectResult(new ProblemDetails { Type = "NotFoundException", Title = "Not Found", Detail = "" });
-                return Ok(mapper.Map<Forecast>(forecast));
+                return Ok(mapper.Map<DraftForecast>(forecast));
             }
             catch (Exception e)
             {
@@ -270,9 +268,9 @@ namespace EMCR.DRR.Controllers
         public IEnumerable<PaymentCondition>? Conditions { get; set; }
         public IEnumerable<ContactDetails>? Contacts { get; set; }
         public IEnumerable<InterimReport>? InterimReports { get; set; }
-        public IEnumerable<ProjectClaim>? Claims { get; set; }
-        public IEnumerable<ProgressReport>? ProgressReports { get; set; }
-        public IEnumerable<Forecast>? Forecast { get; set; }
+        public IEnumerable<DraftProjectClaim>? Claims { get; set; }
+        public IEnumerable<DraftProgressReport>? ProgressReports { get; set; }
+        public IEnumerable<DraftForecast>? Forecast { get; set; }
         public IEnumerable<ProjectEvent>? Events { get; set; }
         public IEnumerable<Attachment>? Attachments { get; set; }
     }
@@ -290,40 +288,93 @@ namespace EMCR.DRR.Controllers
     {
         public string? Id { get; set; }
         public DateTime? DueDate { get; set; }
+        public DateTime? ReportDate { get; set; }
         public string? Description { get; set; }
         public InterimReportStatus? Status { get; set; }
         public InterimProjectType? ProjectType { get; set; }
         public PeriodType? PeriodType { get; set; }
-        public ProjectClaim? ProjectClaim { get; set; }
-        public ProgressReport? ProgressReport { get; set; }
-        public Forecast? Forecast { get; set; }
+        public DraftProjectClaim? ProjectClaim { get; set; }
+        public DraftProgressReport? ProgressReport { get; set; }
+        public DraftForecast? Forecast { get; set; }
     }
 
-    public class ProjectClaim
+    public class ProjectClaim : DraftProjectClaim
+    {
+        public bool? AuthorizedRepresentativeStatement { get; set; }
+        public bool? InformationAccuracyStatement { get; set; }
+    }
+
+    public class DraftProjectClaim
     {
         public string? Id { get; set; }
-        public string? ClaimType { get; set; }
-        public DateTime? ClaimDate { get; set; }
+        public string? ContractNumber { get; set; }
+        public DateTime? ReportDate { get; set; }
+        public DateTime? DateApproved { get; set; }
+        public DateTime? DateSubmitted { get; set; }
+        public IEnumerable<Invoice>? Invoices { get; set; }
+        public string? ClaimComment { get; set; }
         public decimal? ClaimAmount { get; set; }
+        public ContactDetails? AuthorizedRepresentative { get; set; }
         public ClaimStatus? Status { get; set; }
     }
 
-    public class DraftProgressReport : ProgressReport
+    public class ProgressReport : DraftProgressReport
     {
 
     }
 
-    public class ProgressReport
+    public class DraftProgressReport
     {
         public string? Id { get; set; }
         public InterimProjectType? ProjectType { get; set; }
-        public DateTime? DateSubmitted { get; set; }
+        public DateTime? ReportDate { get; set; }
         public DateTime? DateApproved { get; set; }
+        public DateTime? DateSubmitted { get; set; }
         public DateTime? DueDate { get; set; }
         public Workplan? Workplan { get; set; }
         public EventInformation? EventInformation { get; set; }
         public ProgressReportStatus? Status { get; set; }
         public IEnumerable<Attachment>? Attachments { get; set; }
+    }
+
+    public class Forecast : DraftForecast
+    {
+        public bool? AuthorizedRepresentativeStatement { get; set; }
+        public bool? InformationAccuracyStatement { get; set; }
+    }
+
+    public class DraftForecast
+    {
+        public string? Id { get; set; }
+        public DateTime? ReportDate { get; set; }
+        public DateTime? DateSubmitted { get; set; }
+        public DateTime? DateApproved { get; set; }
+        public IEnumerable<ForecastItem>? ForecastItems { get; set; }
+        public decimal? Total { get; set; }
+        public decimal? OriginalForecast { get; set; }
+        public decimal? Variance { get; set; }
+        public string? VarianceComment { get; set; }
+        public ForecastStatus? Status { get; set; }
+        public IEnumerable<Attachment>? Attachments { get; set; }
+        public ContactDetails? AuthorizedRepresentative { get; set; }
+    }
+
+    public class Invoice
+    {
+        public string? Id { get; set; }
+        public string? InvoiceNumber { get; set; }
+        public DateTime? Date { get; set; }
+        public DateTime? WorkStartDate { get; set; }
+        public DateTime? WorkEndDate { get; set; }
+        public DateTime? PaymentDate { get; set; }
+        public CostCategory? CostCategory { get; set; }
+        public string? SupplierName { get; set; }
+        public string? Description { get; set; }
+        public decimal? GrossAmount { get; set; }
+        public decimal? TaxRebate { get; set; }
+        public decimal? ClaimAmount { get; set; }
+        public decimal? TotalPST { get; set; }
+        public decimal? TotalGST { get; set; }
     }
 
     public class EventInformation
@@ -406,13 +457,16 @@ namespace EMCR.DRR.Controllers
         public DateTime? ActualCompletionDate { get; set; }
     }
 
-    public class Forecast
+    public class ForecastItem
     {
         public string? Id { get; set; }
-        public string? ForecastType { get; set; }
-        public DateTime? ForecastDate { get; set; }
+        public string? FiscalYear { get; set; }
         public decimal? ForecastAmount { get; set; }
-        public ForecastStatus? Status { get; set; }
+        public decimal? TotalProjectedExpenditure { get; set; }
+        public decimal? ClaimsPaidToDate { get; set; }
+        public decimal? ClaimsSubmittedNotPaid { get; set; }
+        public decimal? ClaimsOnThisReport { get; set; }
+        public decimal? RemainingClaims { get; set; }
     }
 
     public class FundingSignage
@@ -724,17 +778,20 @@ namespace EMCR.DRR.Controllers
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum ForecastStatus
     {
-        [Description("Pending")]
-        Pending,
+        [Description("Not Started")]
+        NotStarted,
 
-        [Description("Review")]
-        Review,
+        [Description("Draft")]
+        Draft,
+
+        [Description("Submitted")]
+        Submitted,
+
+        [Description("Update Needed")]
+        UpdateNeeded,
 
         [Description("Approved")]
         Approved,
-
-        [Description("Rejected")]
-        Rejected,
     }
 
     public class ProjectResult
