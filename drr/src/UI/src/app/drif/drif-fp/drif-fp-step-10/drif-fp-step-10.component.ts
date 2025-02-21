@@ -124,7 +124,7 @@ export class DrifFpStep10Component {
 
   costCategoriesOptions: DrrSelectOption[] = Object.values(CostCategory)
     .filter((value) =>
-      this.isStrucutralProject() ? value !== CostCategory.Contingency : value,
+      !this.isStrucutralProject() ? value !== CostCategory.Contingency : value,
     )
     .map((value) => ({
       value,
