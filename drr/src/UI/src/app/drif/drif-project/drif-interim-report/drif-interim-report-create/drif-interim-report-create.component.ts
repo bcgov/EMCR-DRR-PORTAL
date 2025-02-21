@@ -12,6 +12,7 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { IFormGroup, RxFormBuilder } from '@rxweb/reactive-form-validators';
 
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
+import { HotToastService } from '@ngxpert/hot-toast';
 import { ProjectService } from '../../../../../api/project/project.service';
 import { CanCreateReportResult, PeriodType } from '../../../../../model';
 import { DrrDatepickerComponent } from '../../../../shared/controls/drr-datepicker/drr-datepicker.component';
@@ -49,6 +50,7 @@ export class DrifInterimReportCreateComponent {
   router = inject(Router);
   route = inject(ActivatedRoute);
   projectService = inject(ProjectService);
+  toastService = inject(HotToastService);
 
   projectId?: string;
   canCreateReportResult?: CanCreateReportResult;
@@ -89,16 +91,8 @@ export class DrifInterimReportCreateComponent {
   }
 
   stepperSelectionChange(event: StepperSelectionEvent) {
-    switch (event.selectedIndex) {
-      case 1:
-        this.canCreateReport();
-        break;
-      case 2:
-        this.createReport();
-        break;
-
-      default:
-        break;
+    if (event.selectedIndex === 1) {
+      this.canCreateReport();
     }
   }
 
@@ -118,7 +112,23 @@ export class DrifInterimReportCreateComponent {
       });
   }
 
-  createReport() {}
+  createReport() {
+    this.projectService
+      .projectCreateReport(this.projectId!, {
+        reportType: this.interimReportForm.value.configuration?.periodType,
+      })
+      .subscribe({
+        next: () => {
+          this.toastService.close();
+          this.toastService.success('Report created successfully');
+
+          this.router.navigate(['drif-projects', this.projectId]);
+        },
+        error: () => {
+          this.toastService.error('Failed to create report');
+        },
+      });
+  }
 
   goBack() {
     this.router.navigate(['drif-projects', this.projectId]);
