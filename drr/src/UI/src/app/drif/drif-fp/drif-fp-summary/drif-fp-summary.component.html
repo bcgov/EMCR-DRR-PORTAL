@@ -1046,12 +1046,14 @@
         [rxFormControl]="fullProposalForm.get('budget.eligibleFundingRequest')"
         controlType="currency"
       ></drr-summary-item>
-      <drr-summary-item
-        [label]="t('costEstimateClass')"
-        [rxFormControl]="fullProposalForm.get('budget.costEstimateClass')"
-        controlType="select"
-        translatePrefix="costEstimateClassType"
-      ></drr-summary-item>
+      @if (fullProposalForm.get("fundingStream")?.value === "Stream2") {
+        <drr-summary-item
+          [label]="t('costEstimateClass')"
+          [rxFormControl]="fullProposalForm.get('budget.costEstimateClass')"
+          controlType="select"
+          translatePrefix="costEstimateClassType"
+        ></drr-summary-item>
+      }
 
       <mat-label class="drr-label">{{ t("detailedCostEstimates") }}</mat-label>
       <div
@@ -1106,11 +1108,13 @@
         [rxFormControl]="fullProposalForm.get('budget.totalEligibleCosts')"
         controlType="currency"
       ></drr-summary-item>
-      <drr-summary-item
-        [label]="t('contingency')"
-        [rxFormControl]="fullProposalForm.get('budget.contingency')"
-        [value]="fullProposalForm.get('budget.contingency')?.value + '%'"
-      ></drr-summary-item>
+      @if (fullProposalForm.get("fundingStream")?.value === "Stream2") {
+        <drr-summary-item
+          [label]="t('contingency')"
+          [rxFormControl]="fullProposalForm.get('budget.contingency')"
+          [value]="fullProposalForm.get('budget.contingency')?.value + '%'"
+        ></drr-summary-item>
+      }
       <drr-summary-item
         [label]="t('fundingRequestDiscrepancy')"
         [rxFormControl]="
@@ -1153,35 +1157,37 @@
         [rxFormControl]="fullProposalForm.get('budget.haveOtherFunding')"
         controlType="radio"
       ></drr-summary-item>
-      <mat-label class="drr-label">{{ t("otherFunding") }}</mat-label>
-      <div
-        class="summary-row"
-        *ngFor="
-          let otherFunding of getRxFormArrayControls('budget', 'otherFunding')
-        "
-      >
-        <drr-summary-item
-          [label]="t('amount')"
-          [value]="otherFunding.get('amount')?.value | currency"
-          [rxFormControl]="otherFunding.get('amount')"
-        ></drr-summary-item>
-        <drr-summary-item
-          [label]="t('name')"
-          [value]="otherFunding.get('name')?.value"
-          [rxFormControl]="otherFunding.get('name')"
-        ></drr-summary-item>
-        <drr-summary-item
-          [label]="t('type')"
-          [value]="t(otherFunding.get('type')?.value)"
-          [rxFormControl]="otherFunding.get('type')"
-        ></drr-summary-item>
-        <drr-summary-item
-          [label]="t('otherDescription')"
-          [value]="otherFunding.get('otherDescription')?.value"
-          [rxFormControl]="otherFunding.get('otherDescription')"
-          *ngIf="otherFunding.get('type')?.value === 'OtherGrants'"
-        ></drr-summary-item>
-      </div>
+      @if (fullProposalForm.get("budget.haveOtherFunding")?.value === true) {
+        <mat-label class="drr-label">{{ t("otherFunding") }}</mat-label>
+        <div
+          class="summary-row"
+          *ngFor="
+            let otherFunding of getRxFormArrayControls('budget', 'otherFunding')
+          "
+        >
+          <drr-summary-item
+            [label]="t('amount')"
+            [value]="otherFunding.get('amount')?.value | currency"
+            [rxFormControl]="otherFunding.get('amount')"
+          ></drr-summary-item>
+          <drr-summary-item
+            [label]="t('name')"
+            [value]="otherFunding.get('name')?.value"
+            [rxFormControl]="otherFunding.get('name')"
+          ></drr-summary-item>
+          <drr-summary-item
+            [label]="t('type')"
+            [value]="t(otherFunding.get('type')?.value)"
+            [rxFormControl]="otherFunding.get('type')"
+          ></drr-summary-item>
+          <drr-summary-item
+            [label]="t('otherDescription')"
+            [value]="otherFunding.get('otherDescription')?.value"
+            [rxFormControl]="otherFunding.get('otherDescription')"
+            *ngIf="otherFunding.get('type')?.value === 'OtherGrants'"
+          ></drr-summary-item>
+        </div>
+      }
       <drr-summary-item
         [label]="
           fullProposalForm.get('budget.remainingAmount')?.value > 0
