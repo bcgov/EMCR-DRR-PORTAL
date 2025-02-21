@@ -285,21 +285,25 @@ export class BudgetForm {
   @prop()
   estimatedUnfundedAmount?: number;
 
+  //* used to calculate remaining amount and hold original(potentially negative) value */
   @prop()
-  @minNumber({ value: 0 })
   remainingAmount?: number;
+
+  //* used for display purposes only */
+  @prop()
+  remainingAmountAbs?: number;
 
   @propArray(YearOverYearFundingForm)
   yearOverYearFunding?: YearOverYearFundingForm[] = [{}];
 
-  // used to calculate total funding request from year over year forecasting
+  //* used to calculate total funding request from year over year forecasting */
   @prop()
   @required()
   @maxNumber({ value: 999999999 })
   @minNumber({ value: -999999999 })
   totalDrifFundingRequest?: number;
 
-  // represents EOI/FP funding request
+  //* represents EOI/FP funding request */
   @prop()
   eligibleFundingRequest?: number;
 
@@ -322,25 +326,24 @@ export class BudgetForm {
   @propArray(CostEstimateForm)
   costEstimates?: CostEstimateForm[] = [];
 
-  // used to determine if the form is valid
+  //* used to determine if the form is valid */
   @prop()
   @requiredTrue()
   estimatesMatchFundingRequest?: boolean;
 
-  // used to calculate contingency
+  //* used to calculate contingency */
   @prop()
   @maxNumber({ value: 100 })
   @minNumber({ value: 0 })
   contingency?: number;
 
-  // used to calculate total cost estimate
+  //* used to calculate total cost estimate */
   @prop()
   @required()
   @maxNumber({ value: 999999999 })
   @minNumber({ value: 0 })
   totalEligibleCosts?: number;
 
-  // other budget fields
   @prop()
   @required()
   costEffectiveComments?: string;

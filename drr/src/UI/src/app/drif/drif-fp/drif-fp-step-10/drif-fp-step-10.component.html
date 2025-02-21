@@ -54,55 +54,57 @@
       [disabled]="true"
     ></drr-currency-input>
 
-    <mat-label class="drr-label" style="margin-top: 2rem"
-      >Cost Estimate Class</mat-label
-    >
-    <p>
-      At this stage, your project should have a class A or B cost estimate. Set
-      your contingency based on this. See the section below for more information
-      about the classes.
-    </p>
-    <div *ngIf="isStrucutralProject()">
-      <table class="cost-estimate-table">
-        <thead>
-          <tr>
-            <th>Cost Estimate Classes</th>
-            <th>Features & Uses</th>
-            <th>Suggested Contingency for Associated Classes</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Class A</td>
-            <td>
-              Detailed estimate based on final drawings and specifications<br />
-              Used to evaluate tenders
-            </td>
-            <td>±10-15%</td>
-          </tr>
-          <tr>
-            <td>Class B</td>
-            <td>
-              Prepared after completing site investigations and studies, and
-              after defining major systems<br />
-              Based on a project brief and preliminary design<br />
-              Used for project approvals and budgetary control
-            </td>
-            <td>±15-25%</td>
-          </tr>
-        </tbody>
-      </table>
-      <p class="footnote">
-        Sourced from the Association of Professional Engineers and Geoscientists
-        of British Columbia (APEGBC)
+    @if (isStrucutralProject()) {
+      <mat-label class="drr-label" style="margin-top: 2rem"
+        >Cost Estimate Class</mat-label
+      >
+      <p>
+        At this stage, your project should have a class A or B cost estimate.
+        Set your contingency based on this. See the section below for more
+        information about the classes.
       </p>
-    </div>
-    <drr-radio-button
-      style="margin-top: 1rem"
-      [label]="t('costEstimateClass')"
-      [rxFormControl]="budgetForm.get('costEstimateClass')"
-      [options]="costEstimateClassOptions"
-    ></drr-radio-button>
+      <div>
+        <table class="cost-estimate-table">
+          <thead>
+            <tr>
+              <th>Cost Estimate Classes</th>
+              <th>Features & Uses</th>
+              <th>Suggested Contingency for Associated Classes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Class A</td>
+              <td>
+                Detailed estimate based on final drawings and specifications<br />
+                Used to evaluate tenders
+              </td>
+              <td>±10-15%</td>
+            </tr>
+            <tr>
+              <td>Class B</td>
+              <td>
+                Prepared after completing site investigations and studies, and
+                after defining major systems<br />
+                Based on a project brief and preliminary design<br />
+                Used for project approvals and budgetary control
+              </td>
+              <td>±15-25%</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="footnote">
+          Sourced from the Association of Professional Engineers and
+          Geoscientists of British Columbia (APEGBC)
+        </p>
+      </div>
+      <drr-radio-button
+        style="margin-top: 1rem"
+        [label]="t('costEstimateClass')"
+        [rxFormControl]="budgetForm.get('costEstimateClass')"
+        [options]="costEstimateClassOptions"
+      ></drr-radio-button>
+    }
 
     <mat-label class="drr-label" style="margin-top: 2rem"
       >Detailed Cost Estimates</mat-label
@@ -279,7 +281,7 @@
     >
     </drr-currency-input>
 
-    <p>The funding request variance (positive = request for more money):</p>
+    <p>The funding request variance is (positive = request for more money):</p>
     <drr-currency-input
       style="align-self: flex-start; margin-top: 1rem; width: 25rem"
       [label]="t('fundingRequestDiscrepancy')"
@@ -301,11 +303,8 @@
     </mat-label>
     <p>
       Use the fields below to provide a year-over-year forecast of your Total
-      Detailed Cost Estimate.
-    </p>
-    <p>
-      Ensure that these numbers align with your Total Detailed Cost Estimate
-      from above.
+      Detailed Cost Estimate. Ensure that these numbers align with your Total
+      Detailed Cost Estimate from above.
     </p>
     <p>Note that the fiscal year runs from April 1 - Mar 31.</p>
     <div>
@@ -384,8 +383,10 @@
       [disabled]="true"
     >
     </drr-currency-input>
-    <p>Your estimated unfunded amount is:</p>
-    <i>Note that this may change if your DRIF funding request has increased.</i>
+    <p>
+      Your estimated unfunded amount is (note that this may change if your DRIF
+      funding request has increased):
+    </p>
     <drr-currency-input
       style="align-self: flex-start; margin-top: 1rem; width: 25rem"
       [label]="t('estimatedUnfundedAmount')"
@@ -413,7 +414,7 @@
             ? t('missingFundsLabel')
             : t('excessFundingLabel')
         "
-        [rxFormControl]="budgetForm.get('remainingAmount')"
+        [rxFormControl]="budgetForm.get('remainingAmountAbs')"
         [disabled]="true"
       >
       </drr-currency-input>

@@ -7,7 +7,7 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { RxFormBuilder, RxFormControl } from '@rxweb/reactive-form-validators';
 
-export class RadioOption {
+export class DrrRadioOption {
   value!: string | boolean | number;
   label!: string;
 }
@@ -33,12 +33,12 @@ export class DrrRadioButtonComponent {
   @Input()
   label = '';
 
-  private _options: RadioOption[] = [
+  private _options: DrrRadioOption[] = [
     { value: true, label: 'Yes' },
     { value: false, label: 'No' },
   ];
   @Input()
-  set options(options: RadioOption[]) {
+  set options(options: DrrRadioOption[]) {
     if (options) {
       this._options = options;
     }

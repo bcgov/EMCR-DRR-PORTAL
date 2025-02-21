@@ -13,12 +13,13 @@ import { IFormGroup, RxFormBuilder } from '@rxweb/reactive-form-validators';
 
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { ProjectService } from '../../../../../api/project/project.service';
-import { PeriodType } from '../../../../../model';
+import { CanCreateReportResult, PeriodType } from '../../../../../model';
 import { DrrDatepickerComponent } from '../../../../shared/controls/drr-datepicker/drr-datepicker.component';
 import {
-  DrrSelectComponent,
-  DrrSelectOption,
-} from '../../../../shared/controls/drr-select/drr-select.component';
+  DrrRadioButtonComponent,
+  DrrRadioOption,
+} from '../../../../shared/controls/drr-radio-button/drr-radio-button.component';
+import { DrrSelectComponent } from '../../../../shared/controls/drr-select/drr-select.component';
 import {
   InterimReportConfigurationForm,
   InterimReportForm,
@@ -36,6 +37,7 @@ import {
     TranslocoModule,
     DrrDatepickerComponent,
     DrrSelectComponent,
+    DrrRadioButtonComponent,
   ],
   templateUrl: './drif-interim-report-create.component.html',
   styleUrl: './drif-interim-report-create.component.scss',
@@ -49,6 +51,7 @@ export class DrifInterimReportCreateComponent {
   projectService = inject(ProjectService);
 
   projectId?: string;
+  canCreateReportResult?: CanCreateReportResult;
 
   stepperOrientation: StepperOrientation = 'horizontal';
 
@@ -56,19 +59,33 @@ export class DrifInterimReportCreateComponent {
     InterimReportForm,
   ) as IFormGroup<InterimReportForm>;
 
-  periodTypeOptions?: DrrSelectOption[] = Object.keys(PeriodType).map(
-    (value) => {
-      return {
-        value,
-        label: this.translocoService.translate(`periodType.${value}`),
-      };
+  periodTypeOptions: DrrRadioOption[] = [
+    {
+      value: PeriodType.Interim,
+      label: this.translocoService.translate(
+        `periodType.${PeriodType.Interim}`,
+      ),
     },
-  );
+    {
+      value: PeriodType.OffCycle,
+      label: this.translocoService.translate(
+        `periodType.${PeriodType.OffCycle}`,
+      ),
+    },
+    {
+      value: PeriodType.Final,
+      label: this.translocoService.translate(`periodType.${PeriodType.Final}`),
+    },
+  ];
 
   ngOnInit() {
     this.route.params.subscribe((params) => {
       this.projectId = params['projectId'];
     });
+  }
+
+  onNext1() {
+    this.interimReportForm.get('configuration')?.markAllAsTouched();
   }
 
   stepperSelectionChange(event: StepperSelectionEvent) {
@@ -97,7 +114,7 @@ export class DrifInterimReportCreateComponent {
         reportType: this.interimReportForm.value.configuration?.periodType,
       })
       .subscribe((response) => {
-        console.log(response);
+        this.canCreateReportResult = response;
       });
   }
 
@@ -105,5 +122,15 @@ export class DrifInterimReportCreateComponent {
 
   goBack() {
     this.router.navigate(['drif-projects', this.projectId]);
+  }
+
+  getStep2Label() {
+    const reportType = this.getConfigurationForm().value?.periodType;
+
+    if (!reportType) {
+      return '';
+    }
+
+    return reportType === PeriodType.Interim ? 'Confirm' : 'Contact';
   }
 }

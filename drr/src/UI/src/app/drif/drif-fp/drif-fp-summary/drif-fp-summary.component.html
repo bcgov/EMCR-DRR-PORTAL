@@ -1049,6 +1049,8 @@
       <drr-summary-item
         [label]="t('costEstimateClass')"
         [rxFormControl]="fullProposalForm.get('budget.costEstimateClass')"
+        controlType="select"
+        translatePrefix="costEstimateClassType"
       ></drr-summary-item>
 
       <mat-label class="drr-label">{{ t("detailedCostEstimates") }}</mat-label>

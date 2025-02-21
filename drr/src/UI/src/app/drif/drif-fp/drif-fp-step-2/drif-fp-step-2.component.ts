@@ -14,7 +14,7 @@ import { YesNoOption } from '../../../../model';
 import { DrrInputComponent } from '../../../shared/controls/drr-input/drr-input.component';
 import {
   DrrRadioButtonComponent,
-  RadioOption,
+  DrrRadioOption,
 } from '../../../shared/controls/drr-radio-button/drr-radio-button.component';
 import { DrrTextareaComponent } from '../../../shared/controls/drr-textarea/drr-textarea.component';
 import { OwnershipAndAuthorizationForm } from '../drif-fp-form';
@@ -46,12 +46,12 @@ export class DrifFpStep2Component {
   @Input()
   ownershipAndAuthorizationForm!: IFormGroup<OwnershipAndAuthorizationForm>;
 
-  yesNoBoolOptions: RadioOption[] = [
+  yesNoBoolOptions: DrrRadioOption[] = [
     { value: true, label: 'Yes' },
     { value: false, label: 'No' },
   ];
 
-  allYesNoOptions: RadioOption[] = [
+  allYesNoOptions: DrrRadioOption[] = [
     { value: YesNoOption.Yes, label: 'Yes' },
     { value: YesNoOption.No, label: 'No' },
     { value: YesNoOption.NotApplicable, label: 'Not Applicable' },
@@ -59,7 +59,7 @@ export class DrifFpStep2Component {
 
   ngOnInit() {
     const ownershipDescription = this.ownershipAndAuthorizationForm.get(
-      'ownershipDescription'
+      'ownershipDescription',
     );
 
     this.ownershipAndAuthorizationForm

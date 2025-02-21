@@ -17,7 +17,7 @@ import {
 import { YesNoOption } from '../../../../model';
 import {
   DrrRadioButtonComponent,
-  RadioOption,
+  DrrRadioOption,
 } from '../../../shared/controls/drr-radio-button/drr-radio-button.component';
 import { DrrAlertComponent } from '../../../shared/drr-alert/drr-alert.component';
 import { ScreenerQuestionsForm } from './drif-fp-screener-form';
@@ -54,7 +54,7 @@ export class DrifFpScreenerComponent {
 
   screenerForm = this.formBuilder.formGroup(ScreenerQuestionsForm);
 
-  foundationWorkCompletedOptions: RadioOption[] = [
+  foundationWorkCompletedOptions: DrrRadioOption[] = [
     { value: YesNoOption.Yes, label: 'Yes' },
     { value: YesNoOption.No, label: 'No' },
     {
@@ -63,13 +63,13 @@ export class DrifFpScreenerComponent {
     },
   ];
 
-  yesNoNotRequiredOptions: RadioOption[] = [
+  yesNoNotRequiredOptions: DrrRadioOption[] = [
     { value: YesNoOption.Yes, label: 'Yes' },
     { value: YesNoOption.No, label: 'No' },
     { value: YesNoOption.NotApplicable, label: 'Not Required' },
   ];
 
-  yesNoNotApplicableOptions: RadioOption[] = [
+  yesNoNotApplicableOptions: DrrRadioOption[] = [
     { value: YesNoOption.Yes, label: 'Yes' },
     { value: YesNoOption.No, label: 'No' },
     { value: YesNoOption.NotApplicable, label: 'Not Applicable' },
@@ -82,13 +82,13 @@ export class DrifFpScreenerComponent {
 
   hasNegativeAnswers() {
     return Object.values(this.screenerForm.value).some(
-      (value) => value === false || value === YesNoOption.No
+      (value) => value === false || value === YesNoOption.No,
     );
   }
 
   allQuestionsAnswered() {
     return Object.values(this.screenerForm.value).every(
-      (value) => value !== null
+      (value) => value !== null,
     );
   }
 
@@ -112,7 +112,7 @@ export class DrifFpScreenerComponent {
         queryParams: {
           ...screenerAnswers,
         },
-      }
+      },
     );
   }
 

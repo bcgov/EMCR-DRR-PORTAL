@@ -25,7 +25,7 @@ import { DrrChipAutocompleteComponent } from '../../../shared/controls/drr-chip-
 import { DrrInputComponent } from '../../../shared/controls/drr-input/drr-input.component';
 import {
   DrrRadioButtonComponent,
-  RadioOption,
+  DrrRadioOption,
 } from '../../../shared/controls/drr-radio-button/drr-radio-button.component';
 import {
   DrrSelectComponent,
@@ -72,7 +72,7 @@ export class DrifFpStep7Component {
   @Input()
   permitsRegulationsAndStandardsForm!: IFormGroup<PermitsRegulationsAndStandardsForm>;
 
-  professionalGuidanceOptions: RadioOption[] = [
+  professionalGuidanceOptions: DrrRadioOption[] = [
     { value: true, label: 'Yes' },
     { value: false, label: 'Not Applicable' },
   ];
@@ -91,7 +91,7 @@ export class DrifFpStep7Component {
     }));
   }
 
-  standardsAcceptableOptions: RadioOption[] = [
+  standardsAcceptableOptions: DrrRadioOption[] = [
     { value: YesNoOption.Yes, label: 'Yes' },
     { value: YesNoOption.No, label: 'No' },
     { value: YesNoOption.NotApplicable, label: 'Not Applicable' },
@@ -121,7 +121,7 @@ export class DrifFpStep7Component {
       .subscribe((value) => {
         const regulatoryRequirementsControl =
           this.permitsRegulationsAndStandardsForm.get(
-            'meetsRegulatoryComments'
+            'meetsRegulatoryComments',
           );
         if (value === false) {
           regulatoryRequirementsControl?.clearValidators();
@@ -138,7 +138,7 @@ export class DrifFpStep7Component {
         const permitsArray = this.getPermitsFormArray();
         const meetsEligibilityCommentsControl =
           this.permitsRegulationsAndStandardsForm.get(
-            'meetsEligibilityComments'
+            'meetsEligibilityComments',
           );
         if (value === false) {
           meetsEligibilityCommentsControl?.clearValidators();
@@ -158,14 +158,14 @@ export class DrifFpStep7Component {
       ?.valueChanges.pipe(distinctUntilChanged())
       .subscribe((value) => {
         const standardsControl = this.permitsRegulationsAndStandardsForm.get(
-          'standards'
+          'standards',
         ) as FormArray;
 
         switch (value) {
           case YesNoOption.Yes:
             this.standardsVisible = true;
             standardsValidControl?.addValidators(
-              RxwebValidators.requiredTrue()
+              RxwebValidators.requiredTrue(),
             );
             break;
           case YesNoOption.No:
@@ -197,7 +197,7 @@ export class DrifFpStep7Component {
         const standardsValidControl =
           this.permitsRegulationsAndStandardsForm.get('standardsValid');
         const isStandardsValid = value.some(
-          (s: StandardInfoForm) => s.isCategorySelected
+          (s: StandardInfoForm) => s.isCategorySelected,
         );
 
         standardsValidControl?.patchValue(isStandardsValid);
@@ -210,7 +210,7 @@ export class DrifFpStep7Component {
       .subscribe((permits: StringItem[]) => {
         this.permitsRegulationsAndStandardsForm.get('permits')?.patchValue(
           permits.map((permit) => permit.value),
-          { emitEvent: false }
+          { emitEvent: false },
         );
       });
   }
@@ -231,11 +231,11 @@ export class DrifFpStep7Component {
 
   getCategoryControl(category: string) {
     const standardInfoArray = this.permitsRegulationsAndStandardsForm.get(
-      'standards'
+      'standards',
     ) as FormArray;
 
     const categoryControl = standardInfoArray.controls.filter(
-      (c) => c?.get('category')?.value === category
+      (c) => c?.get('category')?.value === category,
     );
 
     return categoryControl;
@@ -250,7 +250,7 @@ export class DrifFpStep7Component {
 
   getPermitsFormArray() {
     return this.permitsRegulationsAndStandardsForm.get(
-      'permitsArray'
+      'permitsArray',
     ) as FormArray;
   }
 

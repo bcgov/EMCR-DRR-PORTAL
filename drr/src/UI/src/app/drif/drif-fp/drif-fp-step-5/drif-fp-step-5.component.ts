@@ -10,7 +10,7 @@ import { YesNoOption } from '../../../../model';
 import { DrrChipAutocompleteComponent } from '../../../shared/controls/drr-chip-autocomplete/drr-chip-autocomplete.component';
 import {
   DrrRadioButtonComponent,
-  RadioOption,
+  DrrRadioOption,
 } from '../../../shared/controls/drr-radio-button/drr-radio-button.component';
 import { DrrTextareaComponent } from '../../../shared/controls/drr-textarea/drr-textarea.component';
 import { OptionsStore } from '../../../store/options.store';
@@ -38,7 +38,7 @@ export class DrifFpStep5Component {
 
   @Input() projectEngagementForm!: IFormGroup<ProjectEngagementForm>;
 
-  otherEngagementOptions: RadioOption[] = [
+  otherEngagementOptions: DrrRadioOption[] = [
     { value: YesNoOption.Yes, label: 'Yes' },
     { value: YesNoOption.No, label: 'No' },
     {

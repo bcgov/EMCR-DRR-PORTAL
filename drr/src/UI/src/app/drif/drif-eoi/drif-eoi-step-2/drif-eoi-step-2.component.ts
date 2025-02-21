@@ -18,8 +18,14 @@ import { distinctUntilChanged } from 'rxjs';
 import { FundingStream, Hazards, ProjectType } from '../../../../model';
 import { DrrDatepickerComponent } from '../../../shared/controls/drr-datepicker/drr-datepicker.component';
 import { DrrInputComponent } from '../../../shared/controls/drr-input/drr-input.component';
-import { DrrRadioButtonComponent } from '../../../shared/controls/drr-radio-button/drr-radio-button.component';
-import { DrrSelectComponent } from '../../../shared/controls/drr-select/drr-select.component';
+import {
+  DrrRadioButtonComponent,
+  DrrRadioOption,
+} from '../../../shared/controls/drr-radio-button/drr-radio-button.component';
+import {
+  DrrSelectComponent,
+  DrrSelectOption,
+} from '../../../shared/controls/drr-select/drr-select.component';
 import { ProjectInformationForm } from '../drif-eoi-form';
 
 @UntilDestroy({ checkProperties: true })
@@ -52,17 +58,19 @@ export class DrifEoiStep2Component {
 
   minStartDate = new Date();
 
-  fundingStreamOptions = Object.values(FundingStream).map((value) => ({
+  fundingStreamOptions: DrrRadioOption[] = Object.values(FundingStream).map(
+    (value) => ({
+      value,
+      label: this.translocoService.translate(value),
+    }),
+  );
+
+  hazardsOptions: DrrSelectOption[] = Object.values(Hazards).map((value) => ({
     value,
     label: this.translocoService.translate(value),
   }));
 
-  hazardsOptions = Object.values(Hazards).map((value) => ({
-    value,
-    label: this.translocoService.translate(value),
-  }));
-
-  streamOptions = Object.values(ProjectType).map((value) => ({
+  streamOptions: DrrRadioOption[] = Object.values(ProjectType).map((value) => ({
     value,
     label: this.translocoService.translate(value),
   }));
@@ -73,7 +81,7 @@ export class DrifEoiStep2Component {
       ?.valueChanges.pipe(distinctUntilChanged())
       .subscribe((hazards) => {
         const otherHazardsDescriptionControl = this.projectInformationForm.get(
-          'otherHazardsDescription'
+          'otherHazardsDescription',
         );
         if (hazards?.includes('Other')) {
           otherHazardsDescriptionControl?.addValidators(Validators.required);

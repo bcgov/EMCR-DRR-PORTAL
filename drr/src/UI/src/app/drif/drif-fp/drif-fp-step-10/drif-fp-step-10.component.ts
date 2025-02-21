@@ -31,7 +31,7 @@ import { DrrCurrencyInputComponent } from '../../../shared/controls/drr-currency
 import { DrrInputComponent } from '../../../shared/controls/drr-input/drr-input.component';
 import {
   DrrRadioButtonComponent,
-  RadioOption,
+  DrrRadioOption,
 } from '../../../shared/controls/drr-radio-button/drr-radio-button.component';
 import {
   DrrSelectComponent,
@@ -99,7 +99,7 @@ export class DrifFpStep10Component {
 
   isMobile = false;
 
-  costEstimateClassOptions: RadioOption[] = Object.keys(CostEstimateClass)
+  costEstimateClassOptions: DrrRadioOption[] = Object.keys(CostEstimateClass)
     .map((key) => ({
       value: key,
       label: this.translocoService.translate(`costEstimateClassType.${key}`),
@@ -394,6 +394,9 @@ export class DrifFpStep10Component {
     // how much is left to cover and I need to explain how I'm going to cover it
     let remainingAmount = estimatedUnfundedAmount - otherFundingSum;
     this.budgetForm.patchValue({ remainingAmount });
+    this.budgetForm.patchValue({
+      remainingAmountAbs: Math.abs(remainingAmount),
+    });
 
     const intendToSecureFunding = this.budgetForm.get('intendToSecureFunding');
 

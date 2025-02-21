@@ -14,7 +14,10 @@ import { IFormGroup, RxFormBuilder } from '@rxweb/reactive-form-validators';
 import { distinctUntilChanged, Subscription } from 'rxjs';
 import { ProponentType } from '../../../../model';
 import { DrrInputComponent } from '../../../shared/controls/drr-input/drr-input.component';
-import { DrrRadioButtonComponent } from '../../../shared/controls/drr-radio-button/drr-radio-button.component';
+import {
+  DrrRadioButtonComponent,
+  DrrRadioOption,
+} from '../../../shared/controls/drr-radio-button/drr-radio-button.component';
 import { ProfileStore } from '../../../store/profile.store';
 import {
   ContactDetailsForm,
@@ -52,10 +55,12 @@ export class DrifEoiStep1Component {
   submitterSub: Subscription | undefined;
   isMobile = false;
 
-  proponentTypeOptions = Object.values(ProponentType).map((value) => ({
-    value,
-    label: this.translocoService.translate(value),
-  }));
+  proponentTypeOptions: DrrRadioOption[] = Object.values(ProponentType).map(
+    (value) => ({
+      value,
+      label: this.translocoService.translate(value),
+    }),
+  );
 
   @Input()
   proponentInformationForm!: IFormGroup<ProponentInformationForm>;
@@ -72,7 +77,7 @@ export class DrifEoiStep1Component {
       .subscribe((proponents: StringItem[]) => {
         this.proponentInformationForm.get('partneringProponents')?.patchValue(
           proponents.map((proponent) => proponent.value),
-          { emitEvent: false }
+          { emitEvent: false },
         );
       });
 
@@ -89,7 +94,7 @@ export class DrifEoiStep1Component {
 
   addAdditionalContact() {
     this.getFormArray('additionalContacts').push(
-      this.formBuilder.formGroup(ContactDetailsForm)
+      this.formBuilder.formGroup(ContactDetailsForm),
     );
   }
 

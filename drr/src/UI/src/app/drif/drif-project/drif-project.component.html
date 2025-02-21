@@ -146,7 +146,15 @@
             <ng-container matColumnDef="id">
               <th mat-header-cell *matHeaderCellDef>ID</th>
               <td mat-cell *matCellDef="let element">
-                {{ element.id }}
+                @if (!element.parentId) {
+                  {{ element.id }}
+                }
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="section">
+              <th mat-header-cell *matHeaderCellDef>Section</th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.section }}
               </td>
             </ng-container>
             <ng-container matColumnDef="status">
@@ -169,196 +177,20 @@
               </td>
             </ng-container>
 
-            <ng-container matColumnDef="expand">
-              <th mat-header-cell *matHeaderCellDef aria-label="row actions">
-                &nbsp;
-              </th>
-              <td mat-cell *matCellDef="let element" style="text-align: right">
-                <button
-                  mat-icon-button
-                  aria-label="expand row"
-                  (click)="
-                    expandedInterimReport =
-                      expandedInterimReport === element ? null : element;
-                    $event.stopPropagation()
-                  "
-                >
-                  @if (expandedInterimReport === element) {
-                    <mat-icon>keyboard_arrow_up</mat-icon>
-                  } @else {
-                    <mat-icon>keyboard_arrow_down</mat-icon>
-                  }
-                </button>
-              </td>
-            </ng-container>
-
-            <ng-container matColumnDef="expandedDetail">
-              <td
-                mat-cell
-                *matCellDef="let element"
-                [attr.colspan]="5"
-                style="padding: 0"
-              >
-                <div
-                  class="interim-element-detail"
-                  [@detailExpand]="
-                    element == expandedInterimReport ? 'expanded' : 'collapsed'
-                  "
-                >
-                  <mat-card>
-                    <div class="interim-element-detail-container">
-                      <div class="interim-element-detail-container__info">
-                        <b>Claim</b>
-                        @if (element.projectClaim) {
-                          <div>
-                            Claim ID:
-                            <a
-                              [routerLink]="[
-                                '/drif-projects',
-                                projectId,
-                                'interim-reports',
-                                element.id,
-                                'claims',
-                                element.projectClaim.id,
-                              ]"
-                              >{{ element.projectClaim.id }}</a
-                            >
-                          </div>
-                          <div>
-                            Due Date: {{ element.projectClaim.claimDate }}
-                          </div>
-                          <div>Status: {{ element.projectClaim.status }}</div>
-                        } @else {
-                          <div>
-                            <i>No claim associated with this report</i>
-                          </div>
-                        }
-                      </div>
-                      @if (element.projectClaim) {
-                        <div class="interim-element-detail-container__actions">
-                          <a
-                            mat-raised-button
-                            color="primary"
-                            [routerLink]="[
-                              '/drif-projects',
-                              projectId,
-                              'interim-reports',
-                              element.id,
-                              'claims',
-                              element.projectClaim.id,
-                              'edit',
-                            ]"
-                            >Edit</a
-                          >
-                        </div>
-                      }
-                    </div>
-
-                    <mat-divider></mat-divider>
-
-                    <div class="interim-element-detail-container">
-                      <div class="interim-element-detail-container__info">
-                        <b>Progress Report</b>
-                        @if (element.progressReport) {
-                          <div>
-                            Report ID:
-                            <a
-                              [routerLink]="[
-                                '/drif-projects',
-                                projectId,
-                                'interim-reports',
-                                element.id,
-                                'progress-reports',
-                                element.progressReport.id,
-                                'view',
-                              ]"
-                              >{{ element.progressReport.id }}</a
-                            >
-                          </div>
-                          <div>
-                            Due Date: {{ element.progressReport.reportDate }}
-                          </div>
-                          <div>Status: {{ element.progressReport.status }}</div>
-                        } @else {
-                          <div>
-                            <i
-                              >No progress report associated with this report</i
-                            >
-                          </div>
-                        }
-                      </div>
-                      @if (element.progressReport) {
-                        <div class="interim-element-detail-container__actions">
-                          <a
-                            mat-raised-button
-                            color="primary"
-                            [routerLink]="[
-                              '/drif-projects',
-                              projectId,
-                              'interim-reports',
-                              element.id,
-                              'progress-reports',
-                              element.progressReport.id,
-                              'edit',
-                            ]"
-                          >
-                            Edit
-                          </a>
-                        </div>
-                      }
-                    </div>
-
-                    <mat-divider></mat-divider>
-
-                    <div class="interim-element-detail-container">
-                      <div class="interim-element-detail-container__info">
-                        <b>Forecast</b>
-                        @if (element.forecast) {
-                          <div>
-                            Forecast ID:
-                            <a
-                              [routerLink]="[
-                                '/drif-projects',
-                                projectId,
-                                'interim-reports',
-                                element.id,
-                                'forecasts',
-                                element.forecast.id,
-                              ]"
-                              >{{ element.forecast.id }}</a
-                            >
-                          </div>
-                          <div>
-                            Due Date: {{ element.forecast.forecastDate }}
-                          </div>
-                          <div>Status: {{ element.forecast.status }}</div>
-                        } @else {
-                          <div>
-                            <i>No forecast associated with this report</i>
-                          </div>
-                        }
-                      </div>
-                      @if (element.forecast) {
-                        <div class="interim-element-detail-container__actions">
-                          <a
-                            mat-raised-button
-                            color="primary"
-                            [routerLink]="[
-                              '/drif-projects',
-                              projectId,
-                              'interim-reports',
-                              element.id,
-                              'forecasts',
-                              element.forecast.id,
-                              'edit',
-                            ]"
-                            >Edit</a
-                          >
-                        </div>
-                      }
-                    </div>
-                  </mat-card>
-                </div>
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Actions</th>
+              <td mat-cell *matCellDef="let element">
+                @if (element.parentId) {
+                  <div class="table-actions">
+                    <a
+                      mat-raised-button
+                      color="primary"
+                      [routerLink]="getSubReportRoute(element)"
+                    >
+                      Edit
+                    </a>
+                  </div>
+                }
               </td>
             </ng-container>
 
@@ -366,29 +198,26 @@
               mat-header-row
               *matHeaderRowDef="[
                 'id',
+                'section',
                 'status',
                 'dueDate',
                 'submitDate',
-                'expand',
+                'actions',
               ]"
             ></tr>
             <tr
               mat-row
               *matRowDef="
                 let element;
-                columns: ['id', 'status', 'dueDate', 'submitDate', 'expand']
+                columns: [
+                  'id',
+                  'section',
+                  'status',
+                  'dueDate',
+                  'submitDate',
+                  'actions',
+                ]
               "
-              class="interim-element-row"
-              [class.interim-expanded-row]="expandedInterimReport === element"
-              (click)="
-                expandedInterimReport =
-                  expandedInterimReport === element ? null : element
-              "
-            ></tr>
-            <tr
-              mat-row
-              *matRowDef="let row; columns: ['expandedDetail']"
-              class="interim-detail-row"
             ></tr>
           </table>
           <div style="display: flex; flex-direction: column; gap: 1rem">
@@ -600,9 +429,6 @@
     </mat-tab>
     <mat-tab label="Completed Reports">
       <mat-card>
-        <!-- <mat-card-header>
-          <mat-card-title>Past Reports</mat-card-title>
-        </mat-card-header> -->
         <table mat-table [dataSource]="pastReportsDataSource">
           <ng-container matColumnDef="id">
             <th mat-header-cell *matHeaderCellDef>ID</th>

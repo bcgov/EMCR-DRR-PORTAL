@@ -53,7 +53,7 @@ import { DrrInputComponent } from '../../../../shared/controls/drr-input/drr-inp
 import { DrrNumericInputComponent } from '../../../../shared/controls/drr-number-input/drr-number-input.component';
 import {
   DrrRadioButtonComponent,
-  RadioOption,
+  DrrRadioOption,
 } from '../../../../shared/controls/drr-radio-button/drr-radio-button.component';
 import {
   DrrSelectComponent,
@@ -164,7 +164,7 @@ export class DrifProgressReportCreateComponent {
       value,
     }));
 
-  necessaryActivityStatusOptions: RadioOption[] =
+  necessaryActivityStatusOptions: DrrRadioOption[] =
     this.optionalActivityStatusOptions.filter(
       (option) => option.value !== WorkplanStatus.NoLongerNeeded,
     );
@@ -178,7 +178,7 @@ export class DrifProgressReportCreateComponent {
       value,
     }));
 
-  yesNoRadioOptions: RadioOption[] = [
+  yesNoRadioOptions: DrrRadioOption[] = [
     {
       label: 'Yes',
       value: true,
@@ -200,7 +200,7 @@ export class DrifProgressReportCreateComponent {
     },
   ];
 
-  eventProgressOptions: RadioOption[] = Object.values(EventProgressType).map(
+  eventProgressOptions: DrrRadioOption[] = Object.values(EventProgressType).map(
     (value) => ({
       label: value,
       value,

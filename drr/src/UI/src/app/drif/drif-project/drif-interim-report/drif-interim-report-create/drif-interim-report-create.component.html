@@ -2,7 +2,7 @@
   <div class="app-stepper-header">
     <div style="flex: 1">
       <h5 style="font-size: 1.2rem; margin-bottom: 0.5rem">
-        {{ t("interimReport") }}
+        {{ t("startReport") }}
       </h5>
       <!-- <span>
         {{ t("project") }}: {{ project?.name }} ({{ project?.id }})
@@ -39,41 +39,27 @@
     #stepper
   >
     <mat-step
-      label="Instructions"
+      label="Select Report"
       [stepControl]="getConfigurationForm()"
       [optional]="false"
     >
       <div style="display: flex; flex-direction: column; gap: 1rem">
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras a
-          suscipit lectus. Sed molestie dolor nec tortor hendrerit consequat. In
-          at mauris vel lorem molestie rutrum. Curabitur dictum ligula id
-          fermentum ultrices. In vel tortor volutpat, ultrices ipsum vel,
-          lacinia eros. Curabitur quis lectus et ipsum sagittis semper et
-          commodo turpis. Curabitur viverra felis vel consectetur fringilla.
-          Nunc eu egestas magna, eget tincidunt ex. Integer accumsan, velit eget
-          faucibus ornare, enim risus accumsan dui, congue luctus dui eros sed
-          nunc. Vestibulum et blandit libero. Fusce nec mauris interdum, cursus
-          nibh ut, tristique leo. Nullam rhoncus, lectus ac euismod semper,
-          massa lacus elementum ipsum, vel mollis lacus sem in ante. Mauris a
-          dignissim nunc. Duis mollis facilisis odio, nec interdum enim
-          malesuada sed. Fusce congue tristique fermentum.
-        </p>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras a
-          suscipit lectus. Sed molestie dolor nec tortor hendrerit consequat. In
-          at mauris vel lorem molestie rutrum. Curabitur dictum ligula id
-          fermentum ultrices. In vel tortor volutpat, ultrices ipsum vel,
-          lacinia eros.
-        </p>
-
-        <mat-label class="drr-label"> Select report type </mat-label>
-        <drr-select
-          style="align-self: flex-start; width: 25rem"
-          [label]="t('reportType')"
-          [rxFormControl]="getConfigurationForm().get('periodType')"
-          [options]="periodTypeOptions"
-        ></drr-select>
+        <div>
+          <p>Select the type of report you want to start below.</p>
+          <p>
+            Choose an interim report for your regular reporting, such as monthly
+            or quarterly reports. Choose an off-cycle report to submit a claim
+            between your regular reports. Choose the final report to submit your
+            closing report for the project.
+          </p>
+        </div>
+        <div>
+          <mat-label class="drr-label">{{ t("reportType") }}*</mat-label>
+          <drr-radio-button
+            [rxFormControl]="getConfigurationForm().get('periodType')"
+            [options]="periodTypeOptions"
+          ></drr-radio-button>
+        </div>
       </div>
       <div class="drr-stepper-action">
         <button
@@ -82,25 +68,30 @@
           color="primary"
           matStepperNext
           type="button"
+          (click)="onNext1()"
         >
           {{ t("next") }}
         </button>
       </div>
     </mat-step>
-    <mat-step label="Interim Report Details">
+    <mat-step [label]="getStep2Label()">
       <div style="display: flex; flex-direction: column; gap: 1rem">
-        <ng-container [ngSwitch]="interimReportForm.get('periodType')?.value">
+        <ng-container
+          [ngSwitch]="interimReportForm.get('configuration.periodType')?.value"
+        >
           <div *ngSwitchCase="'Interim'">
-            <mat-label class="drr-label"
-              >You're about to create an interim report</mat-label
-            >
-            <p>
-              <i>
-                An interim report is a report that is submitted in the middle of
-                the project cycle. It is used to provide an update on the
-                project progress and to request additional funding if needed.
-              </i>
-            </p>
+            @if (canCreateReportResult?.canCreate) {
+              <p>
+                This will create the
+                {{ canCreateReportResult?.description }} interim report. Do you
+                want to proceed?
+              </p>
+            } @else {
+              <p>
+                A new interim report cannot be created until the previous report
+                is approved.
+              </p>
+            }
           </div>
           <div *ngSwitchCase="'OffCycle'">
             <mat-label class="drr-label"
@@ -151,23 +142,7 @@
           matStepperNext
           type="button"
         >
-          {{ t("next") }}
-        </button>
-      </div></mat-step
-    >
-    <mat-step label="Review & Declarations">
-      <div class="drr-stepper-actions">
-        <button mat-stroked-button color="primary" matStepperPrevious>
-          {{ t("back") }}
-        </button>
-        <button
-          id="next2"
-          mat-flat-button
-          color="primary"
-          matStepperNext
-          type="button"
-        >
-          {{ t("next") }}
+          {{ canCreateReportResult?.canCreate ? t("create") : t("close") }}
         </button>
       </div></mat-step
     >
