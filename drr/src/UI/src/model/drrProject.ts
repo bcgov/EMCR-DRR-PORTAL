@@ -5,15 +5,15 @@
  * OpenAPI spec version: 1.0.0
  */
 import type { Attachment } from './attachment';
-import type { ProjectClaim } from './projectClaim';
+import type { DraftProjectClaim } from './draftProjectClaim';
 import type { PaymentCondition } from './paymentCondition';
 import type { ContactDetails } from './contactDetails';
 import type { ProjectEvent } from './projectEvent';
-import type { Forecast } from './forecast';
+import type { DraftForecast } from './draftForecast';
 import type { FundingStream } from './fundingStream';
 import type { InterimReport } from './interimReport';
 import type { ProgramType } from './programType';
-import type { ProgressReport } from './progressReport';
+import type { DraftProgressReport } from './draftProgressReport';
 import type { ReportingScheduleType } from './reportingScheduleType';
 import type { ProjectStatus } from './projectStatus';
 
@@ -21,7 +21,7 @@ export interface DrrProject {
   /** @nullable */
   attachments?: Attachment[];
   /** @nullable */
-  claims?: ProjectClaim[];
+  claims?: DraftProjectClaim[];
   /** @nullable */
   conditions?: PaymentCondition[];
   /** @nullable */
@@ -35,7 +35,7 @@ export interface DrrProject {
   /** @nullable */
   events?: ProjectEvent[];
   /** @nullable */
-  forecast?: Forecast[];
+  forecast?: DraftForecast[];
   /** @nullable */
   fpId?: string;
   /** @nullable */
@@ -49,7 +49,7 @@ export interface DrrProject {
   /** @nullable */
   programType?: ProgramType;
   /** @nullable */
-  progressReports?: ProgressReport[];
+  progressReports?: DraftProgressReport[];
   /** @nullable */
   projectNumber?: string;
   /** @nullable */

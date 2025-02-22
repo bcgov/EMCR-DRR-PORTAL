@@ -20,9 +20,9 @@ import {
   DeclarationType,
   Delay,
   DocumentType,
+  DraftProgressReport,
   FormType,
   InterimProjectType,
-  ProgressReport,
   ProjectProgressStatus,
   RecordType,
   SignageType,
@@ -371,7 +371,7 @@ export class DrifProgressReportCreateComponent {
           this.progressReportId,
         )
         .subscribe({
-          next: (report: ProgressReport) => {
+          next: (report: DraftProgressReport) => {
             report.workplan?.workplanActivities?.map((activity) => {
               const activityForm = this.formBuilder.formGroup(
                 new WorkplanActivityForm(activity),

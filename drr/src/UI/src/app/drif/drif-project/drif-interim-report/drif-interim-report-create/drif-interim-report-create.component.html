@@ -141,6 +141,7 @@
           color="primary"
           matStepperNext
           type="button"
+          (click)="createReport()"
         >
           {{ canCreateReportResult?.canCreate ? t("create") : t("close") }}
         </button>
