@@ -324,7 +324,7 @@ export class DrifFpStep10Component {
             contingency = (contingencyTotalCost / totalCost) * 100;
           }
 
-          this.budgetForm.get('contingency')?.setValue(contingency.toFixed(0));
+          this.budgetForm.get('contingency')?.setValue(contingency.toFixed(1));
           this.verifyContingencyPercentageThreashold();
         }
 
