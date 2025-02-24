@@ -4,6 +4,47 @@
   gap: 1rem;
   padding: 1rem;
 
+  .project-details-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+
+    th,
+    td {
+      border-top: 1px solid #ccc;
+      border-left: 1px solid #ccc;
+      padding: 0.5rem;
+      text-align: left;
+    }
+
+    th {
+      background: #e8f3ff;
+      font-weight: bold;
+    }
+
+    td {
+      background: #fff;
+    }
+
+    th:first-child,
+    td:first-child {
+      border-left: none;
+    }
+
+    th:last-child,
+    td:last-child {
+      border-right: none;
+    }
+
+    tr:first-child td {
+      border-top: none;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+  }
+
   .drif-project-details {
     display: grid;
     grid-template-columns: 1fr 2fr;
