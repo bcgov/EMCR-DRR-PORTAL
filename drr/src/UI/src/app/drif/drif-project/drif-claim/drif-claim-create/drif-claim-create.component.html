@@ -40,7 +40,26 @@
     [orientation]="stepperOrientation"
     #stepper
   >
-    <mat-step label="Instructions"> </mat-step>
+    <mat-step label="Instructions">
+      <div>
+        <p>
+          This form captures the expenses you are claiming for the current
+          reporting period. You will need to attach all invoices and your proofs
+          of payment.
+        </p>
+        <p>
+          You will be notified if your total expenses put you over any unmet
+          payment conditions. In those cases, you will be able to choose between
+          updating your claim to ensure it remains under the maximum payment, or
+          submitting the claim so that it can be paid once the condition is met.
+        </p>
+      </div>
+      <div class="drr-stepper-action">
+        <button mat-flat-button color="primary" matStepperNext type="button">
+          {{ t("next") }}
+        </button>
+      </div>
+    </mat-step>
     <mat-step label="Expenditures">
       <div
         style="display: flex; flex-direction: column; gap: 1rem; padding: 1rem"
