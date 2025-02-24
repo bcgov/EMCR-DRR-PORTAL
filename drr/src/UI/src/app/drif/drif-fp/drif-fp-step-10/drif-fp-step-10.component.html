@@ -247,7 +247,9 @@
       </drr-numeric-input>
     }
 
-    @if (isContingencyPercentageThreasholdBroken()) {
+    @if (
+      budgetForm.get("isContingencyPercentageThreasholdMet")?.value === false
+    ) {
       <p style="color: red; display: flex; align-items: center; gap: 1rem">
         <mat-icon>error</mat-icon>
         <i>
