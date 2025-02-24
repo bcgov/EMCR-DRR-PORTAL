@@ -62,13 +62,18 @@
               <tr>
                 <td><strong>EOI:</strong></td>
                 <td>
-                  <a href="">{{ project?.eoiId }}</a>
+                  <a
+                    [routerLink]="['/eoi-submission-details', project?.eoiId]"
+                    >{{ project?.eoiId }}</a
+                  >
                 </td>
               </tr>
               <tr>
                 <td><strong>Full Proposal:</strong></td>
                 <td>
-                  <a href="">{{ project?.fpId }}</a>
+                  <a [routerLink]="['/fp-submission-details', project?.fpId]">{{
+                    project?.fpId
+                  }}</a>
                 </td>
               </tr>
             </table>
