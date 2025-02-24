@@ -4,12 +4,16 @@
       <mat-card-title-group>
         <mat-card-title>{{ project?.projectTitle }}</mat-card-title>
         <div>
-          <i> Status: </i>
-          <mat-chip>
-            {{ project?.status }}
-          </mat-chip>
+          <div><b>ID:</b> {{ projectId }}</div>
+          <div><b>Contract ID:</b> {{ project?.contractNumber }}</div>
+          <div>
+            <b>Status:</b>
+            <mat-chip>
+              {{ project?.status }}
+            </mat-chip>
+          </div>
         </div>
-        <mat-card-subtitle>{{ project?.proponentName }}</mat-card-subtitle>
+        <mat-card-subtitle>for {{ project?.proponentName }}</mat-card-subtitle>
       </mat-card-title-group>
     </mat-card-header>
     <mat-card-content class="drif-project-details">
@@ -24,17 +28,8 @@
         <mat-card>
           <mat-card-header>
             <mat-card-title>Project Details</mat-card-title>
-            <mat-card-subtitle>{{ projectId }} </mat-card-subtitle>
           </mat-card-header>
           <mat-card-content>
-            <!-- <p>
-              <strong>Project ID:</strong>
-              {{ project?.id }}
-            </p> -->
-            <p>
-              <strong>Contract ID:</strong>
-              {{ project?.contractNumber }}
-            </p>
             <p>
               <strong> Funding Program: </strong>
               {{ project?.programType | transloco }}
@@ -44,12 +39,12 @@
               {{ t(project?.fundingStream!) }}
             </p>
             <p>
-              <strong>Funding Amount</strong>
-              {{ project?.fundingAmount | currency: "" : "symbol" : "1.0-0" }}
-            </p>
-            <p>
               <strong>Reporting Schedule:</strong>
               {{ t(project?.reportingScheduleType!) }}
+            </p>
+            <p>
+              <strong>Funding Amount</strong>
+              {{ project?.fundingAmount | currency: "" : "symbol" : "1.0-0" }}
             </p>
             <p>
               <strong>Planned Start Date:</strong>
