@@ -669,5 +669,12 @@
     "OffCycle": "Off-cycle Report",
     "Final": "Final Report",
     "Interim": "Interim Report"
+  },
+  "projectRole": "Project Role",
+  "projectRoleType": {
+    "Head": "Head of Organization",
+    "ProgressReporting": "Project Contact - Progress Reporting",
+    "ForecastReporting": "Budget Contact - Budget Forecast Reporting",
+    "ClaimsReporting": "Claims Contact - Claims Reporting"
   }
 }
