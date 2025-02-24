@@ -120,6 +120,7 @@ export class DrrNumericInputComponent {
   @Input() max: number | null = null;
   @Input() maxlength?: number | null;
   @Input() numericType: NumericInputType = 'integer';
+  @Input() customMask: string | null = null;
 
   ngOnInit() {
     this.breakpointObserver
@@ -173,6 +174,10 @@ export class DrrNumericInputComponent {
   }
 
   getMask() {
+    if (this.customMask) {
+      return this.customMask;
+    }
+
     if (this.numericType === 'percentage' || this.numericType === 'integer') {
       return 'separator.0';
     }
