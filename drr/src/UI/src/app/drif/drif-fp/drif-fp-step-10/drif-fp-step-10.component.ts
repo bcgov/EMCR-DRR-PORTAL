@@ -325,6 +325,7 @@ export class DrifFpStep10Component {
           }
 
           this.budgetForm.get('contingency')?.setValue(contingency.toFixed(0));
+          this.verifyContingencyPercentageThreashold();
         }
 
         this.budgetForm.get('totalEligibleCosts')?.setValue(totalCost);
@@ -351,6 +352,11 @@ export class DrifFpStep10Component {
     this.budgetForm
       .get('costEstimateClass')
       ?.addValidators(Validators.required);
+    this.verifyContingencyPercentageThreashold();
+    this.budgetForm.get('costEstimateClass')?.valueChanges.subscribe(() => {
+      this.verifyContingencyPercentageThreashold();
+    });
+
     this.budgetForm.get('contingency')?.addValidators(Validators.required);
     this.budgetForm
       .get('isContingencyPercentageThreasholdMet')
@@ -475,27 +481,26 @@ export class DrifFpStep10Component {
     );
   }
 
-  isContingencyPercentageThreasholdBroken() {
-    const contingency = this.budgetForm.get('contingency')?.value ?? 0;
+  verifyContingencyPercentageThreashold() {
+    const contingency = Number(this.budgetForm.get('contingency')?.value ?? 0);
     const costEstimateClass = this.budgetForm.get('costEstimateClass')?.value;
 
     if (costEstimateClass === CostEstimateClass.ClassA && contingency > 15) {
       this.budgetForm
         .get('isContingencyPercentageThreasholdMet')
         ?.setValue(false, { emitEvent: false });
-      return true;
+      return;
     }
 
     if (costEstimateClass === CostEstimateClass.ClassB && contingency > 25) {
       this.budgetForm
         .get('isContingencyPercentageThreasholdMet')
         ?.setValue(false, { emitEvent: false });
-      return true;
+      return;
     }
 
     this.budgetForm
       .get('isContingencyPercentageThreasholdMet')
       ?.setValue(true, { emitEvent: false });
-    return false;
   }
 }
