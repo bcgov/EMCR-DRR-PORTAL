@@ -989,8 +989,9 @@ namespace EMCR.DRR.Managers.Intake
 
     public enum ProjectStatus
     {
+        NotStarted,
         InProgress,
-        Completed,
+        Complete,
         Inactive
     }
 

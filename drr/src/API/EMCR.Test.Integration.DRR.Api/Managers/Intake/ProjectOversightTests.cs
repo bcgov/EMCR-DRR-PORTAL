@@ -130,7 +130,6 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var project = queryRes.Items.SingleOrDefault();
             var res = await manager.Handle(new ValidateCanCreateReportCommand { ProjectId = project.Id, ReportType = EMCR.DRR.Managers.Intake.ReportType.Interim, UserInfo = GetCRAFTUserInfo() });
             res.CanCreate.ShouldBe(false);
-            //projects.ShouldAllBe(s => s.ProgramType == ProgramType.DRIF);
         }
 
         //[Test]

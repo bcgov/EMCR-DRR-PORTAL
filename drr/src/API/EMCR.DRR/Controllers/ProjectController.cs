@@ -96,7 +96,6 @@ namespace EMCR.DRR.Controllers
             try
             {
                 project.Id = id;
-
                 var drr_id = await intakeManager.Handle(new SubmitProjectCommand { Project = project, UserInfo = GetCurrentUser() });
                 return Ok(new ProjectResult { Id = drr_id });
             }
@@ -111,8 +110,7 @@ namespace EMCR.DRR.Controllers
         {
             try
             {
-                await Task.CompletedTask;
-                var res = await intakeManager.Handle(new ValidateCanCreateReportCommand { ProjectId = projectId, UserInfo = GetCurrentUser() });
+                var res = await intakeManager.Handle(new ValidateCanCreateReportCommand { ProjectId = projectId, ReportType = (Managers.Intake.ReportType)createReport.ReportType, UserInfo = GetCurrentUser() });
                 return Ok(new CanCreateReportResult { CanCreate = res.CanCreate, ReportType = createReport.ReportType, Description = res.Description });
             }
             catch (Exception e)
@@ -126,8 +124,7 @@ namespace EMCR.DRR.Controllers
         {
             try
             {
-                await Task.CompletedTask;
-                var id = await intakeManager.Handle(new CreateInterimReportCommand { ProjectId = projectId, UserInfo = GetCurrentUser() });
+                var id = await intakeManager.Handle(new CreateInterimReportCommand { ProjectId = projectId, ReportType = (Managers.Intake.ReportType)createReport.ReportType, UserInfo = GetCurrentUser() });
                 return Ok(new CreateReportResult { Id = id });
             }
             catch (Exception e)
@@ -602,8 +599,14 @@ namespace EMCR.DRR.Controllers
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum ProjectStatus
     {
-        [Description("Active")]
-        Active,
+        [Description("Not Started")]
+        NotStarted,
+
+        [Description("In Progress")]
+        InProgress,
+
+        [Description("Complete")]
+        Complete,
 
         [Description("Inactive")]
         Inactive

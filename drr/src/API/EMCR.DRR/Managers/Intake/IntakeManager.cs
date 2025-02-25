@@ -453,7 +453,7 @@ namespace EMCR.DRR.Managers.Intake
                 }
                 else
                 {
-                    description = $"Report {GetReportPeriod(project.ReportingScheduleType, lastReport.ReportDate.Value)} has not been approved.";
+                    description = GetReportPeriod(project.ReportingScheduleType, lastReport.ReportDate.Value);
                 }
             }
 
