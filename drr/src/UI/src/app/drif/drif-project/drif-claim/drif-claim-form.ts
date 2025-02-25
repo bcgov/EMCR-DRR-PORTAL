@@ -1,4 +1,11 @@
-import { prop, propArray } from '@rxweb/reactive-form-validators';
+import {
+  prop,
+  propArray,
+  propObject,
+  required,
+  requiredTrue,
+} from '@rxweb/reactive-form-validators';
+import { ContactDetailsForm } from '../../drif-eoi/drif-eoi-form';
 
 export class InvoiceForm {
   @prop()
@@ -45,7 +52,30 @@ export class InvoiceForm {
   }
 }
 
+export class DeclarationForm {
+  @required()
+  @propObject(ContactDetailsForm)
+  submitter?: ContactDetailsForm = new ContactDetailsForm({});
+
+  @prop()
+  @required()
+  @requiredTrue()
+  authorizedRepresentativeStatement?: boolean;
+
+  @prop()
+  @required()
+  @requiredTrue()
+  informationAccuracyStatement?: boolean;
+
+  constructor(values: DeclarationForm) {
+    Object.assign(this, values);
+  }
+}
+
 export class ClaimForm {
   @propArray(InvoiceForm)
   invoices: InvoiceForm[] = [];
+
+  @propObject(DeclarationForm)
+  declaration: DeclarationForm = new DeclarationForm({});
 }
