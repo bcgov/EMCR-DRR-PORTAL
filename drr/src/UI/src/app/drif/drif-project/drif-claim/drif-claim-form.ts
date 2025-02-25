@@ -5,9 +5,13 @@ import {
   required,
   requiredTrue,
 } from '@rxweb/reactive-form-validators';
+import { CostCategory } from '../../../../model';
 import { ContactDetailsForm } from '../../drif-eoi/drif-eoi-form';
 
 export class InvoiceForm {
+  @prop()
+  id?: string;
+
   @prop()
   invoiceNumber?: string;
 
@@ -24,10 +28,10 @@ export class InvoiceForm {
   paymentDate?: string;
 
   @prop()
-  claimCategory?: string; // TODO: enum
+  supplierName?: string;
 
   @prop()
-  supplierName?: string;
+  claimCategory?: CostCategory;
 
   @prop()
   description?: string;
@@ -52,6 +56,23 @@ export class InvoiceForm {
   }
 }
 
+export class ExpenditureForm {
+  @prop()
+  @required()
+  skipClaimReport?: boolean;
+
+  @propArray(InvoiceForm)
+  invoices?: InvoiceForm[] = [];
+
+  @prop()
+  @required()
+  claimComment?: string;
+
+  constructor(values: ExpenditureForm) {
+    Object.assign(this, values);
+  }
+}
+
 export class DeclarationForm {
   @required()
   @propObject(ContactDetailsForm)
@@ -73,8 +94,8 @@ export class DeclarationForm {
 }
 
 export class ClaimForm {
-  @propArray(InvoiceForm)
-  invoices: InvoiceForm[] = [];
+  @propObject(ExpenditureForm)
+  expenditure: ExpenditureForm = new ExpenditureForm({});
 
   @propObject(DeclarationForm)
   declaration: DeclarationForm = new DeclarationForm({});

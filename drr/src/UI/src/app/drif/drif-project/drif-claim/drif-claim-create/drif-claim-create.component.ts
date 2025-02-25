@@ -3,6 +3,7 @@ import { Component, inject } from '@angular/core';
 import { FormArray } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import {
@@ -10,10 +11,10 @@ import {
   StepperOrientation,
 } from '@angular/material/stepper';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { IFormGroup, RxFormBuilder } from '@rxweb/reactive-form-validators';
 import { ProjectService } from '../../../../../api/project/project.service';
-import { DeclarationType, FormType } from '../../../../../model';
+import { CostCategory, DeclarationType, FormType } from '../../../../../model';
 import { DrrCurrencyInputComponent } from '../../../../shared/controls/drr-currency-input/drr-currency-input.component';
 import { DrrDatepickerComponent } from '../../../../shared/controls/drr-datepicker/drr-datepicker.component';
 import { DrrInputComponent } from '../../../../shared/controls/drr-input/drr-input.component';
@@ -37,6 +38,7 @@ import { ClaimForm, InvoiceForm } from '../drif-claim-form';
     MatButtonModule,
     MatInputModule,
     MatCardModule,
+    MatDividerModule,
     TranslocoModule,
     RouterModule,
     DrrDatepickerComponent,
@@ -57,6 +59,7 @@ export class DrifClaimCreateComponent {
   optionsStore = inject(OptionsStore);
   profileStore = inject(ProfileStore);
   projectService = inject(ProjectService);
+  translocoService = inject(TranslocoService);
 
   projectId?: string;
   reportId?: string;
@@ -67,13 +70,15 @@ export class DrifClaimCreateComponent {
 
   claimForm = this.formBuilder.formGroup(ClaimForm) as IFormGroup<ClaimForm>;
 
-  claimCategoryOptions: DrrSelectOption[] = [
-    { label: 'Option 1', value: 'option1' },
-    { label: 'Option 2', value: 'option2' },
-  ];
+  claimCategoryOptions: DrrSelectOption[] = Object.values(CostCategory).map(
+    (value) => ({
+      value,
+      label: this.translocoService.translate(value),
+    }),
+  );
 
   getInvoiceFormArray() {
-    return this.claimForm.get('invoices') as FormArray;
+    return this.claimForm.get('expenditure.invoices') as FormArray;
   }
 
   ngOnInit() {
@@ -141,6 +146,42 @@ export class DrifClaimCreateComponent {
         .subscribe({
           next: (claim) => {
             this.claimForm.patchValue(claim);
+
+            // TODO: init two temp invoice forms
+            this.getInvoiceFormArray().push(
+              this.formBuilder.formGroup(InvoiceForm, {
+                invoiceNumber: 'N123-456',
+                invoiceDate: '2025-02-24T21:43:47Z',
+                startDate: '2025-02-24T21:43:47Z',
+                endDate: '2025-02-24T21:43:47Z',
+                paymentDate: '2025-02-24T21:43:47Z',
+                supplierName: 'Supplier of Tools Inc.',
+                claimCategory: CostCategory.ConstructionMaterials,
+                description: 'Tools for construction: hammer, nails, etc.',
+                grossAmount: 1000,
+                taxRebate: 50,
+                claimAmount: 950,
+                pstPaid: 1,
+                gstPaid: 2,
+              }),
+            );
+            this.getInvoiceFormArray().push(
+              this.formBuilder.formGroup(InvoiceForm, {
+                invoiceNumber: 'N987-457',
+                invoiceDate: '2025-03-24T21:43:47Z',
+                startDate: '2025-03-24T21:43:47Z',
+                endDate: '2025-03-24T21:43:47Z',
+                paymentDate: '2025-03-24T21:43:47Z',
+                supplierName: 'Design Inc.',
+                claimCategory: CostCategory.Design,
+                description: 'Design of the building.',
+                grossAmount: 2000,
+                taxRebate: 100,
+                claimAmount: 1900,
+                pstPaid: 4,
+                gstPaid: 5,
+              }),
+            );
             resolve();
           },
           error: (error) => {
@@ -168,5 +209,99 @@ export class DrifClaimCreateComponent {
 
   removeInvoice(index: number) {
     this.getInvoiceFormArray().removeAt(index);
+  }
+
+  getEarliestInvoiceDate() {
+    return this.getInvoiceFormArray().controls.reduce(
+      (earliestDate: Date | null, control) => {
+        const invoiceDate = control.get('invoiceDate')?.value;
+        if (!invoiceDate) {
+          return earliestDate;
+        }
+
+        const date = new Date(invoiceDate);
+        if (!earliestDate || date < earliestDate) {
+          return date;
+        }
+
+        return earliestDate;
+      },
+      null,
+    );
+  }
+
+  getLatestInvoiceDate() {
+    return this.getInvoiceFormArray().controls.reduce(
+      (latestDate: Date | null, control) => {
+        const invoiceDate = control.get('invoiceDate')?.value;
+        if (!invoiceDate) {
+          return latestDate;
+        }
+
+        const date = new Date(invoiceDate);
+        if (!latestDate || date > latestDate) {
+          return date;
+        }
+
+        return latestDate;
+      },
+      null,
+    );
+  }
+
+  getEarliestGoodsAndServicesWorkStartDate() {
+    return this.getInvoiceFormArray().controls.reduce(
+      (earliestDate: Date | null, control) => {
+        const startDate = control.get('startDate')?.value;
+        if (!startDate) {
+          return earliestDate;
+        }
+
+        const date = new Date(startDate);
+        if (!earliestDate || date < earliestDate) {
+          return date;
+        }
+
+        return earliestDate;
+      },
+      null,
+    );
+  }
+
+  getLatestGoodsAndServicesWorkEndDate() {
+    return this.getInvoiceFormArray().controls.reduce(
+      (latestDate: Date | null, control) => {
+        const endDate = control.get('endDate')?.value;
+        if (!endDate) {
+          return latestDate;
+        }
+
+        const date = new Date(endDate);
+        if (!latestDate || date > latestDate) {
+          return date;
+        }
+
+        return latestDate;
+      },
+      null,
+    );
+  }
+
+  getNumberOfInvoices() {
+    return this.getInvoiceFormArray().length;
+  }
+
+  getTotalClaimAmount() {
+    return this.getInvoiceFormArray().controls.reduce(
+      (total: number, control) => {
+        const claimAmount = control.get('claimAmount')?.value;
+        if (!claimAmount) {
+          return total;
+        }
+
+        return total + claimAmount;
+      },
+      0,
+    );
   }
 }
