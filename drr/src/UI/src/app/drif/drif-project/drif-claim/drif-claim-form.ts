@@ -16,13 +16,13 @@ export class InvoiceForm {
   invoiceNumber?: string;
 
   @prop()
-  invoiceDate?: string;
+  date?: string;
 
   @prop()
-  startDate?: string;
+  workStartDate?: string;
 
   @prop()
-  endDate?: string;
+  workEndDate?: string;
 
   @prop()
   paymentDate?: string;
@@ -31,7 +31,7 @@ export class InvoiceForm {
   supplierName?: string;
 
   @prop()
-  claimCategory?: CostCategory;
+  costCategory?: CostCategory;
 
   @prop()
   description?: string;
@@ -46,12 +46,14 @@ export class InvoiceForm {
   claimAmount?: number;
 
   @prop()
-  pstPaid?: number;
+  totalPST?: number;
 
   @prop()
-  gstPaid?: number;
+  totalGST?: number;
 
   constructor(value: InvoiceForm) {
+    // TODO: check if I can initiate formArray from within the constructor
+    // perhaps I should reinstantiate the whole form instead of patching value after API call
     Object.assign(this, value);
   }
 }
@@ -99,4 +101,8 @@ export class ClaimForm {
 
   @propObject(DeclarationForm)
   declaration: DeclarationForm = new DeclarationForm({});
+
+  constructor(values: ClaimForm) {
+    Object.assign(this, values);
+  }
 }
