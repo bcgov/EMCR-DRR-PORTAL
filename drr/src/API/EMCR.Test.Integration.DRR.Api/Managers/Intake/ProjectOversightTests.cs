@@ -60,7 +60,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
         [Test]
         public async Task QueryReports_CanFilterById()
         {
-            var queryRes = await manager.Handle(new DrrReportsQuery { Id = "DRIF-REP-1034", BusinessId = GetTestUserInfo().BusinessId });
+            var queryRes = await manager.Handle(new DrrReportsQuery { Id = "DRIF-REP-1144", BusinessId = GetTestUserInfo().BusinessId });
             var reports = mapper.Map<IEnumerable<EMCR.DRR.Controllers.InterimReport>>(queryRes.Items);
             reports.Count().ShouldBe(1);
         }
@@ -77,7 +77,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
         public async Task QueryProgressReports_CanFilterById()
         {
             var queryRes = await manager.Handle(new DrrProgressReportsQuery { Id = "DRIF-PR-1058", BusinessId = GetCRAFTUserInfo().BusinessId });
-            var prs = mapper.Map<IEnumerable<EMCR.DRR.Controllers.ProgressReport>>(queryRes.Items);
+            var prs = mapper.Map<IEnumerable<EMCR.DRR.Controllers.DraftProgressReport>>(queryRes.Items);
             prs.Count().ShouldBe(1);
             var progressReport = prs.Single();
             progressReport.ProjectType.ShouldBe(EMCR.DRR.Controllers.InterimProjectType.Stream1);
@@ -111,7 +111,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             await manager.Handle(new SaveProgressReportCommand { ProgressReport = progressReport, UserInfo = userInfo });
 
 
-            var updatedProgressReport = mapper.Map<EMCR.DRR.Controllers.ProgressReport>((await manager.Handle(new DrrProgressReportsQuery { Id = progressReport.Id, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+            var updatedProgressReport = mapper.Map<EMCR.DRR.Controllers.DraftProgressReport>((await manager.Handle(new DrrProgressReportsQuery { Id = progressReport.Id, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
             updatedProgressReport.Workplan.MediaAnnouncementComment.ShouldBe(progressReport.Workplan.MediaAnnouncementComment);
             updatedProgressReport.Workplan.ProjectCompletionPercentage.ShouldBe(progressReport.Workplan.ProjectCompletionPercentage);
             updatedProgressReport.Workplan.ProjectProgress.ShouldBe(progressReport.Workplan.ProjectProgress);
@@ -173,7 +173,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var userInfo = GetCRAFTUserInfo();
 
             var progressReportId = "DRIF-PR-1058";
-            var progressReport = mapper.Map<EMCR.DRR.Controllers.ProgressReport>((await manager.Handle(new DrrProgressReportsQuery { Id = progressReportId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+            var progressReport = mapper.Map<EMCR.DRR.Controllers.DraftProgressReport>((await manager.Handle(new DrrProgressReportsQuery { Id = progressReportId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
             foreach (var doc in progressReport.Attachments)
             {
                 await manager.Handle(new DeleteAttachmentCommand { Id = doc.Id, UserInfo = userInfo });
@@ -194,7 +194,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             await manager.Handle(new SaveProgressReportCommand { ProgressReport = progressReportToUpdate, UserInfo = userInfo });
 
 
-            var updatedProgressReport = mapper.Map<EMCR.DRR.Controllers.ProgressReport>((await manager.Handle(new DrrProgressReportsQuery { Id = progressReportToUpdate.Id, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+            var updatedProgressReport = mapper.Map<EMCR.DRR.Controllers.DraftProgressReport>((await manager.Handle(new DrrProgressReportsQuery { Id = progressReportToUpdate.Id, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
             updatedProgressReport.Attachments.First().Comments.ShouldBe(progressReportToUpdate.Attachments.First().Comments);
 
         }
