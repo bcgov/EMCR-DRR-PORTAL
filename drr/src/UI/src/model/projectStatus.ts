@@ -9,6 +9,8 @@ export type ProjectStatus = (typeof ProjectStatus)[keyof typeof ProjectStatus];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ProjectStatus = {
-  Active: 'Active',
+  NotStarted: 'NotStarted',
+  InProgress: 'InProgress',
+  Complete: 'Complete',
   Inactive: 'Inactive',
 } as const;
