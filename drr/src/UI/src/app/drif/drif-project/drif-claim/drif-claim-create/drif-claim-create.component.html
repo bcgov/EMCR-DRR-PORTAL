@@ -84,6 +84,11 @@
           justify-content: flex-start;
         "
       >
+        <drr-radio-button
+          [label]="t('skipClaimReport')"
+          [rxFormControl]="claimForm.get('expenditure.skipClaimReport')"
+        ></drr-radio-button>
+
         <div
           *ngFor="let invoice of getInvoiceFormArray().controls; let i = index"
         >
@@ -187,9 +192,56 @@
             </mat-card-actions>
           </mat-card>
         </div>
+        <drr-textarea
+          [label]="t('claimComment')"
+          [rxFormControl]="claimForm.get('expenditure.claimComment')"
+          [maxlength]="2000"
+        >
+        </drr-textarea>
+
+        <mat-divider style="margin: 2rem 0"></mat-divider>
+
+        <h5>Claim Summary</h5>
+
+        <div>
+          <table class="claim-summary-table">
+            <tr>
+              <td>Earliest Invoice</td>
+              <td>{{ getEarliestInvoiceDate() | date: "yyyy-MM-dd" }}</td>
+            </tr>
+            <tr>
+              <td>Latest Invoice</td>
+              <td>{{ getLatestInvoiceDate() | date: "yyyy-MM-dd" }}</td>
+            </tr>
+            <tr>
+              <td>Earliest Goods and Services Work Start Date</td>
+              <td>
+                {{
+                  getEarliestGoodsAndServicesWorkStartDate()
+                    | date: "yyyy-MM-dd"
+                }}
+              </td>
+            </tr>
+            <tr>
+              <td>Latest Goods and Services Work End Date</td>
+              <td>
+                {{
+                  getLatestGoodsAndServicesWorkEndDate() | date: "yyyy-MM-dd"
+                }}
+              </td>
+            </tr>
+            <tr>
+              <td>Number of Invoices</td>
+              <td>{{ getNumberOfInvoices() }}</td>
+            </tr>
+            <tr>
+              <td>Total Amount of this Claim</td>
+              <td>{{ getTotalClaimAmount() | currency }}</td>
+            </tr>
+          </table>
+        </div>
       </div>
     </mat-step>
-    <mat-step label="Claim"> </mat-step>
     <mat-step label="Attachments"> </mat-step>
     <mat-step label="Review"> </mat-step>
   </mat-stepper>

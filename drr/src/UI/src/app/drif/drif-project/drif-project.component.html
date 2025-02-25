@@ -32,19 +32,19 @@
           <mat-card-content>
             <table class="project-details-table">
               <tr>
-                <td><strong>Funding Program:</strong></td>
+                <td><strong>Funding Program</strong></td>
                 <td>{{ project?.programType | transloco }}</td>
               </tr>
               <tr>
-                <td><strong>Project Type:</strong></td>
+                <td><strong>Project Type</strong></td>
                 <td>{{ t(project?.fundingStream!) }}</td>
               </tr>
               <tr>
-                <td><strong>Reporting Schedule:</strong></td>
+                <td><strong>Reporting Schedule</strong></td>
                 <td>{{ t(project?.reportingScheduleType!) }}</td>
               </tr>
               <tr>
-                <td><strong>Funding Amount:</strong></td>
+                <td><strong>Funding Amount</strong></td>
                 <td>
                   {{
                     project?.fundingAmount | currency: "" : "symbol" : "1.0-0"
@@ -52,15 +52,15 @@
                 </td>
               </tr>
               <tr>
-                <td><strong>Planned Start Date:</strong></td>
+                <td><strong>Planned Start Date</strong></td>
                 <td>{{ project?.startDate | date: "yyyy-MM-dd" }}</td>
               </tr>
               <tr>
-                <td><strong>Planned End Date:</strong></td>
+                <td><strong>Planned End Date</strong></td>
                 <td>{{ project?.endDate | date: "yyyy-MM-dd" }}</td>
               </tr>
               <tr>
-                <td><strong>EOI:</strong></td>
+                <td><strong>EOI</strong></td>
                 <td>
                   <a
                     [routerLink]="['/eoi-submission-details', project?.eoiId]"
@@ -69,7 +69,7 @@
                 </td>
               </tr>
               <tr>
-                <td><strong>Full Proposal:</strong></td>
+                <td><strong>Full Proposal</strong></td>
                 <td>
                   <a [routerLink]="['/fp-submission-details', project?.fpId]">{{
                     project?.fpId

@@ -10,6 +10,11 @@ import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
+import {
+  MatDialog,
+  MatDialogModule,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -27,6 +32,7 @@ import {
   PaymentCondition,
 } from '../../../model';
 import { DrrInputComponent } from '../../shared/controls/drr-input/drr-input.component';
+import { DrifProjectContactDialogComponent } from './drif-project-contact-dialog.component';
 
 export enum InterimSubReportSection {
   Progress = 'Progress',
@@ -58,6 +64,7 @@ export interface InterimSubReport {
     MatChipsModule,
     MatTabsModule,
     MatDividerModule,
+    MatDialogModule,
     DrrInputComponent,
     TranslocoModule,
   ],
@@ -78,6 +85,8 @@ export class DrifProjectComponent {
   route = inject(ActivatedRoute);
   router = inject(Router);
   projectService = inject(ProjectService);
+  matDialog = inject(MatDialog);
+  
 
   projectId?: string;
 
@@ -189,7 +198,20 @@ export class DrifProjectComponent {
     ];
   }
 
-  addProjectContact() {}
+  addProjectContact() {
+    this.matDialog
+      .open(DrifProjectContactDialogComponent, {
+        data: {
+          firstName: 'Vasa',
+        },
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        if (result) {
+          console.log(result);
+        }
+      });
+  }
 
   editClaim() {}
 
