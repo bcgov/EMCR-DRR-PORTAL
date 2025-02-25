@@ -602,8 +602,14 @@ namespace EMCR.DRR.Controllers
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum ProjectStatus
     {
-        [Description("Active")]
-        Active,
+        [Description("Not Started")]
+        NotStarted,
+        
+        [Description("In Progress")]
+        InProgress,
+        
+        [Description("Complete")]
+        Complete,
 
         [Description("Inactive")]
         Inactive
