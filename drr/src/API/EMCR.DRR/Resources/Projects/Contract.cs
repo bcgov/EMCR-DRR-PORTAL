@@ -37,8 +37,9 @@ namespace EMCR.DRR.API.Resources.Projects
 
     public enum ProjectStatusOptionSet
     {
+        NotStarted = 172580001,
         InProgress = 1,
-        Completed = 172580000,
+        Complete = 172580000,
         Inactive = 2,
     }
 
