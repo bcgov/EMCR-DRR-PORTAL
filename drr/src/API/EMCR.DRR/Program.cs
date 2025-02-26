@@ -1,11 +1,15 @@
 ﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Text.Json.Serialization;
+using AutoMapper;
+using EMCR.DRR.API.Model;
 using EMCR.DRR.API.Services;
 using EMCR.DRR.API.Services.S3;
 using EMCR.DRR.API.Utilities.Converters;
+using EMCR.DRR.API.Utilities.TestData;
 using EMCR.DRR.Controllers;
 using EMCR.DRR.Dynamics;
 using EMCR.DRR.Managers.Intake;
@@ -274,8 +278,6 @@ services.AddAuthorization(options =>
     });
     var ssoPolicyBuilder = new AuthorizationPolicyBuilder("SSO");
     options.AddPolicy("OnlySSO", ssoPolicyBuilder.RequireAuthenticatedUser().Build());
-
-    //options.DefaultPolicy = options.GetPolicy(JwtBearerDefaults.AuthenticationScheme) ?? null!;
 });
 
 services.Configure<OpenApiDocumentMiddlewareSettings>(options =>
@@ -306,7 +308,6 @@ services.AddOpenApiDocument(document =>
     });
 
     document.OperationProcessors.Add(new AspNetCoreOperationSecurityScopeProcessor("bearer token"));
-    //document.GenerateAbstractProperties = true;
 });
 
 services.AddHealthChecks()
@@ -331,5 +332,86 @@ app.UseSerilogRequestLogging();
 app.UseCors();
 app.UseAuthorization();
 app.MapControllers();
+
+
+
+//Conditional endpoints to create test EOI and test FP
+//To help testers save time setting up test data
+var testDataEndpointsEnabled = configuration.GetValue("TestDataEndpointsEnabled", false);
+if (testDataEndpointsEnabled)
+{
+    app.MapPost("/test-data/eoi", [Authorize] async (HttpContext ctx) =>
+    {
+#pragma warning disable CS8603 // Possible null reference return.
+        string GetCurrentBusinessId() => ctx.User.FindFirstValue("bceid_business_guid");
+        string GetCurrentBusinessName() => ctx.User.FindFirstValue("bceid_business_name");
+        string GetCurrentUserId() => ctx.User.FindFirstValue("bceid_user_guid");
+#pragma warning restore CS8603 // Possible null reference return.
+        UserInfo GetCurrentUser()
+        {
+            return new UserInfo { BusinessId = GetCurrentBusinessId(), BusinessName = GetCurrentBusinessName(), UserId = GetCurrentUserId() };
+        }
+
+        var application = TestHelper.CreateNewTestEOIApplication();
+        var manager = ctx.RequestServices.GetRequiredService<IIntakeManager>();
+        var mapper = ctx.RequestServices.GetRequiredService<IMapper>();
+        var id = await manager.Handle(new EoiSaveApplicationCommand { Application = mapper.Map<EoiApplication>(application), UserInfo = GetCurrentUser() });
+
+        ctx.Response.StatusCode = (int)HttpStatusCode.Created;
+        await ctx.Response.WriteAsJsonAsync(new { id = id });
+    }).WithName("Create Test EOI");
+
+    app.MapPost("/test-data/fp", async ctx =>
+    {
+
+#pragma warning disable CS8603 // Possible null reference return.
+        string GetCurrentBusinessId() => ctx.User.FindFirstValue("bceid_business_guid");
+        string GetCurrentBusinessName() => ctx.User.FindFirstValue("bceid_business_name");
+        string GetCurrentUserId() => ctx.User.FindFirstValue("bceid_user_guid");
+#pragma warning restore CS8603 // Possible null reference return.
+        UserInfo GetCurrentUser()
+        {
+            return new UserInfo { BusinessId = GetCurrentBusinessId(), BusinessName = GetCurrentBusinessName(), UserId = GetCurrentUserId() };
+        }
+        var manager = ctx.RequestServices.GetRequiredService<IIntakeManager>();
+        var mapper = ctx.RequestServices.GetRequiredService<IMapper>();
+
+        EMCR.DRR.Managers.Intake.ScreenerQuestions CreateScreenerQuestions()
+        {
+            return new EMCR.DRR.Managers.Intake.ScreenerQuestions
+            {
+                ProjectWorkplan = true,
+                ProjectSchedule = true,
+                CostEstimate = true,
+                SitePlan = EMCR.DRR.Managers.Intake.YesNoOption.Yes,
+                HaveAuthorityToDevelop = true,
+                FirstNationsAuthorizedByPartners = EMCR.DRR.Managers.Intake.YesNoOption.Yes,
+                LocalGovernmentAuthorizedByPartners = EMCR.DRR.Managers.Intake.YesNoOption.Yes,
+                FoundationWorkCompleted = EMCR.DRR.Managers.Intake.YesNoOption.Yes,
+                EngagedWithFirstNationsOccurred = true,
+                IncorporateFutureClimateConditions = true,
+                MeetsRegulatoryRequirements = true,
+                MeetsEligibilityRequirements = true,
+            };
+        }
+
+        var eoi = mapper.Map<EoiApplication>(TestHelper.CreateNewTestEOIApplication());
+        eoi.Status = SubmissionPortalStatus.EligibleInvited;
+        eoi.AuthorizedRepresentativeStatement = true;
+        eoi.FOIPPAConfirmation = true;
+        eoi.InformationAccuracyStatement = true;
+        var eoiId = await manager.Handle(new EoiSaveApplicationCommand { Application = eoi, UserInfo = GetCurrentUser() });
+
+        var screenerQuestions = CreateScreenerQuestions();
+        screenerQuestions.FirstNationsAuthorizedByPartners = EMCR.DRR.Managers.Intake.YesNoOption.NotApplicable;
+        screenerQuestions.LocalGovernmentAuthorizedByPartners = EMCR.DRR.Managers.Intake.YesNoOption.NotApplicable;
+        screenerQuestions.EngagedWithFirstNationsOccurred = false;
+
+        var fpId = await manager.Handle(new CreateFpFromEoiCommand { EoiId = eoiId, UserInfo = GetCurrentUser(), ScreenerQuestions = screenerQuestions });
+
+        ctx.Response.StatusCode = (int)HttpStatusCode.Created;
+        await ctx.Response.WriteAsJsonAsync(new { id = fpId });
+    }).WithName("Create Test FP");
+}
 
 app.Run();

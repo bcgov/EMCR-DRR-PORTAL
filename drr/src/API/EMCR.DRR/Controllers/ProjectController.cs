@@ -305,6 +305,7 @@ namespace EMCR.DRR.Controllers
     public class DraftProjectClaim
     {
         public string? Id { get; set; }
+        public string? ReportPeriod { get; set; }
         public string? ContractNumber { get; set; }
         public DateTime? ReportDate { get; set; }
         public DateTime? DateApproved { get; set; }
@@ -324,6 +325,7 @@ namespace EMCR.DRR.Controllers
     public class DraftProgressReport
     {
         public string? Id { get; set; }
+        public string? ReportPeriod { get; set; }
         public InterimProjectType? ProjectType { get; set; }
         public DateTime? ReportDate { get; set; }
         public DateTime? DateApproved { get; set; }
@@ -344,6 +346,7 @@ namespace EMCR.DRR.Controllers
     public class DraftForecast
     {
         public string? Id { get; set; }
+        public string? ReportPeriod { get; set; }
         public DateTime? ReportDate { get; set; }
         public DateTime? DateSubmitted { get; set; }
         public DateTime? DateApproved { get; set; }

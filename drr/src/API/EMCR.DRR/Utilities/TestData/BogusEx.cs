@@ -1,7 +1,7 @@
 ﻿using Bogus;
 using EMCR.DRR.Controllers;
 
-namespace EMCR.Tests.Unit.DRR
+namespace EMCR.DRR.API.Utilities.TestData
 {
     public static class BogusExtensions
     {

@@ -747,6 +747,7 @@ namespace EMCR.DRR.Managers.Intake
     public class ProjectClaim
     {
         public string? Id { get; set; }
+        public string? ReportPeriod { get; set; }
         public string? ContractNumber { get; set; }
         public DateTime? ReportDate { get; set; }
         public DateTime? DateApproved { get; set; }
@@ -767,6 +768,7 @@ namespace EMCR.DRR.Managers.Intake
     public class ProgressReport
     {
         public string? Id { get; set; }
+        public string? ReportPeriod { get; set; }
         public string? CrmId { get; set; }
         public DateTime? ReportDate { get; set; }
         public DateTime? DateSubmitted { get; set; }
@@ -816,6 +818,7 @@ namespace EMCR.DRR.Managers.Intake
     public class Forecast
     {
         public string? Id { get; set; }
+        public string? ReportPeriod { get; set; }
         public DateTime? ReportDate { get; set; }
         public DateTime? DateSubmitted { get; set; }
         public DateTime? DateApproved { get; set; }
