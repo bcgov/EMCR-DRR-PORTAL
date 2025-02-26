@@ -1,7 +1,7 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, Input, inject } from '@angular/core';
-import { FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -96,6 +96,9 @@ export class DrrTextareaComponent {
   }
 
   getMandatoryMark() {
-    return this.rxFormControl?.hasValidator(Validators.required) ? '*' : '';
+    return !!this.rxFormControl?.validator?.({})?.required ||
+      this.rxFormControl?.hasError('required')
+      ? '*'
+      : '';
   }
 }
