@@ -31,5 +31,7 @@ export interface InterimReport {
   /** @nullable */
   reportDate?: string;
   /** @nullable */
+  reportPeriod?: string;
+  /** @nullable */
   status?: InterimReportStatus;
 }

@@ -61,186 +61,197 @@
       </div>
     </mat-step>
     <mat-step label="Expenditures">
-      <div
-        style="display: flex; flex-direction: column; gap: 1rem; padding: 1rem"
-      >
-        <div style="align-self: center">invoice summary table goes here</div>
-        <button
-          style="align-self: flex-end"
-          (click)="addInvoice()"
-          mat-stroked-button
-          type="button"
-          color="primary"
-        >
-          <mat-icon>add</mat-icon>
-          {{ t("addInvoice") }}
-        </button>
-      </div>
-      <div
-        style="
-          display: flex;
-          flex-direction: column;
-          gap: 1rem;
-          justify-content: flex-start;
-        "
-      >
-        <drr-radio-button
-          [label]="t('skipClaimReport')"
-          [rxFormControl]="claimForm.get('expenditure.skipClaimReport')"
-        ></drr-radio-button>
-
+      @if (claimForm) {
         <div
-          *ngFor="let invoice of getInvoiceFormArray().controls; let i = index"
+          style="
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 1rem;
+          "
         >
-          <mat-card>
-            <mat-card-header>
-              <mat-card-subtitle> Invoice {{ i + 1 }} </mat-card-subtitle>
-            </mat-card-header>
-            <mat-card-content>
-              <div class="invoice-container">
-                <div style="display: flex; gap: 1rem; align-items: flex-end">
-                  <drr-input
-                    style="width: 30rem"
-                    [label]="t('invoiceNumber')"
-                    [rxFormControl]="invoice.get('invoiceNumber')"
-                    [maxlength]="200"
-                  ></drr-input>
-                  <drr-datepicker
-                    [label]="t('invoiceDate')"
-                    [rxFormControl]="invoice.get('invoiceDate')"
-                  ></drr-datepicker>
-                  <drr-datepicker
-                    [label]="t('worksStartDate')"
-                    [rxFormControl]="invoice.get('startDate')"
-                  ></drr-datepicker>
-                  <drr-datepicker
-                    [label]="t('worksEndDate')"
-                    [rxFormControl]="invoice.get('endDate')"
-                  ></drr-datepicker>
-                  <drr-datepicker
-                    [label]="t('paymentDate')"
-                    [rxFormControl]="invoice.get('paymentDate')"
-                  ></drr-datepicker>
+          <button
+            style="align-self: flex-end"
+            (click)="addInvoice()"
+            mat-stroked-button
+            type="button"
+            color="primary"
+          >
+            <mat-icon>add</mat-icon>
+            {{ t("addInvoice") }}
+          </button>
+        </div>
+        <div
+          style="
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            justify-content: flex-start;
+          "
+        >
+          <drr-radio-button
+            [label]="t('skipClaimReport')"
+            [rxFormControl]="
+              claimForm.get('expenditure')?.get('skipClaimReport')
+            "
+          ></drr-radio-button>
+
+          <div
+            *ngFor="
+              let invoice of getInvoiceFormArray()?.controls;
+              let i = index
+            "
+          >
+            <mat-card>
+              <mat-card-header>
+                <mat-card-subtitle> Invoice {{ i + 1 }} </mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content>
+                <div class="invoice-container">
+                  <div style="display: flex; gap: 1rem; align-items: flex-end">
+                    <drr-input
+                      style="width: 30rem"
+                      [label]="t('invoiceNumber')"
+                      [rxFormControl]="invoice.get('invoiceNumber')"
+                      [maxlength]="200"
+                    ></drr-input>
+                    <drr-datepicker
+                      [label]="t('invoiceDate')"
+                      [rxFormControl]="invoice.get('date')"
+                    ></drr-datepicker>
+                    <drr-datepicker
+                      [label]="t('workStartDate')"
+                      [rxFormControl]="invoice.get('workStartDate')"
+                    ></drr-datepicker>
+                    <drr-datepicker
+                      [label]="t('workEndDate')"
+                      [rxFormControl]="invoice.get('workEndDate')"
+                    ></drr-datepicker>
+                    <drr-datepicker
+                      [label]="t('paymentDate')"
+                      [rxFormControl]="invoice.get('paymentDate')"
+                    ></drr-datepicker>
+                  </div>
+                  <div
+                    style="
+                      display: flex;
+                      justify-content: flex-start;
+                      gap: 1rem;
+                      margin-top: 1rem;
+                    "
+                  ></div>
+                  <div style="display: flex; gap: 1rem">
+                    <drr-input
+                      class="drr-single-input"
+                      [label]="t('supplierName')"
+                      [rxFormControl]="invoice.get('supplierName')"
+                    ></drr-input>
+                    <drr-select
+                      class="drr-single-input"
+                      [label]="t('costCategory')"
+                      [rxFormControl]="invoice.get('costCategory')"
+                      [options]="costCategoryOptions"
+                    ></drr-select>
+                  </div>
+                  <drr-textarea
+                    [label]="t('description')"
+                    [rxFormControl]="invoice.get('description')"
+                    [maxlength]="2000"
+                  ></drr-textarea>
+                  <div
+                    style="
+                      display: flex;
+                      gap: 1rem;
+                      margin-top: 1rem;
+                      align-items: flex-end;
+                    "
+                  >
+                    <drr-currency-input
+                      [label]="t('grossAmount')"
+                      [rxFormControl]="invoice.get('grossAmount')"
+                    ></drr-currency-input>
+                    <drr-currency-input
+                      [label]="t('taxRebate')"
+                      [rxFormControl]="invoice.get('taxRebate')"
+                    ></drr-currency-input>
+                    <drr-currency-input
+                      [label]="t('totalPST')"
+                      [rxFormControl]="invoice.get('totalPST')"
+                    ></drr-currency-input>
+                    <drr-currency-input
+                      [label]="t('totalGST')"
+                      [rxFormControl]="invoice.get('totalGST')"
+                    ></drr-currency-input>
+                    <drr-currency-input
+                      class="drr-single-input"
+                      [label]="t('claimAmount')"
+                      [rxFormControl]="invoice.get('claimAmount')"
+                    ></drr-currency-input>
+                  </div>
                 </div>
-                <div
-                  style="
-                    display: flex;
-                    justify-content: flex-start;
-                    gap: 1rem;
-                    margin-top: 1rem;
-                  "
-                ></div>
-                <div style="display: flex; gap: 1rem">
-                  <drr-input
-                    class="drr-single-input"
-                    [label]="t('supplierName')"
-                    [rxFormControl]="invoice.get('supplierName')"
-                  ></drr-input>
-                  <drr-select
-                    class="drr-single-input"
-                    [label]="t('claimCategory')"
-                    [rxFormControl]="invoice.get('claimCategory')"
-                    [options]="claimCategoryOptions"
-                  ></drr-select>
-                </div>
-                <drr-textarea
-                  [label]="t('description')"
-                  [rxFormControl]="invoice.get('description')"
-                  [maxlength]="2000"
-                ></drr-textarea>
-                <div
-                  style="
-                    display: flex;
-                    gap: 1rem;
-                    margin-top: 1rem;
-                    align-items: flex-end;
-                  "
+              </mat-card-content>
+              <mat-card-actions [align]="'end'">
+                <button
+                  mat-stroked-button
+                  color="warn"
+                  (click)="removeInvoice(i)"
+                  type="button"
                 >
-                  <drr-currency-input
-                    [label]="t('grossAmount')"
-                    [rxFormControl]="invoice.get('grossAmount')"
-                  ></drr-currency-input>
-                  <drr-currency-input
-                    [label]="t('taxRebate')"
-                    [rxFormControl]="invoice.get('taxRebate')"
-                  ></drr-currency-input>
-                  <drr-currency-input
-                    [label]="t('pstPaid')"
-                    [rxFormControl]="invoice.get('pstPaid')"
-                  ></drr-currency-input>
-                  <drr-currency-input
-                    [label]="t('gstPaid')"
-                    [rxFormControl]="invoice.get('gstPaid')"
-                  ></drr-currency-input>
-                  <drr-currency-input
-                    class="drr-single-input"
-                    [label]="t('claimAmount')"
-                    [rxFormControl]="invoice.get('claimAmount')"
-                  ></drr-currency-input>
-                </div>
-              </div>
-            </mat-card-content>
-            <mat-card-actions [align]="'end'">
-              <button
-                mat-stroked-button
-                color="warn"
-                (click)="removeInvoice(i)"
-                type="button"
-              >
-                {{ t("delete") }}
-              </button>
-            </mat-card-actions>
-          </mat-card>
+                  {{ t("delete") }}
+                </button>
+              </mat-card-actions>
+            </mat-card>
+          </div>
+          <drr-textarea
+            [label]="t('claimComment')"
+            [rxFormControl]="claimForm.get('expenditure')?.get('claimComment')"
+            [maxlength]="2000"
+          >
+          </drr-textarea>
+
+          <mat-divider style="margin: 2rem 0"></mat-divider>
+
+          <h5>Claim Summary</h5>
+
+          <div>
+            <table class="claim-summary-table">
+              <tr>
+                <td>Earliest Invoice</td>
+                <td>{{ getEarliestInvoiceDate() | date: "yyyy-MM-dd" }}</td>
+              </tr>
+              <tr>
+                <td>Latest Invoice</td>
+                <td>{{ getLatestInvoiceDate() | date: "yyyy-MM-dd" }}</td>
+              </tr>
+              <tr>
+                <td>Earliest Goods and Services Work Start Date</td>
+                <td>
+                  {{
+                    getEarliestGoodsAndServicesWorkStartDate()
+                      | date: "yyyy-MM-dd"
+                  }}
+                </td>
+              </tr>
+              <tr>
+                <td>Latest Goods and Services Work End Date</td>
+                <td>
+                  {{
+                    getLatestGoodsAndServicesWorkEndDate() | date: "yyyy-MM-dd"
+                  }}
+                </td>
+              </tr>
+              <tr>
+                <td>Number of Invoices</td>
+                <td>{{ getNumberOfInvoices() }}</td>
+              </tr>
+              <tr>
+                <td>Total Amount of this Claim</td>
+                <td>{{ getTotalClaimAmount() | currency }}</td>
+              </tr>
+            </table>
+          </div>
         </div>
-        <drr-textarea
-          [label]="t('claimComment')"
-          [rxFormControl]="claimForm.get('expenditure.claimComment')"
-          [maxlength]="2000"
-        >
-        </drr-textarea>
-
-        <mat-divider style="margin: 2rem 0"></mat-divider>
-
-        <h5>Claim Summary</h5>
-
-        <div>
-          <table class="claim-summary-table">
-            <tr>
-              <td>Earliest Invoice</td>
-              <td>{{ getEarliestInvoiceDate() | date: "yyyy-MM-dd" }}</td>
-            </tr>
-            <tr>
-              <td>Latest Invoice</td>
-              <td>{{ getLatestInvoiceDate() | date: "yyyy-MM-dd" }}</td>
-            </tr>
-            <tr>
-              <td>Earliest Goods and Services Work Start Date</td>
-              <td>
-                {{
-                  getEarliestGoodsAndServicesWorkStartDate()
-                    | date: "yyyy-MM-dd"
-                }}
-              </td>
-            </tr>
-            <tr>
-              <td>Latest Goods and Services Work End Date</td>
-              <td>
-                {{
-                  getLatestGoodsAndServicesWorkEndDate() | date: "yyyy-MM-dd"
-                }}
-              </td>
-            </tr>
-            <tr>
-              <td>Number of Invoices</td>
-              <td>{{ getNumberOfInvoices() }}</td>
-            </tr>
-            <tr>
-              <td>Total Amount of this Claim</td>
-              <td>{{ getTotalClaimAmount() | currency }}</td>
-            </tr>
-          </table>
-        </div>
-      </div>
+      }
     </mat-step>
     <mat-step label="Attachments"> </mat-step>
     <mat-step label="Review"> </mat-step>

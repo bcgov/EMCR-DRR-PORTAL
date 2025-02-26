@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { FormArray } from '@angular/forms';
+import { FormArray, FormGroup } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
@@ -12,7 +12,11 @@ import {
 } from '@angular/material/stepper';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
-import { IFormGroup, RxFormBuilder } from '@rxweb/reactive-form-validators';
+import {
+  AppFormGroup,
+  RxFormBuilder,
+  RxFormGroup,
+} from '@rxweb/reactive-form-validators';
 import { ProjectService } from '../../../../../api/project/project.service';
 import { CostCategory, DeclarationType, FormType } from '../../../../../model';
 import { DrrCurrencyInputComponent } from '../../../../shared/controls/drr-currency-input/drr-currency-input.component';
@@ -68,17 +72,17 @@ export class DrifClaimCreateComponent {
   authorizedRepresentativeText?: string;
   accuracyOfInformationText?: string;
 
-  claimForm = this.formBuilder.formGroup(ClaimForm) as IFormGroup<ClaimForm>;
+  claimForm?: RxFormGroup | FormGroup<any> | AppFormGroup<ClaimForm>;
 
-  claimCategoryOptions: DrrSelectOption[] = Object.values(CostCategory).map(
+  costCategoryOptions: DrrSelectOption[] = Object.values(CostCategory).map(
     (value) => ({
       value,
       label: this.translocoService.translate(value),
     }),
   );
 
-  getInvoiceFormArray() {
-    return this.claimForm.get('expenditure.invoices') as FormArray;
+  getInvoiceFormArray(): FormArray | undefined {
+    return this.claimForm?.get('expenditure')?.get('invoices') as FormArray;
   }
 
   ngOnInit() {
@@ -99,39 +103,39 @@ export class DrifClaimCreateComponent {
 
       const profileData = this.profileStore.getProfile();
 
-      const submitterForm = this.claimForm.get('declaration.submitter');
-      if (profileData.firstName?.()) {
-        submitterForm
-          ?.get('firstName')
-          ?.setValue(profileData.firstName(), { emitEvent: false });
-        submitterForm?.get('firstName')?.disable();
-      }
-      if (profileData.lastName?.()) {
-        submitterForm
-          ?.get('lastName')
-          ?.setValue(profileData.lastName(), { emitEvent: false });
-        submitterForm?.get('lastName')?.disable();
-      }
-      if (profileData.title?.()) {
-        submitterForm?.get('title')?.setValue(profileData.title(), {
-          emitEvent: false,
-        });
-      }
-      if (profileData.department?.()) {
-        submitterForm?.get('department')?.setValue(profileData.department(), {
-          emitEvent: false,
-        });
-      }
-      if (profileData.phone?.()) {
-        submitterForm?.get('phone')?.setValue(profileData.phone(), {
-          emitEvent: false,
-        });
-      }
-      if (profileData.email?.()) {
-        submitterForm?.get('email')?.setValue(profileData.email(), {
-          emitEvent: false,
-        });
-      }
+      // const submitterForm = this.claimForm?.get('declaration.submitter');
+      // if (profileData.firstName?.()) {
+      //   submitterForm
+      //     ?.get('firstName')
+      //     ?.setValue(profileData.firstName(), { emitEvent: false });
+      //   submitterForm?.get('firstName')?.disable();
+      // }
+      // if (profileData.lastName?.()) {
+      //   submitterForm
+      //     ?.get('lastName')
+      //     ?.setValue(profileData.lastName(), { emitEvent: false });
+      //   submitterForm?.get('lastName')?.disable();
+      // }
+      // if (profileData.title?.()) {
+      //   submitterForm?.get('title')?.setValue(profileData.title(), {
+      //     emitEvent: false,
+      //   });
+      // }
+      // if (profileData.department?.()) {
+      //   submitterForm?.get('department')?.setValue(profileData.department(), {
+      //     emitEvent: false,
+      //   });
+      // }
+      // if (profileData.phone?.()) {
+      //   submitterForm?.get('phone')?.setValue(profileData.phone(), {
+      //     emitEvent: false,
+      //   });
+      // }
+      // if (profileData.email?.()) {
+      //   submitterForm?.get('email')?.setValue(profileData.email(), {
+      //     emitEvent: false,
+      //   });
+      // }
 
       this.load().then(() => {
         // TODO: after init logic, auto save, etc
@@ -145,43 +149,47 @@ export class DrifClaimCreateComponent {
         .projectGetClaim(this.projectId!, this.reportId!, this.claimId!)
         .subscribe({
           next: (claim) => {
-            this.claimForm.patchValue(claim);
+            const formData = new ClaimForm({
+              expenditure: {
+                skipClaimReport: false,
+                claimComment: 'claim comment text goes here',
+                invoices: [
+                  {
+                    invoiceNumber: 'N123-456',
+                    date: '2025-02-24T21:43:47Z',
+                    workStartDate: '2025-02-24T21:43:47Z',
+                    workEndDate: '2025-02-24T21:43:47Z',
+                    paymentDate: '2025-02-24T21:43:47Z',
+                    supplierName: 'Supplier of Tools Inc.',
+                    costCategory: CostCategory.ConstructionMaterials,
+                    description: 'Tools for construction: hammer, nails, etc.',
+                    grossAmount: 1000,
+                    taxRebate: 50,
+                    claimAmount: 950,
+                    totalPST: 1,
+                    totalGST: 2,
+                  },
+                  {
+                    invoiceNumber: 'N987-457',
+                    date: '2025-03-24T21:43:47Z',
+                    workStartDate: '2025-03-24T21:43:47Z',
+                    workEndDate: '2025-03-24T21:43:47Z',
+                    paymentDate: '2025-03-24T21:43:47Z',
+                    supplierName: 'Design Inc.',
+                    costCategory: CostCategory.Design,
+                    description: 'Design of the building.',
+                    grossAmount: 2000,
+                    taxRebate: 100,
+                    claimAmount: 1900,
+                    totalPST: 4,
+                    totalGST: 5,
+                  },
+                ],
+              },
+            } as ClaimForm);
 
-            // TODO: init two temp invoice forms
-            this.getInvoiceFormArray().push(
-              this.formBuilder.formGroup(InvoiceForm, {
-                invoiceNumber: 'N123-456',
-                invoiceDate: '2025-02-24T21:43:47Z',
-                startDate: '2025-02-24T21:43:47Z',
-                endDate: '2025-02-24T21:43:47Z',
-                paymentDate: '2025-02-24T21:43:47Z',
-                supplierName: 'Supplier of Tools Inc.',
-                claimCategory: CostCategory.ConstructionMaterials,
-                description: 'Tools for construction: hammer, nails, etc.',
-                grossAmount: 1000,
-                taxRebate: 50,
-                claimAmount: 950,
-                pstPaid: 1,
-                gstPaid: 2,
-              }),
-            );
-            this.getInvoiceFormArray().push(
-              this.formBuilder.formGroup(InvoiceForm, {
-                invoiceNumber: 'N987-457',
-                invoiceDate: '2025-03-24T21:43:47Z',
-                startDate: '2025-03-24T21:43:47Z',
-                endDate: '2025-03-24T21:43:47Z',
-                paymentDate: '2025-03-24T21:43:47Z',
-                supplierName: 'Design Inc.',
-                claimCategory: CostCategory.Design,
-                description: 'Design of the building.',
-                grossAmount: 2000,
-                taxRebate: 100,
-                claimAmount: 1900,
-                pstPaid: 4,
-                gstPaid: 5,
-              }),
-            );
+            this.claimForm = this.formBuilder.formGroup(ClaimForm, formData);
+
             resolve();
           },
           error: (error) => {
@@ -204,15 +212,15 @@ export class DrifClaimCreateComponent {
   }
 
   addInvoice() {
-    this.getInvoiceFormArray().push(this.formBuilder.formGroup(InvoiceForm));
+    this.getInvoiceFormArray()?.push(this.formBuilder.formGroup(InvoiceForm));
   }
 
   removeInvoice(index: number) {
-    this.getInvoiceFormArray().removeAt(index);
+    this.getInvoiceFormArray()?.removeAt(index);
   }
 
   getEarliestInvoiceDate() {
-    return this.getInvoiceFormArray().controls.reduce(
+    return this.getInvoiceFormArray()?.controls.reduce(
       (earliestDate: Date | null, control) => {
         const invoiceDate = control.get('invoiceDate')?.value;
         if (!invoiceDate) {
@@ -231,7 +239,7 @@ export class DrifClaimCreateComponent {
   }
 
   getLatestInvoiceDate() {
-    return this.getInvoiceFormArray().controls.reduce(
+    return this.getInvoiceFormArray()?.controls.reduce(
       (latestDate: Date | null, control) => {
         const invoiceDate = control.get('invoiceDate')?.value;
         if (!invoiceDate) {
@@ -250,7 +258,7 @@ export class DrifClaimCreateComponent {
   }
 
   getEarliestGoodsAndServicesWorkStartDate() {
-    return this.getInvoiceFormArray().controls.reduce(
+    return this.getInvoiceFormArray()?.controls.reduce(
       (earliestDate: Date | null, control) => {
         const startDate = control.get('startDate')?.value;
         if (!startDate) {
@@ -269,7 +277,7 @@ export class DrifClaimCreateComponent {
   }
 
   getLatestGoodsAndServicesWorkEndDate() {
-    return this.getInvoiceFormArray().controls.reduce(
+    return this.getInvoiceFormArray()?.controls.reduce(
       (latestDate: Date | null, control) => {
         const endDate = control.get('endDate')?.value;
         if (!endDate) {
@@ -288,11 +296,11 @@ export class DrifClaimCreateComponent {
   }
 
   getNumberOfInvoices() {
-    return this.getInvoiceFormArray().length;
+    return this.getInvoiceFormArray()?.length;
   }
 
   getTotalClaimAmount() {
-    return this.getInvoiceFormArray().controls.reduce(
+    return this.getInvoiceFormArray()?.controls.reduce(
       (total: number, control) => {
         const claimAmount = control.get('claimAmount')?.value;
         if (!claimAmount) {

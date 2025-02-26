@@ -154,11 +154,11 @@
             [dataSource]="interimReportsDataSource"
             multiTemplateDataRows
           >
-            <ng-container matColumnDef="id">
-              <th mat-header-cell *matHeaderCellDef>ID</th>
+            <ng-container matColumnDef="report">
+              <th mat-header-cell *matHeaderCellDef>Report</th>
               <td mat-cell *matCellDef="let element">
                 @if (!element.parentId) {
-                  {{ element.id }}
+                  {{ element.name }}
                 }
               </td>
             </ng-container>
@@ -208,7 +208,7 @@
             <tr
               mat-header-row
               *matHeaderRowDef="[
-                'id',
+                'report',
                 'section',
                 'status',
                 'dueDate',
@@ -221,7 +221,7 @@
               *matRowDef="
                 let element;
                 columns: [
-                  'id',
+                  'report',
                   'section',
                   'status',
                   'dueDate',
