@@ -170,7 +170,7 @@ namespace EMCR.DRR.Resources.Applications
                 .ForMember(dest => dest.drr_costestimateclass, opt => opt.MapFrom(src => src.CostEstimateClass.HasValue ? (int?)Enum.Parse<CostEstimateClassOptionSet>(src.CostEstimateClass.Value.ToString()) : null))
                 //.ForMember(dest => dest.match, opt => opt.MapFrom(src => src.EstimatesMatchFundingRequest))
                 .ForMember(dest => dest.drr_contingency, opt => opt.MapFrom(src => src.Contingency))
-                .ForMember(dest => dest.drr_totaleligiblecosts, opt => opt.MapFrom(src => src.TotalEligibleCosts))
+                .ForMember(dest => dest.drr_totaleligiblecost, opt => opt.MapFrom(src => src.TotalEligibleCosts))
                 .ForMember(dest => dest.drr_reasontotalprojectcostchange, opt => opt.MapFrom(src => src.TotalProjectCostChangeComments))
 
                 //Attachments - 11
@@ -326,7 +326,7 @@ namespace EMCR.DRR.Resources.Applications
                 .ForMember(dest => dest.CostEstimateClass, opt => opt.MapFrom(src => src.drr_costestimateclass.HasValue ? (int?)Enum.Parse<CostEstimateClass>(((CostEstimateClassOptionSet)src.drr_costestimateclass).ToString()) : null))
                 .ForMember(dest => dest.EstimatesMatchFundingRequest, opt => opt.Ignore())
                 .ForMember(dest => dest.Contingency, opt => opt.MapFrom(src => src.drr_contingency))
-                .ForMember(dest => dest.TotalEligibleCosts, opt => opt.MapFrom(src => src.drr_totaleligiblecosts))
+                .ForMember(dest => dest.TotalEligibleCosts, opt => opt.MapFrom(src => src.drr_totaleligiblecost))
                 .ForMember(dest => dest.TotalProjectCostChangeComments, opt => opt.MapFrom(src => src.drr_reasontotalprojectcostchange))
 
                 //Attachments

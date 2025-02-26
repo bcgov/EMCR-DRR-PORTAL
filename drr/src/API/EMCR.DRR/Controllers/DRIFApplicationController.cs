@@ -441,7 +441,7 @@ namespace EMCR.DRR.Controllers
         public IEnumerable<CostEstimate>? CostEstimates { get; set; }
         public bool? EstimatesMatchFundingRequest { get; set; }
         [Range(ApplicationValidators.CONTINGENCY_MIN_VALUE, ApplicationValidators.CONTINGENCY_MAX_VALUE)]
-        public int? Contingency { get; set; }
+        public decimal? Contingency { get; set; }
         [Range(ApplicationValidators.FUNDING_MIN_VAL, ApplicationValidators.FUNDING_MAX_VAL)]
         [CurrencyNotNegativeForSubmission(typeof(FpApplication))]
         //For Submission - must match Updated DRIF program funding request on step 10
