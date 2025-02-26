@@ -23,6 +23,7 @@ namespace EMCR.DRR.API.Resources.Reports
                 .ForMember(dest => dest.ReportDate, opt => opt.MapFrom(src => src.drr_reportdate.HasValue ? src.drr_reportdate.Value.UtcDateTime : (DateTime?)null))
                 .ForMember(dest => dest.ProjectType, opt => opt.MapFrom(src => src.drr_projecttype.HasValue ? (int?)Enum.Parse<InterimProjectType>(((FundingStreamOptionSet)src.drr_projecttype).ToString()) : null))
                 .ForMember(dest => dest.PeriodType, opt => opt.MapFrom(src => src.drr_periodtype.HasValue ? (int?)Enum.Parse<PeriodType>(((PeriodTypeOptionSet)src.drr_periodtype).ToString()) : null))
+                .ForMember(dest => dest.ReportPeriod, opt => opt.MapFrom(src => src.drr_ReportPeriod != null ? src.drr_ReportPeriod.drr_name : string.Empty))
                 .ForMember(dest => dest.ProjectClaim, opt => opt.MapFrom(src => src.drr_ClaimReport))
                 .ForMember(dest => dest.ProgressReport, opt => opt.MapFrom(src => src.drr_ProgressReport))
                 .ForMember(dest => dest.Forecast, opt => opt.MapFrom(src => src.drr_BudgetForecast))
@@ -166,7 +167,7 @@ namespace EMCR.DRR.API.Resources.Reports
                 .ForMember(dest => dest.ClaimsSubmittedNotPaid, opt => opt.MapFrom(src => src.drr_claimssubmittednotpaid))
                 .ForMember(dest => dest.ClaimsOnThisReport, opt => opt.MapFrom(src => src.drr_name))
                 .ForMember(dest => dest.RemainingClaims, opt => opt.MapFrom(src => src.drr_projectedremainingexpenditure))
-                
+
             ;
 
             CreateMap<WorkplanActivityDetails, drr_projectworkplanactivity>(MemberList.None)
