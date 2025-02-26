@@ -43,6 +43,7 @@ namespace EMCR.DRR.API.Controllers
 #pragma warning disable CS8601 // Possible null reference assignment.
             var config = new Configuration
             {
+                TestDataEndpointsEnabled = configuration.GetValue("TestDataEndpointsEnabled", false),
                 Oidc = new OidcConfiguration
                 {
                     ClientId = configuration.GetValue<string>("oidc:clientId"),
@@ -81,6 +82,7 @@ namespace EMCR.DRR.API.Controllers
     public class Configuration
     {
         public required OidcConfiguration Oidc { get; set; }
+        public required bool TestDataEndpointsEnabled { get; set; } = false;
     }
 
     public class OidcConfiguration

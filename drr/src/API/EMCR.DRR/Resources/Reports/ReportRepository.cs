@@ -432,6 +432,9 @@ namespace EMCR.DRR.API.Resources.Reports
             };
 
             await Task.WhenAll(loadTasks);
+            if (report.drr_ClaimReport != null) report.drr_ClaimReport.drr_ProjectReport = report;
+            if (report.drr_ProgressReport != null) report.drr_ProgressReport.drr_ProjectReport = report;
+            if (report.drr_BudgetForecast != null) report.drr_BudgetForecast.drr_ProjectReport = report;
         }
 
         private static async Task ParallelLoadProgressReport(DRRContext ctx, drr_projectprogress pr, CancellationToken ct)

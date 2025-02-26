@@ -92,8 +92,10 @@ namespace EMCR.DRR.API.Resources.Projects
             await Task.WhenAll(loadTasks2);
 
             await Task.WhenAll([
-                ParallelLoadProgressReports(ctx, project, ct),
                 ParallelLoadReportDetails(ctx, project, ct),
+                ParallelLoadProgressReports(ctx, project, ct),
+                ParallelLoadForecasts(ctx, project, ct),
+                ParallelLoadClaims(ctx, project, ct),
                 ParallelLoadConditions(ctx, project, ct),
                 ]);
         }
@@ -122,6 +124,8 @@ namespace EMCR.DRR.API.Resources.Projects
                 ctx.AttachTo(nameof(DRRContext.drr_projectprogresses), report);
                 await ctx.LoadPropertyAsync(report, nameof(drr_projectprogress.drr_ProjectReport), ct);
                 await ctx.LoadPropertyAsync(report, nameof(drr_projectprogress.drr_drr_projectprogress_drr_projectworkplanactivity_ProjectProgressReport), ct);
+                var projectReport = project.drr_drr_project_drr_projectreport_Project.Where(pr => pr._drr_progressreport_value == report.drr_projectprogressid).SingleOrDefault();
+                if (projectReport != null) report.drr_ProjectReport = projectReport;
             });
         }
 
@@ -140,6 +144,8 @@ namespace EMCR.DRR.API.Resources.Projects
             {
                 ctx.AttachTo(nameof(DRRContext.drr_projectbudgetforecasts), report);
                 await ctx.LoadPropertyAsync(report, nameof(drr_projectbudgetforecast.drr_ProjectReport), ct);
+                var projectReport = project.drr_drr_project_drr_projectreport_Project.Where(pr => pr._drr_budgetforecast_value == report.drr_projectbudgetforecastid).SingleOrDefault();
+                if (projectReport != null) report.drr_ProjectReport = projectReport;
             });
         }
 
@@ -149,6 +155,8 @@ namespace EMCR.DRR.API.Resources.Projects
             {
                 ctx.AttachTo(nameof(DRRContext.drr_projectclaims), report);
                 await ctx.LoadPropertyAsync(report, nameof(drr_projectclaim.drr_ProjectReport), ct);
+                var projectReport = project.drr_drr_project_drr_projectreport_Project.Where(pr => pr._drr_claimreport_value == report.drr_projectclaimid).SingleOrDefault();
+                if (projectReport != null) report.drr_ProjectReport = projectReport;
             });
         }
 
