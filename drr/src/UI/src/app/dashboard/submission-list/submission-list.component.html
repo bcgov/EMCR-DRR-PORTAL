@@ -5,10 +5,10 @@
         <span>{{ t("startNewEOI") }}</span>
       </button>
       @if (showGenerateTestSubmissionControls()) {
-        <button mat-raised-button color="primary" (click)="onCreateFormClick()">
+        <button mat-raised-button color="primary" (click)="generateTestEOI()">
           <span>Generate EOI</span>
         </button>
-        <button mat-raised-button color="primary" (click)="onCreateFormClick()">
+        <button mat-raised-button color="primary" (click)="generateTestFP()">
           <span>Generate FP</span>
         </button>
       }

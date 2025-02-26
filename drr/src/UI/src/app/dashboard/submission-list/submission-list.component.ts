@@ -416,4 +416,10 @@ export class SubmissionListComponent {
   showGenerateTestSubmissionControls() {
     return this.configStore.configuration()!.testDataEndpointsEnabled;
   }
+
+  generateTestEOI() {
+  }
+
+  generateTestFP() {
+  }
 }
