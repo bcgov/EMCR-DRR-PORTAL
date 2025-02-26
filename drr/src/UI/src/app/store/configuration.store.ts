@@ -1,13 +1,17 @@
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 
 export interface ConfigurationState {
-  oidc?: {
-    clientId?: string;
-    issuer?: string;
-    scope?: string;
-    postLogoutRedirectUri?: string;
-    accountRecoveryUrl?: string;
+  configuration: {
+    oidc?: {
+      clientId?: string;
+      issuer?: string;
+      scope?: string;
+      postLogoutRedirectUri?: string;
+      accountRecoveryUrl?: string;
+    };
+    testDataEndpointsEnabled?: boolean;
   };
+
   isConfigurationLoaded: boolean;
 }
 
@@ -16,12 +20,15 @@ type ConfigurationStore = {
 };
 
 const initialState: ConfigurationState = {
-  oidc: {
-    clientId: '',
-    issuer: '',
-    scope: '',
-    postLogoutRedirectUri: '',
-    accountRecoveryUrl: '',
+  configuration: {
+    oidc: {
+      clientId: '',
+      issuer: '',
+      scope: '',
+      postLogoutRedirectUri: '',
+      accountRecoveryUrl: '',
+    },
+    testDataEndpointsEnabled: false,
   },
   isConfigurationLoaded: false,
 };
@@ -30,8 +37,11 @@ export const ConfigurationStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
   withMethods((store) => ({
-    setOidc(oidc: ConfigurationState['oidc']) {
-      patchState(store, { oidc, isConfigurationLoaded: true });
+    setConfiguration(coniguration: ConfigurationState['configuration']) {
+      patchState(store, {
+        configuration: coniguration,
+        isConfigurationLoaded: true,
+      });
     },
-  }))
+  })),
 );

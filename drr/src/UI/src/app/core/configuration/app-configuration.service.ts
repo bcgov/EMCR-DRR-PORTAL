@@ -17,7 +17,7 @@ export class AppConfigurationService {
     return new Promise((resolve) =>
       this.configurationService.configurationGetConfiguration().subscribe(
         (config) => {
-          this.configurationStore.setOidc(config.oidc);
+          this.configurationStore.setConfiguration(config);
           resolve(true);
         },
         (error) => {

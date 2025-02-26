@@ -28,6 +28,8 @@ export interface DraftProgressReport {
   /** @nullable */
   reportDate?: string;
   /** @nullable */
+  reportPeriod?: string;
+  /** @nullable */
   status?: ProgressReportStatus;
   /** @nullable */
   workplan?: Workplan;
