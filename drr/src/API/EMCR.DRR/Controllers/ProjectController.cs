@@ -290,6 +290,7 @@ namespace EMCR.DRR.Controllers
         public InterimReportStatus? Status { get; set; }
         public InterimProjectType? ProjectType { get; set; }
         public PeriodType? PeriodType { get; set; }
+        public string? ReportPeriod {  get; set; }
         public DraftProjectClaim? ProjectClaim { get; set; }
         public DraftProgressReport? ProgressReport { get; set; }
         public DraftForecast? Forecast { get; set; }

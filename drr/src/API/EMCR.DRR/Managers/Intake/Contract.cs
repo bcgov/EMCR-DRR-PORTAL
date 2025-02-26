@@ -738,6 +738,7 @@ namespace EMCR.DRR.Managers.Intake
         public InterimReportStatus? Status { get; set; }
         public InterimProjectType? ProjectType { get; set; }
         public PeriodType? PeriodType { get; set; }
+        public string? ReportPeriod { get; set; }
         public ProjectClaim? ProjectClaim { get; set; }
         public ProgressReport? ProgressReport { get; set; }
         public Forecast? Forecast { get; set; }
