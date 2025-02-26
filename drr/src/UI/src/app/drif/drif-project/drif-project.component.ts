@@ -10,11 +10,7 @@ import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
-import {
-  MatDialog,
-  MatDialogModule,
-  MatDialogRef,
-} from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -42,6 +38,7 @@ export enum InterimSubReportSection {
 
 export interface InterimSubReport {
   id?: string;
+  name?: string;
   parentId?: string;
   section?: InterimSubReportSection;
   status?: string;
@@ -86,7 +83,6 @@ export class DrifProjectComponent {
   router = inject(Router);
   projectService = inject(ProjectService);
   matDialog = inject(MatDialog);
-  
 
   projectId?: string;
 
@@ -126,10 +122,12 @@ export class DrifProjectComponent {
         reportsDue.forEach((report) => {
           subReportsDue.push({
             id: report.id,
+            name: `${report.reportPeriod} Report`,
           });
           if (report.progressReport) {
             subReportsDue.push({
               id: report.progressReport?.id,
+              name: `${report.reportPeriod} Progress`,
               parentId: report.id,
               section: InterimSubReportSection.Progress,
               status: report.progressReport?.status,
@@ -140,6 +138,7 @@ export class DrifProjectComponent {
           if (report.projectClaim) {
             subReportsDue.push({
               id: report.projectClaim?.id,
+              name: `${report.reportPeriod} Claim`,
               parentId: report.id,
               section: InterimSubReportSection.Claim,
               status: report.projectClaim?.status,
@@ -150,6 +149,7 @@ export class DrifProjectComponent {
           if (report.forecast) {
             subReportsDue.push({
               id: report.forecast?.id,
+              name: `${report.reportPeriod} Forecast`,
               parentId: report.id,
               section: InterimSubReportSection.Forecast,
               status: report.forecast?.status,
