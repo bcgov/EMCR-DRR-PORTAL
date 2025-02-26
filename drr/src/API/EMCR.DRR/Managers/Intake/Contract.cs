@@ -500,7 +500,7 @@ namespace EMCR.DRR.Managers.Intake
         public IEnumerable<CostEstimate>? CostEstimates { get; set; }
         public CostEstimateClass? CostEstimateClass { get; set; }
         public bool? EstimatesMatchFundingRequest { get; set; }
-        public int? Contingency { get; set; }
+        public decimal? Contingency { get; set; }
         public decimal? TotalEligibleCosts { get; set; }
 
         //Attachments - 11
@@ -738,6 +738,7 @@ namespace EMCR.DRR.Managers.Intake
         public InterimReportStatus? Status { get; set; }
         public InterimProjectType? ProjectType { get; set; }
         public PeriodType? PeriodType { get; set; }
+        public string? ReportPeriod { get; set; }
         public ProjectClaim? ProjectClaim { get; set; }
         public ProgressReport? ProgressReport { get; set; }
         public Forecast? Forecast { get; set; }
