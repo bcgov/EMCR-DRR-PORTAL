@@ -340,7 +340,7 @@ app.MapControllers();
 var testDataEndpointsEnabled = configuration.GetValue("TestDataEndpointsEnabled", false);
 if (testDataEndpointsEnabled)
 {
-    app.MapPost("/test-data/eoi", [Authorize] async (HttpContext ctx) =>
+    app.MapPost("/api/test-data/eoi", [Authorize] async (HttpContext ctx) =>
     {
 #pragma warning disable CS8603 // Possible null reference return.
         string GetCurrentBusinessId() => ctx.User.FindFirstValue("bceid_business_guid");
@@ -361,7 +361,7 @@ if (testDataEndpointsEnabled)
         await ctx.Response.WriteAsJsonAsync(new { eoiId = id });
     }).WithName("Create Test EOI");
 
-    app.MapPost("/test-data/fp", async ctx =>
+    app.MapPost("/api/test-data/fp", async ctx =>
     {
 
 #pragma warning disable CS8603 // Possible null reference return.
