@@ -500,7 +500,7 @@ namespace EMCR.DRR.Managers.Intake
         public IEnumerable<CostEstimate>? CostEstimates { get; set; }
         public CostEstimateClass? CostEstimateClass { get; set; }
         public bool? EstimatesMatchFundingRequest { get; set; }
-        public int? Contingency { get; set; }
+        public decimal? Contingency { get; set; }
         public decimal? TotalEligibleCosts { get; set; }
 
         //Attachments - 11
