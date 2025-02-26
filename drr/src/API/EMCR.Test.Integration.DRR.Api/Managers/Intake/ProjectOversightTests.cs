@@ -54,13 +54,13 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var queryRes = await manager.Handle(new DrrProjectsQuery { Id = "DRIF-PRJ-1015", BusinessId = GetCRAFTUserInfo().BusinessId, QueryOptions = queryOptions });
             var projects = mapper.Map<IEnumerable<DraftDrrProject>>(queryRes.Items);
             projects.Count().ShouldBe(1);
-            //projects.ShouldAllBe(s => s.ProgramType == ProgramType.DRIF);
+            projects.First().Claims.Last().ReportPeriod.ShouldNotBeNullOrEmpty();
         }
 
         [Test]
         public async Task QueryReports_CanFilterById()
         {
-            var queryRes = await manager.Handle(new DrrReportsQuery { Id = "DRIF-REP-1144", BusinessId = GetTestUserInfo().BusinessId });
+            var queryRes = await manager.Handle(new DrrReportsQuery { Id = "DRIF-REP-1146", BusinessId = GetTestUserInfo().BusinessId });
             var reports = mapper.Map<IEnumerable<EMCR.DRR.Controllers.InterimReport>>(queryRes.Items);
             reports.Count().ShouldBe(1);
         }
@@ -139,6 +139,10 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
         //    var queryRes = await manager.Handle(new DrrProjectsQuery { Id = "DRIF-PRJ-1013", BusinessId = GetCRAFTUserInfo().BusinessId, QueryOptions = queryOptions });
         //    var project = queryRes.Items.SingleOrDefault();
         //    var res = await manager.Handle(new CreateInterimReportCommand { ProjectId = project.Id, ReportType = EMCR.DRR.Managers.Intake.ReportType.Interim, UserInfo = GetCRAFTUserInfo() });
+        //    project = (await manager.Handle(new DrrProjectsQuery { Id = "DRIF-PRJ-1013", BusinessId = GetCRAFTUserInfo().BusinessId, QueryOptions = queryOptions })).Items.SingleOrDefault();
+        //    project.InterimReports.First().ProgressReport.ShouldNotBeNull();
+        //    project.InterimReports.First().ProjectClaim.ShouldNotBeNull();
+        //    project.InterimReports.First().Forecast.ShouldNotBeNull();
         //    res.ShouldNotBeNullOrEmpty();
         //}
 

@@ -1,8 +1,7 @@
 ﻿using Bogus;
 using EMCR.DRR.Controllers;
-using EMCR.Tests.Unit.DRR;
 
-namespace EMCR.Tests.Integration
+namespace EMCR.DRR.API.Utilities.TestData
 {
     public static class TestHelper
     {
