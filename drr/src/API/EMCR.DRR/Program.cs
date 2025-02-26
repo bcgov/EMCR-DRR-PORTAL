@@ -358,7 +358,7 @@ if (testDataEndpointsEnabled)
         var id = await manager.Handle(new EoiSaveApplicationCommand { Application = mapper.Map<EoiApplication>(application), UserInfo = GetCurrentUser() });
 
         ctx.Response.StatusCode = (int)HttpStatusCode.Created;
-        await ctx.Response.WriteAsJsonAsync(new { id = id });
+        await ctx.Response.WriteAsJsonAsync(new { eoiId = id });
     }).WithName("Create Test EOI");
 
     app.MapPost("/test-data/fp", async ctx =>
@@ -410,7 +410,7 @@ if (testDataEndpointsEnabled)
         var fpId = await manager.Handle(new CreateFpFromEoiCommand { EoiId = eoiId, UserInfo = GetCurrentUser(), ScreenerQuestions = screenerQuestions });
 
         ctx.Response.StatusCode = (int)HttpStatusCode.Created;
-        await ctx.Response.WriteAsJsonAsync(new { id = fpId });
+        await ctx.Response.WriteAsJsonAsync(new { eoiId = eoiId, fpId = fpId });
     }).WithName("Create Test FP");
 }
 
