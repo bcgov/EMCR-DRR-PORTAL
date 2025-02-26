@@ -848,7 +848,9 @@ export class DrifFpComponent {
       } else {
         let controlWasDisabled = false;
         if (control && control.disabled) {
-          control.enable();
+          control.enable({
+            emitEvent: false,
+          });
           controlWasDisabled = true;
         }
 
@@ -857,7 +859,7 @@ export class DrifFpComponent {
         }
 
         if (controlWasDisabled) {
-          control!.disable();
+          control!.disable({ emitEvent: false });
         }
       }
     });
