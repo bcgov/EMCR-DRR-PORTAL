@@ -54,7 +54,9 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var queryRes = await manager.Handle(new DrrProjectsQuery { Id = "DRIF-PRJ-1015", BusinessId = GetCRAFTUserInfo().BusinessId, QueryOptions = queryOptions });
             var projects = mapper.Map<IEnumerable<DraftDrrProject>>(queryRes.Items);
             projects.Count().ShouldBe(1);
+#pragma warning disable CS8604 // Possible null reference argument.
             projects.First().Claims.Last().ReportPeriod.ShouldNotBeNullOrEmpty();
+#pragma warning restore CS8604 // Possible null reference argument.
         }
 
         [Test]
@@ -76,7 +78,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
         [Test]
         public async Task QueryProgressReports_CanFilterById()
         {
-            var queryRes = await manager.Handle(new DrrProgressReportsQuery { Id = "DRIF-PR-1058", BusinessId = GetCRAFTUserInfo().BusinessId });
+            var queryRes = await manager.Handle(new DrrProgressReportsQuery { Id = "DRIF-PR-1102", BusinessId = GetCRAFTUserInfo().BusinessId });
             var prs = mapper.Map<IEnumerable<EMCR.DRR.Controllers.DraftProgressReport>>(queryRes.Items);
             prs.Count().ShouldBe(1);
             var progressReport = prs.Single();
