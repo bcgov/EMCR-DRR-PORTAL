@@ -708,18 +708,14 @@ namespace EMCR.DRR.Managers.Intake
         {
             if (string.IsNullOrEmpty(businessId)) throw new ArgumentNullException("Missing user's BusinessId");
             if (string.IsNullOrEmpty(id)) return true;
-            logger.LogDebug("CanAccessReport not implemented");
-            //return await reportRepository.CanAccessReport(id, businessId);
-            return await Task.FromResult(true);
+            return await reportRepository.CanAccessReport(id, businessId);
         }
 
         private async Task<bool> CanAccessClaim(string? id, string? businessId)
         {
             if (string.IsNullOrEmpty(businessId)) throw new ArgumentNullException("Missing user's BusinessId");
             if (string.IsNullOrEmpty(id)) return true;
-            logger.LogDebug("CanAccessClaim not implemented");
-            //return await reportRepository.CanAccessClaim(id, businessId);
-            return await Task.FromResult(true);
+            return await reportRepository.CanAccessClaim(id, businessId);
         }
 
         private async Task<bool> CanAccessProgressReport(string? id, string? businessId)
@@ -740,9 +736,14 @@ namespace EMCR.DRR.Managers.Intake
         {
             if (string.IsNullOrEmpty(businessId)) throw new ArgumentNullException("Missing user's BusinessId");
             if (string.IsNullOrEmpty(id)) return true;
-            logger.LogDebug("CanAccessForecast not implemented");
-            //return await reportRepository.CanAccessForecast(id, businessId);
-            return await Task.FromResult(true);
+            return await reportRepository.CanAccessForecast(id, businessId);
+        }
+
+        private async Task<bool> CanAccessInvoiceFromDocumentId(string? id, string? businessId)
+        {
+            if (string.IsNullOrEmpty(businessId)) throw new ArgumentNullException("Missing user's BusinessId");
+            if (string.IsNullOrEmpty(id)) return true;
+            return await reportRepository.CanAccessInvoiceFromDocumentId(id, businessId);
         }
 
         private FilterOptions ParseFilter(string? filter)

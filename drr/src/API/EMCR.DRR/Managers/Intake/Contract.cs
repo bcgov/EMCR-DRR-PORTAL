@@ -533,7 +533,7 @@ namespace EMCR.DRR.Managers.Intake
         public IEnumerable<ProgressReport>? ProgressReports { get; set; }
         public IEnumerable<Forecast>? Forecast { get; set; }
         public IEnumerable<ProjectEvent>? Events { get; set; }
-        public IEnumerable<Attachment>? Attachments { get; set; }
+        public IEnumerable<BcGovDocument>? Attachments { get; set; }
     }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
@@ -832,7 +832,7 @@ namespace EMCR.DRR.Managers.Intake
     {
         public IEnumerable<ForecastItem>? ForecastItems { get; set; }
         public string? VarianceComment { get; set; }
-        public IEnumerable<Attachment>? Attachments { get; set; }
+        public IEnumerable<BcGovDocument>? Attachments { get; set; }
         public ContactDetails? AuthorizedRepresentative { get; set; }
         public bool? AuthorizedRepresentativeStatement { get; set; }
         public bool? InformationAccuracyStatement { get; set; }
@@ -910,6 +910,7 @@ namespace EMCR.DRR.Managers.Intake
         public decimal? ClaimAmount { get; set; }
         public decimal? TotalPST { get; set; }
         public decimal? TotalGST { get; set; }
+        public IEnumerable<BcGovDocument>? Attachments { get; set; }
     }
 
     public class ActivityType

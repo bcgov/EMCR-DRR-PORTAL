@@ -68,6 +68,7 @@ namespace EMCR.DRR.API.Resources.Reports
                 .ForMember(dest => dest.ClaimAmount, opt => opt.MapFrom(src => src.drr_proponentclaimamount))
                 .ForMember(dest => dest.TotalPST, opt => opt.MapFrom(src => src.drr_totalpstpaid))
                 .ForMember(dest => dest.TotalGST, opt => opt.MapFrom(src => src.drr_totalgstpaid))
+                .ForMember(dest => dest.Attachments, opt => opt.MapFrom(src => src.bcgov_drr_projectexpenditure_bcgov_documenturl_ProjectExpenditure.Where(c => c.statecode == (int)EntityState.Active)))
             ;
 
 #pragma warning disable CS8604 // Possible null reference argument.

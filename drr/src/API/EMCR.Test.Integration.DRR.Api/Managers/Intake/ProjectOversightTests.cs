@@ -67,22 +67,25 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             reports.Count().ShouldBe(1);
         }
 
+#pragma warning disable CS8604 // Possible null reference argument.
         [Test]
         public async Task QueryClaims_CanFilterById()
         {
-            var queryRes = await manager.Handle(new DrrClaimsQuery { Id = "DRIF-CLAIM-1000", BusinessId = GetTestUserInfo().BusinessId });
-            var claims = mapper.Map<IEnumerable<EMCR.DRR.Controllers.ProjectClaim>>(queryRes.Items);
+            var queryRes = await manager.Handle(new DrrClaimsQuery { Id = "DRIF-CLAIM-1039", BusinessId = GetCRAFTUserInfo().BusinessId });
+            var claims = mapper.Map<IEnumerable<DraftProjectClaim>>(queryRes.Items);
             claims.Count().ShouldBe(1);
+            claims.First().Invoices.Count().ShouldBe(1);
         }
+#pragma warning restore CS8604 // Possible null reference argument.
 
         [Test]
         public async Task QueryProgressReports_CanFilterById()
         {
             var queryRes = await manager.Handle(new DrrProgressReportsQuery { Id = "DRIF-PR-1102", BusinessId = GetCRAFTUserInfo().BusinessId });
-            var prs = mapper.Map<IEnumerable<EMCR.DRR.Controllers.DraftProgressReport>>(queryRes.Items);
+            var prs = mapper.Map<IEnumerable<DraftProgressReport>>(queryRes.Items);
             prs.Count().ShouldBe(1);
             var progressReport = prs.Single();
-            progressReport.ProjectType.ShouldBe(EMCR.DRR.Controllers.InterimProjectType.Stream1);
+            progressReport.ProjectType.ShouldBe(EMCR.DRR.Controllers.InterimProjectType.Stream2);
         }
 
         [Test]
