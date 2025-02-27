@@ -434,6 +434,24 @@
 
     <mat-divider style="margin: 2rem 0"></mat-divider>
 
+    <mat-label class="drr-label">{{ t("costConsiderations") }}</mat-label>
+    <drr-radio-button
+      [label]="t('costConsiderationsApplied')"
+      [rxFormControl]="budgetForm.get('costConsiderationsApplied')"
+    ></drr-radio-button>
+    <drr-chip-autocomplete
+      *ngIf="budgetForm.get('costConsiderationsApplied')?.value === true"
+      [label]="t('costConsiderationsQuestions')"
+      [placeholder]="t('autocompletePlaceholder')"
+      [rxFormControl]="budgetForm.get('costConsiderations')"
+      [options]="costConsiderationsOptions"
+    ></drr-chip-autocomplete>
+    <drr-textarea
+      [label]="t('costConsiderationsComments')"
+      [rxFormControl]="budgetForm.get('costConsiderationsComments')"
+      [maxlength]="2000"
+    ></drr-textarea>
+
     <mat-label class="drr-label" style="margin-top: 1rem">{{
       t("costEffective")
     }}</mat-label>
@@ -461,24 +479,6 @@
       "
       [label]="t('previousResponseComments')"
       [rxFormControl]="budgetForm.get('previousResponseComments')"
-      [maxlength]="2000"
-    ></drr-textarea>
-
-    <mat-label class="drr-label">{{ t("costConsiderations") }}</mat-label>
-    <drr-radio-button
-      [label]="t('costConsiderationsApplied')"
-      [rxFormControl]="budgetForm.get('costConsiderationsApplied')"
-    ></drr-radio-button>
-    <drr-chip-autocomplete
-      *ngIf="budgetForm.get('costConsiderationsApplied')?.value === true"
-      [label]="t('costConsiderationsQuestions')"
-      [placeholder]="t('autocompletePlaceholder')"
-      [rxFormControl]="budgetForm.get('costConsiderations')"
-      [options]="costConsiderationsOptions"
-    ></drr-chip-autocomplete>
-    <drr-textarea
-      [label]="t('costConsiderationsComments')"
-      [rxFormControl]="budgetForm.get('costConsiderationsComments')"
       [maxlength]="2000"
     ></drr-textarea>
   </form>
