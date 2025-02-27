@@ -376,6 +376,7 @@ namespace EMCR.DRR.Controllers
         public decimal? ClaimAmount { get; set; }
         public decimal? TotalPST { get; set; }
         public decimal? TotalGST { get; set; }
+        public IEnumerable<Attachment>? Attachments { get; set; }
     }
 
     public class EventInformation

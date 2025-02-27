@@ -339,6 +339,22 @@ namespace EMCR.DRR.Managers.Intake
                 .ReverseMap()
                 ;
 
+            CreateMap<DraftProjectClaim, ClaimDetails>()
+                .ForMember(dest => dest.AuthorizedRepresentativeStatement, opt => opt.Ignore())
+                .ForMember(dest => dest.InformationAccuracyStatement, opt => opt.Ignore())
+                .AfterMap((src, dest) =>
+                {
+                    foreach (var prop in dest.GetType().GetProperties())
+                    {
+                        if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
+                        {
+                            prop.SetValue(dest, "");
+                        }
+                    }
+                })
+                .ReverseMap()
+                ;
+
             CreateMap<Controllers.ProgressReport, ProgressReportDetails>()
                 .ForMember(dest => dest.CrmId, opt => opt.Ignore())
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => IntakeProgressReportStatusMapper(src.Status)))
