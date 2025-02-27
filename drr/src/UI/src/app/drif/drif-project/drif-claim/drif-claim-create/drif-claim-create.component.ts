@@ -76,6 +76,10 @@ export class DrifClaimCreateComponent {
 
   claimForm?: RxFormGroup | FormGroup<any> | AppFormGroup<ClaimForm>;
 
+  today = new Date();
+  plannedStartDate!: Date;
+  plannedEndDate!: Date;
+
   costCategoryOptions: DrrSelectOption[] = Object.values(CostCategory).map(
     (value) => ({
       value,
@@ -153,6 +157,15 @@ export class DrifClaimCreateComponent {
           next: (claim) => {
             this.reportName = `${claim.reportPeriod} Claim`;
 
+            // TODO: change when API is ready
+            // temp set to month before and month after
+            this.plannedStartDate = new Date();
+            this.plannedStartDate.setMonth(
+              this.plannedStartDate.getMonth() - 1,
+            );
+            this.plannedEndDate = new Date();
+            this.plannedEndDate.setMonth(this.plannedEndDate.getMonth() + 1);
+
             const formData = new ClaimForm({
               expenditure: {
                 skipClaimReport: false,
@@ -214,6 +227,8 @@ export class DrifClaimCreateComponent {
 
     this.router.navigate(['drif-projects', this.projectId]);
   }
+
+  submit() {}
 
   addInvoice() {
     this.getInvoiceFormArray()?.push(this.formBuilder.formGroup(InvoiceForm));

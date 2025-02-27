@@ -687,5 +687,11 @@
     "ProgressReporting": "Project Contact - Progress Reporting",
     "ForecastReporting": "Budget Contact - Budget Forecast Reporting",
     "ClaimsReporting": "Claims Contact - Claims Reporting"
+  },
+  "claim": {
+    "invoiceNumber": "Invoice Number",
+    "invoiceDate": "Date of Invoice",
+    "workStartDate": "Start Date",
+    "workEndDate": "End Date"
   }
 }

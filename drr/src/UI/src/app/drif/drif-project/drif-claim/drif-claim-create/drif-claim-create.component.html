@@ -1,4 +1,4 @@
-<div class="app-stepper-container" *transloco="let t">
+<div class="app-stepper-container" *transloco="let t; read: 'claim'">
   <div class="app-stepper-header">
     <div style="flex: 1">
       <h5 style="font-size: 1.2rem; margin-bottom: 0.5rem">{{ reportName }}</h5>
@@ -60,7 +60,7 @@
         </button>
       </div>
     </mat-step>
-    <mat-step label="Expenditures">
+    <mat-step label="Summary of Expenditures">
       @if (claimForm) {
         <div
           style="
@@ -118,14 +118,19 @@
                     <drr-datepicker
                       [label]="t('invoiceDate')"
                       [rxFormControl]="invoice.get('date')"
+                      [max]="today"
                     ></drr-datepicker>
                     <drr-datepicker
                       [label]="t('workStartDate')"
                       [rxFormControl]="invoice.get('workStartDate')"
+                      [min]="plannedStartDate"
+                      [max]="invoice.get('workEndDate')?.value"
                     ></drr-datepicker>
                     <drr-datepicker
                       [label]="t('workEndDate')"
                       [rxFormControl]="invoice.get('workEndDate')"
+                      [min]="invoice.get('workStartDate')?.value"
+                      [max]="plannedEndDate"
                     ></drr-datepicker>
                     <drr-datepicker
                       [label]="t('paymentDate')"
@@ -252,8 +257,31 @@
           </div>
         </div>
       }
+      <div class="drr-stepper-actions">
+        <button mat-stroked-button color="primary" matStepperPrevious>
+          Back
+        </button>
+        <button mat-flat-button color="primary" matStepperNext type="button">
+          {{ t("next") }}
+        </button>
+      </div>
     </mat-step>
-    <mat-step label="Attachments"> </mat-step>
-    <mat-step label="Review"> </mat-step>
+    <mat-step label="Review & Declaration">
+      <div></div>
+      <div class="drr-stepper-actions">
+        <button mat-stroked-button color="primary" matStepperPrevious>
+          Back
+        </button>
+        <button
+          id="submit"
+          mat-flat-button
+          color="primary"
+          type="button"
+          (click)="submit()"
+        >
+          Submit
+        </button>
+      </div>
+    </mat-step>
   </mat-stepper>
 </div>

@@ -5,23 +5,28 @@ import {
   required,
   requiredTrue,
 } from '@rxweb/reactive-form-validators';
-import { CostCategory } from '../../../../model';
+import { CostCategory, Invoice } from '../../../../model';
 import { ContactDetailsForm } from '../../drif-eoi/drif-eoi-form';
 
-export class InvoiceForm {
+export class InvoiceForm implements Invoice {
   @prop()
   id?: string;
 
   @prop()
+  @required()
   invoiceNumber?: string;
 
+  /** invoice date */
   @prop()
+  @required()
   date?: string;
 
   @prop()
+  @required()
   workStartDate?: string;
 
   @prop()
+  @required()
   workEndDate?: string;
 
   @prop()
@@ -105,4 +110,10 @@ export class ClaimForm {
   constructor(values: ClaimForm) {
     Object.assign(this, values);
   }
+}
+function requiredFalse(): (
+  target: InvoiceForm,
+  propertyKey: 'paymentDate',
+) => void {
+  throw new Error('Function not implemented.');
 }
