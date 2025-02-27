@@ -13,9 +13,11 @@ export class InvoiceForm {
   id?: string;
 
   @prop()
+  @required()
   invoiceNumber?: string;
 
   @prop()
+  @required()
   date?: string;
 
   @prop()

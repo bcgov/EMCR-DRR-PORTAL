@@ -1,4 +1,4 @@
-<div class="app-stepper-container" *transloco="let t">
+<div class="app-stepper-container" *transloco="let t; read: 'claim'">
   <div class="app-stepper-header">
     <div style="flex: 1">
       <h5 style="font-size: 1.2rem; margin-bottom: 0.5rem">{{ reportName }}</h5>
@@ -118,6 +118,7 @@
                     <drr-datepicker
                       [label]="t('invoiceDate')"
                       [rxFormControl]="invoice.get('date')"
+                      [max]="today"
                     ></drr-datepicker>
                     <drr-datepicker
                       [label]="t('workStartDate')"

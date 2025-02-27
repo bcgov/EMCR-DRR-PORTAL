@@ -76,6 +76,8 @@ export class DrifClaimCreateComponent {
 
   claimForm?: RxFormGroup | FormGroup<any> | AppFormGroup<ClaimForm>;
 
+  today = new Date();
+
   costCategoryOptions: DrrSelectOption[] = Object.values(CostCategory).map(
     (value) => ({
       value,
