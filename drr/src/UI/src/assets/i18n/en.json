@@ -690,6 +690,8 @@
   },
   "claim": {
     "invoiceNumber": "Invoice Number",
-    "invoiceDate": "Date of Invoice"
+    "invoiceDate": "Date of Invoice",
+    "workStartDate": "Start Date",
+    "workEndDate": "End Date"
   }
 }

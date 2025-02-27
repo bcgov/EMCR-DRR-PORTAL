@@ -123,10 +123,14 @@
                     <drr-datepicker
                       [label]="t('workStartDate')"
                       [rxFormControl]="invoice.get('workStartDate')"
+                      [min]="plannedStartDate"
+                      [max]="invoice.get('workEndDate')?.value"
                     ></drr-datepicker>
                     <drr-datepicker
                       [label]="t('workEndDate')"
                       [rxFormControl]="invoice.get('workEndDate')"
+                      [min]="invoice.get('workStartDate')?.value"
+                      [max]="plannedEndDate"
                     ></drr-datepicker>
                     <drr-datepicker
                       [label]="t('paymentDate')"
