@@ -60,7 +60,7 @@
         </button>
       </div>
     </mat-step>
-    <mat-step label="Expenditures">
+    <mat-step label="Summary of Expenditures">
       @if (claimForm) {
         <div
           style="
@@ -252,8 +252,31 @@
           </div>
         </div>
       }
+      <div class="drr-stepper-actions">
+        <button mat-stroked-button color="primary" matStepperPrevious>
+          Back
+        </button>
+        <button mat-flat-button color="primary" matStepperNext type="button">
+          {{ t("next") }}
+        </button>
+      </div>
     </mat-step>
-    <mat-step label="Attachments"> </mat-step>
-    <mat-step label="Review"> </mat-step>
+    <mat-step label="Review & Declaration">
+      <div></div>
+      <div class="drr-stepper-actions">
+        <button mat-stroked-button color="primary" matStepperPrevious>
+          Back
+        </button>
+        <button
+          id="submit"
+          mat-flat-button
+          color="primary"
+          type="button"
+          (click)="submit()"
+        >
+          Submit
+        </button>
+      </div>
+    </mat-step>
   </mat-stepper>
 </div>

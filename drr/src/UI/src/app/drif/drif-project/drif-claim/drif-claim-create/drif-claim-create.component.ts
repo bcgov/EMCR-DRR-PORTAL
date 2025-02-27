@@ -316,4 +316,6 @@ export class DrifClaimCreateComponent {
       0,
     );
   }
+
+  submit() {}
 }
