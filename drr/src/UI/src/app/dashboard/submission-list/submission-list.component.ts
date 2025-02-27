@@ -17,6 +17,7 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Router, RouterModule } from '@angular/router';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { HotToastService } from '@ngxpert/hot-toast';
 import { prop, RxFormBuilder } from '@rxweb/reactive-form-validators';
 import {
   ConditionalOperator,
@@ -31,6 +32,7 @@ import {
   Submission,
   SubmissionPortalStatus,
 } from '../../../model';
+import { TestService } from '../../core/test/test.service';
 import { DrrSelectComponent } from '../../shared/controls/drr-select/drr-select.component';
 import { ConfigurationStore } from '../../store/configuration.store';
 
@@ -123,6 +125,8 @@ export class SubmissionListComponent {
   matDialog = inject(MatDialog);
   breakpointObserver = inject(BreakpointObserver);
   configStore = inject(ConfigurationStore);
+  testService = inject(TestService);
+  toastService = inject(HotToastService);
 
   programTypeOptions = Object.values(ProgramType).map((value) => ({
     value,
@@ -418,8 +422,18 @@ export class SubmissionListComponent {
   }
 
   generateTestEOI() {
+    this.testService.createTestEOI().subscribe((result) => {
+      this.toastService.success(`Test EOI(${result.eoiId}) created`);
+      this.load();
+    });
   }
 
   generateTestFP() {
+    this.testService.createTestFP().subscribe((result) => {
+      this.toastService.success(
+        `Test FP(${result.fpId}) & EOI(${result.eoiId}) created`,
+      );
+      this.load();
+    });
   }
 }
