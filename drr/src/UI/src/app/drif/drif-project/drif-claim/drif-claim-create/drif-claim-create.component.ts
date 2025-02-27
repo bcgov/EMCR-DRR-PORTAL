@@ -69,6 +69,8 @@ export class DrifClaimCreateComponent {
   reportId?: string;
   claimId?: string;
 
+  reportName?: string;
+
   authorizedRepresentativeText?: string;
   accuracyOfInformationText?: string;
 
@@ -149,6 +151,8 @@ export class DrifClaimCreateComponent {
         .projectGetClaim(this.projectId!, this.reportId!, this.claimId!)
         .subscribe({
           next: (claim) => {
+            this.reportName = `${claim.reportPeriod} Claim`;
+
             const formData = new ClaimForm({
               expenditure: {
                 skipClaimReport: false,

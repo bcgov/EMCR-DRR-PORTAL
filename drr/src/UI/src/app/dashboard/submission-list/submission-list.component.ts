@@ -32,6 +32,7 @@ import {
   SubmissionPortalStatus,
 } from '../../../model';
 import { DrrSelectComponent } from '../../shared/controls/drr-select/drr-select.component';
+import { ConfigurationStore } from '../../store/configuration.store';
 
 class SubmissionFilter {
   @prop()
@@ -121,6 +122,7 @@ export class SubmissionListComponent {
   translocoService = inject(TranslocoService);
   matDialog = inject(MatDialog);
   breakpointObserver = inject(BreakpointObserver);
+  configStore = inject(ConfigurationStore);
 
   programTypeOptions = Object.values(ProgramType).map((value) => ({
     value,
@@ -200,7 +202,7 @@ export class SubmissionListComponent {
       .subscribe((response) => {
         this.submissions = response.submissions;
         this.submissionListDataSource = new MatTableDataSource(
-          this.submissions
+          this.submissions,
         );
         this.paginator.length = response.length!;
       });
@@ -294,12 +296,12 @@ export class SubmissionListComponent {
       .open(DrrDialogComponent, {
         data: {
           title: this.translocoService.translate(
-            'submission-list.withdrawTitle'
+            'submission-list.withdrawTitle',
           ),
           text: this.translocoService.translate(
             submission.applicationType === ApplicationType.EOI
               ? 'submission-list.withdrawTextEoi'
-              : 'submission-list.withdrawTextFp'
+              : 'submission-list.withdrawTextFp',
           ),
         },
       })
@@ -354,7 +356,7 @@ export class SubmissionListComponent {
       query.addCondition(
         'programType',
         ConditionalOperator.Equal,
-        filters.programType ?? ''
+        filters.programType ?? '',
       );
     }
 
@@ -366,7 +368,7 @@ export class SubmissionListComponent {
       query.addCondition(
         'applicationType',
         ConditionalOperator.Equal,
-        filters.applicationType ?? ''
+        filters.applicationType ?? '',
       );
     }
 
@@ -382,7 +384,7 @@ export class SubmissionListComponent {
       query.addCondition(
         'status',
         ConditionalOperator.Equal,
-        filters.status.join('|')
+        filters.status.join('|'),
       );
     }
 
@@ -409,5 +411,15 @@ export class SubmissionListComponent {
     this.filterForm.markAsPristine();
     this.filterApplied = false;
     this.load();
+  }
+
+  showGenerateTestSubmissionControls() {
+    return this.configStore.configuration()!.testDataEndpointsEnabled;
+  }
+
+  generateTestEOI() {
+  }
+
+  generateTestFP() {
   }
 }

@@ -21,7 +21,7 @@ export class FooterComponent {
   configStore = inject(ConfigurationStore);
 
   get homeUrl() {
-    return this.configStore.oidc!()?.postLogoutRedirectUri;
+    return this.configStore.configuration()!.oidc?.postLogoutRedirectUri;
   }
 
   isDevMode = isDevMode();

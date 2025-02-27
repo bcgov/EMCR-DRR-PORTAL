@@ -1,8 +1,18 @@
 <div *transloco="let t; read: 'submission-list'">
   <div class="submissions-header">
-    <button mat-raised-button color="primary" (click)="onCreateFormClick()">
-      <span>{{ t("startNewEOI") }}</span>
-    </button>
+    <div style="display: flex; gap: 1rem">
+      <button mat-raised-button color="primary" (click)="onCreateFormClick()">
+        <span>{{ t("startNewEOI") }}</span>
+      </button>
+      @if (showGenerateTestSubmissionControls()) {
+        <button mat-raised-button color="primary" (click)="generateTestEOI()">
+          <span>Generate EOI</span>
+        </button>
+        <button mat-raised-button color="primary" (click)="generateTestFP()">
+          <span>Generate FP</span>
+        </button>
+      }
+    </div>
     <div *ngIf="submissions" class="submission-filter">
       <div class="submission-filter__controls">
         <p>{{ t("filters") }}:</p>
@@ -44,252 +54,262 @@
     </div>
   </div>
 
-  @if (isMobile) { @for (submission of submissions; track submission.id) {
-  <div class="submission-card">
-    <div class="submission-card__header">
-      <div>
-        <span>{{ t("applicationId") }}</span
-        >: {{ submission.id }}
-      </div>
-      <div>
-        <span>{{ t("programType") }}</span
-        >: {{ submission.programType }}
-      </div>
-      <div>
-        <span>{{ t("applicationType") }}</span
-        >: {{ submission.applicationType }}
-      </div>
-      <div>
-        <span>{{ t("status") }}</span
-        >: {{ submission.status }}
-      </div>
-      <div>
-        <span>{{ t("projectTitle") }}</span
-        >: {{ submission.projectTitle }}
-      </div>
-      <div>
-        <span>{{ t("fundingRequest") }}</span>
-        : {{ submission.fundingRequest | currency }}
-      </div>
-      <div>
-        <span>{{ t("modifiedDate") }}</span>
-        :
-        {{ submission.modifiedDate | date : "yyyy-MM-dd" }}
-      </div>
-      <div>
-        <span>{{ t("submittedDate") }}</span>
-        :
-        {{ submission.submittedDate | date : "yyyy-MM-dd" }}
-      </div>
-      <div>
-        <span>{{ t("partneringProponents") }}</span>
-        :
-      </div>
-      <div
-        style="overflow: hidden; text-overflow: ellipsis; width: 100%"
-        *ngFor="let proponent of submission.partneringProponents"
-      >
-        {{ proponent }}
-      </div>
-      <div style="margin-top: 1rem; display: flex; gap: 1rem">
-        <button
-          *ngIf="submission.actions?.includes('Edit')"
-          mat-stroked-button
-          color="primary"
-          (click)="onViewFormClick(submission, $event)"
-        >
-          {{ t("edit") }}
-        </button>
-        <button
-          *ngIf="submission.actions?.includes('Delete')"
-          mat-stroked-button
-          color="warn"
-          (click)="onDeleteClick(submission, $event)"
-        >
-          {{ t("delete") }}
-        </button>
-        <button
-          *ngIf="submission.actions?.includes('Withdraw')"
-          mat-stroked-button
-          color="primary"
-          (click)="onWithdrawClick(submission, $event)"
-        >
-          {{ t("withdraw") }}
-        </button>
-        <button
-          *ngIf="submission.actions?.includes('CreateFP')"
-          mat-raised-button
-          color="primary"
-          (click)="createFullProposal(submission, $event)"
-        >
-          {{ t("createFP") }}
-        </button>
-      </div>
-    </div>
-  </div>
-  } } @else {
-  <div class="submissions-table">
-    <table
-      *ngIf="submissionListDataSource.data.length > 0; else noDataTemplate"
-      mat-table
-      [dataSource]="submissionListDataSource"
-      matSort
-      (matSortChange)="onSortSubmissionTable($event)"
-      class="mat-elevation-z8"
-    >
-      <ng-container matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          {{ t("applicationId") }}
-        </th>
-        <td mat-cell *matCellDef="let element" style="white-space: nowrap">
-          <a (click)="onViewFormClick(element, $event)" href="">
-            {{ element.id }}
-          </a>
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="programType">
-        <th mat-header-cell *matHeaderCellDef>
-          {{ t("programType") }}
-        </th>
-        <td mat-cell *matCellDef="let element">
-          {{ t(element.programType) }}
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="applicationType">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          {{ t("applicationType") }}
-        </th>
-        <td mat-cell *matCellDef="let element">
-          {{ t(element.applicationType) }}
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="projectTitle">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          {{ t("projectTitle") }}
-        </th>
-        <td mat-cell *matCellDef="let element" style="overflow-wrap: anywhere">
-          {{ element.projectTitle }}
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="status">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          {{ t("status") }}
-        </th>
-        <td mat-cell *matCellDef="let element">
-          {{ t(element.status) }}
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="fundingRequest">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          {{ t("fundingRequest") }}
-        </th>
-        <td mat-cell *matCellDef="let element">
-          {{ element.fundingRequest | currency }}
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="modifiedDate">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          {{ t("modifiedDate") }}
-        </th>
-        <td mat-cell *matCellDef="let element">
-          {{ element.modifiedDate | date : "yyyy-MM-dd" }}
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="submittedDate">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          {{ t("submittedDate") }}
-        </th>
-        <td mat-cell *matCellDef="let element">
-          {{ element.submittedDate | date : "yyyy-MM-dd" }}
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="partneringProponents">
-        <th mat-header-cell *matHeaderCellDef>
-          {{ t("partneringProponents") }}
-        </th>
-        <td mat-cell *matCellDef="let element" style="overflow-wrap: anywhere">
-          <p *ngFor="let proponent of element.partneringProponents">
+  @if (isMobile) {
+    @for (submission of submissions; track submission.id) {
+      <div class="submission-card">
+        <div class="submission-card__header">
+          <div>
+            <span>{{ t("applicationId") }}</span
+            >: {{ submission.id }}
+          </div>
+          <div>
+            <span>{{ t("programType") }}</span
+            >: {{ submission.programType }}
+          </div>
+          <div>
+            <span>{{ t("applicationType") }}</span
+            >: {{ submission.applicationType }}
+          </div>
+          <div>
+            <span>{{ t("status") }}</span
+            >: {{ submission.status }}
+          </div>
+          <div>
+            <span>{{ t("projectTitle") }}</span
+            >: {{ submission.projectTitle }}
+          </div>
+          <div>
+            <span>{{ t("fundingRequest") }}</span>
+            : {{ submission.fundingRequest | currency }}
+          </div>
+          <div>
+            <span>{{ t("modifiedDate") }}</span>
+            :
+            {{ submission.modifiedDate | date: "yyyy-MM-dd" }}
+          </div>
+          <div>
+            <span>{{ t("submittedDate") }}</span>
+            :
+            {{ submission.submittedDate | date: "yyyy-MM-dd" }}
+          </div>
+          <div>
+            <span>{{ t("partneringProponents") }}</span>
+            :
+          </div>
+          <div
+            style="overflow: hidden; text-overflow: ellipsis; width: 100%"
+            *ngFor="let proponent of submission.partneringProponents"
+          >
             {{ proponent }}
-          </p>
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef>
-          {{ t("actions") }}
-        </th>
-        <td mat-cell *matCellDef="let element">
-          <div class="table-actions">
+          </div>
+          <div style="margin-top: 1rem; display: flex; gap: 1rem">
             <button
-              *ngIf="element.actions.includes('Edit')"
+              *ngIf="submission.actions?.includes('Edit')"
               mat-stroked-button
               color="primary"
-              (click)="onViewFormClick(element, $event)"
+              (click)="onViewFormClick(submission, $event)"
             >
               {{ t("edit") }}
             </button>
             <button
-              style="white-space: nowrap"
-              *ngIf="element.actions.includes('Delete')"
+              *ngIf="submission.actions?.includes('Delete')"
               mat-stroked-button
               color="warn"
-              (click)="onDeleteClick(element, $event)"
+              (click)="onDeleteClick(submission, $event)"
             >
               {{ t("delete") }}
             </button>
             <button
-              *ngIf="element.actions.includes('Withdraw')"
+              *ngIf="submission.actions?.includes('Withdraw')"
               mat-stroked-button
               color="primary"
-              (click)="onWithdrawClick(element, $event)"
+              (click)="onWithdrawClick(submission, $event)"
             >
               {{ t("withdraw") }}
             </button>
             <button
-              style="white-space: nowrap"
-              *ngIf="element.actions.includes('CreateFP')"
+              *ngIf="submission.actions?.includes('CreateFP')"
               mat-raised-button
               color="primary"
-              (click)="createFullProposal(element, $event)"
+              (click)="createFullProposal(submission, $event)"
             >
               {{ t("createFP") }}
             </button>
           </div>
-          <!-- <button mat-raised-button color="warn">{{ t("delete") }}</button>
+        </div>
+      </div>
+    }
+  } @else {
+    <div class="submissions-table">
+      <table
+        *ngIf="submissionListDataSource.data.length > 0; else noDataTemplate"
+        mat-table
+        [dataSource]="submissionListDataSource"
+        matSort
+        (matSortChange)="onSortSubmissionTable($event)"
+        class="mat-elevation-z8"
+      >
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{ t("applicationId") }}
+          </th>
+          <td mat-cell *matCellDef="let element" style="white-space: nowrap">
+            <a (click)="onViewFormClick(element, $event)" href="">
+              {{ element.id }}
+            </a>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="programType">
+          <th mat-header-cell *matHeaderCellDef>
+            {{ t("programType") }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ t(element.programType) }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="applicationType">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{ t("applicationType") }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ t(element.applicationType) }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="projectTitle">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{ t("projectTitle") }}
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let element"
+            style="overflow-wrap: anywhere"
+          >
+            {{ element.projectTitle }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{ t("status") }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ t(element.status) }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="fundingRequest">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{ t("fundingRequest") }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.fundingRequest | currency }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="modifiedDate">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{ t("modifiedDate") }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.modifiedDate | date: "yyyy-MM-dd" }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="submittedDate">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{ t("submittedDate") }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.submittedDate | date: "yyyy-MM-dd" }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="partneringProponents">
+          <th mat-header-cell *matHeaderCellDef>
+            {{ t("partneringProponents") }}
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let element"
+            style="overflow-wrap: anywhere"
+          >
+            <p *ngFor="let proponent of element.partneringProponents">
+              {{ proponent }}
+            </p>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>
+            {{ t("actions") }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <div class="table-actions">
+              <button
+                *ngIf="element.actions.includes('Edit')"
+                mat-stroked-button
+                color="primary"
+                (click)="onViewFormClick(element, $event)"
+              >
+                {{ t("edit") }}
+              </button>
+              <button
+                style="white-space: nowrap"
+                *ngIf="element.actions.includes('Delete')"
+                mat-stroked-button
+                color="warn"
+                (click)="onDeleteClick(element, $event)"
+              >
+                {{ t("delete") }}
+              </button>
+              <button
+                *ngIf="element.actions.includes('Withdraw')"
+                mat-stroked-button
+                color="primary"
+                (click)="onWithdrawClick(element, $event)"
+              >
+                {{ t("withdraw") }}
+              </button>
+              <button
+                style="white-space: nowrap"
+                *ngIf="element.actions.includes('CreateFP')"
+                mat-raised-button
+                color="primary"
+                (click)="createFullProposal(element, $event)"
+              >
+                {{ t("createFP") }}
+              </button>
+            </div>
+            <!-- <button mat-raised-button color="warn">{{ t("delete") }}</button>
             <button mat-raised-button color="accent">{{ t("withdraw") }}</button> -->
-        </td>
-      </ng-container>
+          </td>
+        </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="submissionListColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: submissionListColumns"></tr>
-    </table>
-    <mat-paginator
-      *ngIf="submissions"
-      [pageIndex]="paginator.pageIndex"
-      [length]="paginator.length"
-      [pageSize]="paginator.pageSize"
-      [pageSizeOptions]="paginator.pageSizeOptions"
-      aria-label="Select page"
-      (page)="onPageChange($event)"
-    >
-    </mat-paginator>
-  </div>
+        <tr mat-header-row *matHeaderRowDef="submissionListColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: submissionListColumns"></tr>
+      </table>
+      <mat-paginator
+        *ngIf="submissions"
+        [pageIndex]="paginator.pageIndex"
+        [length]="paginator.length"
+        [pageSize]="paginator.pageSize"
+        [pageSizeOptions]="paginator.pageSizeOptions"
+        aria-label="Select page"
+        (page)="onPageChange($event)"
+      >
+      </mat-paginator>
+    </div>
 
-  <ng-template #noDataTemplate>
-    <div *ngIf="submissions && !filterApplied" class="no-data">
-      <p>{{ t("noSubmissionsYet") }}</p>
-    </div>
-    <div *ngIf="submissions && filterApplied" class="no-data">
-      <p>{{ t("noSubmissionsFound") }}</p>
-    </div>
-  </ng-template>
+    <ng-template #noDataTemplate>
+      <div *ngIf="submissions && !filterApplied" class="no-data">
+        <p>{{ t("noSubmissionsYet") }}</p>
+      </div>
+      <div *ngIf="submissions && filterApplied" class="no-data">
+        <p>{{ t("noSubmissionsFound") }}</p>
+      </div>
+    </ng-template>
   }
 </div>

@@ -17,7 +17,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { ProjectService } from '../../../api/project/project.service';
 import {
   Attachment,
@@ -83,6 +83,7 @@ export class DrifProjectComponent {
   router = inject(Router);
   projectService = inject(ProjectService);
   matDialog = inject(MatDialog);
+  translocoService = inject(TranslocoService);
 
   projectId?: string;
 
@@ -130,7 +131,9 @@ export class DrifProjectComponent {
               name: `${report.reportPeriod} Progress`,
               parentId: report.id,
               section: InterimSubReportSection.Progress,
-              status: report.progressReport?.status,
+              status: this.translocoService.translate(
+                `project.${report.progressReport?.status!}`,
+              ),
               dueDate: report.dueDate,
               submittedDate: report.progressReport?.dateSubmitted,
             });
@@ -141,7 +144,9 @@ export class DrifProjectComponent {
               name: `${report.reportPeriod} Claim`,
               parentId: report.id,
               section: InterimSubReportSection.Claim,
-              status: report.projectClaim?.status,
+              status: this.translocoService.translate(
+                `project.${report.projectClaim?.status!}`,
+              ),
               dueDate: report.dueDate,
               // submittedDate: report.projectClaim?.submittedDate,
             });
@@ -152,7 +157,9 @@ export class DrifProjectComponent {
               name: `${report.reportPeriod} Forecast`,
               parentId: report.id,
               section: InterimSubReportSection.Forecast,
-              status: report.forecast?.status,
+              status: this.translocoService.translate(
+                `project.${report.forecast?.status!}`,
+              ),
               dueDate: report.dueDate,
               // submittedDate: report.forecast?.submittedDate,
             });

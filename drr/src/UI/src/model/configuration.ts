@@ -8,4 +8,5 @@ import type { OidcConfiguration } from './oidcConfiguration';
 
 export interface Configuration {
   oidc?: OidcConfiguration;
+  testDataEndpointsEnabled?: boolean;
 }

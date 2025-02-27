@@ -20,7 +20,7 @@ export class AuthService {
     if (this.isLoggedIn()) {
       const profile = this.getProfile();
       const profileDetails = await firstValueFrom(
-        this.profileService.profileProfileDetails()
+        this.profileService.profileProfileDetails(),
       );
 
       this.profileStore.setProfile({
@@ -72,7 +72,7 @@ export class AuthService {
       return;
     }
 
-    const configuration = this.configurationStore.oidc!();
+    const configuration = this.configurationStore.configuration!().oidc;
 
     this.oauthService.configure({
       ...authConfig,
@@ -96,7 +96,7 @@ export class AuthService {
           let redirectState = JSON.parse(
             this.oauthService.state
               ? atob(decodeURIComponent(this.oauthService.state))
-              : '{}'
+              : '{}',
           );
           if (redirectState.originalURL) {
             const originalURL = new URL(redirectState.originalURL);
@@ -129,7 +129,7 @@ export class AuthService {
         // DO NOT URL encode the state value as that happens automatically by the OAuthService.  Just convert
         // to base64.
         const encodedState = btoa(
-          JSON.stringify({ originalURL: window.location.href })
+          JSON.stringify({ originalURL: window.location.href }),
         );
 
         this.oauthService.initCodeFlow(encodedState);

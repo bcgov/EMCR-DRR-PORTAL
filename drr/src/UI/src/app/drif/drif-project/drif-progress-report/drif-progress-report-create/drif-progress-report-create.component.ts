@@ -127,6 +127,8 @@ export class DrifProgressReportCreateComponent {
   projectId!: string;
   reportId!: string;
   progressReportId!: string;
+  
+  reportName?: string;
 
   @ViewChild(MatStepper) stepper!: MatStepper;
   stepperOrientation: StepperOrientation = 'horizontal';
@@ -372,6 +374,8 @@ export class DrifProgressReportCreateComponent {
         )
         .subscribe({
           next: (report: DraftProgressReport) => {
+            this.reportName = `${report.reportPeriod} Progress Report`;
+
             report.workplan?.workplanActivities?.map((activity) => {
               const activityForm = this.formBuilder.formGroup(
                 new WorkplanActivityForm(activity),

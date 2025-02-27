@@ -28,5 +28,7 @@ export interface DraftProjectClaim {
   /** @nullable */
   reportDate?: string;
   /** @nullable */
+  reportPeriod?: string;
+  /** @nullable */
   status?: ClaimStatus;
 }

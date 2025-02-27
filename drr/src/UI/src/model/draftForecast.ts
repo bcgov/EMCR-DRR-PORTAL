@@ -27,6 +27,8 @@ export interface DraftForecast {
   /** @nullable */
   reportDate?: string;
   /** @nullable */
+  reportPeriod?: string;
+  /** @nullable */
   status?: ForecastStatus;
   /** @nullable */
   total?: number;
