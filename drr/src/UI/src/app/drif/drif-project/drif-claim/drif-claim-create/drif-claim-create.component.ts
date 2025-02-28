@@ -18,7 +18,12 @@ import {
   RxFormGroup,
 } from '@rxweb/reactive-form-validators';
 import { ProjectService } from '../../../../../api/project/project.service';
-import { CostCategory, DeclarationType, FormType } from '../../../../../model';
+import {
+  CostCategory,
+  DeclarationType,
+  FormType,
+  InterimProjectType,
+} from '../../../../../model';
 import { DrrCurrencyInputComponent } from '../../../../shared/controls/drr-currency-input/drr-currency-input.component';
 import { DrrDatepickerComponent } from '../../../../shared/controls/drr-datepicker/drr-datepicker.component';
 import { DrrInputComponent } from '../../../../shared/controls/drr-input/drr-input.component';
@@ -79,13 +84,14 @@ export class DrifClaimCreateComponent {
   today = new Date();
   plannedStartDate!: Date;
   plannedEndDate!: Date;
+  projectType!: InterimProjectType;
 
-  costCategoryOptions: DrrSelectOption[] = Object.values(CostCategory).map(
-    (value) => ({
+  costCategoryOptions: DrrSelectOption[] = Object.values(CostCategory)
+    .map((value) => ({
       value,
       label: this.translocoService.translate(value),
-    }),
-  );
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label));
 
   getInvoiceFormArray(): FormArray | undefined {
     return this.claimForm?.get('expenditure')?.get('invoices') as FormArray;
@@ -165,6 +171,13 @@ export class DrifClaimCreateComponent {
             );
             this.plannedEndDate = new Date();
             this.plannedEndDate.setMonth(this.plannedEndDate.getMonth() + 1);
+            this.projectType = InterimProjectType.Stream1;
+
+            if (this.projectType === InterimProjectType.Stream1) {
+              this.costCategoryOptions = this.costCategoryOptions.filter(
+                (option) => option.value !== CostCategory.Contingency,
+              );
+            }
 
             const formData = new ClaimForm({
               expenditure: {
