@@ -307,6 +307,7 @@ namespace EMCR.DRR.Controllers
         public string? Id { get; set; }
         public string? ReportPeriod { get; set; }
         public string? ContractNumber { get; set; }
+        public FundingStream? FundingStream { get; set; }
         public DateTime? ReportDate { get; set; }
         public DateTime? DateApproved { get; set; }
         public DateTime? DateSubmitted { get; set; }

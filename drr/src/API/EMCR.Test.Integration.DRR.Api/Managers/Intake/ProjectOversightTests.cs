@@ -68,14 +68,18 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
         }
 
 #pragma warning disable CS8604 // Possible null reference argument.
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
         [Test]
         public async Task QueryClaims_CanFilterById()
         {
             var queryRes = await manager.Handle(new DrrClaimsQuery { Id = "DRIF-CLAIM-1039", BusinessId = GetCRAFTUserInfo().BusinessId });
             var claims = mapper.Map<IEnumerable<DraftProjectClaim>>(queryRes.Items);
             claims.Count().ShouldBe(1);
-            claims.First().Invoices.Count().ShouldBe(1);
+            var claim = claims.SingleOrDefault();
+            claim.Invoices.Count().ShouldBe(1);
+            claim.FundingStream.ShouldNotBeNull();
         }
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 #pragma warning restore CS8604 // Possible null reference argument.
 
         [Test]
