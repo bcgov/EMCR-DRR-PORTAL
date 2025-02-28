@@ -151,6 +151,7 @@
                       class="drr-single-input"
                       [label]="t('supplierName')"
                       [rxFormControl]="invoice.get('supplierName')"
+                      [maxlength]="100"
                     ></drr-input>
                     <drr-select
                       class="drr-single-input"
@@ -162,7 +163,7 @@
                   <drr-textarea
                     [label]="t('description')"
                     [rxFormControl]="invoice.get('description')"
-                    [maxlength]="2000"
+                    [maxlength]="250"
                   ></drr-textarea>
                   <div
                     style="

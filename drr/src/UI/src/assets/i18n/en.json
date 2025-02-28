@@ -694,6 +694,8 @@
     "workStartDate": "Start Date",
     "workEndDate": "End Date",
     "paymentDate": "Payment Date",
-    "costCategory": "Cost Category"
+    "costCategory": "Cost Category",
+    "supplierName": "Supplier Name",
+    "description": "Description"
   }
 }

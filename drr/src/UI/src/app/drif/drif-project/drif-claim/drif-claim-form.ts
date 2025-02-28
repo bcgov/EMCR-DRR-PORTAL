@@ -38,9 +38,11 @@ export class InvoiceForm implements Invoice {
   costCategory?: CostCategory;
 
   @prop()
+  @required()
   supplierName?: string;
 
   @prop()
+  @required()
   description?: string;
 
   @prop()
