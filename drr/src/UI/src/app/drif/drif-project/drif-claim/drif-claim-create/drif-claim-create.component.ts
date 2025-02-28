@@ -22,7 +22,7 @@ import {
   CostCategory,
   DeclarationType,
   FormType,
-  InterimProjectType,
+  FundingStream,
 } from '../../../../../model';
 import { DrrCurrencyInputComponent } from '../../../../shared/controls/drr-currency-input/drr-currency-input.component';
 import { DrrDatepickerComponent } from '../../../../shared/controls/drr-datepicker/drr-datepicker.component';
@@ -84,7 +84,7 @@ export class DrifClaimCreateComponent {
   today = new Date();
   plannedStartDate!: Date;
   plannedEndDate!: Date;
-  projectType!: InterimProjectType;
+  projectType!: FundingStream;
 
   costCategoryOptions: DrrSelectOption[] = Object.values(CostCategory)
     .map((value) => ({
@@ -171,9 +171,9 @@ export class DrifClaimCreateComponent {
             );
             this.plannedEndDate = new Date();
             this.plannedEndDate.setMonth(this.plannedEndDate.getMonth() + 1);
-            this.projectType = InterimProjectType.Stream1;
+            this.projectType = claim.fundingStream!;
 
-            if (this.projectType === InterimProjectType.Stream1) {
+            if (this.projectType === FundingStream.Stream1) {
               this.costCategoryOptions = this.costCategoryOptions.filter(
                 (option) => option.value !== CostCategory.Contingency,
               );
