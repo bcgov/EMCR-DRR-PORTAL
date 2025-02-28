@@ -30,13 +30,15 @@ export class InvoiceForm implements Invoice {
   workEndDate?: string;
 
   @prop()
+  @required()
   paymentDate?: string;
 
   @prop()
-  supplierName?: string;
+  @required()
+  costCategory?: CostCategory;
 
   @prop()
-  costCategory?: CostCategory;
+  supplierName?: string;
 
   @prop()
   description?: string;

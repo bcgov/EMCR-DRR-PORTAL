@@ -692,6 +692,8 @@
     "invoiceNumber": "Invoice Number",
     "invoiceDate": "Date of Invoice",
     "workStartDate": "Start Date",
-    "workEndDate": "End Date"
+    "workEndDate": "End Date",
+    "paymentDate": "Payment Date",
+    "costCategory": "Cost Category"
   }
 }

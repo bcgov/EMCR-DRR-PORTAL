@@ -135,6 +135,7 @@
                     <drr-datepicker
                       [label]="t('paymentDate')"
                       [rxFormControl]="invoice.get('paymentDate')"
+                      [min]="invoice.get('date')?.value"
                     ></drr-datepicker>
                   </div>
                   <div
