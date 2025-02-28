@@ -40,6 +40,47 @@ namespace EMCR.DRR.API.Resources.Reports
             return (!string.IsNullOrEmpty(existingProgressReport.drr_Project.drr_ProponentName.drr_bceidguid)) && existingProgressReport.drr_Project.drr_ProponentName.drr_bceidguid.Equals(businessId);
         }
 
+        public async Task<bool> CanAccessClaim(string id, string businessId)
+        {
+            var readCtx = dRRContextFactory.CreateReadOnly();
+            var existingClaim = await readCtx.drr_projectclaims.Expand(a => a.drr_Project).Where(a => a.drr_name == id).SingleOrDefaultAsync();
+            if (existingClaim == null) return true;
+            readCtx.AttachTo(nameof(readCtx.drr_projects), existingClaim.drr_Project);
+            await readCtx.LoadPropertyAsync(existingClaim.drr_Project, nameof(drr_project.drr_ProponentName));
+            return (!string.IsNullOrEmpty(existingClaim.drr_Project.drr_ProponentName.drr_bceidguid)) && existingClaim.drr_Project.drr_ProponentName.drr_bceidguid.Equals(businessId);
+        }
+
+        public async Task<bool> CanAccessForecast(string id, string businessId)
+        {
+            var readCtx = dRRContextFactory.CreateReadOnly();
+            var existingForecast = await readCtx.drr_projectbudgetforecasts.Expand(a => a.drr_Project).Where(a => a.drr_name == id).SingleOrDefaultAsync();
+            if (existingForecast == null) return true;
+            readCtx.AttachTo(nameof(readCtx.drr_projects), existingForecast.drr_Project);
+            await readCtx.LoadPropertyAsync(existingForecast.drr_Project, nameof(drr_project.drr_ProponentName));
+            return (!string.IsNullOrEmpty(existingForecast.drr_Project.drr_ProponentName.drr_bceidguid)) && existingForecast.drr_Project.drr_ProponentName.drr_bceidguid.Equals(businessId);
+        }
+
+        public async Task<bool> CanAccessInvoiceFromDocumentId(string id, string businessId)
+        {
+            var readCtx = dRRContextFactory.CreateReadOnly();
+            var document = await readCtx.bcgov_documenturls.Expand(d => d.bcgov_ProgressReport).Where(a => a.bcgov_documenturlid == Guid.Parse(id)).SingleOrDefaultAsync();
+            var existingInvoice = await readCtx.drr_projectexpenditures.Expand(a => a.drr_Project).Where(a => a.drr_projectexpenditureid == document.bcgov_ProjectExpenditure.drr_projectexpenditureid).SingleOrDefaultAsync();
+            if (existingInvoice == null) return true;
+            readCtx.AttachTo(nameof(readCtx.drr_projects), existingInvoice.drr_Project);
+            await readCtx.LoadPropertyAsync(existingInvoice.drr_Project, nameof(drr_project.drr_ProponentName));
+            return (!string.IsNullOrEmpty(existingInvoice.drr_Project.drr_ProponentName.drr_bceidguid)) && existingInvoice.drr_Project.drr_ProponentName.drr_bceidguid.Equals(businessId);
+        }
+
+        public async Task<bool> CanAccessReport(string id, string businessId)
+        {
+            var readCtx = dRRContextFactory.CreateReadOnly();
+            var existingReport = await readCtx.drr_projectreports.Expand(a => a.drr_Project).Where(a => a.drr_name == id).SingleOrDefaultAsync();
+            if (existingReport == null) return true;
+            readCtx.AttachTo(nameof(readCtx.drr_projects), existingReport.drr_Project);
+            await readCtx.LoadPropertyAsync(existingReport.drr_Project, nameof(drr_project.drr_ProponentName));
+            return (!string.IsNullOrEmpty(existingReport.drr_Project.drr_ProponentName.drr_bceidguid)) && existingReport.drr_Project.drr_ProponentName.drr_bceidguid.Equals(businessId);
+        }
+
         public async Task<ManageReportCommandResult> Manage(ManageReportCommand cmd)
         {
             return cmd switch
@@ -386,6 +427,7 @@ namespace EMCR.DRR.API.Resources.Reports
             var results = (await claimsQuery.GetAllPagesAsync(ct)).ToList();
             var length = results.Count;
 
+            await Parallel.ForEachAsync(results, ct, async (claim, ct) => await ParallelLoadClaim(readCtx, claim, ct));
             return new ClaimQueryResult { Items = mapper.Map<IEnumerable<ClaimDetails>>(results), Length = length };
         }
 
@@ -437,6 +479,48 @@ namespace EMCR.DRR.API.Resources.Reports
             if (report.drr_BudgetForecast != null) report.drr_BudgetForecast.drr_ProjectReport = report;
         }
 
+        private static async Task ParallelLoadClaim(DRRContext ctx, drr_projectclaim claim, CancellationToken ct)
+        {
+            ctx.AttachTo(nameof(DRRContext.drr_projectclaims), claim);
+            var loadTasks = new List<Task>
+            {
+                ctx.LoadPropertyAsync(claim, nameof(drr_projectclaim.drr_Project), ct),
+                ctx.LoadPropertyAsync(claim, nameof(drr_projectclaim.drr_ProjectReport), ct),
+                ctx.LoadPropertyAsync(claim, nameof(drr_projectclaim.drr_drr_projectclaim_drr_projectexpenditure_Claim), ct), //Invoices
+                //ctx.LoadPropertyAsync(claim, nameof(drr_projectclaim.drr_drr_projectclaim_drr_projectpayment_ProjectClaim), ct), //Payments
+                //ctx.LoadPropertyAsync(claim, nameof(drr_projectclaim.bcgov_drr_projectprogress_bcgov_documenturl_ProgressReport), ct), //Attachments
+            };
+
+            await Task.WhenAll(loadTasks);
+
+            var secondLoadTasks = new List<Task>{
+                ParallelLoadInvoiceAttachments(ctx, claim, ct),
+            };
+
+            if (claim.drr_ProjectReport != null)
+            {
+                ctx.AttachTo(nameof(DRRContext.drr_projectreports), claim.drr_ProjectReport);
+                secondLoadTasks.Add(ctx.LoadPropertyAsync(claim.drr_ProjectReport, nameof(drr_projectreport.drr_ReportPeriod), ct));
+            }
+
+            if (claim.drr_Project != null)
+            {
+                ctx.AttachTo(nameof(DRRContext.drr_projects), claim.drr_Project);
+                secondLoadTasks.Add(ctx.LoadPropertyAsync(claim.drr_Project, nameof(drr_project.drr_FullProposalApplication), ct));
+            }
+
+            await Task.WhenAll(secondLoadTasks);
+        }
+
+        private static async Task ParallelLoadInvoiceAttachments(DRRContext ctx, drr_projectclaim claim, CancellationToken ct)
+        {
+            await claim.drr_drr_projectclaim_drr_projectexpenditure_Claim.ForEachAsync(5, async invoice =>
+            {
+                ctx.AttachTo(nameof(DRRContext.drr_projectexpenditures), invoice);
+                await ctx.LoadPropertyAsync(invoice, nameof(drr_projectexpenditure.bcgov_drr_projectexpenditure_bcgov_documenturl_ProjectExpenditure), ct);
+            });
+        }
+
         private static async Task ParallelLoadProgressReport(DRRContext ctx, drr_projectprogress pr, CancellationToken ct)
         {
             ctx.AttachTo(nameof(DRRContext.drr_projectprogresses), pr);
@@ -453,11 +537,13 @@ namespace EMCR.DRR.API.Resources.Reports
 
             await Task.WhenAll(loadTasks);
 
-            await Task.WhenAll([
+            var secondLoadTasks = new List<Task>{
                 ParallelLoadActivityTypes(ctx, pr, ct),
                 ParallelLoadEventContacts(ctx, pr, ct),
                 ParallelLoadDocumentTypes(ctx, pr, ct),
-                ]);
+            };
+
+            await Task.WhenAll(secondLoadTasks);
         }
 
         private static async Task ParallelLoadActivityTypes(DRRContext ctx, drr_projectprogress pr, CancellationToken ct)
@@ -465,8 +551,13 @@ namespace EMCR.DRR.API.Resources.Reports
             await pr.drr_drr_projectprogress_drr_projectworkplanactivity_ProjectProgressReport.ForEachAsync(5, async wa =>
             {
                 ctx.AttachTo(nameof(DRRContext.drr_projectworkplanactivities), wa);
-                await ctx.LoadPropertyAsync(wa, nameof(drr_projectworkplanactivity.drr_ActivityType), ct);
-                await ctx.LoadPropertyAsync(wa, nameof(drr_projectworkplanactivity.drr_CopiedfromReport), ct);
+                var loadTasks = new List<Task>
+                {
+                    ctx.LoadPropertyAsync(wa, nameof(drr_projectworkplanactivity.drr_ActivityType), ct),
+                    ctx.LoadPropertyAsync(wa, nameof(drr_projectworkplanactivity.drr_CopiedfromReport), ct),
+                };
+
+                await Task.WhenAll(loadTasks);
             });
         }
 
@@ -486,14 +577,6 @@ namespace EMCR.DRR.API.Resources.Reports
                 ctx.AttachTo(nameof(DRRContext.bcgov_documenturls), doc);
                 await ctx.LoadPropertyAsync(doc, nameof(bcgov_documenturl.bcgov_DocumentType), ct);
             });
-        }
-
-        public async Task<bool> CanAccessProject(string id, string businessId)
-        {
-            var readCtx = dRRContextFactory.CreateReadOnly();
-            var existingProject = await readCtx.drr_projects.Expand(a => a.drr_ProponentName).Where(a => a.drr_name == id).SingleOrDefaultAsync();
-            if (existingProject == null) return true;
-            return (!string.IsNullOrEmpty(existingProject.drr_ProponentName.drr_bceidguid)) && existingProject.drr_ProponentName.drr_bceidguid.Equals(businessId);
         }
     }
 }

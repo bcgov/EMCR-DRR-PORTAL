@@ -54,7 +54,9 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var queryRes = await manager.Handle(new DrrProjectsQuery { Id = "DRIF-PRJ-1015", BusinessId = GetCRAFTUserInfo().BusinessId, QueryOptions = queryOptions });
             var projects = mapper.Map<IEnumerable<DraftDrrProject>>(queryRes.Items);
             projects.Count().ShouldBe(1);
+#pragma warning disable CS8604 // Possible null reference argument.
             projects.First().Claims.Last().ReportPeriod.ShouldNotBeNullOrEmpty();
+#pragma warning restore CS8604 // Possible null reference argument.
         }
 
         [Test]
@@ -65,22 +67,29 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             reports.Count().ShouldBe(1);
         }
 
+#pragma warning disable CS8604 // Possible null reference argument.
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
         [Test]
         public async Task QueryClaims_CanFilterById()
         {
-            var queryRes = await manager.Handle(new DrrClaimsQuery { Id = "DRIF-CLAIM-1000", BusinessId = GetTestUserInfo().BusinessId });
-            var claims = mapper.Map<IEnumerable<EMCR.DRR.Controllers.ProjectClaim>>(queryRes.Items);
+            var queryRes = await manager.Handle(new DrrClaimsQuery { Id = "DRIF-CLAIM-1039", BusinessId = GetCRAFTUserInfo().BusinessId });
+            var claims = mapper.Map<IEnumerable<DraftProjectClaim>>(queryRes.Items);
             claims.Count().ShouldBe(1);
+            var claim = claims.SingleOrDefault();
+            claim.Invoices.Count().ShouldBe(1);
+            claim.FundingStream.ShouldNotBeNull();
         }
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+#pragma warning restore CS8604 // Possible null reference argument.
 
         [Test]
         public async Task QueryProgressReports_CanFilterById()
         {
-            var queryRes = await manager.Handle(new DrrProgressReportsQuery { Id = "DRIF-PR-1058", BusinessId = GetCRAFTUserInfo().BusinessId });
-            var prs = mapper.Map<IEnumerable<EMCR.DRR.Controllers.DraftProgressReport>>(queryRes.Items);
+            var queryRes = await manager.Handle(new DrrProgressReportsQuery { Id = "DRIF-PR-1102", BusinessId = GetCRAFTUserInfo().BusinessId });
+            var prs = mapper.Map<IEnumerable<DraftProgressReport>>(queryRes.Items);
             prs.Count().ShouldBe(1);
             var progressReport = prs.Single();
-            progressReport.ProjectType.ShouldBe(EMCR.DRR.Controllers.InterimProjectType.Stream1);
+            progressReport.ProjectType.ShouldBe(EMCR.DRR.Controllers.InterimProjectType.Stream2);
         }
 
         [Test]

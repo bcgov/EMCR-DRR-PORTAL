@@ -432,7 +432,7 @@ namespace EMCR.DRR.Managers.Intake
             if (!canAccess) throw new ForbiddenException("Not allowed to access this project.");
             var project = (await projectRepository.Query(new ProjectsQuery { Id = cmd.ProjectId, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
             if (project == null) throw new NotFoundException("Project not found");
-            if (project.StartDate == null) throw new BusinessValidationException("Invalid Report Start Date");
+            if (project.StartDate == null) throw new BusinessValidationException("Invalid Project Start Date");
 
             bool canCreate = false;
             string description = string.Empty;
@@ -440,7 +440,7 @@ namespace EMCR.DRR.Managers.Intake
             if (project.InterimReports == null || project.InterimReports.Count() == 0)
             {
                 canCreate = true;
-                description = GetReportPeriod(project.ReportingScheduleType, project.StartDate.Value);
+                description = GetReportPeriodFromDate(project.ReportingScheduleType, project.StartDate.Value);
             }
             else
             {
@@ -449,11 +449,13 @@ namespace EMCR.DRR.Managers.Intake
                 if (lastReport.Status == InterimReportStatus.Approved)
                 {
                     canCreate = true;
-                    description = GetNextReportPeriod(project.ReportingScheduleType, lastReport.ReportDate.Value);
+                    //description = GetNextReportPeriod(project.ReportingScheduleType, lastReport.ReportDate.Value);
+                    description = !string.IsNullOrEmpty(lastReport.ReportPeriod) ? GetNextReportPeriodFromString(project.ReportingScheduleType, lastReport.ReportPeriod) : GetNextReportPeriodFromDate(project.ReportingScheduleType, lastReport.ReportDate.Value);
                 }
                 else
                 {
-                    description = GetReportPeriod(project.ReportingScheduleType, lastReport.ReportDate.Value);
+                    description = !string.IsNullOrEmpty(lastReport.ReportPeriod) ? lastReport.ReportPeriod : GetReportPeriodFromDate(project.ReportingScheduleType, lastReport.ReportDate.Value);
+                    //description = GetReportPeriod(project.ReportingScheduleType, lastReport.ReportDate.Value);
                 }
             }
 
@@ -580,7 +582,19 @@ namespace EMCR.DRR.Managers.Intake
             return application.Status == ApplicationStatus.DraftProponent || application.Status == ApplicationStatus.DraftStaff || application.Status == ApplicationStatus.Withdrawn;
         }
 
-        private string GetNextReportPeriod(ReportingScheduleType? type, DateTime date)
+        private string GetNextReportPeriodFromString(ReportingScheduleType? type, string period)
+        {
+            switch (type)
+            {
+                case ReportingScheduleType.Quarterly:
+                    return GetNextFiscalQuarter(period);
+                case ReportingScheduleType.Monthly:
+                    return GetNextMonthString(period);
+                default: return string.Empty;
+            }
+        }
+
+        private string GetNextReportPeriodFromDate(ReportingScheduleType? type, DateTime date)
         {
             switch (type)
             {
@@ -592,7 +606,7 @@ namespace EMCR.DRR.Managers.Intake
             }
         }
 
-        private string GetReportPeriod(ReportingScheduleType? type, DateTime date)
+        private string GetReportPeriodFromDate(ReportingScheduleType? type, DateTime date)
         {
             switch (type)
             {
@@ -694,18 +708,14 @@ namespace EMCR.DRR.Managers.Intake
         {
             if (string.IsNullOrEmpty(businessId)) throw new ArgumentNullException("Missing user's BusinessId");
             if (string.IsNullOrEmpty(id)) return true;
-            logger.LogDebug("CanAccessReport not implemented");
-            //return await reportRepository.CanAccessReport(id, businessId);
-            return await Task.FromResult(true);
+            return await reportRepository.CanAccessReport(id, businessId);
         }
 
         private async Task<bool> CanAccessClaim(string? id, string? businessId)
         {
             if (string.IsNullOrEmpty(businessId)) throw new ArgumentNullException("Missing user's BusinessId");
             if (string.IsNullOrEmpty(id)) return true;
-            logger.LogDebug("CanAccessClaim not implemented");
-            //return await reportRepository.CanAccessClaim(id, businessId);
-            return await Task.FromResult(true);
+            return await reportRepository.CanAccessClaim(id, businessId);
         }
 
         private async Task<bool> CanAccessProgressReport(string? id, string? businessId)
@@ -726,9 +736,14 @@ namespace EMCR.DRR.Managers.Intake
         {
             if (string.IsNullOrEmpty(businessId)) throw new ArgumentNullException("Missing user's BusinessId");
             if (string.IsNullOrEmpty(id)) return true;
-            logger.LogDebug("CanAccessForecast not implemented");
-            //return await reportRepository.CanAccessForecast(id, businessId);
-            return await Task.FromResult(true);
+            return await reportRepository.CanAccessForecast(id, businessId);
+        }
+
+        private async Task<bool> CanAccessInvoiceFromDocumentId(string? id, string? businessId)
+        {
+            if (string.IsNullOrEmpty(businessId)) throw new ArgumentNullException("Missing user's BusinessId");
+            if (string.IsNullOrEmpty(id)) return true;
+            return await reportRepository.CanAccessInvoiceFromDocumentId(id, businessId);
         }
 
         private FilterOptions ParseFilter(string? filter)

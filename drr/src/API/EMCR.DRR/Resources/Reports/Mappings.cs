@@ -38,6 +38,7 @@ namespace EMCR.DRR.API.Resources.Reports
                 .ForMember(dest => dest.ReportPeriod, opt => opt.MapFrom(src => src.drr_ProjectReport != null ? src.drr_ProjectReport.drr_ReportPeriod != null ? src.drr_ProjectReport.drr_ReportPeriod.drr_name : string.Empty : string.Empty))
                 .ForMember(dest => dest.ContractNumber, opt => opt.MapFrom(src => src.drr_Project != null ? src.drr_Project.drr_contractnumber : string.Empty))
                 .ForMember(dest => dest.ClaimAmount, opt => opt.MapFrom(src => src.drr_claimamount))
+                .ForMember(dest => dest.FundingStream, opt => opt.MapFrom(src => src.drr_Project != null ? src.drr_Project.drr_FullProposalApplication != null ? src.drr_Project.drr_FullProposalApplication.drr_fundingstream.HasValue ? (int?)Enum.Parse<FundingStream>(((FundingStreamOptionSet)src.drr_Project.drr_FullProposalApplication.drr_fundingstream).ToString()) : null : null : null))
                 .ForMember(dest => dest.ReportDate, opt => opt.MapFrom(src => src.drr_ProjectReport != null ? src.drr_ProjectReport.drr_reportdate.HasValue ? src.drr_ProjectReport.drr_reportdate.Value.UtcDateTime : (DateTime?)null : (DateTime?)null))
                 .ForMember(dest => dest.DateSubmitted, opt => opt.MapFrom(src => src.drr_datesubmitted.HasValue ? src.drr_datesubmitted.Value.UtcDateTime : (DateTime?)null))
                 .ForMember(dest => dest.DateApproved, opt => opt.MapFrom(src => src.drr_dateapproved.HasValue ? src.drr_dateapproved.Value.UtcDateTime : (DateTime?)null))
@@ -68,6 +69,7 @@ namespace EMCR.DRR.API.Resources.Reports
                 .ForMember(dest => dest.ClaimAmount, opt => opt.MapFrom(src => src.drr_proponentclaimamount))
                 .ForMember(dest => dest.TotalPST, opt => opt.MapFrom(src => src.drr_totalpstpaid))
                 .ForMember(dest => dest.TotalGST, opt => opt.MapFrom(src => src.drr_totalgstpaid))
+                .ForMember(dest => dest.Attachments, opt => opt.MapFrom(src => src.bcgov_drr_projectexpenditure_bcgov_documenturl_ProjectExpenditure.Where(c => c.statecode == (int)EntityState.Active)))
             ;
 
 #pragma warning disable CS8604 // Possible null reference argument.

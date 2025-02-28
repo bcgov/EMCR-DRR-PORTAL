@@ -9,8 +9,12 @@ namespace EMCR.DRR.API.Resources.Reports
         Task<ClaimQueryResult> Query(ClaimQuery query);
         Task<ProgressReportQueryResult> Query(ProgressReportQuery query);
         Task<ForecastQueryResult> Query(ForecastQuery query);
+        Task<bool> CanAccessReport(string id, string businessId);
         Task<bool> CanAccessProgressReport(string id, string businessId);
         Task<bool> CanAccessProgressReportFromDocumentId(string id, string businessId);
+        Task<bool> CanAccessClaim(string id, string businessId);
+        Task<bool> CanAccessForecast(string id, string businessId);
+        Task<bool> CanAccessInvoiceFromDocumentId(string id, string businessId);
     }
 
     public abstract class ManageReportCommand
