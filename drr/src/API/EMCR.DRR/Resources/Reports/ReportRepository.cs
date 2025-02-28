@@ -88,6 +88,10 @@ namespace EMCR.DRR.API.Resources.Reports
                 SaveProgressReport c => await HandleSaveProgressReport(c),
                 SubmitProgressReport c => await HandleSubmitProgressReport(c),
                 CreateProjectReport c => await HandleCreateProjectReport(c),
+                SaveClaim c => await HandleSaveClaim(c),
+                SubmitClaim c => await HandleSubmitClaim(c),
+                CreateInvoice c => await HandleCreateInvoice(c),
+                DeleteInvoice c => await HandleDeleteInvoice(c),
                 _ => throw new NotSupportedException($"{cmd.GetType().Name} is not supported")
             };
         }
@@ -121,7 +125,7 @@ namespace EMCR.DRR.API.Resources.Reports
 
             drrProgressReport.bcgov_drr_projectprogress_bcgov_documenturl_ProgressReport = existingProgressReport.bcgov_drr_projectprogress_bcgov_documenturl_ProgressReport;
 
-            RemoveOldData(ctx, existingProgressReport, drrProgressReport);
+            RemoveOldProgressReportData(ctx, existingProgressReport, drrProgressReport);
             ctx.AttachTo(nameof(ctx.drr_projectprogresses), drrProgressReport);
 
             var projectActivityMasterListTask = LoadProjectActivityList(ctx, drrProgressReport);
@@ -134,7 +138,7 @@ namespace EMCR.DRR.API.Resources.Reports
             AddPastEvents(ctx, drrProgressReport, existingProgressReport);
             await AddUpcomingEvents(ctx, drrProgressReport, existingProgressReport);
             AddFundingSignage(ctx, drrProgressReport, existingProgressReport);
-            UpdateDocuments(ctx, drrProgressReport);
+            UpdateProgressReportDocuments(ctx, drrProgressReport);
 
             ctx.UpdateObject(drrProgressReport);
             await ctx.SaveChangesAsync();
@@ -154,6 +158,76 @@ namespace EMCR.DRR.API.Resources.Reports
             await ctx.SaveChangesAsync();
             ctx.DetachAll();
             return new ManageReportCommandResult { Id = cmd.Id };
+        }
+
+        //HandleSaveClaim
+        public async Task<ManageReportCommandResult> HandleSaveClaim(SaveClaim cmd)
+        {
+            var ctx = dRRContextFactory.Create();
+            var existingClaim = await ctx.drr_projectclaims.Where(p => p.drr_name == cmd.Claim.Id).SingleOrDefaultAsync();
+            if (existingClaim == null) throw new NotFoundException("Claim not found");
+
+            var loadTasks = new List<Task>
+            {
+                ctx.LoadPropertyAsync(existingClaim, nameof(drr_projectclaim.drr_drr_projectclaim_drr_projectexpenditure_Claim)),
+            };
+
+            await Task.WhenAll(loadTasks);
+
+            ctx.DetachAll();
+            var drrClaim = mapper.Map<drr_projectclaim>(cmd.Claim);
+            drrClaim.drr_projectclaimid = existingClaim.drr_projectclaimid;
+
+            //RemoveOldClaimData(ctx, existingClaim, drrClaim); //if we use this, it would be for invoices - but we're doing separate commands to create/delete invoices
+            ctx.AttachTo(nameof(ctx.drr_projectclaims), drrClaim);
+
+            UpdateInvoices(ctx, drrClaim, existingClaim);
+
+            ctx.UpdateObject(drrClaim);
+            await ctx.SaveChangesAsync();
+            ctx.DetachAll();
+
+            return new ManageReportCommandResult { Id = existingClaim.drr_name };
+        }
+
+        public async Task<ManageReportCommandResult> HandleSubmitClaim(SubmitClaim cmd)
+        {
+            var ctx = dRRContextFactory.Create();
+            var claim = await ctx.drr_projectclaims.Where(a => a.drr_name == cmd.Id).SingleOrDefaultAsync();
+            claim.statuscode = (int)ProjectClaimStatusOptionSet.Submitted;
+            claim.drr_datesubmitted = DateTime.UtcNow;
+            ctx.UpdateObject(claim);
+            await ctx.SaveChangesAsync();
+            ctx.DetachAll();
+            return new ManageReportCommandResult { Id = cmd.Id };
+        }
+
+        public async Task<ManageReportCommandResult> HandleCreateInvoice(CreateInvoice cmd)
+        {
+            var ctx = dRRContextFactory.Create();
+            var claim = await ctx.drr_projectclaims.Expand(c => c.drr_Project).Where(a => a.drr_name == cmd.ClaimId).SingleOrDefaultAsync();
+            var invoice = new drr_projectexpenditure
+            {
+                drr_projectexpenditureid = Guid.Parse(cmd.InvoiceId),
+            };
+            ctx.AddTodrr_projectexpenditures(invoice);
+            ctx.AddLink(claim, nameof(claim.drr_drr_projectclaim_drr_projectexpenditure_Claim), invoice);
+            ctx.SetLink(invoice, nameof(invoice.drr_Claim), claim);
+            ctx.SetLink(invoice, nameof(invoice.drr_Project), claim.drr_Project);
+            await ctx.SaveChangesAsync();
+            ctx.DetachAll();
+            return new ManageReportCommandResult { Id = invoice.drr_projectexpenditureid.ToString() ?? string.Empty };
+        }
+
+        public async Task<ManageReportCommandResult> HandleDeleteInvoice(DeleteInvoice cmd)
+        {
+            var ctx = dRRContextFactory.Create();
+            var invoice = await ctx.drr_projectexpenditures.Where(a => a.drr_projectexpenditureid == Guid.Parse(cmd.InvoiceId)).SingleOrDefaultAsync();
+            if (invoice == null) throw new NotFoundException("Invoice not found");
+            ctx.DeleteObject(invoice);
+            await ctx.SaveChangesAsync();
+            ctx.DetachAll();
+            return new ManageReportCommandResult { Id = invoice.drr_projectexpenditureid.ToString() ?? string.Empty };
         }
 #pragma warning restore CS8604 // Possible null reference argument.
         public async Task<ManageReportCommandResult> HandleCreateProjectReport(CreateProjectReport cmd)
@@ -188,7 +262,7 @@ namespace EMCR.DRR.API.Resources.Reports
 
         }
 
-        private void RemoveOldData(DRRContext ctx, drr_projectprogress existingProgressReport, drr_projectprogress drrProgressReport)
+        private void RemoveOldProgressReportData(DRRContext ctx, drr_projectprogress existingProgressReport, drr_projectprogress drrProgressReport)
         {
             var activitiesToRemove = existingProgressReport.drr_drr_projectprogress_drr_projectworkplanactivity_ProjectProgressReport.Where(curr =>
             !drrProgressReport.drr_drr_projectprogress_drr_projectworkplanactivity_ProjectProgressReport.Any(updated => updated.drr_projectworkplanactivityid == curr.drr_projectworkplanactivityid)).ToList();
@@ -224,6 +298,18 @@ namespace EMCR.DRR.API.Resources.Reports
             {
                 ctx.AttachTo(nameof(ctx.drr_temporaryprovincialfundingsignages), signage);
                 ctx.DeleteObject(signage);
+            }
+        }
+
+        private void RemoveOldClaimData(DRRContext ctx, drr_projectclaim existingClaim, drr_projectclaim drrClaim)
+        {
+            var invoicesToRemove = existingClaim.drr_drr_projectclaim_drr_projectexpenditure_Claim.Where(curr =>
+            !drrClaim.drr_drr_projectclaim_drr_projectexpenditure_Claim.Any(updated => updated.drr_projectexpenditureid == curr.drr_projectexpenditureid)).ToList();
+
+            foreach (var invoice in invoicesToRemove)
+            {
+                ctx.AttachTo(nameof(ctx.drr_projectexpenditures), invoice);
+                ctx.DeleteObject(invoice);
             }
         }
 
@@ -350,7 +436,7 @@ namespace EMCR.DRR.API.Resources.Reports
             }
         }
 
-        private static void UpdateDocuments(DRRContext drrContext, drr_projectprogress progressReport)
+        private static void UpdateProgressReportDocuments(DRRContext drrContext, drr_projectprogress progressReport)
         {
             foreach (var doc in progressReport.bcgov_drr_projectprogress_bcgov_documenturl_ProgressReport)
             {
@@ -358,6 +444,41 @@ namespace EMCR.DRR.API.Resources.Reports
                 {
                     drrContext.AttachTo(nameof(drrContext.bcgov_documenturls), doc);
                     drrContext.UpdateObject(doc);
+                }
+            }
+        }
+
+        private static void UpdateInvoices(DRRContext drrContext, drr_projectclaim claim, drr_projectclaim existingClaim)
+        {
+            foreach (var invoice in claim.drr_drr_projectclaim_drr_projectexpenditure_Claim)
+            {
+                if (invoice != null)
+                {
+                    var existingInvoice = existingClaim.drr_drr_projectclaim_drr_projectexpenditure_Claim.Where(i => i.drr_name == invoice.drr_name).SingleOrDefault();
+                    if (existingInvoice != null)
+                    {
+                        invoice.drr_projectexpenditureid = existingInvoice.drr_projectexpenditureid;
+                        foreach (var doc in invoice.bcgov_drr_projectexpenditure_bcgov_documenturl_ProjectExpenditure)
+                        {
+
+                            var curr = existingInvoice.bcgov_drr_projectexpenditure_bcgov_documenturl_ProjectExpenditure.SingleOrDefault(d => d.bcgov_documenturlid == doc.bcgov_documenturlid);
+                            if (curr != null) curr.bcgov_documentcomments = doc.bcgov_documentcomments;
+                        }
+
+                        invoice.bcgov_drr_projectexpenditure_bcgov_documenturl_ProjectExpenditure = existingInvoice.bcgov_drr_projectexpenditure_bcgov_documenturl_ProjectExpenditure;
+
+                        foreach (var doc in invoice.bcgov_drr_projectexpenditure_bcgov_documenturl_ProjectExpenditure)
+                        {
+                            if (doc != null)
+                            {
+                                drrContext.AttachTo(nameof(drrContext.bcgov_documenturls), doc);
+                                drrContext.UpdateObject(doc);
+                            }
+                        }
+                    }
+
+                    drrContext.AttachTo(nameof(drrContext.drr_projectexpenditures), invoice);
+                    drrContext.UpdateObject(invoice);
                 }
             }
         }
@@ -394,6 +515,15 @@ namespace EMCR.DRR.API.Resources.Reports
             return query switch
             {
                 ForecastsQuery q => await HandleQueryForecast(q),
+                _ => throw new NotSupportedException($"{query.GetType().Name} is not supported")
+            };
+        }
+
+        public async Task<InvoiceQueryResult> Query(InvoiceQuery query)
+        {
+            return query switch
+            {
+                InvoicesQuery q => await HandleQueryInvoice(q),
                 _ => throw new NotSupportedException($"{query.GetType().Name} is not supported")
             };
         }
@@ -453,13 +583,28 @@ namespace EMCR.DRR.API.Resources.Reports
             var readCtx = dRRContextFactory.CreateReadOnly();
 
             var forecastsQuery = readCtx.drr_projectbudgetforecasts
-                .Where(a => a.statuscode != (int)ProjectStatusOptionSet.Inactive);
+                .Where(a => a.statuscode != (int)ForecastStatusOptionSet.Inactive);
             if (!string.IsNullOrEmpty(query.Id)) forecastsQuery = forecastsQuery.Where(a => a.drr_name == query.Id);
 
             var results = (await forecastsQuery.GetAllPagesAsync(ct)).ToList();
             var length = results.Count;
 
             return new ForecastQueryResult { Items = mapper.Map<IEnumerable<ForecastDetails>>(results), Length = length };
+        }
+
+        private async Task<InvoiceQueryResult> HandleQueryInvoice(InvoicesQuery query)
+        {
+            var ct = new CancellationTokenSource().Token;
+            var readCtx = dRRContextFactory.CreateReadOnly();
+
+            var invoicesQuery = readCtx.drr_projectexpenditures
+                .Where(a => a.statuscode != (int)InvoiceStatusOptionSet.Inactive);
+            if (!string.IsNullOrEmpty(query.Id)) invoicesQuery = invoicesQuery.Where(a => a.drr_projectexpenditureid == Guid.Parse(query.Id));
+
+            var results = (await invoicesQuery.GetAllPagesAsync(ct)).ToList();
+            var length = results.Count;
+
+            return new InvoiceQueryResult { Items = mapper.Map<IEnumerable<Managers.Intake.Invoice>>(results), Length = length };
         }
 
         private static async Task ParallelLoadReportDetails(DRRContext ctx, drr_projectreport report, CancellationToken ct)

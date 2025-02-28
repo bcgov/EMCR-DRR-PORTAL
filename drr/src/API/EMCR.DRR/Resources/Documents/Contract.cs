@@ -54,6 +54,18 @@ namespace EMCR.DRR.API.Resources.Documents
         public required string Id { get; set; }
     }
 
+    public class CreateInvoiceDocument : ManageDocumentCommand
+    {
+        public required string InvoiceId { get; set; }
+        public required string NewDocId { get; set; }
+        public required Document Document { get; set; }
+    }
+
+    public class DeleteInvoiceDocument : ManageDocumentCommand
+    {
+        public required string Id { get; set; }
+    }
+
     public class Document
     {
         public required string Name { get; set; }

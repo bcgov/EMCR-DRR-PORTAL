@@ -76,8 +76,8 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var claims = mapper.Map<IEnumerable<DraftProjectClaim>>(queryRes.Items);
             claims.Count().ShouldBe(1);
             var claim = claims.SingleOrDefault();
-            claim.Invoices.Count().ShouldBe(1);
-            claim.FundingStream.ShouldNotBeNull();
+            claim.Invoices.Count().ShouldBeGreaterThan(0);
+            claim.ProjectType.ShouldNotBeNull();
         }
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 #pragma warning restore CS8604 // Possible null reference argument.
@@ -132,6 +132,76 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
         }
 
         [Test]
+        public async Task CanUpdateClaim()
+        {
+            //var userInfo = GetTestUserInfo();
+            var userInfo = GetCRAFTUserInfo();
+
+            var claimId = "DRIF-CLAIM-1039";
+            var uniqueSignature = TestPrefix + "-" + Guid.NewGuid().ToString().Substring(0, 4);
+            var claim = mapper.Map<EMCR.DRR.Controllers.ProjectClaim>((await manager.Handle(new DrrClaimsQuery { Id = claimId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+
+            claim = FillInClaim(claim, uniqueSignature);
+            claim.Status = EMCR.DRR.Controllers.ClaimStatus.InProgress;
+
+            //Console.WriteLine(progressReport.Id);
+            await manager.Handle(new SaveClaimCommand { Claim = claim, UserInfo = userInfo });
+            var invoiceId = await manager.Handle(new CreateInvoiceCommand { ClaimId = claim.Id, InvoiceId = Guid.NewGuid().ToString(), UserInfo = userInfo });
+
+
+            var updatedClaim = mapper.Map<DraftProjectClaim>((await manager.Handle(new DrrClaimsQuery { Id = claim.Id, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+            updatedClaim.Status.ShouldBe(claim.Status);
+            updatedClaim.Invoices.Any(i => i.Id == invoiceId).ShouldBeTrue();
+
+            await manager.Handle(new DeleteInvoiceCommand { ClaimId = claim.Id, InvoiceId = invoiceId, UserInfo = userInfo });
+
+            updatedClaim = mapper.Map<DraftProjectClaim>((await manager.Handle(new DrrClaimsQuery { Id = claim.Id, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+            updatedClaim.Invoices.Any(i => i.Id == invoiceId).ShouldBeFalse();
+        }
+
+        [Test]
+        public async Task CanAddAttachmentToClaim()
+        {
+            //var userInfo = GetTestUserInfo();
+            var userInfo = GetCRAFTUserInfo();
+
+            var claimId = "DRIF-CLAIM-1039";
+            var claim = mapper.Map<EMCR.DRR.Controllers.ProjectClaim>((await manager.Handle(new DrrClaimsQuery { Id = claimId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+            var invoice = claim.Invoices.FirstOrDefault();
+            if (invoice == null)
+            {
+                var invoiceId = await manager.Handle(new CreateInvoiceCommand { ClaimId = claim.Id, InvoiceId = Guid.NewGuid().ToString(), UserInfo = userInfo });
+                claim = mapper.Map<EMCR.DRR.Controllers.ProjectClaim>((await manager.Handle(new DrrClaimsQuery { Id = claimId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+                invoice = claim.Invoices.FirstOrDefault();
+            }
+            foreach (var doc in invoice.Attachments)
+            {
+                await manager.Handle(new DeleteAttachmentCommand { Id = doc.Id, UserInfo = userInfo });
+            }
+
+            var body = DateTime.Now.ToString();
+            var fileName = "autotest.txt";
+            byte[] bytes = Encoding.ASCII.GetBytes(body);
+            var file = new S3File { FileName = fileName, Content = bytes, ContentType = "text/plain", };
+
+            var documentId = await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = invoice.Id, RecordType = EMCR.DRR.Managers.Intake.RecordType.Invoice, File = file, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.OtherSupportingDocument }, UserInfo = userInfo });
+
+            var claimToUpdate = mapper.Map<EMCR.DRR.Controllers.ProjectClaim>((await manager.Handle(new DrrClaimsQuery { Id = claimId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+            var invoiceToUpdate = claimToUpdate.Invoices.SingleOrDefault(i => i.Id == invoice.Id);
+            invoiceToUpdate.Attachments.Count().ShouldBe(1);
+            invoiceToUpdate.Attachments.First().DocumentType.ShouldBe(EMCR.DRR.API.Model.DocumentType.OtherSupportingDocument);
+            invoiceToUpdate.Attachments.First().Comments = "invoice comments";
+
+            await manager.Handle(new SaveClaimCommand { Claim = claimToUpdate, UserInfo = userInfo });
+
+
+            var updatedClaim = mapper.Map<EMCR.DRR.Controllers.ProjectClaim>((await manager.Handle(new DrrClaimsQuery { Id = claimId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+            var updatedInvoice = claimToUpdate.Invoices.SingleOrDefault(i => i.Id == invoice.Id);
+            updatedInvoice.Attachments.First().Comments.ShouldBe(invoiceToUpdate.Attachments.First().Comments);
+
+        }
+
+        [Test]
         public async Task ValidateCanCreateReport_ValidationFalse()
         {
             var queryOptions = new QueryOptions { Filter = "programType=DRIF,applicationType=FP,status=*UnderReview\\|EligiblePending" };
@@ -180,7 +250,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
         //}
 
         [Test]
-        public async Task CanAddAttachment()
+        public async Task CanAddAttachmentToProgressReport()
         {
             //var userInfo = GetTestUserInfo();
             var userInfo = GetCRAFTUserInfo();
@@ -221,6 +291,13 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var document = (FileQueryResult)(await manager.Handle(new DownloadAttachment { Id = "fed185a3-b079-4a4c-9680-36b220352cdc", UserInfo = userInfo }));
             document.File.FileName.ShouldNotBeNull();
 
+        }
+
+        private EMCR.DRR.Controllers.ProjectClaim FillInClaim(EMCR.DRR.Controllers.ProjectClaim claim, string uniqueSignature = "autotest")
+        {
+            claim.ClaimComment = $"{uniqueSignature} - claim comment";
+            claim.ClaimAmount = 5000;
+            return claim;
         }
 
         private EMCR.DRR.Controllers.ProgressReport FillInProgressReport(EMCR.DRR.Controllers.ProgressReport progressReport, string uniqueSignature = "autotest")

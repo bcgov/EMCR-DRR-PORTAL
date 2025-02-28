@@ -9,6 +9,7 @@ namespace EMCR.DRR.API.Resources.Reports
         Task<ClaimQueryResult> Query(ClaimQuery query);
         Task<ProgressReportQueryResult> Query(ProgressReportQuery query);
         Task<ForecastQueryResult> Query(ForecastQuery query);
+        Task<InvoiceQueryResult> Query(InvoiceQuery query);
         Task<bool> CanAccessReport(string id, string businessId);
         Task<bool> CanAccessProgressReport(string id, string businessId);
         Task<bool> CanAccessProgressReportFromDocumentId(string id, string businessId);
@@ -40,6 +41,27 @@ namespace EMCR.DRR.API.Resources.Reports
     public class SubmitProgressReport : ManageReportCommand
     {
         public required string Id { get; set; }
+    }
+
+    public class SaveClaim : ManageReportCommand
+    {
+        public required ClaimDetails Claim { get; set; }
+    }
+
+    public class SubmitClaim : ManageReportCommand
+    {
+        public required string Id { get; set; }
+    }
+
+    public class CreateInvoice : ManageReportCommand
+    {
+        public required string ClaimId { get; set; }
+        public required string InvoiceId { get; set; }
+    }
+
+    public class DeleteInvoice : ManageReportCommand
+    {
+        public required string InvoiceId { get; set; }
     }
 
     public abstract class ReportQuery
@@ -97,6 +119,21 @@ namespace EMCR.DRR.API.Resources.Reports
     }
 
     public class ForecastsQuery : ForecastQuery
+    {
+        public string? Id { get; set; }
+        public string? BusinessId { get; set; }
+    }
+
+    public class InvoiceQueryResult
+    {
+        public IEnumerable<Invoice> Items { get; set; } = Array.Empty<Invoice>();
+        public int Length { get; set; }
+    }
+
+    public abstract class InvoiceQuery
+    { }
+
+    public class InvoicesQuery : InvoiceQuery
     {
         public string? Id { get; set; }
         public string? BusinessId { get; set; }

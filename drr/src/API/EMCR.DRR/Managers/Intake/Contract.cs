@@ -251,6 +251,32 @@ namespace EMCR.DRR.Managers.Intake
         public UserInfo UserInfo { get; set; }
     }
 
+    public class SaveClaimCommand : IntakeCommand
+    {
+        public Controllers.ProjectClaim Claim { get; set; } = null!;
+        public UserInfo UserInfo { get; set; }
+    }
+
+    public class SubmitClaimCommand : IntakeCommand
+    {
+        public Controllers.ProjectClaim Claim { get; set; } = null!;
+        public UserInfo UserInfo { get; set; }
+    }
+
+    public class CreateInvoiceCommand : IntakeCommand
+    {
+        public required string ClaimId {  get; set; }
+        public required string InvoiceId {  get; set; }
+        public UserInfo UserInfo { get; set; }
+    }
+    
+    public class DeleteInvoiceCommand : IntakeCommand
+    {
+        public required string ClaimId { get; set; }
+        public required string InvoiceId {  get; set; }
+        public UserInfo UserInfo { get; set; }
+    }
+
     public class CreateInterimReportCommand : IntakeCommand
     {
         public string ProjectId { get; set; } = null!;
@@ -303,6 +329,8 @@ namespace EMCR.DRR.Managers.Intake
         FullProposal,
         [Description("drr_projectprogress")]
         ProgressReport,
+        [Description("drr_projectexpenditure")]
+        Invoice,
         None,
     }
 
@@ -758,7 +786,9 @@ namespace EMCR.DRR.Managers.Intake
 
     public class ClaimDetails : ProjectClaim
     {
-        public FundingStream? FundingStream { get; set; }
+        public DateTime? PlannedStartDate { get; set; }
+        public DateTime? PlannedEndDate { get; set; }
+        public InterimProjectType? ProjectType { get; set; }
         public IEnumerable<Invoice>? Invoices { get; set; }
         public string? ClaimComment { get; set; }
         public ContactDetails? AuthorizedRepresentative { get; set; }
@@ -898,6 +928,7 @@ namespace EMCR.DRR.Managers.Intake
     public class Invoice
     {
         public string? Id { get; set; }
+        public string? Name { get; set; }
         public string? InvoiceNumber { get; set; }
         public DateTime? Date { get; set; }
         public DateTime? WorkStartDate { get; set; }

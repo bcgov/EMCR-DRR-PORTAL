@@ -118,6 +118,10 @@ namespace EMCR.DRR.Managers.Intake
                 SaveProgressReportCommand c => await Handle(c),
                 SubmitProgressReportCommand c => await Handle(c),
                 CreateInterimReportCommand c => await Handle(c),
+                SaveClaimCommand c => await Handle(c),
+                SubmitClaimCommand c => await Handle(c),
+                CreateInvoiceCommand c => await Handle(c),
+                DeleteInvoiceCommand c => await Handle(c),
                 _ => throw new NotSupportedException($"{cmd.GetType().Name} is not supported")
             };
         }
@@ -321,6 +325,7 @@ namespace EMCR.DRR.Managers.Intake
             {
                 case RecordType.FullProposal: return await UploadApplicationDocument(cmd);
                 case RecordType.ProgressReport: return await UploadProgressReportDocument(cmd);
+                case RecordType.Invoice: return await UploadInvoiceDocument(cmd);
                 default: throw new BusinessValidationException("Unsupported Record Type");
             }
         }
@@ -333,6 +338,7 @@ namespace EMCR.DRR.Managers.Intake
             {
                 case RecordType.FullProposal: return await DeleteApplicationDocument(cmd);
                 case RecordType.ProgressReport: return await DeleteProgressReportDocument(cmd);
+                case RecordType.Invoice: return await DeleteInvoiceDocument(cmd);
                 default: throw new BusinessValidationException("Unsupported Record Type");
             }
         }
@@ -384,7 +390,7 @@ namespace EMCR.DRR.Managers.Intake
             var canAccess = await CanAccessProgressReport(cmd.ProgressReport.Id, cmd.UserInfo.BusinessId);
             if (!canAccess) throw new ForbiddenException("Not allowed to access this progress report.");
             var existingProgressReport = (await reportRepository.Query(new ProgressReportsQuery { Id = cmd.ProgressReport.Id, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
-            if (existingProgressReport == null) throw new NotFoundException("Application not found");
+            if (existingProgressReport == null) throw new NotFoundException("Progress Report not found");
 
             var progressReport = mapper.Map<ProgressReportDetails>(cmd.ProgressReport);
 
@@ -395,6 +401,71 @@ namespace EMCR.DRR.Managers.Intake
 
             var id = (await reportRepository.Manage(new SaveProgressReport { ProgressReport = progressReport })).Id;
             await reportRepository.Manage(new SubmitProgressReport { Id = id });
+            return id;
+        }
+
+        public async Task<string> Handle(SaveClaimCommand cmd)
+        {
+            var canAccess = await CanAccessClaim(cmd.Claim.Id, cmd.UserInfo.BusinessId);
+            if (!canAccess) throw new ForbiddenException("Not allowed to access this claim.");
+
+            var existingClaim = (await reportRepository.Query(new ClaimsQuery { Id = cmd.Claim.Id, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
+            if (existingClaim == null) throw new NotFoundException("Claim not found");
+
+            var claim = mapper.Map<ClaimDetails>(cmd.Claim);
+
+            var id = (await reportRepository.Manage(new SaveClaim { Claim = claim })).Id;
+            return id;
+        }
+
+        public async Task<string> Handle(SubmitClaimCommand cmd)
+        {
+            var canAccess = await CanAccessClaim(cmd.Claim.Id, cmd.UserInfo.BusinessId);
+            if (!canAccess) throw new ForbiddenException("Not allowed to access this claim.");
+
+            var existingClaim = (await reportRepository.Query(new ClaimsQuery { Id = cmd.Claim.Id, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
+            if (existingClaim == null) throw new NotFoundException("Claim not found");
+
+            var claim = mapper.Map<ClaimDetails>(cmd.Claim);
+
+            var id = (await reportRepository.Manage(new SaveClaim { Claim = claim })).Id;
+            await reportRepository.Manage(new SubmitClaim { Id = id });
+            return id;
+        }
+
+        public async Task<string> Handle(CreateInvoiceCommand cmd)
+        {
+            var canAccess = await CanAccessClaim(cmd.ClaimId, cmd.UserInfo.BusinessId);
+            if (!canAccess) throw new ForbiddenException("Not allowed to access this claim.");
+
+            var existingClaim = (await reportRepository.Query(new ClaimsQuery { Id = cmd.ClaimId, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
+            if (existingClaim == null) throw new NotFoundException("Claim not found");
+
+            var id = (await reportRepository.Manage(new CreateInvoice { ClaimId = cmd.ClaimId, InvoiceId = cmd.InvoiceId })).Id;
+            return id;
+        }
+
+        public async Task<string> Handle(DeleteInvoiceCommand cmd)
+        {
+            var canAccess = await CanAccessClaim(cmd.ClaimId, cmd.UserInfo.BusinessId);
+            if (!canAccess) throw new ForbiddenException("Not allowed to access this claim.");
+
+            var existingClaim = (await reportRepository.Query(new ClaimsQuery { Id = cmd.ClaimId, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
+            if (existingClaim == null) throw new NotFoundException("Claim not found");
+            if (existingClaim.Invoices == null) throw new NotFoundException("Invoice not found");
+
+            var existingInvoice = existingClaim.Invoices.Where(i => i.Id == cmd.InvoiceId).SingleOrDefault();
+            if (existingInvoice == null) throw new NotFoundException("Invoice not found");
+
+            if (existingInvoice.Attachments != null)
+            {
+                foreach (var attachment in existingInvoice.Attachments)
+                {
+                    await DeleteInvoiceDocument(new DeleteAttachmentCommand { Id = attachment.Id, UserInfo = cmd.UserInfo });
+                }
+            }
+
+            var id = (await reportRepository.Manage(new DeleteInvoice { InvoiceId = cmd.InvoiceId })).Id;
             return id;
         }
 
@@ -544,6 +615,25 @@ namespace EMCR.DRR.Managers.Intake
             var documentRes = (await documentRepository.Manage(new CreateProgressReportDocument { NewDocId = newDocId, ProgressReportId = cmd.AttachmentInfo.RecordId, Document = new Document { Name = cmd.AttachmentInfo.File.FileName, DocumentType = cmd.AttachmentInfo.DocumentType, Size = GetFileSize(cmd.AttachmentInfo.File.Content) } }));
             return documentRes.Id;
         }
+        
+        private async Task<string> UploadInvoiceDocument(UploadAttachmentCommand cmd)
+        {
+            var canAccess = await CanAccessInvoiceFromDocumentId(cmd.AttachmentInfo.Id, cmd.UserInfo.BusinessId);
+            if (!canAccess) throw new ForbiddenException("Not allowed to access this invoice.");
+            var invoice = (await reportRepository.Query(new InvoicesQuery { Id = cmd.AttachmentInfo.RecordId })).Items.SingleOrDefault();
+            if (invoice == null) throw new NotFoundException("Invoice not found");
+            //if (!ApplicationInEditableStatus(progressReport)) throw new BusinessValidationException("Can only edit attachments when application is in Draft");
+            if (cmd.AttachmentInfo.DocumentType != DocumentType.OtherSupportingDocument && invoice.Attachments != null && invoice.Attachments.Any(a => a.DocumentType == cmd.AttachmentInfo.DocumentType))
+            {
+                throw new BusinessValidationException($"A document with type {cmd.AttachmentInfo.DocumentType.ToDescriptionString()} already exists on the invoice {cmd.AttachmentInfo.RecordId}");
+            }
+
+            var newDocId = Guid.NewGuid().ToString();
+
+            await s3Provider.HandleCommand(new UploadFileCommand { Key = newDocId, File = cmd.AttachmentInfo.File, Folder = $"{cmd.AttachmentInfo.RecordType.ToDescriptionString()}/{invoice.Id}" });
+            var documentRes = (await documentRepository.Manage(new CreateInvoiceDocument { NewDocId = newDocId, InvoiceId = cmd.AttachmentInfo.RecordId, Document = new Document { Name = cmd.AttachmentInfo.File.FileName, DocumentType = cmd.AttachmentInfo.DocumentType, Size = GetFileSize(cmd.AttachmentInfo.File.Content) } }));
+            return documentRes.Id;
+        }
 
         private async Task<string> DeleteApplicationDocument(DeleteAttachmentCommand cmd)
         {
@@ -560,6 +650,15 @@ namespace EMCR.DRR.Managers.Intake
             if (!canAccess) throw new ForbiddenException("Not allowed to access this progress report.");
             var documentRes = await documentRepository.Manage(new DeleteProgressReportDocument { Id = cmd.Id });
             await s3Provider.HandleCommand(new UpdateTagsCommand { Key = cmd.Id, Folder = $"{RecordType.ProgressReport.ToDescriptionString()}/{documentRes.RecordId}", FileTag = GetDeletedFileTag() });
+            return documentRes.Id;
+        }
+
+        private async Task<string> DeleteInvoiceDocument(DeleteAttachmentCommand cmd)
+        {
+            //var canAccess = await CanAccessApplicationFromDocumentId(cmd.Id, cmd.UserInfo.BusinessId);
+            //if (!canAccess) throw new ForbiddenException("Not allowed to access this application.");
+            var documentRes = await documentRepository.Manage(new DeleteInvoiceDocument { Id = cmd.Id });
+            await s3Provider.HandleCommand(new UpdateTagsCommand { Key = cmd.Id, Folder = $"{RecordType.Invoice.ToDescriptionString()}/{documentRes.RecordId}", FileTag = GetDeletedFileTag() });
             return documentRes.Id;
         }
 
