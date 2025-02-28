@@ -5,6 +5,7 @@
  * OpenAPI spec version: 1.0.0
  */
 import type { ContactDetails } from './contactDetails';
+import type { FundingStream } from './fundingStream';
 import type { Invoice } from './invoice';
 import type { ClaimStatus } from './claimStatus';
 
@@ -21,6 +22,8 @@ export interface DraftProjectClaim {
   dateApproved?: string;
   /** @nullable */
   dateSubmitted?: string;
+  /** @nullable */
+  fundingStream?: FundingStream;
   /** @nullable */
   id?: string;
   /** @nullable */

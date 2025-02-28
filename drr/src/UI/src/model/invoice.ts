@@ -4,9 +4,12 @@
  * DRR API
  * OpenAPI spec version: 1.0.0
  */
+import type { Attachment } from './attachment';
 import type { CostCategory } from './costCategory';
 
 export interface Invoice {
+  /** @nullable */
+  attachments?: Attachment[];
   /** @nullable */
   claimAmount?: number;
   /** @nullable */
