@@ -758,6 +758,7 @@ namespace EMCR.DRR.Managers.Intake
 
     public class ClaimDetails : ProjectClaim
     {
+        public FundingStream? FundingStream { get; set; }
         public IEnumerable<Invoice>? Invoices { get; set; }
         public string? ClaimComment { get; set; }
         public ContactDetails? AuthorizedRepresentative { get; set; }

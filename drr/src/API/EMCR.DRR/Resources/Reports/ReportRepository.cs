@@ -49,7 +49,7 @@ namespace EMCR.DRR.API.Resources.Reports
             await readCtx.LoadPropertyAsync(existingClaim.drr_Project, nameof(drr_project.drr_ProponentName));
             return (!string.IsNullOrEmpty(existingClaim.drr_Project.drr_ProponentName.drr_bceidguid)) && existingClaim.drr_Project.drr_ProponentName.drr_bceidguid.Equals(businessId);
         }
-        
+
         public async Task<bool> CanAccessForecast(string id, string businessId)
         {
             var readCtx = dRRContextFactory.CreateReadOnly();
@@ -493,15 +493,23 @@ namespace EMCR.DRR.API.Resources.Reports
 
             await Task.WhenAll(loadTasks);
 
+            var secondLoadTasks = new List<Task>{
+                ParallelLoadInvoiceAttachments(ctx, claim, ct),
+            };
+
             if (claim.drr_ProjectReport != null)
             {
                 ctx.AttachTo(nameof(DRRContext.drr_projectreports), claim.drr_ProjectReport);
-                await ctx.LoadPropertyAsync(claim.drr_ProjectReport, nameof(drr_projectreport.drr_ReportPeriod), ct);
+                secondLoadTasks.Add(ctx.LoadPropertyAsync(claim.drr_ProjectReport, nameof(drr_projectreport.drr_ReportPeriod), ct));
             }
 
-            await Task.WhenAll([
-                ParallelLoadInvoiceAttachments(ctx, claim, ct),
-                ]);
+            if (claim.drr_Project != null)
+            {
+                ctx.AttachTo(nameof(DRRContext.drr_projects), claim.drr_Project);
+                secondLoadTasks.Add(ctx.LoadPropertyAsync(claim.drr_Project, nameof(drr_project.drr_FullProposalApplication), ct));
+            }
+
+            await Task.WhenAll(secondLoadTasks);
         }
 
         private static async Task ParallelLoadInvoiceAttachments(DRRContext ctx, drr_projectclaim claim, CancellationToken ct)
@@ -529,17 +537,13 @@ namespace EMCR.DRR.API.Resources.Reports
 
             await Task.WhenAll(loadTasks);
 
-            if (pr.drr_ProjectReport != null)
-            {
-                ctx.AttachTo(nameof(DRRContext.drr_projectreports), pr.drr_ProjectReport);
-                await ctx.LoadPropertyAsync(pr.drr_ProjectReport, nameof(drr_projectreport.drr_ReportPeriod), ct);
-            }
-
-            await Task.WhenAll([
+            var secondLoadTasks = new List<Task>{
                 ParallelLoadActivityTypes(ctx, pr, ct),
                 ParallelLoadEventContacts(ctx, pr, ct),
                 ParallelLoadDocumentTypes(ctx, pr, ct),
-                ]);
+            };
+
+            await Task.WhenAll(secondLoadTasks);
         }
 
         private static async Task ParallelLoadActivityTypes(DRRContext ctx, drr_projectprogress pr, CancellationToken ct)
@@ -547,8 +551,13 @@ namespace EMCR.DRR.API.Resources.Reports
             await pr.drr_drr_projectprogress_drr_projectworkplanactivity_ProjectProgressReport.ForEachAsync(5, async wa =>
             {
                 ctx.AttachTo(nameof(DRRContext.drr_projectworkplanactivities), wa);
-                await ctx.LoadPropertyAsync(wa, nameof(drr_projectworkplanactivity.drr_ActivityType), ct);
-                await ctx.LoadPropertyAsync(wa, nameof(drr_projectworkplanactivity.drr_CopiedfromReport), ct);
+                var loadTasks = new List<Task>
+                {
+                    ctx.LoadPropertyAsync(wa, nameof(drr_projectworkplanactivity.drr_ActivityType), ct),
+                    ctx.LoadPropertyAsync(wa, nameof(drr_projectworkplanactivity.drr_CopiedfromReport), ct),
+                };
+
+                await Task.WhenAll(loadTasks);
             });
         }
 
@@ -569,13 +578,5 @@ namespace EMCR.DRR.API.Resources.Reports
                 await ctx.LoadPropertyAsync(doc, nameof(bcgov_documenturl.bcgov_DocumentType), ct);
             });
         }
-
-        //public async Task<bool> CanAccessProject(string id, string businessId)
-        //{
-        //    var readCtx = dRRContextFactory.CreateReadOnly();
-        //    var existingProject = await readCtx.drr_projects.Expand(a => a.drr_ProponentName).Where(a => a.drr_name == id).SingleOrDefaultAsync();
-        //    if (existingProject == null) return true;
-        //    return (!string.IsNullOrEmpty(existingProject.drr_ProponentName.drr_bceidguid)) && existingProject.drr_ProponentName.drr_bceidguid.Equals(businessId);
-        //}
     }
 }
