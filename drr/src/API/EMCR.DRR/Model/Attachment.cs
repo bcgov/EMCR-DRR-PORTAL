@@ -45,5 +45,6 @@ namespace EMCR.DRR.API.Model
     {
         FullProposal,
         ProgressReport,
+        Invoice,
     }
 }
