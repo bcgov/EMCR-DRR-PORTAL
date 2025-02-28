@@ -58,7 +58,7 @@ namespace EMCR.DRR.API.Resources.Reports
             ;
 
             CreateMap<Invoice, drr_projectexpenditure>(MemberList.None)
-                .ForMember(dest => dest.drr_projectexpenditureid, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.drr_projectexpenditureid, opt => opt.MapFrom(src => !string.IsNullOrEmpty(src.Id) ? Guid.Parse(src.Id) : (Guid?)null))
                 .ForMember(dest => dest.drr_invoicenumber, opt => opt.MapFrom(src => src.InvoiceNumber))
                 .ForMember(dest => dest.drr_dateofinvoice, opt => opt.MapFrom(src => src.Date.HasValue ? src.Date.Value.ToUniversalTime() : (DateTimeOffset?)null))
                 .ForMember(dest => dest.drr_goodsandservicesworkrenderedstartdate, opt => opt.MapFrom(src => src.WorkStartDate.HasValue ? src.WorkStartDate.Value.ToUniversalTime() : (DateTimeOffset?)null))
@@ -238,7 +238,7 @@ namespace EMCR.DRR.API.Resources.Reports
             ;
 
             CreateMap<FundingSignage, drr_temporaryprovincialfundingsignage>(MemberList.None)
-                .ForMember(dest => dest.drr_temporaryprovincialfundingsignageid, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.drr_temporaryprovincialfundingsignageid, opt => opt.MapFrom(src => !string.IsNullOrEmpty(src.Id) ? Guid.Parse(src.Id) : (Guid?)null))
                 .ForMember(dest => dest.drr_typeofsignage, opt => opt.MapFrom(src => src.Type.HasValue ? (int?)Enum.Parse<SignageTypeOptionSet>(src.Type.Value.ToString()) : null))
                 .ForMember(dest => dest.drr_dateinstalled, opt => opt.MapFrom(src => src.DateInstalled.HasValue ? src.DateInstalled.Value.ToUniversalTime() : (DateTimeOffset?)null))
                 .ForMember(dest => dest.drr_dateremoved, opt => opt.MapFrom(src => src.DateRemoved.HasValue ? src.DateRemoved.Value.ToUniversalTime() : (DateTimeOffset?)null))
