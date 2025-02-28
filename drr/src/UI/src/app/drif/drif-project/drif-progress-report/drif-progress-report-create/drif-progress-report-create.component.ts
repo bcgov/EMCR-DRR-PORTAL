@@ -1,6 +1,18 @@
+import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { CommonModule } from '@angular/common';
 import { Component, HostListener, inject, ViewChild } from '@angular/core';
+import {
+  AbstractControl,
+  FormArray,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import {
@@ -8,13 +20,19 @@ import {
   MatStepperModule,
   StepperOrientation,
 } from '@angular/material/stepper';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { HotToastService } from '@ngxpert/hot-toast';
 import {
   IFormGroup,
   RxFormBuilder,
   RxFormGroup,
   RxReactiveFormsModule,
 } from '@rxweb/reactive-form-validators';
+import { distinctUntilChanged, pairwise, startWith, Subscription } from 'rxjs';
+import { v4 as uuidv4 } from 'uuid';
+import { AttachmentService } from '../../../../../api/attachment/attachment.service';
+import { ProjectService } from '../../../../../api/project/project.service';
 import {
   ActivityType,
   DeclarationType,
@@ -29,24 +47,6 @@ import {
   WorkplanStatus,
   YesNoOption,
 } from '../../../../../model';
-
-import { StepperSelectionEvent } from '@angular/cdk/stepper';
-import {
-  AbstractControl,
-  FormArray,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { MatCardModule } from '@angular/material/card';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { ActivatedRoute, Router } from '@angular/router';
-import { HotToastService } from '@ngxpert/hot-toast';
-import { distinctUntilChanged, pairwise, startWith, Subscription } from 'rxjs';
-import { AttachmentService } from '../../../../../api/attachment/attachment.service';
-import { ProjectService } from '../../../../../api/project/project.service';
 import { DrrDatepickerComponent } from '../../../../shared/controls/drr-datepicker/drr-datepicker.component';
 import { DrrFileUploadComponent } from '../../../../shared/controls/drr-file-upload/drr-file-upload.component';
 import { DrrInputComponent } from '../../../../shared/controls/drr-input/drr-input.component';
@@ -127,7 +127,7 @@ export class DrifProgressReportCreateComponent {
   projectId!: string;
   reportId!: string;
   progressReportId!: string;
-  
+
   reportName?: string;
 
   @ViewChild(MatStepper) stepper!: MatStepper;
@@ -735,6 +735,7 @@ export class DrifProgressReportCreateComponent {
     const newActivity = this.formBuilder.formGroup(
       new WorkplanActivityForm({
         isMandatory: false,
+        id: uuidv4(),
       }),
     );
     this.setValidationsForActivity(newActivity);
@@ -808,7 +809,15 @@ export class DrifProgressReportCreateComponent {
     return !!activityControl.get('isMandatory')?.value;
   }
 
-  removeAdditionalActivity(index: number) {
+  removeAdditionalActivity(id: string) {
+    if (!id) {
+      return;
+    }
+
+    const index = this.workplanActivitiesArray?.controls.findIndex(
+      (control) => control.get('id')?.value === id,
+    );
+
     this.workplanActivitiesArray?.removeAt(index);
   }
 

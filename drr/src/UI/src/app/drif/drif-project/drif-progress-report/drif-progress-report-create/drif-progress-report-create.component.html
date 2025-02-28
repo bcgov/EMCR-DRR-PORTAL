@@ -446,7 +446,11 @@
                   <button
                     mat-raised-button
                     color="warn"
-                    (click)="removeAdditionalActivity(i)"
+                    (click)="
+                      removeAdditionalActivity(
+                        additionalActivity.get('id')?.value
+                      )
+                    "
                   >
                     Remove
                   </button>
