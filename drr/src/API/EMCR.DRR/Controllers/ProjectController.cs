@@ -163,6 +163,70 @@ namespace EMCR.DRR.Controllers
             }
         }
 
+        [HttpPatch("{projectId}/interim-reports/{reportId}/claims/{claimId}")]
+        public async Task<ActionResult<ProjectClaimResult>> UpdateClaim([FromBody] DraftProjectClaim claim, string claimId)
+        {
+            try
+            {
+                claim.Id = claimId;
+                claim.Status = ClaimStatus.InProgress;
+
+                var drr_id = await intakeManager.Handle(new SaveClaimCommand { Claim = mapper.Map<ProjectClaim>(claim), UserInfo = GetCurrentUser() });
+                return Ok(new ProjectClaimResult { Id = drr_id });
+            }
+            catch (Exception e)
+            {
+                return errorParser.Parse(e, logger);
+            }
+        }
+
+        [HttpPost("{projectId}/interim-reports/{reportId}/claims/{claimId}/invoice")]
+        public async Task<ActionResult<CreateInvoiceResult>> CreateInvoice([FromBody] CreateInvoice inv, string claimId)
+        {
+            try
+            {
+                var invoiceId = inv.Id ?? Guid.NewGuid().ToString();
+                var drr_id = await intakeManager.Handle(new CreateInvoiceCommand { ClaimId = claimId, InvoiceId = invoiceId, UserInfo = GetCurrentUser() });
+                return Ok(new ProjectClaimResult { Id = drr_id });
+            }
+            catch (Exception e)
+            {
+                return errorParser.Parse(e, logger);
+            }
+        }
+
+        [HttpDelete("{projectId}/interim-reports/{reportId}/claims/{claimId}/invoice")]
+        public async Task<ActionResult<CreateInvoiceResult>> DeleteInvoice([FromBody] CreateInvoice inv, string claimId)
+        {
+            try
+            {
+                var invoiceId = inv.Id ?? Guid.NewGuid().ToString();
+                var drr_id = await intakeManager.Handle(new DeleteInvoiceCommand { ClaimId = claimId, InvoiceId = invoiceId, UserInfo = GetCurrentUser() });
+                return Ok(new ProjectClaimResult { Id = drr_id });
+            }
+            catch (Exception e)
+            {
+                return errorParser.Parse(e, logger);
+            }
+        }
+
+        [HttpPatch("{projectId}/interim-reports/{reportId}/claims/{claimId}/submit")]
+        public async Task<ActionResult<ProjectClaimResult>> SubmitClaim([FromBody] ProjectClaim claim, string claimId)
+        {
+            try
+            {
+                claim.Id = claimId;
+                claim.Status = ClaimStatus.InProgress;
+
+                var drr_id = await intakeManager.Handle(new SubmitClaimCommand { Claim = claim, UserInfo = GetCurrentUser() });
+                return Ok(new ProjectClaimResult { Id = drr_id });
+            }
+            catch (Exception e)
+            {
+                return errorParser.Parse(e, logger);
+            }
+        }
+
         [HttpGet("{projectId}/interim-reports/{reportId}/progress-reports/{progressId}")]
         public async Task<ActionResult<DraftProgressReport>> GetProgressReport(string projectId, string reportId, string progressId)
         {
@@ -290,7 +354,7 @@ namespace EMCR.DRR.Controllers
         public InterimReportStatus? Status { get; set; }
         public InterimProjectType? ProjectType { get; set; }
         public PeriodType? PeriodType { get; set; }
-        public string? ReportPeriod {  get; set; }
+        public string? ReportPeriod { get; set; }
         public DraftProjectClaim? ProjectClaim { get; set; }
         public DraftProgressReport? ProgressReport { get; set; }
         public DraftForecast? Forecast { get; set; }
@@ -307,7 +371,9 @@ namespace EMCR.DRR.Controllers
         public string? Id { get; set; }
         public string? ReportPeriod { get; set; }
         public string? ContractNumber { get; set; }
-        public FundingStream? FundingStream { get; set; }
+        public InterimProjectType? ProjectType { get; set; }
+        public DateTime? PlannedStartDate { get; set; }
+        public DateTime? PlannedEndDate { get; set; }
         public DateTime? ReportDate { get; set; }
         public DateTime? DateApproved { get; set; }
         public DateTime? DateSubmitted { get; set; }
@@ -364,6 +430,7 @@ namespace EMCR.DRR.Controllers
     public class Invoice
     {
         public string? Id { get; set; }
+        public string? Name { get; set; }
         public string? InvoiceNumber { get; set; }
         public DateTime? Date { get; set; }
         public DateTime? WorkStartDate { get; set; }
@@ -823,7 +890,19 @@ namespace EMCR.DRR.Controllers
     {
     }
 
+    public class ProjectClaimResult : ReportResult
+    {
+    }
+
     public class CreateReportResult : ReportResult
+    {
+    }
+
+    public class CreateInvoiceResult : ReportResult
+    {
+    }
+
+    public class DeleteInvoiceResult : ReportResult
     {
     }
 
@@ -837,6 +916,16 @@ namespace EMCR.DRR.Controllers
     public class CreateReport
     {
         public required ReportType ReportType { get; set; }
+    }
+
+    public class CreateInvoice
+    {
+        public string? Id { get; set; }
+    }
+
+    public class DeleteInvoice
+    {
+        public string? Id { get; set; }
     }
 
     [JsonConverter(typeof(JsonStringEnumConverter))]

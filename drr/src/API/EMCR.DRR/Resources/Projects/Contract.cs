@@ -43,6 +43,12 @@ namespace EMCR.DRR.API.Resources.Projects
         Inactive = 2,
     }
 
+    public enum InvoiceStatusOptionSet
+    {
+        Active = 1,
+        Inactive = 2,
+    }
+
     public enum ProjectReportStatusOptionSet
     {
         NotStarted = 1,
