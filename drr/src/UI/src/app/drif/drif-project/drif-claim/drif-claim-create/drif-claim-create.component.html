@@ -180,6 +180,8 @@
                     <drr-currency-input
                       [label]="t('taxRebate')"
                       [rxFormControl]="invoice.get('taxRebate')"
+                      [max]="invoice.get('grossAmount')?.value"
+                      [maxValueCustomErrorMessage]="t('taxRebateError')"
                     ></drr-currency-input>
                     <drr-currency-input
                       [label]="t('totalPST')"
@@ -193,6 +195,9 @@
                       class="drr-single-input"
                       [label]="t('claimAmount')"
                       [rxFormControl]="invoice.get('claimAmount')"
+                      [max]="invoice.get('grossAmount')?.value"
+                      [maxValueCustomErrorMessage]="t('claimAmountError')"
+                      [value]="invoice.get('grossAmount')?.value"
                     ></drr-currency-input>
                   </div>
                 </div>

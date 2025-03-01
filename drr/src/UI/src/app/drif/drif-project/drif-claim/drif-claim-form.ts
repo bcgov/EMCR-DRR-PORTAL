@@ -46,6 +46,7 @@ export class InvoiceForm implements Invoice {
   description?: string;
 
   @prop()
+  @required()
   grossAmount?: number;
 
   @prop()
