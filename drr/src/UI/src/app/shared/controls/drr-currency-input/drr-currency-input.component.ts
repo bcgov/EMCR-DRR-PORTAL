@@ -141,6 +141,7 @@ export class DrrCurrencyInputComponent {
   @Input() label = '';
   @Input() id = '';
 
+  @Input()
   set value(val: number | undefined) {
     // do not set value if the control is pristine since loading the value
     if (this.rxFormControl.pristine) {
