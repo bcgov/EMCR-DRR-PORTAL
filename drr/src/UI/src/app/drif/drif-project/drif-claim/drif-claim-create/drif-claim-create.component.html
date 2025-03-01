@@ -186,10 +186,14 @@
                     <drr-currency-input
                       [label]="t('totalPST')"
                       [rxFormControl]="invoice.get('totalPST')"
+                      [max]="invoice.get('grossAmount')?.value"
+                      [maxValueCustomErrorMessage]="t('totalPSTError')"
                     ></drr-currency-input>
                     <drr-currency-input
                       [label]="t('totalGST')"
                       [rxFormControl]="invoice.get('totalGST')"
+                      [max]="invoice.get('grossAmount')?.value"
+                      [maxValueCustomErrorMessage]="t('totalGSTError')"
                     ></drr-currency-input>
                     <drr-currency-input
                       class="drr-single-input"

@@ -70,10 +70,9 @@ import { NgxMaskDirective } from 'ngx-mask';
       <mat-hint *ngIf="max && isFocused" align="end"
         >Max: {{ max | currency: '' : 'symbol' : '1.0-0' }}</mat-hint
       >
-      <mat-error
-        *ngIf="rxFormControl.hasError('maxNumber') || hasMaxValueError()"
-        >{{ maxValueCustomErrorMessage }}</mat-error
-      >
+      <mat-error *ngIf="rxFormControl.hasError('max')">{{
+        maxValueCustomErrorMessage
+      }}</mat-error>
       <mat-error *ngIf="rxFormControl.hasError('minNumber')">{{
         t('minValueError', { min: min | currency: '' : 'symbol' : '1.0-0' })
       }}</mat-error>
@@ -141,19 +140,16 @@ export class DrrCurrencyInputComponent {
   @Input() label = '';
   @Input() id = '';
 
-  private _value?: number;
   @Input()
-  get value(): number | undefined {
-    return this._value;
-  }
   set value(val: number | undefined) {
+    // do not set value if the control is pristine since loading the value
     if (this.rxFormControl.pristine) {
       return;
     }
 
+    // if there is a valid value and control is not touched, set the value
     if (val !== undefined && !this.rxFormControl.touched) {
       this.rxFormControl.setValue(val, { emitEvent: false });
-      this._value = val;
     }
   }
 
@@ -255,10 +251,6 @@ export class DrrCurrencyInputComponent {
   }
 
   hasMaxValueError() {
-    if (this.max) {
-      return this.rxFormControl.value > this.max;
-    }
-
     return this.rxFormControl.value > this.MAX_ALLOWED_VALUE;
   }
 }

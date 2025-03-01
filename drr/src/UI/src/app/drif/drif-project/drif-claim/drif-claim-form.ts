@@ -53,6 +53,7 @@ export class InvoiceForm implements Invoice {
   taxRebate?: number;
 
   @prop()
+  @required()
   claimAmount?: number;
 
   @prop()
