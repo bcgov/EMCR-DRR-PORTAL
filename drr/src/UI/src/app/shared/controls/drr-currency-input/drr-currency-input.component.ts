@@ -141,19 +141,15 @@ export class DrrCurrencyInputComponent {
   @Input() label = '';
   @Input() id = '';
 
-  private _value?: number;
-  @Input()
-  get value(): number | undefined {
-    return this._value;
-  }
   set value(val: number | undefined) {
+    // do not set value if the control is pristine since loading the value
     if (this.rxFormControl.pristine) {
       return;
     }
 
+    // if there is a valid value and control is not touched, set the value
     if (val !== undefined && !this.rxFormControl.touched) {
       this.rxFormControl.setValue(val, { emitEvent: false });
-      this._value = val;
     }
   }
 
