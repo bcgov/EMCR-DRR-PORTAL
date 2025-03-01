@@ -1,5 +1,5 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { CommonModule } from '@angular/common';
+import { CommonModule, CurrencyPipe } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
@@ -7,14 +7,18 @@ import {
   Input,
   inject,
 } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { RxFormBuilder, RxFormControl } from '@rxweb/reactive-form-validators';
+import {
+  RxFormBuilder,
+  RxFormControl,
+  RxwebValidators,
+} from '@rxweb/reactive-form-validators';
 import { NgxMaskDirective } from 'ngx-mask';
 
 @UntilDestroy({ checkProperties: true })
@@ -32,6 +36,7 @@ import { NgxMaskDirective } from 'ngx-mask';
     MatButtonModule,
     MatIconModule,
   ],
+  providers: [CurrencyPipe],
   template: `<mat-label *ngIf="isMobile"
       >{{ label }}{{ getMandatoryMark() }}</mat-label
     >
@@ -67,15 +72,13 @@ import { NgxMaskDirective } from 'ngx-mask';
       >
       <mat-error
         *ngIf="rxFormControl.hasError('maxNumber') || hasMaxValueError()"
-        >{{
-          t('maxValueError', { max: max | currency: '' : 'symbol' : '1.0-0' })
-        }}</mat-error
+        >{{ maxValueCustomErrorMessage }}</mat-error
       >
       <mat-error *ngIf="rxFormControl.hasError('minNumber')">{{
         t('minValueError', { min: min | currency: '' : 'symbol' : '1.0-0' })
       }}</mat-error>
       <mat-hint *ngIf="hasMaxValueError()" class="max-number-error">
-        The value is too large.
+        {{ maxValueCustomErrorMessage }}
       </mat-hint>
     </mat-form-field> `,
   styles: `
@@ -105,9 +108,9 @@ import { NgxMaskDirective } from 'ngx-mask';
         left: -10px;
       }
 
-      .mat-mdc-form-field-error {
-        text-wrap: nowrap;
-      }
+      // .mat-mdc-form-field-error {
+      //   text-wrap: nowrap;
+      // }
 
       .drr-currency-input
         ::ng-deep
@@ -128,15 +131,40 @@ import { NgxMaskDirective } from 'ngx-mask';
 export class DrrCurrencyInputComponent {
   formBuilder = inject(RxFormBuilder);
   breakpointObserver = inject(BreakpointObserver);
+  translocoService = inject(TranslocoService);
+  currency = inject(CurrencyPipe);
 
   isFocused = false;
   isMobile = false;
-  MAX_VALUE = 999999999.99;
+  MAX_ALLOWED_VALUE = 999999999.99;
 
   @Input() label = '';
   @Input() id = '';
   @Input() min: number = 0;
-  @Input() max: number = 0;
+
+  private _max: number = 0;
+  @Input()
+  set max(value: number) {
+    if (value) {
+      const validators = this.isRequired()
+        ? [RxwebValidators.required(), Validators.max(value)]
+        : [Validators.max(value)];
+      this.rxFormControl.setValidators(validators);
+    } else {
+      this.rxFormControl.removeValidators([Validators.max]);
+    }
+
+    this.rxFormControl.updateValueAndValidity();
+    this._max = value;
+  }
+  get max() {
+    return this._max;
+  }
+
+  @Input() maxValueCustomErrorMessage = this.translocoService.translate(
+    'maxValueError',
+    { max: this.currency.transform(this.MAX_ALLOWED_VALUE) },
+  );
   @Input() allowEnabling = false;
 
   ngOnInit() {
@@ -181,7 +209,7 @@ export class DrrCurrencyInputComponent {
 
   handleInputEvent(event: Event, value: string) {
     const newValue = parseFloat(this.rxFormControl.value + value);
-    if (newValue > this.MAX_VALUE) {
+    if (newValue > this.MAX_ALLOWED_VALUE) {
       event.preventDefault();
     }
   }
@@ -210,6 +238,10 @@ export class DrrCurrencyInputComponent {
   }
 
   hasMaxValueError() {
-    return this.rxFormControl.value > this.MAX_VALUE;
+    if (this.max) {
+      return this.rxFormControl.value > this.max;
+    }
+
+    return this.rxFormControl.value > this.MAX_ALLOWED_VALUE;
   }
 }

@@ -696,6 +696,11 @@
     "paymentDate": "Payment Date",
     "costCategory": "Cost Category",
     "supplierName": "Supplier Name",
-    "description": "Description"
+    "description": "Description",
+    "grossAmount": "Gross Invoice Amount",
+    "taxRebate": "Tax Rebate Amount",
+    "taxRebateError": "Tax Rebate Amount must be less than Gross Invoice Amount",
+    "claimAmount": "Proponent Claim Amount",
+    "claimAmountError": "Claim Amount must be less than Gross Invoice Amount"
   }
 }
