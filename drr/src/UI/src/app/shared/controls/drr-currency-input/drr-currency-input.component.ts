@@ -140,6 +140,23 @@ export class DrrCurrencyInputComponent {
 
   @Input() label = '';
   @Input() id = '';
+
+  private _value?: number;
+  @Input()
+  get value(): number | undefined {
+    return this._value;
+  }
+  set value(val: number | undefined) {
+    if (this.rxFormControl.pristine) {
+      return;
+    }
+
+    if (val !== undefined && !this.rxFormControl.touched) {
+      this.rxFormControl.setValue(val, { emitEvent: false });
+      this._value = val;
+    }
+  }
+
   @Input() min: number = 0;
 
   private _max: number = 0;
