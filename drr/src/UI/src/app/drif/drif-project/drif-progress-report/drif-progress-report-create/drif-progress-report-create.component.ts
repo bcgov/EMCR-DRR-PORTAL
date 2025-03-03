@@ -618,9 +618,10 @@ export class DrifProgressReportCreateComponent {
           this.formChanged = false;
           this.resetAutoSaveTimer();
         },
-        error: () => {
+        error: (error) => {
           this.toastService.close();
           this.toastService.error('Failed to save report');
+          console.error(error);
         },
       });
   }
@@ -673,6 +674,7 @@ export class DrifProgressReportCreateComponent {
         error: (error) => {
           this.toastService.close();
           this.toastService.error('Failed to submit report');
+          console.error(error);
         },
       });
   }
@@ -992,9 +994,10 @@ export class DrifProgressReportCreateComponent {
               this.formBuilder.formGroup(AttachmentForm, attachmentFormData),
             );
           },
-          error: () => {
+          error: (error) => {
             this.toastService.close();
             this.toastService.error('File upload failed');
+            console.error(error);
           },
         });
     });
@@ -1024,9 +1027,10 @@ export class DrifProgressReportCreateComponent {
 
           attachmentsArray.removeAt(fileIndex);
         },
-        error: () => {
+        error: (error) => {
           this.toastService.close();
           this.toastService.error('File deletion failed');
+          console.error(error);
         },
       });
   }
