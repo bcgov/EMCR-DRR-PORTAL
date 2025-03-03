@@ -1140,12 +1140,14 @@ namespace EMCR.DRR.Managers.Intake
 
     public enum ClaimStatus
     {
-        Approved,
-        Rejected,
-        Invalid,
-        InProgress,
+        NotStarted,
+        DraftStaff,
+        DraftProponent,
         Submitted,
-        Inactive
+        UpdateNeeded,
+        Approved,
+        Skipped,
+        Inactive,
     }
 
     public enum ProgressReportStatus
@@ -1163,10 +1165,12 @@ namespace EMCR.DRR.Managers.Intake
     public enum ForecastStatus
     {
         NotStarted,
-        Draft,
+        DraftStaff,
+        DraftProponent,
         Submitted,
         UpdateNeeded,
         Approved,
+        Skipped,
         Inactive,
     }
 

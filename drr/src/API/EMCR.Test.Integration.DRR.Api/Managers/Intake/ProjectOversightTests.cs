@@ -142,7 +142,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var claim = mapper.Map<EMCR.DRR.Controllers.ProjectClaim>((await manager.Handle(new DrrClaimsQuery { Id = claimId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
 
             claim = FillInClaim(claim, uniqueSignature);
-            claim.Status = EMCR.DRR.Controllers.ClaimStatus.InProgress;
+            claim.Status = EMCR.DRR.Controllers.ClaimStatus.Draft;
 
             //Console.WriteLine(progressReport.Id);
             await manager.Handle(new SaveClaimCommand { Claim = claim, UserInfo = userInfo });
