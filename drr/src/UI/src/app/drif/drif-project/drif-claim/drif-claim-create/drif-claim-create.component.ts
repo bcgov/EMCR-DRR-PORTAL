@@ -12,6 +12,7 @@ import {
 } from '@angular/material/stepper';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { HotToastService } from '@ngxpert/hot-toast';
 import {
   AppFormGroup,
   RxFormBuilder,
@@ -71,6 +72,7 @@ export class DrifClaimCreateComponent {
   profileStore = inject(ProfileStore);
   projectService = inject(ProjectService);
   translocoService = inject(TranslocoService);
+  toastService = inject(HotToastService);
 
   projectId?: string;
   reportId?: string;
@@ -202,7 +204,26 @@ export class DrifClaimCreateComponent {
 
   stepperSelectionChange(event: any) {}
 
-  save() {}
+  save() {
+    const claimForm = this.claimForm?.value as ClaimForm;
+
+    this.projectService
+      .projectUpdateClaim(this.projectId!, this.reportId!, this.claimId!, {
+        claimComment: claimForm.expenditure.claimComment,
+        invoices: claimForm.expenditure.invoices,
+      })
+      .subscribe({
+        next: () => {
+          this.toastService.close();
+          this.toastService.success('Claim saved successfully');
+        },
+        error: (error) => {
+          this.toastService.close();
+          this.toastService.error('Failed to save claim');
+          console.error(error);
+        },
+      });
+  }
 
   goBack() {
     // TODO: save
