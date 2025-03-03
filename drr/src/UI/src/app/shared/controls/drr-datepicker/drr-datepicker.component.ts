@@ -31,8 +31,8 @@ export class DrrDatepickerComponent {
 
   @Input() label = '';
   @Input() id = '';
-  @Input() min?: Date;
-  @Input() max?: Date;
+  @Input() min?: Date | string;
+  @Input() max?: Date | string;
   @Input() minErrorLabel = '';
   @Input() maxErrorLabel = '';
 

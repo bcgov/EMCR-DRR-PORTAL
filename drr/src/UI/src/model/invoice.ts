@@ -25,6 +25,8 @@ export interface Invoice {
   /** @nullable */
   invoiceNumber?: string;
   /** @nullable */
+  name?: string;
+  /** @nullable */
   paymentDate?: string;
   /** @nullable */
   supplierName?: string;

@@ -11,4 +11,5 @@ export type RecordType = (typeof RecordType)[keyof typeof RecordType];
 export const RecordType = {
   FullProposal: 'FullProposal',
   ProgressReport: 'ProgressReport',
+  Invoice: 'Invoice',
 } as const;
