@@ -408,7 +408,7 @@ export class DrifClaimCreateComponent {
   getEarliestInvoiceDate() {
     return this.getInvoiceFormArray()?.controls.reduce(
       (earliestDate: Date | null, control) => {
-        const invoiceDate = control.get('invoiceDate')?.value;
+        const invoiceDate = control.get('date')?.value;
         if (!invoiceDate) {
           return earliestDate;
         }
@@ -427,7 +427,7 @@ export class DrifClaimCreateComponent {
   getLatestInvoiceDate() {
     return this.getInvoiceFormArray()?.controls.reduce(
       (latestDate: Date | null, control) => {
-        const invoiceDate = control.get('invoiceDate')?.value;
+        const invoiceDate = control.get('date')?.value;
         if (!invoiceDate) {
           return latestDate;
         }
@@ -446,7 +446,7 @@ export class DrifClaimCreateComponent {
   getEarliestGoodsAndServicesWorkStartDate() {
     return this.getInvoiceFormArray()?.controls.reduce(
       (earliestDate: Date | null, control) => {
-        const startDate = control.get('startDate')?.value;
+        const startDate = control.get('workStartDate')?.value;
         if (!startDate) {
           return earliestDate;
         }
@@ -465,7 +465,7 @@ export class DrifClaimCreateComponent {
   getLatestGoodsAndServicesWorkEndDate() {
     return this.getInvoiceFormArray()?.controls.reduce(
       (latestDate: Date | null, control) => {
-        const endDate = control.get('endDate')?.value;
+        const endDate = control.get('workEndDate')?.value;
         if (!endDate) {
           return latestDate;
         }
