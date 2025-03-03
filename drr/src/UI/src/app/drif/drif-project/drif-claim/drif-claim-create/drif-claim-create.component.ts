@@ -295,19 +295,27 @@ export class DrifClaimCreateComponent {
     }
   }
 
+  getFormValue(): DraftProjectClaim {
+    const claimForm = this.claimForm?.value as ClaimForm;
+
+    return {
+      claimComment: claimForm.expenditure.claimComment,
+      invoices: claimForm.expenditure.invoices,
+    };
+  }
+
   save() {
     if (!this.formChanged) {
       return;
     }
 
-    const claimForm = this.claimForm?.value as ClaimForm;
+    const claimValue = this.getFormValue();
 
     this.lastSavedAt = undefined;
 
     this.projectService
       .projectUpdateClaim(this.projectId!, this.reportId!, this.claimId!, {
-        claimComment: claimForm.expenditure.claimComment,
-        invoices: claimForm.expenditure.invoices,
+        ...claimValue,
       })
       .subscribe({
         next: () => {
@@ -332,7 +340,35 @@ export class DrifClaimCreateComponent {
     this.router.navigate(['drif-projects', this.projectId]);
   }
 
-  submit() {}
+  submit() {
+    this.claimForm?.markAllAsTouched();
+    this.stepper.steps.forEach((step) => step._markAsInteracted());
+    this.stepper._stateChanged();
+
+    if (this.claimForm?.invalid) {
+      this.toastService.error('Please fill in all required fields');
+      return;
+    }
+
+    const claimValue = this.getFormValue();
+
+    this.projectService
+      .projectSubmitClaim(this.projectId!, this.reportId!, this.claimId!, {
+        ...claimValue,
+      })
+      .subscribe({
+        next: () => {
+          this.toastService.close();
+          this.toastService.success('Claim submitted successfully');
+
+          this.router.navigate(['drif-projects', this.projectId]);
+        },
+        error: (error) => {
+          this.toastService.error('Failed to submit claim');
+          console.error(error);
+        },
+      });
+  }
 
   addInvoice() {
     this.projectService

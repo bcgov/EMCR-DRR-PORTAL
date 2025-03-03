@@ -60,7 +60,11 @@
         </button>
       </div>
     </mat-step>
-    <mat-step label="Summary of Expenditures">
+    <mat-step
+      label="Summary of Expenditures"
+      [stepControl]="claimForm?.get('expenditure')!"
+      [errorMessage]="'stepError' | transloco"
+    >
       @if (claimForm) {
         <div
           style="
@@ -276,7 +280,11 @@
         </button>
       </div>
     </mat-step>
-    <mat-step label="Review & Declaration">
+    <mat-step
+      label="Review & Declaration"
+      [stepControl]="claimForm?.get('declaraion')!"
+      [errorMessage]="'stepError' | transloco"
+    >
       <div></div>
       <div class="drr-stepper-actions">
         <button mat-stroked-button color="primary" matStepperPrevious>
