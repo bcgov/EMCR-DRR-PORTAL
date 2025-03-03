@@ -222,9 +222,10 @@
             Add Invoice
           </button>
           <drr-textarea
+            style="margin-top: 2rem"
             [label]="t('claimComment')"
             [rxFormControl]="claimForm.get('expenditure')?.get('claimComment')"
-            [maxlength]="2000"
+            [maxlength]="500"
           >
           </drr-textarea>
 

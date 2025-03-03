@@ -705,6 +705,7 @@
     "totalPST": "Total PST Paid",
     "totalPSTError": "Total PST Paid must be less than Gross Invoice Amount",
     "totalGST": "Total GST Paid",
-    "totalGSTError": "Total GST Paid must be less than Gross Invoice Amount"
+    "totalGSTError": "Total GST Paid must be less than Gross Invoice Amount",
+    "claimComment": "Claim Comment"
   }
 }

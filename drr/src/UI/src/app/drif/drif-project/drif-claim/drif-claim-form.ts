@@ -78,7 +78,6 @@ export class ExpenditureForm {
   invoices?: InvoiceForm[] = [];
 
   @prop()
-  @required()
   claimComment?: string;
 
   constructor(values: ExpenditureForm) {
