@@ -60,11 +60,13 @@ namespace EMCR.DRR.API.Resources.Projects
 
     public enum ProjectClaimStatusOptionSet
     {
-        Approved = 1,
-        Rejected = 172580000,
-        Invalid = 172580001,
-        InProgress = 172580002,
-        Submitted = 172580003,
+        NotStarted = 172580000,
+        DraftProponent = 1,
+        DraftStaff = 172580004,
+        Submitted = 172580001,
+        UpdateNeeded = 1172580002,
+        Approved = 172580003,
+        Skipped = 172580005,
         Inactive = 2,
     }
 
@@ -82,11 +84,13 @@ namespace EMCR.DRR.API.Resources.Projects
 
     public enum ForecastStatusOptionSet
     {
-        NotStarted = 1,
-        Draft = 172580000,
+        NotStarted = 172580000,
+        DraftProponent = 1,
+        DraftStaff = 172580004,
         Submitted = 172580001,
         UpdateNeeded = 1172580002,
         Approved = 172580003,
+        Skipped = 172580005,
         Inactive = 2,
     }
 

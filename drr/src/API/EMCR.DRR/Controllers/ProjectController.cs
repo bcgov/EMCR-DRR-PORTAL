@@ -169,7 +169,7 @@ namespace EMCR.DRR.Controllers
             try
             {
                 claim.Id = claimId;
-                claim.Status = ClaimStatus.InProgress;
+                claim.Status = ClaimStatus.Draft;
 
                 var drr_id = await intakeManager.Handle(new SaveClaimCommand { Claim = mapper.Map<ProjectClaim>(claim), UserInfo = GetCurrentUser() });
                 return Ok(new ProjectClaimResult { Id = drr_id });
@@ -216,7 +216,7 @@ namespace EMCR.DRR.Controllers
             try
             {
                 claim.Id = claimId;
-                claim.Status = ClaimStatus.InProgress;
+                claim.Status = ClaimStatus.Draft;
 
                 var drr_id = await intakeManager.Handle(new SubmitClaimCommand { Claim = claim, UserInfo = GetCurrentUser() });
                 return Ok(new ProjectClaimResult { Id = drr_id });
@@ -813,20 +813,23 @@ namespace EMCR.DRR.Controllers
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum ClaimStatus
     {
-        [Description("Approved")]
-        Approved,
+        [Description("NotStarted")]
+        NotStarted,
 
-        [Description("Rejected")]
-        Rejected,
-
-        [Description("Invalid")]
-        Invalid,
-
-        [Description("In Progress")]
-        InProgress,
+        [Description("Draft")]
+        Draft,
 
         [Description("Submitted")]
         Submitted,
+
+        [Description("Update Needed")]
+        UpdateNeeded,
+
+        [Description("Approved")]
+        Approved,
+
+        [Description("Skipped")]
+        Skipped,
     }
 
     [JsonConverter(typeof(JsonStringEnumConverter))]
@@ -854,7 +857,7 @@ namespace EMCR.DRR.Controllers
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum ForecastStatus
     {
-        [Description("Not Started")]
+        [Description("NotStarted")]
         NotStarted,
 
         [Description("Draft")]
@@ -868,6 +871,9 @@ namespace EMCR.DRR.Controllers
 
         [Description("Approved")]
         Approved,
+
+        [Description("Skipped")]
+        Skipped,
     }
 
     public class ProjectResult
