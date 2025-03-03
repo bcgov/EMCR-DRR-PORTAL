@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, HostListener, inject, ViewChild } from '@angular/core';
 import { FormArray, FormGroup } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -7,6 +7,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import {
+  MatStepper,
   MatStepperModule,
   StepperOrientation,
 } from '@angular/material/stepper';
@@ -18,6 +19,7 @@ import {
   RxFormBuilder,
   RxFormGroup,
 } from '@rxweb/reactive-form-validators';
+import { distinctUntilChanged, pairwise, startWith } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import { ProjectService } from '../../../../../api/project/project.service';
 import {
@@ -83,7 +85,39 @@ export class DrifClaimCreateComponent {
   authorizedRepresentativeText?: string;
   accuracyOfInformationText?: string;
 
+  @ViewChild(MatStepper) stepper!: MatStepper;
+  stepperOrientation: StepperOrientation = 'horizontal';
+
   claimForm?: RxFormGroup | FormGroup<any> | AppFormGroup<ClaimForm>;
+  formChanged = false;
+  lastSavedAt?: Date;
+
+  autoSaveCountdown = 0;
+  autoSaveTimer: any;
+  autoSaveInterval = 60;
+
+  @HostListener('window:mousemove')
+  @HostListener('window:mousedown')
+  @HostListener('window:keypress')
+  @HostListener('window:scroll')
+  @HostListener('window:touchmove')
+  resetAutoSaveTimer() {
+    if (!this.formChanged) {
+      this.autoSaveCountdown = 0;
+      clearInterval(this.autoSaveTimer);
+      return;
+    }
+
+    this.autoSaveCountdown = this.autoSaveInterval;
+    clearInterval(this.autoSaveTimer);
+    this.autoSaveTimer = setInterval(() => {
+      this.autoSaveCountdown -= 1;
+      if (this.autoSaveCountdown === 0) {
+        this.save();
+        clearInterval(this.autoSaveTimer);
+      }
+    }, 1000);
+  }
 
   today = new Date();
   plannedStartDate!: Date;
@@ -154,7 +188,44 @@ export class DrifClaimCreateComponent {
       // }
 
       this.load().then(() => {
-        // TODO: after init logic, auto save, etc
+        this.formChanged = false;
+        setTimeout(() => {
+          this.claimForm?.valueChanges
+            .pipe(
+              startWith(this.claimForm.value),
+              pairwise(),
+              distinctUntilChanged((a, b) => {
+                // compare objects but ignore declaration changes
+                delete a[1].declaration.authorizedRepresentativeStatement;
+                delete a[1].declaration.informationAccuracyStatement;
+                delete b[1].declaration.authorizedRepresentativeStatement;
+                delete b[1].declaration.informationAccuracyStatement;
+
+                return JSON.stringify(a[1]) == JSON.stringify(b[1]);
+              }),
+            )
+            .subscribe(([prev, curr]) => {
+              if (
+                prev.declaration.authorizedRepresentativeStatement !==
+                  curr.declaration.authorizedRepresentativeStatement ||
+                prev.declaration.informationAccuracyStatement !==
+                  curr.declaration.informationAccuracyStatement
+              ) {
+                return;
+              }
+
+              this.claimForm
+                ?.get('declaration.authorizedRepresentativeStatement')
+                ?.reset();
+
+              this.claimForm
+                ?.get('declaration.informationAccuracyStatement')
+                ?.reset();
+
+              this.formChanged = true;
+              this.resetAutoSaveTimer();
+            });
+        }, 1000);
       });
     });
   }
@@ -187,9 +258,7 @@ export class DrifClaimCreateComponent {
 
             this.claimForm = this.formBuilder.formGroup(ClaimForm, formData);
 
-            console.log(
-              this.claimForm.get('expenditure')?.get('invoices')?.value,
-            );
+            this.formChanged = false;
 
             resolve();
           },
@@ -200,12 +269,40 @@ export class DrifClaimCreateComponent {
     });
   }
 
-  stepperOrientation: StepperOrientation = 'horizontal';
+  stepperSelectionChange(event: any) {
+    if (event.previouslySelectedIndex === 0) {
+      return;
+    }
 
-  stepperSelectionChange(event: any) {}
+    this.save();
+
+    event.previouslySelectedStep.stepControl.markAllAsTouched();
+
+    if (this.stepperOrientation === 'horizontal') {
+      return;
+    }
+
+    const stepId = this.stepper._getStepLabelId(event.selectedIndex);
+    const stepElement = document.getElementById(stepId);
+    if (stepElement) {
+      setTimeout(() => {
+        stepElement.scrollIntoView({
+          block: 'start',
+          inline: 'nearest',
+          behavior: 'smooth',
+        });
+      }, 250);
+    }
+  }
 
   save() {
+    if (!this.formChanged) {
+      return;
+    }
+
     const claimForm = this.claimForm?.value as ClaimForm;
+
+    this.lastSavedAt = undefined;
 
     this.projectService
       .projectUpdateClaim(this.projectId!, this.reportId!, this.claimId!, {
@@ -214,8 +311,13 @@ export class DrifClaimCreateComponent {
       })
       .subscribe({
         next: () => {
+          this.lastSavedAt = new Date();
+
           this.toastService.close();
           this.toastService.success('Claim saved successfully');
+
+          this.formChanged = false;
+          this.resetAutoSaveTimer();
         },
         error: (error) => {
           this.toastService.close();
@@ -226,8 +328,7 @@ export class DrifClaimCreateComponent {
   }
 
   goBack() {
-    // TODO: save
-
+    this.save();
     this.router.navigate(['drif-projects', this.projectId]);
   }
 
