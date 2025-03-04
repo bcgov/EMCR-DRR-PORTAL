@@ -287,6 +287,7 @@ export class BudgetForm {
 
   //* used to calculate remaining amount and hold original(potentially negative) value */
   @prop()
+  @minNumber({ value: 0 })
   remainingAmount?: number;
 
   //* used for display purposes only */
