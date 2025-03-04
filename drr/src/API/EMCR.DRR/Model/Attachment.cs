@@ -38,6 +38,8 @@ namespace EMCR.DRR.API.Model
         PreliminaryDesign,
         SitePlan,
         ProgressReport,
+        Invoice,
+        ProofOfPayment,
     }
 
     [JsonConverter(typeof(JsonStringEnumConverter))]

@@ -427,6 +427,15 @@ namespace EMCR.DRR.Managers.Intake
             if (existingClaim == null) throw new NotFoundException("Claim not found");
 
             var claim = mapper.Map<ClaimDetails>(cmd.Claim);
+            var now = DateTime.UtcNow;
+            if (claim.Invoices != null && claim.Invoices.Any(i => string.IsNullOrEmpty(i.InvoiceNumber))) throw new BusinessValidationException("InvoiceNumber is required");
+            if (claim.Invoices != null && claim.Invoices.Any(i => i.Date > now)) throw new BusinessValidationException("Invoice date cannot be in the future");
+            if (claim.Invoices != null && claim.Invoices.Any(i => i.Date > i.PaymentDate)) throw new BusinessValidationException("Payment date cannot be before invoice date");
+            if (claim.Invoices != null && claim.Invoices.Any(i => i.TaxRebate > i.GrossAmount)) throw new BusinessValidationException("Tax Rebate cannot be greater than Gross Amount");
+            if (claim.Invoices != null && claim.Invoices.Any(i => i.ClaimAmount > i.GrossAmount)) throw new BusinessValidationException("Claim Amount cannot be greater than Gross Amount");
+            if (claim.Invoices != null && claim.Invoices.Any(i => i.TotalPST > i.GrossAmount)) throw new BusinessValidationException("PST cannot be greater than Gross Amount");
+            if (claim.Invoices != null && claim.Invoices.Any(i => i.TotalGST > i.GrossAmount)) throw new BusinessValidationException("GST cannot be greater than Gross Amount");
+
 
             var id = (await reportRepository.Manage(new SaveClaim { Claim = claim })).Id;
             await reportRepository.Manage(new SubmitClaim { Id = id });
@@ -615,7 +624,7 @@ namespace EMCR.DRR.Managers.Intake
             var documentRes = (await documentRepository.Manage(new CreateProgressReportDocument { NewDocId = newDocId, ProgressReportId = cmd.AttachmentInfo.RecordId, Document = new Document { Name = cmd.AttachmentInfo.File.FileName, DocumentType = cmd.AttachmentInfo.DocumentType, Size = GetFileSize(cmd.AttachmentInfo.File.Content) } }));
             return documentRes.Id;
         }
-        
+
         private async Task<string> UploadInvoiceDocument(UploadAttachmentCommand cmd)
         {
             var canAccess = await CanAccessInvoiceFromDocumentId(cmd.AttachmentInfo.Id, cmd.UserInfo.BusinessId);
