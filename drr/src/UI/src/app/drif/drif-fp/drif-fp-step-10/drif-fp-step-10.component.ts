@@ -202,13 +202,16 @@ export class DrifFpStep10Component {
           this.originalTotalProjectCost = value;
         }
 
-        this.hasTotalProjectCostChanged()
-          ? this.budgetForm
-              .get('totalProjectCostChangeComments')
-              ?.setValidators(Validators.required)
-          : this.budgetForm
-              .get('totalProjectCostChangeComments')
-              ?.clearValidators();
+        const totalProjectCostChangeComments = this.budgetForm.get(
+          'totalProjectCostChangeComments',
+        );
+
+        if (this.hasTotalProjectCostChanged()) {
+          totalProjectCostChangeComments?.setValidators(Validators.required);
+        } else {
+          totalProjectCostChangeComments?.clearValidators();
+          totalProjectCostChangeComments?.reset();
+        }
       });
 
     this.budgetForm
