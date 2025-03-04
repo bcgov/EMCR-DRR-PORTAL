@@ -84,7 +84,7 @@ namespace EMCR.DRR.API.Resources.Documents
             ctx.AddTobcgov_documenturls(bcGovDocument);
             ctx.AddLink(application, nameof(application.bcgov_drr_application_bcgov_documenturl_Application), bcGovDocument);
             ctx.SetLink(bcGovDocument, nameof(bcGovDocument.bcgov_Application), application);
-            var documentType = await ctx.bcgov_documenttypes.Where(t => t.bcgov_name == cmd.Document.DocumentType.ToDescriptionString()).SingleOrDefaultAsync();
+            var documentType = await ctx.bcgov_documenttypes.Where(t => t.bcgov_isportalaccessible == (int)DRRTwoOptions.Yes && t.bcgov_name == cmd.Document.DocumentType.ToDescriptionString()).SingleOrDefaultAsync();
             if (documentType == null) documentType = await ctx.bcgov_documenttypes.Where(t => t.bcgov_name == DocumentType.OtherSupportingDocument.ToDescriptionString()).SingleOrDefaultAsync();
             ctx.SetLink(bcGovDocument, nameof(bcGovDocument.bcgov_DocumentType), documentType);
             await ctx.SaveChangesAsync();
@@ -123,7 +123,7 @@ namespace EMCR.DRR.API.Resources.Documents
             ctx.AddTobcgov_documenturls(bcGovDocument);
             ctx.AddLink(progressReport, nameof(progressReport.bcgov_drr_projectprogress_bcgov_documenturl_ProgressReport), bcGovDocument);
             ctx.SetLink(bcGovDocument, nameof(bcGovDocument.bcgov_ProgressReport), progressReport);
-            var documentType = await ctx.bcgov_documenttypes.Where(t => t.bcgov_name == cmd.Document.DocumentType.ToDescriptionString()).SingleOrDefaultAsync();
+            var documentType = await ctx.bcgov_documenttypes.Where(t => t.bcgov_isportalaccessible == (int)DRRTwoOptions.Yes && t.bcgov_name == cmd.Document.DocumentType.ToDescriptionString()).SingleOrDefaultAsync();
             if (documentType == null) documentType = await ctx.bcgov_documenttypes.Where(t => t.bcgov_name == DocumentType.OtherSupportingDocument.ToDescriptionString()).SingleOrDefaultAsync();
             ctx.SetLink(bcGovDocument, nameof(bcGovDocument.bcgov_DocumentType), documentType);
             await ctx.SaveChangesAsync();
@@ -162,7 +162,7 @@ namespace EMCR.DRR.API.Resources.Documents
             ctx.AddTobcgov_documenturls(bcGovDocument);
             ctx.AddLink(invoice, nameof(invoice.bcgov_drr_projectexpenditure_bcgov_documenturl_ProjectExpenditure), bcGovDocument);
             ctx.SetLink(bcGovDocument, nameof(bcGovDocument.bcgov_ProjectExpenditure), invoice);
-            var documentType = await ctx.bcgov_documenttypes.Where(t => t.bcgov_name == cmd.Document.DocumentType.ToDescriptionString()).SingleOrDefaultAsync();
+            var documentType = await ctx.bcgov_documenttypes.Where(t => t.bcgov_isportalaccessible == (int)DRRTwoOptions.Yes && t.bcgov_name == cmd.Document.DocumentType.ToDescriptionString()).SingleOrDefaultAsync();
             if (documentType == null) documentType = await ctx.bcgov_documenttypes.Where(t => t.bcgov_name == DocumentType.OtherSupportingDocument.ToDescriptionString()).SingleOrDefaultAsync();
             ctx.SetLink(bcGovDocument, nameof(bcGovDocument.bcgov_DocumentType), documentType);
             await ctx.SaveChangesAsync();

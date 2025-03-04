@@ -663,6 +663,11 @@ namespace EMCR.DRR.API.Resources.Reports
             {
                 ctx.AttachTo(nameof(DRRContext.drr_projectexpenditures), invoice);
                 await ctx.LoadPropertyAsync(invoice, nameof(drr_projectexpenditure.bcgov_drr_projectexpenditure_bcgov_documenturl_ProjectExpenditure), ct);
+                await invoice.bcgov_drr_projectexpenditure_bcgov_documenturl_ProjectExpenditure.ForEachAsync(5, async doc =>
+                {
+                    ctx.AttachTo(nameof(DRRContext.bcgov_documenturls), doc);
+                    await ctx.LoadPropertyAsync(doc, nameof(bcgov_documenturl.bcgov_DocumentType), ct);
+                });
             });
         }
 

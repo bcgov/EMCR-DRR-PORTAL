@@ -265,15 +265,15 @@ namespace EMCR.DRR.Managers.Intake
 
     public class CreateInvoiceCommand : IntakeCommand
     {
-        public required string ClaimId {  get; set; }
-        public required string InvoiceId {  get; set; }
+        public required string ClaimId { get; set; }
+        public required string InvoiceId { get; set; }
         public UserInfo UserInfo { get; set; }
     }
-    
+
     public class DeleteInvoiceCommand : IntakeCommand
     {
         public required string ClaimId { get; set; }
-        public required string InvoiceId {  get; set; }
+        public required string InvoiceId { get; set; }
         public UserInfo UserInfo { get; set; }
     }
 
@@ -352,6 +352,10 @@ namespace EMCR.DRR.Managers.Intake
         SMEFeedback,
         [Description("Progress Report")]
         ProgressReport,
+        [Description("Invoice")]
+        Invoice,
+        [Description("Proof of Payment")]
+        ProofOfPayment,
     }
 
     public class Application
