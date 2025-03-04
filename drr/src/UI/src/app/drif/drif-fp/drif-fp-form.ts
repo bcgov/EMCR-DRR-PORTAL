@@ -285,6 +285,9 @@ export class BudgetForm {
   @prop()
   estimatedUnfundedAmount?: number;
 
+  @prop()
+  estimatedUnfundedAmountAbs?: number;
+
   //* used to calculate remaining amount and hold original(potentially negative) value */
   @prop()
   @minNumber({ value: 0 })

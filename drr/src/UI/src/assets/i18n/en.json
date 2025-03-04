@@ -135,6 +135,7 @@
   "additionalSolutionInformation": "Provide additional relevant information, if applicable.",
   "remainingAmount": "Remaining Amount",
   "estimatedUnfundedAmount": "Estimated Unfunded Amount",
+  "estimatedExcessAmount": "Estimated Excess Amount",
   "ownershipDeclaration": "Ownership Declaration",
   "ownershipDeclarationText": "The project will be in BC on land that the proponent has legal access to either through ownership, right of way, or other at the time the Shared Cost Agreement is signed. You can provide context in the project area description question that follows.",
   "ownershipDescription": "If No, provide context in the field below",

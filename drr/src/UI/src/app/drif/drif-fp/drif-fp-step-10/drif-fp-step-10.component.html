@@ -360,7 +360,7 @@
       <p style="color: red; display: flex; align-items: center; gap: 1rem">
         <mat-icon>error</mat-icon>
         <i>
-          Your total forecast amount differs from the Total Detailed Cost
+          Your Total Forecast amount differs from the Total Detailed Cost
           Estimate. Please adjust your Financial Forecast numbers to match.
         </i>
       </p>
@@ -394,13 +394,22 @@
     </p>
     <drr-currency-input
       style="align-self: flex-start; margin-top: 1rem; width: 25rem"
-      [label]="t('estimatedUnfundedAmount')"
-      [rxFormControl]="budgetForm.get('estimatedUnfundedAmount')"
+      [label]="getEstimatedUnfundedAmountLabel()"
+      [rxFormControl]="budgetForm.get('estimatedUnfundedAmountAbs')"
       [disabled]="true"
     >
     </drr-currency-input>
+    @if (hasExcessEstimatedAmount()) {
+      <span style="color: red; display: flex; align-items: center; gap: 1rem">
+        <mat-icon>error</mat-icon>
+        <i>
+          Your Total Detailed Cost Estimate has exceeded the Total Project Cost.
+        </i>
+      </span>
+    }
 
     <drr-radio-button
+      style="margin-top: 1rem"
       [label]="t('haveOtherFunding')"
       [rxFormControl]="budgetForm.get('haveOtherFunding')"
     ></drr-radio-button>
@@ -423,6 +432,14 @@
         [disabled]="true"
       >
       </drr-currency-input>
+      @if (getRemainingAmount() < 0) {
+        <span style="color: red; display: flex; align-items: center; gap: 1rem">
+          <mat-icon>error</mat-icon>
+          <i>
+            {{ t("excessFundingTextFp") }}
+          </i>
+        </span>
+      }
     }
 
     <drr-textarea
