@@ -946,10 +946,7 @@ export class DrifFpComponent {
   getBudgetStepErrorMessageKey() {
     const budgetForm = this.getFormGroup('budget');
 
-    const invalidControls = Object.keys(budgetForm?.controls).filter(
-      (key) => budgetForm?.get(key)?.invalid,
-    );
-    if (budgetForm.get('remainingAmount')?.invalid) {
+    if (budgetForm.get('remainingAmount')?.value! < 0) {
       return 'excessFundingError';
     }
 
@@ -974,11 +971,7 @@ export class DrifFpComponent {
         .filter((key) => this.fullProposalForm.get(key)?.invalid)
         .map((key) => this.formToStepMap[key]);
 
-      if (
-        invalidSteps.length === 1 &&
-        invalidSteps[0] === 'Step 10' &&
-        this.fullProposalForm.get('budget.remainingAmount')?.value! < 0
-      ) {
+      if (this.fullProposalForm.get('budget.remainingAmount')?.value! < 0) {
         this.hotToast.close();
         this.hotToast.error('Cannot submit with excess funding.');
         return;
@@ -986,7 +979,7 @@ export class DrifFpComponent {
 
       if (
         this.fullProposalForm.get('budget.estimatesMatchFundingRequest')
-          ?.invalid
+          ?.value === false
       ) {
         this.hotToast.close();
         this.hotToast.error(
