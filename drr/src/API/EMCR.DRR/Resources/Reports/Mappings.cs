@@ -65,6 +65,7 @@ namespace EMCR.DRR.API.Resources.Reports
                 .ForMember(dest => dest.drr_goodsandservicesworkrenderedstartdate, opt => opt.MapFrom(src => src.WorkStartDate.HasValue ? src.WorkStartDate.Value.ToUniversalTime() : (DateTimeOffset?)null))
                 .ForMember(dest => dest.drr_goodsandservicesworkrenderedenddate, opt => opt.MapFrom(src => src.WorkEndDate.HasValue ? src.WorkEndDate.Value.ToUniversalTime() : (DateTimeOffset?)null))
                 .ForMember(dest => dest.drr_paymentdate, opt => opt.MapFrom(src => src.PaymentDate.HasValue ? src.PaymentDate.Value.ToUniversalTime() : (DateTimeOffset?)null))
+                .ForMember(dest => dest.drr_costcategory, opt => opt.MapFrom(src => src.CostCategory.HasValue ? (int?)Enum.Parse<CostCategoryOptionSet>(src.CostCategory.Value.ToString()) : null))
                 .ForMember(dest => dest.drr_suppliername, opt => opt.MapFrom(src => src.SupplierName))
                 .ForMember(dest => dest.drr_description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(dest => dest.drr_grossinvoiceamount, opt => opt.MapFrom(src => src.GrossAmount))
