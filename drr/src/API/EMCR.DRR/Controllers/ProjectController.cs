@@ -423,8 +423,16 @@ namespace EMCR.DRR.Controllers
         public IEnumerable<Invoice>? Invoices { get; set; }
         public string? ClaimComment { get; set; }
         public decimal? ClaimAmount { get; set; }
+        public IEnumerable<PreviousClaim>? PreviousClaims { get; set; }
         public ContactDetails? AuthorizedRepresentative { get; set; }
         public ClaimStatus? Status { get; set; }
+    }
+
+    public class PreviousClaim
+    {
+        public CostCategory? CostCategory { get; set; }
+        public decimal? TotalForProject { get; set; }
+        public decimal? OriginalEstimate { get; set; }
     }
 
     public class Invoice

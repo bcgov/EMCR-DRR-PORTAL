@@ -554,6 +554,7 @@ namespace EMCR.DRR.Managers.Intake
         public string? ProjectNumber { get; set; }
         public ProgramType? ProgramType { get; set; }
         public ReportingScheduleType? ReportingScheduleType { get; set; }
+        public string? FirstReportPeriod { get; set; }
         public decimal? FundingAmount { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
@@ -798,6 +799,20 @@ namespace EMCR.DRR.Managers.Intake
         public ContactDetails? AuthorizedRepresentative { get; set; }
         public bool? AuthorizedRepresentativeStatement { get; set; }
         public bool? InformationAccuracyStatement { get; set; }
+        public ClaimProject? Project { get; set; }
+    }
+
+    public class ClaimProject
+    {
+        public string? Id { get; set; }
+        public IEnumerable<ClaimDetails>? Claims { get; set; }
+        public ProjectApplication? FullProposal { get; set; }
+    }
+
+    public class ProjectApplication
+    {
+        public string? Id { get; set; }
+        public IEnumerable<CostEstimate>? CostEstimates { get; set; }
     }
 
     public class ProgressReport

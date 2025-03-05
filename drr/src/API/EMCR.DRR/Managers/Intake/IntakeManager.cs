@@ -513,17 +513,24 @@ namespace EMCR.DRR.Managers.Intake
             var project = (await projectRepository.Query(new ProjectsQuery { Id = cmd.ProjectId, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
             if (project == null) throw new NotFoundException("Project not found");
             if (project.StartDate == null) throw new BusinessValidationException("Invalid Project Start Date");
+            if (project.ReportingScheduleType == null) throw new BusinessValidationException("Invalid Project Reporting Schedule");
+            //if (string.IsNullOrEmpty(project.FirstReportPeriod)) throw new BusinessValidationException("Invalid First Report Period");
 
             bool canCreate = false;
             string description = string.Empty;
 
             if (project.InterimReports == null || project.InterimReports.Count() == 0)
             {
+                //First Interim Report
                 canCreate = true;
-                description = GetReportPeriodFromDate(project.ReportingScheduleType, project.StartDate.Value);
+                var defaultPeriod = project.ReportingScheduleType == ReportingScheduleType.Quarterly ? "2025-Q1" : project.ReportingScheduleType == ReportingScheduleType.Monthly ? "2025-Month-1" : string.Empty;
+                description = project.FirstReportPeriod ?? defaultPeriod;
+                if (string.IsNullOrEmpty(description)) throw new BusinessValidationException("Error determining report period");
+                //GetReportPeriodFromDate(project.ReportingScheduleType, project.StartDate.Value);
             }
             else
             {
+                //Subsequent Interim Report
                 var lastReport = project.InterimReports.OrderByDescending(r => r.ReportDate).First();
                 if (lastReport.ReportDate == null) throw new BusinessValidationException($"Invalid Report Date for report {lastReport.Id}");
                 if (lastReport.Status == InterimReportStatus.Approved)
@@ -664,8 +671,8 @@ namespace EMCR.DRR.Managers.Intake
 
         private async Task<string> DeleteInvoiceDocument(DeleteAttachmentCommand cmd)
         {
-            //var canAccess = await CanAccessApplicationFromDocumentId(cmd.Id, cmd.UserInfo.BusinessId);
-            //if (!canAccess) throw new ForbiddenException("Not allowed to access this application.");
+            var canAccess = await CanAccessInvoiceFromDocumentId(cmd.Id, cmd.UserInfo.BusinessId);
+            if (!canAccess) throw new ForbiddenException("Not allowed to access this invoice.");
             var documentRes = await documentRepository.Manage(new DeleteInvoiceDocument { Id = cmd.Id });
             await s3Provider.HandleCommand(new UpdateTagsCommand { Key = cmd.Id, Folder = $"{RecordType.Invoice.ToDescriptionString()}/{documentRes.RecordId}", FileTag = GetDeletedFileTag() });
             return documentRes.Id;
@@ -755,7 +762,7 @@ namespace EMCR.DRR.Managers.Intake
             return $"{year}-Month-{month}";
         }
 
-        private static string GetFiscalQuarterString(DateTime date, int fiscalYearStartMonth = 1) //January
+        private static string GetFiscalQuarterString(DateTime date, int fiscalYearStartMonth = 4) //April
         {
             int year = date.Year;
             int monthOffset = (date.Month - fiscalYearStartMonth + 12) % 12;

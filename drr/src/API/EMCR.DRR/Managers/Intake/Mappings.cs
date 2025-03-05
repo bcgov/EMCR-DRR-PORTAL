@@ -160,6 +160,7 @@ namespace EMCR.DRR.Managers.Intake
                 ;
 
             CreateMap<DraftDrrProject, Project>(MemberList.None)
+                .ForMember(dest => dest.FirstReportPeriod, opt => opt.Ignore())
                 .AfterMap((src, dest) =>
                 {
                     foreach (var prop in dest.GetType().GetProperties())
@@ -326,6 +327,7 @@ namespace EMCR.DRR.Managers.Intake
             CreateMap<Controllers.ProjectClaim, ClaimDetails>()
                 .ForMember(dest => dest.AuthorizedRepresentativeStatement, opt => opt.Ignore())
                 .ForMember(dest => dest.InformationAccuracyStatement, opt => opt.Ignore())
+                .ForMember(dest => dest.Project, opt => opt.Ignore())
                 .AfterMap((src, dest) =>
                 {
                     foreach (var prop in dest.GetType().GetProperties())
@@ -337,11 +339,16 @@ namespace EMCR.DRR.Managers.Intake
                     }
                 })
                 .ReverseMap()
+                .AfterMap((src, dest) =>
+                {
+                    dest.PreviousClaims = CalculateClaimTotals(src);
+                })
                 ;
 
             CreateMap<DraftProjectClaim, ClaimDetails>()
                 .ForMember(dest => dest.AuthorizedRepresentativeStatement, opt => opt.Ignore())
                 .ForMember(dest => dest.InformationAccuracyStatement, opt => opt.Ignore())
+                .ForMember(dest => dest.Project, opt => opt.Ignore())
                 .AfterMap((src, dest) =>
                 {
                     foreach (var prop in dest.GetType().GetProperties())
@@ -353,6 +360,10 @@ namespace EMCR.DRR.Managers.Intake
                     }
                 })
                 .ReverseMap()
+                .AfterMap((src, dest) =>
+                {
+                    dest.PreviousClaims = CalculateClaimTotals(src);
+                })
                 ;
 
             CreateMap<Controllers.ProgressReport, ProgressReportDetails>()
@@ -750,6 +761,37 @@ namespace EMCR.DRR.Managers.Intake
                 })
                 .ReverseMap()
                 ;
+        }
+
+        private IEnumerable<PreviousClaim> CalculateClaimTotals(ClaimDetails claim)
+        {
+            var ret = new List<PreviousClaim>();
+            if (claim.Project != null && claim.Project.Claims != null)
+            {
+                var previousClaims = claim.Project.Claims.Where(c => c.ReportDate < claim.ReportDate).ToList();
+                var allInvoices = previousClaims.Where(c => c.Id != claim.Id).SelectMany(c => c.Invoices ?? Enumerable.Empty<Invoice>()).ToList();
+                foreach (CostCategory category in Enum.GetValues(typeof(CostCategory)))
+                {
+
+                    var categoryInvoices = allInvoices.Where(i => i.CostCategory == category).ToList();
+                    var categoryTotal = categoryInvoices.Select(i => i.ClaimAmount).Sum();
+
+                    var categoryEstimates = claim.Project.FullProposal?.CostEstimates?.Where(est => est.CostCategory == category).ToList() ?? [];
+                    var estimateTotal = categoryEstimates.Select(est => est.TotalCost).Sum();
+
+                    if (estimateTotal > 0 || categoryTotal > 0)
+                    {
+                        ret.Add(new PreviousClaim
+                        {
+                            CostCategory = (Controllers.CostCategory?)category,
+                            TotalForProject = categoryTotal,
+                            OriginalEstimate = estimateTotal
+                        });
+                    }
+                }
+            }
+
+            return ret;
         }
 
         private IEnumerable<ContactDetails> DRRAdditionalContactMapper(ContactDetails? contact1, ContactDetails? contact2)

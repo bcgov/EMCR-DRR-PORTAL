@@ -63,7 +63,7 @@ namespace EMCR.DRR.API.Resources.Reports
         public async Task<bool> CanAccessInvoiceFromDocumentId(string id, string businessId)
         {
             var readCtx = dRRContextFactory.CreateReadOnly();
-            var document = await readCtx.bcgov_documenturls.Expand(d => d.bcgov_ProgressReport).Where(a => a.bcgov_documenturlid == Guid.Parse(id)).SingleOrDefaultAsync();
+            var document = await readCtx.bcgov_documenturls.Expand(d => d.bcgov_ProjectExpenditure).Where(a => a.bcgov_documenturlid == Guid.Parse(id)).SingleOrDefaultAsync();
             var existingInvoice = await readCtx.drr_projectexpenditures.Expand(a => a.drr_Project).Where(a => a.drr_projectexpenditureid == document.bcgov_ProjectExpenditure.drr_projectexpenditureid).SingleOrDefaultAsync();
             if (existingInvoice == null) return true;
             readCtx.AttachTo(nameof(readCtx.drr_projects), existingInvoice.drr_Project);
@@ -632,6 +632,8 @@ namespace EMCR.DRR.API.Resources.Reports
                 ctx.LoadPropertyAsync(claim, nameof(drr_projectclaim.drr_Project), ct),
                 ctx.LoadPropertyAsync(claim, nameof(drr_projectclaim.drr_ProjectReport), ct),
                 ctx.LoadPropertyAsync(claim, nameof(drr_projectclaim.drr_drr_projectclaim_drr_projectexpenditure_Claim), ct), //Invoices
+                
+                //These might be for future...
                 //ctx.LoadPropertyAsync(claim, nameof(drr_projectclaim.drr_drr_projectclaim_drr_projectpayment_ProjectClaim), ct), //Payments
                 //ctx.LoadPropertyAsync(claim, nameof(drr_projectclaim.bcgov_drr_projectprogress_bcgov_documenturl_ProgressReport), ct), //Attachments
             };
@@ -652,9 +654,40 @@ namespace EMCR.DRR.API.Resources.Reports
             {
                 ctx.AttachTo(nameof(DRRContext.drr_projects), claim.drr_Project);
                 secondLoadTasks.Add(ctx.LoadPropertyAsync(claim.drr_Project, nameof(drr_project.drr_FullProposalApplication), ct));
+                secondLoadTasks.Add(ctx.LoadPropertyAsync(claim.drr_Project, nameof(drr_project.drr_drr_project_drr_projectclaim_Project), ct)); //All Project Claims for getting claim totals
             }
 
             await Task.WhenAll(secondLoadTasks);
+
+            var thirdLoadTasks = new List<Task>{
+                ParallelLoadAllClaimInvoices(ctx, claim, ct),
+            };
+
+            if (claim.drr_Project != null && claim.drr_Project.drr_FullProposalApplication != null)
+            {
+                ctx.AttachTo(nameof(DRRContext.drr_applications), claim.drr_Project.drr_FullProposalApplication);
+                thirdLoadTasks.Add(ctx.LoadPropertyAsync(claim.drr_Project.drr_FullProposalApplication, nameof(drr_application.drr_drr_application_drr_detailedcostestimate_Application), ct));
+            }
+
+            await Task.WhenAll(thirdLoadTasks);
+        }
+
+        private static async Task ParallelLoadAllClaimInvoices(DRRContext ctx, drr_projectclaim claim, CancellationToken ct)
+        {
+            await claim.drr_Project.drr_drr_project_drr_projectclaim_Project.ForEachAsync(5, async prjClaim =>
+            {
+                if (prjClaim.drr_projectclaimid != claim.drr_projectclaimid)
+                {
+                    ctx.AttachTo(nameof(DRRContext.drr_projectclaims), prjClaim);
+                    await ctx.LoadPropertyAsync(prjClaim, nameof(drr_projectclaim.drr_drr_projectclaim_drr_projectexpenditure_Claim), ct);
+                    await ctx.LoadPropertyAsync(prjClaim, nameof(drr_projectclaim.drr_ProjectReport), ct);
+                }
+                else
+                {
+                    prjClaim.drr_drr_projectclaim_drr_projectexpenditure_Claim = claim.drr_drr_projectclaim_drr_projectexpenditure_Claim;
+                    prjClaim.drr_ProjectReport = claim.drr_ProjectReport;
+                }
+            });
         }
 
         private static async Task ParallelLoadInvoiceAttachments(DRRContext ctx, drr_projectclaim claim, CancellationToken ct)

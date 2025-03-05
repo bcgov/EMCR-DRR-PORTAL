@@ -187,7 +187,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var file2 = new S3File { FileName = fileName2, Content = bytes, ContentType = "text/plain", };
 
             var documentId = await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = invoice.Id, RecordType = EMCR.DRR.Managers.Intake.RecordType.Invoice, File = file, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.Invoice }, UserInfo = userInfo });
-            var documentId2 = await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = invoice.Id, RecordType = EMCR.DRR.Managers.Intake.RecordType.Invoice, File = file, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.ProofOfPayment}, UserInfo = userInfo });
+            var documentId2 = await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = invoice.Id, RecordType = EMCR.DRR.Managers.Intake.RecordType.Invoice, File = file, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.ProofOfPayment }, UserInfo = userInfo });
 
             var claimToUpdate = mapper.Map<EMCR.DRR.Controllers.ProjectClaim>((await manager.Handle(new DrrClaimsQuery { Id = claimId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
             var invoiceToUpdate = claimToUpdate.Invoices.SingleOrDefault(i => i.Id == invoice.Id);
@@ -203,7 +203,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var updatedClaim = mapper.Map<EMCR.DRR.Controllers.ProjectClaim>((await manager.Handle(new DrrClaimsQuery { Id = claimId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
             var updatedInvoice = claimToUpdate.Invoices.SingleOrDefault(i => i.Id == invoice.Id);
             var invDoc = updatedInvoice.Attachments.Where(a => a.DocumentType == EMCR.DRR.API.Model.DocumentType.Invoice).SingleOrDefault();
-            invDoc.Comments.ShouldBe(invoiceToUpdate.Attachments.First().Comments);
+            invDoc.Comments.ShouldBe(invDocToUpdate.Comments);
 
         }
 
