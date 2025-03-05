@@ -225,8 +225,8 @@
                             color="warn"
                             (click)="
                               removeFile(
-                                invoice.get('id')?.value,
-                                getInvoiceDocument(invoice)?.get('id')?.value
+                                getInvoiceDocument(invoice)?.get('id')?.value,
+                                invoice.get('id')?.value
                               )
                             "
                             type="button"
