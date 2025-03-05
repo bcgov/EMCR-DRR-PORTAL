@@ -44,9 +44,12 @@ import { DrrTextareaComponent } from '../../../../shared/controls/drr-textarea/d
 import { FileService } from '../../../../shared/services/file.service';
 import { OptionsStore } from '../../../../store/options.store';
 import { ProfileStore } from '../../../../store/profile.store';
-import { AttachmentForm } from '../../../drif-fp/drif-fp-form';
 import { DrrAttahcmentComponent } from '../../../drif-fp/drif-fp-step-11/drif-fp-attachment.component';
-import { ClaimForm, InvoiceForm } from '../drif-claim-form';
+import {
+  ClaimForm,
+  InvoiceAttachmentForm,
+  InvoiceForm,
+} from '../drif-claim-form';
 
 export enum InvoiceDocumentType {
   Invoice = 'Invoice',
@@ -275,6 +278,35 @@ export class DrifClaimCreateComponent {
               },
             } as ClaimForm);
 
+            // iterate over invoices and add attachments if they are missing
+            formData.expenditure.invoices?.forEach((invoice) => {
+              if (!invoice.attachments || invoice.attachments.length === 0) {
+                invoice.attachments = [];
+              }
+
+              if (
+                !invoice.attachments.some(
+                  (attachment) =>
+                    attachment.documentType === this.invoiceDocumentType,
+                )
+              ) {
+                invoice.attachments.push({
+                  documentType: this.invoiceDocumentType,
+                } as InvoiceAttachmentForm);
+              }
+
+              if (
+                !invoice.attachments.some(
+                  (attachment) =>
+                    attachment.documentType === this.proofOfPaymentDocumentType,
+                )
+              ) {
+                invoice.attachments.push({
+                  documentType: this.proofOfPaymentDocumentType,
+                } as InvoiceAttachmentForm);
+              }
+            });
+
             this.claimForm = this.formBuilder.formGroup(ClaimForm, formData);
 
             this.formChanged = false;
@@ -316,6 +348,15 @@ export class DrifClaimCreateComponent {
 
   getFormValue(): DraftProjectClaim {
     const claimForm = this.claimForm?.value as ClaimForm;
+
+    // iterate over invoices and remove attachments if they are empty
+    claimForm.expenditure.invoices?.forEach((invoice) => {
+      if (invoice.attachments) {
+        invoice.attachments = invoice.attachments.filter(
+          (attachment) => attachment.id,
+        );
+      }
+    });
 
     return {
       claimComment: claimForm.expenditure.claimComment,
@@ -546,17 +587,19 @@ export class DrifClaimCreateComponent {
           next: (attachment) => {
             const attachmentFormData = {
               name: file.name,
-              comments: '',
               id: attachment.id,
               documentType: event.documentType,
-            } as AttachmentForm;
+            } as InvoiceAttachmentForm;
 
             const attachmentsArray = invoiceControl.get(
               'attachments',
             ) as FormArray;
 
             attachmentsArray.push(
-              this.formBuilder.formGroup(AttachmentForm, attachmentFormData),
+              this.formBuilder.formGroup(
+                InvoiceAttachmentForm,
+                attachmentFormData,
+              ),
             );
           },
           error: () => {

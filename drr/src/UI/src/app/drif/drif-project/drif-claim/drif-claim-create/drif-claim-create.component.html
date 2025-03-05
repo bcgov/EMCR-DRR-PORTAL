@@ -198,7 +198,7 @@
                   >
                     <div class="invoice-file-upload">
                       <mat-label>{{ t("invoice") }} *</mat-label>
-                      @if (getInvoiceDocument(invoice)) {
+                      @if (getInvoiceDocument(invoice)?.get("id")?.value) {
                         <drr-input
                           [label]="'fileName'"
                           [rxFormControl]="
@@ -236,9 +236,9 @@
                         </div>
                       } @else {
                         <mat-hint
-                          class="required"
+                          style="color: red"
                           *ngIf="showInvoiceDocumentRequiredError(invoice)"
-                          >{{ t("required") }}</mat-hint
+                          >Required</mat-hint
                         >
                         <drr-file-upload
                           (filesSelected)="
@@ -255,23 +255,53 @@
                     </div>
                     <div class="invoice-file-upload">
                       <mat-label>{{ t("proofOfPayment") }} *</mat-label>
-                      <!-- <drr-attachment
-                        [title]="t('proofOfPayment') + '*'"
-                        [attachmentForm]="getInvoiceProofOfPayment(invoice)"
-                        (uploadFiles)="
-                          uploadFiles(
-                            $event,
-                            invoice,
-                            proofOfPaymentDocumentType
-                          )
-                        "
-                        (removeFile)="removeFile($event)"
-                        (downloadFile)="downloadFile($event)"
-                        [documentType]="'ProofOfPayment'"
-                      >
-                      </drr-attachment> -->
-                      @if (getInvoiceProofOfPayment(invoice)) {
+                      @if (
+                        getInvoiceProofOfPayment(invoice)?.get("id")?.value
+                      ) {
+                        <drr-input
+                          [label]="'fileName'"
+                          [rxFormControl]="
+                            getInvoiceProofOfPayment(invoice)?.get('name')
+                          "
+                          [disabled]="true"
+                        >
+                        </drr-input>
+                        <div style="display: flex; gap: 1rem">
+                          <button
+                            mat-stroked-button
+                            color="primary"
+                            (click)="
+                              downloadFile(
+                                getInvoiceProofOfPayment(invoice)?.get('id')
+                                  ?.value
+                              )
+                            "
+                            type="button"
+                          >
+                            Download
+                          </button>
+                          <button
+                            mat-stroked-button
+                            color="warn"
+                            (click)="
+                              removeFile(
+                                getInvoiceProofOfPayment(invoice)?.get('id')
+                                  ?.value,
+                                invoice.get('id')?.value
+                              )
+                            "
+                            type="button"
+                          >
+                            Remove
+                          </button>
+                        </div>
                       } @else {
+                        <mat-hint
+                          style="color: red"
+                          *ngIf="showProofOfPaymentRequiredError(invoice)"
+                          >Required</mat-hint
+                        >
+
                         <drr-file-upload
                           (filesSelected)="
                             uploadFiles(
