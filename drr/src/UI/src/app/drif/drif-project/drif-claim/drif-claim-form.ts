@@ -5,9 +5,31 @@ import {
   required,
   requiredTrue,
 } from '@rxweb/reactive-form-validators';
-import { Attachment, CostCategory, Invoice } from '../../../../model';
+import {
+  Attachment,
+  CostCategory,
+  DocumentType,
+  Invoice,
+} from '../../../../model';
 import { ContactDetailsForm } from '../../drif-eoi/drif-eoi-form';
 import { AttachmentForm } from '../../drif-fp/drif-fp-form';
+
+export class InvoiceAttachmentForm implements Attachment {
+  @prop()
+  @required()
+  id?: string;
+
+  @prop()
+  @required()
+  name?: string;
+
+  @prop()
+  documentType?: DocumentType | undefined;
+
+  constructor(values: AttachmentForm) {
+    Object.assign(this, values);
+  }
+}
 
 export class InvoiceForm implements Invoice {
   @prop()
@@ -63,8 +85,15 @@ export class InvoiceForm implements Invoice {
   @prop()
   totalGST?: number;
 
-  @propArray(AttachmentForm)
-  attachments?: Attachment[] = [];
+  @propArray(InvoiceAttachmentForm)
+  attachments?: InvoiceAttachmentForm[] = [
+    // {
+    //   documentType: DocumentType.Invoice,
+    // },
+    // {
+    //   documentType: DocumentType.ProofOfPayment,
+    // },
+  ];
 
   constructor(value: InvoiceForm) {
     // TODO: check if I can initiate formArray from within the constructor

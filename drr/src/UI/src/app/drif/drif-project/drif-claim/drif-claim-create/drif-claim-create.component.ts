@@ -1,11 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostListener, inject, ViewChild } from '@angular/core';
-import {
-  AbstractControl,
-  FormArray,
-  FormControl,
-  FormGroup,
-} from '@angular/forms';
+import { AbstractControl, FormArray, FormGroup } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
@@ -579,7 +574,7 @@ export class DrifClaimCreateComponent {
     );
   }
 
-  getInvoiceProofOfPayment(invoiceControl: FormControl) {
+  getInvoiceProofOfPayment(invoiceControl: AbstractControl) {
     const attachments = invoiceControl.get('attachments') as FormArray;
     return attachments.controls.find(
       (control) =>
@@ -591,5 +586,37 @@ export class DrifClaimCreateComponent {
     this.fileService.downloadFile(fileId);
   }
 
-  removeFile(fileId: string) {}
+  showInvoiceDocumentRequiredError(invoiceControl: AbstractControl) {
+    const invoiceDocumentControl = this.getInvoiceDocument(invoiceControl);
+    return (
+      invoiceDocumentControl?.get('id')?.invalid &&
+      invoiceDocumentControl?.touched
+    );
+  }
+
+  showProofOfPaymentRequiredError(invoiceControl: AbstractControl) {
+    const proofOfPaymentControl = this.getInvoiceProofOfPayment(invoiceControl);
+    return (
+      proofOfPaymentControl?.get('id')?.invalid &&
+      proofOfPaymentControl?.touched
+    );
+  }
+
+  removeFile(fileId: string, invoiceId: string) {
+    this.attachmentsService
+      .attachmentDeleteAttachment(fileId, {
+        id: fileId,
+        recordId: invoiceId,
+      })
+      .subscribe({
+        next: () => {
+          this.toastService.close();
+          this.toastService.success('File removed successfully');
+        },
+        error: () => {
+          this.toastService.close();
+          this.toastService.error('Failed to remove file');
+        },
+      });
+  }
 }

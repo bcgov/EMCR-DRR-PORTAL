@@ -42,7 +42,7 @@ export class AttachmentForm implements Attachment {
   name?: string;
 
   @prop()
-  @required()
+  @required() // TODO: comment is not required for invoice docs
   comments?: string;
 
   @prop()

@@ -119,6 +119,11 @@ export class DrrInputComponent {
     return this._formControl;
   }
 
+  @Input()
+  set disabled(disabled: boolean) {
+    disabled ? this.rxFormControl.disable() : this.rxFormControl.enable();
+  }
+
   changeDetector = inject(ChangeDetectorRef);
 
   ngAfterViewInit() {
