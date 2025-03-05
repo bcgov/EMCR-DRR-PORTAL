@@ -15,4 +15,6 @@ export const DocumentType = {
   PreliminaryDesign: 'PreliminaryDesign',
   SitePlan: 'SitePlan',
   ProgressReport: 'ProgressReport',
+  Invoice: 'Invoice',
+  ProofOfPayment: 'ProofOfPayment',
 } as const;

@@ -1,6 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostListener, inject, ViewChild } from '@angular/core';
-import { FormArray, FormGroup } from '@angular/forms';
+import {
+  AbstractControl,
+  FormArray,
+  FormControl,
+  FormGroup,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
@@ -21,6 +26,7 @@ import {
 } from '@rxweb/reactive-form-validators';
 import { distinctUntilChanged, pairwise, startWith } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
+import { AttachmentService } from '../../../../../api/attachment/attachment.service';
 import { ProjectService } from '../../../../../api/project/project.service';
 import {
   CostCategory,
@@ -28,9 +34,11 @@ import {
   DraftProjectClaim,
   FormType,
   InterimProjectType,
+  RecordType,
 } from '../../../../../model';
 import { DrrCurrencyInputComponent } from '../../../../shared/controls/drr-currency-input/drr-currency-input.component';
 import { DrrDatepickerComponent } from '../../../../shared/controls/drr-datepicker/drr-datepicker.component';
+import { DrrFileUploadComponent } from '../../../../shared/controls/drr-file-upload/drr-file-upload.component';
 import { DrrInputComponent } from '../../../../shared/controls/drr-input/drr-input.component';
 import { DrrRadioButtonComponent } from '../../../../shared/controls/drr-radio-button/drr-radio-button.component';
 import {
@@ -38,9 +46,17 @@ import {
   DrrSelectOption,
 } from '../../../../shared/controls/drr-select/drr-select.component';
 import { DrrTextareaComponent } from '../../../../shared/controls/drr-textarea/drr-textarea.component';
+import { FileService } from '../../../../shared/services/file.service';
 import { OptionsStore } from '../../../../store/options.store';
 import { ProfileStore } from '../../../../store/profile.store';
+import { AttachmentForm } from '../../../drif-fp/drif-fp-form';
+import { DrrAttahcmentComponent } from '../../../drif-fp/drif-fp-step-11/drif-fp-attachment.component';
 import { ClaimForm, InvoiceForm } from '../drif-claim-form';
+
+export enum InvoiceDocumentType {
+  Invoice = 'Invoice',
+  ProofOfPayment = 'ProofOfPayment',
+}
 
 @Component({
   selector: 'drr-drif-claim-create',
@@ -61,6 +77,8 @@ import { ClaimForm, InvoiceForm } from '../drif-claim-form';
     DrrRadioButtonComponent,
     DrrTextareaComponent,
     DrrCurrencyInputComponent,
+    DrrFileUploadComponent,
+    DrrAttahcmentComponent,
   ],
   templateUrl: './drif-claim-create.component.html',
   styleUrl: './drif-claim-create.component.scss',
@@ -73,8 +91,13 @@ export class DrifClaimCreateComponent {
   optionsStore = inject(OptionsStore);
   profileStore = inject(ProfileStore);
   projectService = inject(ProjectService);
+  attachmentsService = inject(AttachmentService);
   translocoService = inject(TranslocoService);
   toastService = inject(HotToastService);
+  fileService = inject(FileService);
+
+  invoiceDocumentType = InvoiceDocumentType.Invoice;
+  proofOfPaymentDocumentType = InvoiceDocumentType.ProofOfPayment;
 
   projectId?: string;
   reportId?: string;
@@ -498,4 +521,75 @@ export class DrifClaimCreateComponent {
       0,
     );
   }
+
+  uploadFiles(
+    event: any,
+    invoiceControl: AbstractControl,
+    docType: InvoiceDocumentType,
+  ) {
+    event.files.forEach(async (file: any) => {
+      if (file == null) {
+        return;
+      }
+
+      const base64Content = await this.fileService.fileToBase64(file);
+
+      this.attachmentsService
+        .attachmentUploadAttachment({
+          recordId: invoiceControl.get('id')?.value,
+          recordType: RecordType.Invoice,
+          documentType: event.documentType,
+          name: file.name,
+          contentType:
+            file.type === ''
+              ? this.fileService.getCustomContentType(file)
+              : file.type,
+          content: base64Content.split(',')[1],
+        })
+        .subscribe({
+          next: (attachment) => {
+            const attachmentFormData = {
+              name: file.name,
+              comments: '',
+              id: attachment.id,
+              documentType: event.documentType,
+            } as AttachmentForm;
+
+            const attachmentsArray = invoiceControl.get(
+              'attachments',
+            ) as FormArray;
+
+            attachmentsArray.push(
+              this.formBuilder.formGroup(AttachmentForm, attachmentFormData),
+            );
+          },
+          error: () => {
+            this.toastService.close();
+            this.toastService.error('File upload failed');
+          },
+        });
+    });
+  }
+
+  getInvoiceDocument(invoiceControl: AbstractControl) {
+    const attachments = invoiceControl.get('attachments') as FormArray;
+    return attachments.controls.find(
+      (control) =>
+        control.get('documentType')?.value === this.invoiceDocumentType,
+    );
+  }
+
+  getInvoiceProofOfPayment(invoiceControl: FormControl) {
+    const attachments = invoiceControl.get('attachments') as FormArray;
+    return attachments.controls.find(
+      (control) =>
+        control.get('documentType')?.value === this.proofOfPaymentDocumentType,
+    );
+  }
+
+  downloadFile(fileId: string) {
+    this.fileService.downloadFile(fileId);
+  }
+
+  removeFile(fileId: string) {}
 }
