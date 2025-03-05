@@ -143,6 +143,7 @@ export class DrifClaimCreateComponent {
   projectType!: InterimProjectType;
 
   costCategoryOptions: DrrSelectOption[] = Object.values(CostCategory)
+    .filter((value) => value !== CostCategory.Contingency)
     .map((value) => ({
       value,
       label: this.translocoService.translate(value),
