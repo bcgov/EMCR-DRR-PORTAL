@@ -160,7 +160,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
         }
 
         [Test]
-        public async Task CanAddAttachmentToClaim()
+        public async Task CanAddAttachmentsToClaimInvoice()
         {
             //var userInfo = GetTestUserInfo();
             var userInfo = GetCRAFTUserInfo();
@@ -180,24 +180,30 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             }
 
             var body = DateTime.Now.ToString();
-            var fileName = "autotest.txt";
+            var fileName = "autotest-invoice.txt";
+            var fileName2 = "autotest-pop.txt";
             byte[] bytes = Encoding.ASCII.GetBytes(body);
             var file = new S3File { FileName = fileName, Content = bytes, ContentType = "text/plain", };
+            var file2 = new S3File { FileName = fileName2, Content = bytes, ContentType = "text/plain", };
 
-            var documentId = await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = invoice.Id, RecordType = EMCR.DRR.Managers.Intake.RecordType.Invoice, File = file, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.OtherSupportingDocument }, UserInfo = userInfo });
+            var documentId = await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = invoice.Id, RecordType = EMCR.DRR.Managers.Intake.RecordType.Invoice, File = file, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.Invoice }, UserInfo = userInfo });
+            var documentId2 = await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = invoice.Id, RecordType = EMCR.DRR.Managers.Intake.RecordType.Invoice, File = file, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.ProofOfPayment}, UserInfo = userInfo });
 
             var claimToUpdate = mapper.Map<EMCR.DRR.Controllers.ProjectClaim>((await manager.Handle(new DrrClaimsQuery { Id = claimId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
             var invoiceToUpdate = claimToUpdate.Invoices.SingleOrDefault(i => i.Id == invoice.Id);
-            invoiceToUpdate.Attachments.Count().ShouldBe(1);
-            invoiceToUpdate.Attachments.First().DocumentType.ShouldBe(EMCR.DRR.API.Model.DocumentType.OtherSupportingDocument);
-            invoiceToUpdate.Attachments.First().Comments = "invoice comments";
+            invoiceToUpdate.Attachments.Count().ShouldBe(2);
+            var invDocToUpdate = invoiceToUpdate.Attachments.Where(a => a.DocumentType == EMCR.DRR.API.Model.DocumentType.Invoice).SingleOrDefault();
+            invoiceToUpdate.Attachments.Where(a => a.DocumentType == EMCR.DRR.API.Model.DocumentType.Invoice).ToArray().Length.ShouldBe(1);
+            invoiceToUpdate.Attachments.Where(a => a.DocumentType == EMCR.DRR.API.Model.DocumentType.ProofOfPayment).ToArray().Length.ShouldBe(1);
+            invDocToUpdate.Comments = "invoice comments";
 
             await manager.Handle(new SaveClaimCommand { Claim = claimToUpdate, UserInfo = userInfo });
 
 
             var updatedClaim = mapper.Map<EMCR.DRR.Controllers.ProjectClaim>((await manager.Handle(new DrrClaimsQuery { Id = claimId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
             var updatedInvoice = claimToUpdate.Invoices.SingleOrDefault(i => i.Id == invoice.Id);
-            updatedInvoice.Attachments.First().Comments.ShouldBe(invoiceToUpdate.Attachments.First().Comments);
+            var invDoc = updatedInvoice.Attachments.Where(a => a.DocumentType == EMCR.DRR.API.Model.DocumentType.Invoice).SingleOrDefault();
+            invDoc.Comments.ShouldBe(invoiceToUpdate.Attachments.First().Comments);
 
         }
 

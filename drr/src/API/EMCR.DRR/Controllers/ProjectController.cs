@@ -360,30 +360,6 @@ namespace EMCR.DRR.Controllers
         public DraftForecast? Forecast { get; set; }
     }
 
-    public class ProjectClaim : DraftProjectClaim
-    {
-        public bool? AuthorizedRepresentativeStatement { get; set; }
-        public bool? InformationAccuracyStatement { get; set; }
-    }
-
-    public class DraftProjectClaim
-    {
-        public string? Id { get; set; }
-        public string? ReportPeriod { get; set; }
-        public string? ContractNumber { get; set; }
-        public InterimProjectType? ProjectType { get; set; }
-        public DateTime? PlannedStartDate { get; set; }
-        public DateTime? PlannedEndDate { get; set; }
-        public DateTime? ReportDate { get; set; }
-        public DateTime? DateApproved { get; set; }
-        public DateTime? DateSubmitted { get; set; }
-        public IEnumerable<Invoice>? Invoices { get; set; }
-        public string? ClaimComment { get; set; }
-        public decimal? ClaimAmount { get; set; }
-        public ContactDetails? AuthorizedRepresentative { get; set; }
-        public ClaimStatus? Status { get; set; }
-    }
-
     public class ProgressReport : DraftProgressReport
     {
 
@@ -427,6 +403,30 @@ namespace EMCR.DRR.Controllers
         public ContactDetails? AuthorizedRepresentative { get; set; }
     }
 
+    public class ProjectClaim : DraftProjectClaim
+    {
+        public bool? AuthorizedRepresentativeStatement { get; set; }
+        public bool? InformationAccuracyStatement { get; set; }
+    }
+
+    public class DraftProjectClaim
+    {
+        public string? Id { get; set; }
+        public string? ReportPeriod { get; set; }
+        public string? ContractNumber { get; set; }
+        public InterimProjectType? ProjectType { get; set; }
+        public DateTime? PlannedStartDate { get; set; }
+        public DateTime? PlannedEndDate { get; set; }
+        public DateTime? ReportDate { get; set; }
+        public DateTime? DateApproved { get; set; }
+        public DateTime? DateSubmitted { get; set; }
+        public IEnumerable<Invoice>? Invoices { get; set; }
+        public string? ClaimComment { get; set; }
+        public decimal? ClaimAmount { get; set; }
+        public ContactDetails? AuthorizedRepresentative { get; set; }
+        public ClaimStatus? Status { get; set; }
+    }
+
     public class Invoice
     {
         public string? Id { get; set; }
@@ -437,12 +437,19 @@ namespace EMCR.DRR.Controllers
         public DateTime? WorkEndDate { get; set; }
         public DateTime? PaymentDate { get; set; }
         public CostCategory? CostCategory { get; set; }
+        [StringLength(100)]
         public string? SupplierName { get; set; }
+        [StringLength(250)]
         public string? Description { get; set; }
+        [Range(0, ApplicationValidators.FUNDING_MAX_VAL)]
         public decimal? GrossAmount { get; set; }
+        [Range(0, ApplicationValidators.FUNDING_MAX_VAL)]
         public decimal? TaxRebate { get; set; }
+        [Range(0, ApplicationValidators.FUNDING_MAX_VAL)]
         public decimal? ClaimAmount { get; set; }
+        [Range(0, ApplicationValidators.FUNDING_MAX_VAL)]
         public decimal? TotalPST { get; set; }
+        [Range(0, ApplicationValidators.FUNDING_MAX_VAL)]
         public decimal? TotalGST { get; set; }
         public IEnumerable<Attachment>? Attachments { get; set; }
     }
