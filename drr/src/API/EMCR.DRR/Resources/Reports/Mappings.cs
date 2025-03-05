@@ -51,6 +51,7 @@ namespace EMCR.DRR.API.Resources.Reports
                 .ForMember(dest => dest.DateApproved, opt => opt.MapFrom(src => src.drr_dateapproved.HasValue ? src.drr_dateapproved.Value.UtcDateTime : (DateTime?)null))
                 .ForMember(dest => dest.ClaimComment, opt => opt.MapFrom(src => src.drr_claimcomment))
                 .ForMember(dest => dest.Invoices, opt => opt.MapFrom(src => src.drr_drr_projectclaim_drr_projectexpenditure_Claim.Where(c => c.statecode == (int)EntityState.Active)))
+                .ForMember(dest => dest.Project, opt => opt.MapFrom(src => src.drr_Project))
                 .ForMember(dest => dest.AuthorizedRepresentative, opt => opt.Ignore())
                 .ForMember(dest => dest.AuthorizedRepresentativeStatement, opt => opt.Ignore())
                 .ForMember(dest => dest.InformationAccuracyStatement, opt => opt.Ignore())
@@ -64,6 +65,7 @@ namespace EMCR.DRR.API.Resources.Reports
                 .ForMember(dest => dest.drr_goodsandservicesworkrenderedstartdate, opt => opt.MapFrom(src => src.WorkStartDate.HasValue ? src.WorkStartDate.Value.ToUniversalTime() : (DateTimeOffset?)null))
                 .ForMember(dest => dest.drr_goodsandservicesworkrenderedenddate, opt => opt.MapFrom(src => src.WorkEndDate.HasValue ? src.WorkEndDate.Value.ToUniversalTime() : (DateTimeOffset?)null))
                 .ForMember(dest => dest.drr_paymentdate, opt => opt.MapFrom(src => src.PaymentDate.HasValue ? src.PaymentDate.Value.ToUniversalTime() : (DateTimeOffset?)null))
+                .ForMember(dest => dest.drr_costcategory, opt => opt.MapFrom(src => src.CostCategory.HasValue ? (int?)Enum.Parse<CostCategoryOptionSet>(src.CostCategory.Value.ToString()) : null))
                 .ForMember(dest => dest.drr_suppliername, opt => opt.MapFrom(src => src.SupplierName))
                 .ForMember(dest => dest.drr_description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(dest => dest.drr_grossinvoiceamount, opt => opt.MapFrom(src => src.GrossAmount))
@@ -81,8 +83,7 @@ namespace EMCR.DRR.API.Resources.Reports
                 .ForMember(dest => dest.WorkStartDate, opt => opt.MapFrom(src => src.drr_goodsandservicesworkrenderedstartdate.HasValue ? src.drr_goodsandservicesworkrenderedstartdate.Value.UtcDateTime : (DateTime?)null))
                 .ForMember(dest => dest.WorkEndDate, opt => opt.MapFrom(src => src.drr_goodsandservicesworkrenderedenddate.HasValue ? src.drr_goodsandservicesworkrenderedenddate.Value.UtcDateTime : (DateTime?)null))
                 .ForMember(dest => dest.PaymentDate, opt => opt.MapFrom(src => src.drr_paymentdate.HasValue ? src.drr_paymentdate.Value.UtcDateTime : (DateTime?)null))
-                //.ForMember(dest => dest.CostCategory, opt => opt.MapFrom(src => src.drr_costcategory.HasValue ? (int?)Enum.Parse<CostCategory>(((CostCategoryOptionSet)src.drr_costcategory).ToString()) : null))
-                .ForMember(dest => dest.CostCategory, opt => opt.Ignore())
+                .ForMember(dest => dest.CostCategory, opt => opt.MapFrom(src => src.drr_costcategory.HasValue ? (int?)Enum.Parse<CostCategory>(((CostCategoryOptionSet)src.drr_costcategory).ToString()) : null))
                 .ForMember(dest => dest.SupplierName, opt => opt.MapFrom(src => src.drr_suppliername))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.drr_description))
                 .ForMember(dest => dest.GrossAmount, opt => opt.MapFrom(src => src.drr_grossinvoiceamount))
@@ -93,6 +94,20 @@ namespace EMCR.DRR.API.Resources.Reports
                 .ForMember(dest => dest.Attachments, opt => opt.MapFrom(src => src.bcgov_drr_projectexpenditure_bcgov_documenturl_ProjectExpenditure.Where(c => c.statecode == (int)EntityState.Active)))
             ;
 
+            CreateMap<ClaimProject, drr_project>(MemberList.None)
+                //.ForMember(dest => dest.drr_name, opt => opt.MapFrom(src => src.Id))
+                .ReverseMap()
+                .ValidateMemberList(MemberList.Destination)
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.drr_name))
+                .ForMember(dest => dest.FullProposal, opt => opt.MapFrom(src => src.drr_FullProposalApplication))
+                .ForMember(dest => dest.Claims, opt => opt.MapFrom(src => src.drr_drr_project_drr_projectclaim_Project.Where(c => c.statecode == (int)EntityState.Active)))
+                ;
+
+            CreateMap<ProjectApplication, drr_application>(MemberList.None)
+                .ReverseMap()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.drr_name))
+                .ForMember(dest => dest.CostEstimates, opt => opt.MapFrom(src => src.drr_drr_application_drr_detailedcostestimate_Application))
+            ;
 
             CreateMap<ProgressReportDetails, drr_projectprogress>(MemberList.None)
                 .ForMember(dest => dest.drr_name, opt => opt.MapFrom(src => src.Id))
