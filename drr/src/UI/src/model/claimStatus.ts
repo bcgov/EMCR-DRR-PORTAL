@@ -9,9 +9,10 @@ export type ClaimStatus = (typeof ClaimStatus)[keyof typeof ClaimStatus];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ClaimStatus = {
-  Approved: 'Approved',
-  Rejected: 'Rejected',
-  Invalid: 'Invalid',
-  InProgress: 'InProgress',
+  NotStarted: 'NotStarted',
+  Draft: 'Draft',
   Submitted: 'Submitted',
+  UpdateNeeded: 'UpdateNeeded',
+  Approved: 'Approved',
+  Skipped: 'Skipped',
 } as const;

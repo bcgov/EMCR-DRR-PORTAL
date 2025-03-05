@@ -334,6 +334,7 @@ export class DrifFpStep10Component {
         this.budgetForm.get('totalEligibleCosts')?.setValue(totalCost);
 
         this.calculateDiscrepancy();
+        this.calculateRemainingAmount();
 
         const totalDrifFundingRequest = this.budgetForm?.get(
           'totalDrifFundingRequest',
@@ -404,6 +405,9 @@ export class DrifFpStep10Component {
 
     const estimatedUnfundedAmount = totalProjectCost - totalEligibleCosts;
     this.budgetForm.patchValue({ estimatedUnfundedAmount });
+    this.budgetForm.patchValue({
+      estimatedUnfundedAmountAbs: Math.abs(estimatedUnfundedAmount),
+    });
 
     // how much is left to cover and I need to explain how I'm going to cover it
     let remainingAmount = estimatedUnfundedAmount - otherFundingSum;
@@ -422,6 +426,16 @@ export class DrifFpStep10Component {
     }
 
     intendToSecureFunding?.updateValueAndValidity();
+  }
+
+  hasExcessEstimatedAmount() {
+    return this.budgetForm.get('estimatedUnfundedAmount')?.value < 0;
+  }
+
+  getEstimatedUnfundedAmountLabel() {
+    return this.hasExcessEstimatedAmount()
+      ? this.translocoService.translate('estimatedExcessAmount')
+      : this.translocoService.translate('estimatedUnfundedAmount');
   }
 
   calculateDiscrepancy() {

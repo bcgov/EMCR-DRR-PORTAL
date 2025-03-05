@@ -15,4 +15,5 @@ export const ForecastStatus = {
   Submitted: 'Submitted',
   UpdateNeeded: 'UpdateNeeded',
   Approved: 'Approved',
+  Skipped: 'Skipped',
 } as const;

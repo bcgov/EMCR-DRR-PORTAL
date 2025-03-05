@@ -43,3 +43,11 @@
     border-bottom: none;
   }
 }
+
+.invoice-file-upload {
+  display: flex;
+  flex-direction: column;
+  justify-items: flex-start;
+  gap: 0.5rem;
+  width: 50rem;
+}

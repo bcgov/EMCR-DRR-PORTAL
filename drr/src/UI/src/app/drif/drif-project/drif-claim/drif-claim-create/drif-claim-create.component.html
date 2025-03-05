@@ -131,14 +131,6 @@
                       [min]="invoice.get('date')?.value"
                     ></drr-datepicker>
                   </div>
-                  <div
-                    style="
-                      display: flex;
-                      justify-content: flex-start;
-                      gap: 1rem;
-                      margin-top: 1rem;
-                    "
-                  ></div>
                   <div style="display: flex; gap: 1rem">
                     <drr-input
                       class="drr-single-input"
@@ -196,6 +188,103 @@
                       [maxValueCustomErrorMessage]="t('claimAmountError')"
                       [value]="invoice.get('grossAmount')?.value"
                     ></drr-currency-input>
+                  </div>
+                  <div
+                    style="
+                      display: flex;
+                      justify-content: space-between;
+                      gap: 1rem;
+                    "
+                  >
+                    <div class="invoice-file-upload">
+                      <mat-label>{{ t("invoice") }} *</mat-label>
+                      @if (getInvoiceDocument(invoice)) {
+                        <drr-input
+                          [label]="'fileName'"
+                          [rxFormControl]="
+                            getInvoiceDocument(invoice)?.get('name')
+                          "
+                          [disabled]="true"
+                        >
+                        </drr-input>
+                        <div style="display: flex; gap: 1rem">
+                          <button
+                            mat-stroked-button
+                            color="primary"
+                            (click)="
+                              downloadFile(
+                                getInvoiceDocument(invoice)?.get('id')?.value
+                              )
+                            "
+                            type="button"
+                          >
+                            Download
+                          </button>
+                          <button
+                            mat-stroked-button
+                            color="warn"
+                            (click)="
+                              removeFile(
+                                getInvoiceDocument(invoice)?.get('id')?.value,
+                                invoice.get('id')?.value
+                              )
+                            "
+                            type="button"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      } @else {
+                        <mat-hint
+                          class="required"
+                          *ngIf="showInvoiceDocumentRequiredError(invoice)"
+                          >{{ t("required") }}</mat-hint
+                        >
+                        <drr-file-upload
+                          (filesSelected)="
+                            uploadFiles(
+                              $event,
+                              invoice.get('id')?.value,
+                              invoiceDocumentType
+                            )
+                          "
+                          [attachButtonLabel]="t('uploadInvoice')"
+                          [multiple]="false"
+                        ></drr-file-upload>
+                      }
+                    </div>
+                    <div class="invoice-file-upload">
+                      <mat-label>{{ t("proofOfPayment") }} *</mat-label>
+                      <!-- <drr-attachment
+                        [title]="t('proofOfPayment') + '*'"
+                        [attachmentForm]="getInvoiceProofOfPayment(invoice)"
+                        (uploadFiles)="
+                          uploadFiles(
+                            $event,
+                            invoice,
+                            proofOfPaymentDocumentType
+                          )
+                        "
+                        (removeFile)="removeFile($event)"
+                        (downloadFile)="downloadFile($event)"
+                        [documentType]="'ProofOfPayment'"
+                      >
+                      </drr-attachment> -->
+                      @if (getInvoiceProofOfPayment(invoice)) {
+                      } @else {
+                        <drr-file-upload
+                          (filesSelected)="
+                            uploadFiles(
+                              $event,
+                              invoice.get('id')?.value,
+                              invoiceDocumentType
+                            )
+                          "
+                          [attachButtonLabel]="t('uploadProofOfPayment')"
+                          [multiple]="false"
+                        ></drr-file-upload>
+                      }
+                    </div>
                   </div>
                 </div>
               </mat-card-content>

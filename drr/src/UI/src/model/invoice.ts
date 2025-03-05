@@ -10,15 +10,27 @@ import type { CostCategory } from './costCategory';
 export interface Invoice {
   /** @nullable */
   attachments?: Attachment[];
-  /** @nullable */
+  /**
+   * @minimum 0
+   * @maximum 999999999.99
+   * @nullable
+   */
   claimAmount?: number;
   /** @nullable */
   costCategory?: CostCategory;
   /** @nullable */
   date?: string;
-  /** @nullable */
+  /**
+   * @minLength 0
+   * @maxLength 250
+   * @nullable
+   */
   description?: string;
-  /** @nullable */
+  /**
+   * @minimum 0
+   * @maximum 999999999.99
+   * @nullable
+   */
   grossAmount?: number;
   /** @nullable */
   id?: string;
@@ -28,13 +40,29 @@ export interface Invoice {
   name?: string;
   /** @nullable */
   paymentDate?: string;
-  /** @nullable */
+  /**
+   * @minLength 0
+   * @maxLength 100
+   * @nullable
+   */
   supplierName?: string;
-  /** @nullable */
+  /**
+   * @minimum 0
+   * @maximum 999999999.99
+   * @nullable
+   */
   taxRebate?: number;
-  /** @nullable */
+  /**
+   * @minimum 0
+   * @maximum 999999999.99
+   * @nullable
+   */
   totalGST?: number;
-  /** @nullable */
+  /**
+   * @minimum 0
+   * @maximum 999999999.99
+   * @nullable
+   */
   totalPST?: number;
   /** @nullable */
   workEndDate?: string;
