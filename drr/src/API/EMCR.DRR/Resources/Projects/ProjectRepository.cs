@@ -72,6 +72,7 @@ namespace EMCR.DRR.API.Resources.Projects
                 ctx.LoadPropertyAsync(project, nameof(drr_project.drr_Program), ct),
                 ctx.LoadPropertyAsync(project, nameof(drr_project.drr_ReportingSchedule), ct),
                 ctx.LoadPropertyAsync(project, nameof(drr_project.drr_drr_project_drr_projectreport_Project), ct),
+                ctx.LoadPropertyAsync(project, nameof(drr_project.drr_firstreportdue), ct),
             };
 
             await Task.WhenAll(loadTasks);
