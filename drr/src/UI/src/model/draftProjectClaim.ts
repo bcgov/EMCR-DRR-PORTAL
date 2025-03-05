@@ -6,6 +6,7 @@
  */
 import type { ContactDetails } from './contactDetails';
 import type { Invoice } from './invoice';
+import type { PreviousClaim } from './previousClaim';
 import type { InterimProjectType } from './interimProjectType';
 import type { ClaimStatus } from './claimStatus';
 
@@ -30,6 +31,8 @@ export interface DraftProjectClaim {
   plannedEndDate?: string;
   /** @nullable */
   plannedStartDate?: string;
+  /** @nullable */
+  previousClaims?: PreviousClaim[];
   /** @nullable */
   projectType?: InterimProjectType;
   /** @nullable */

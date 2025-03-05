@@ -74,6 +74,7 @@ export * from './oidcConfiguration';
 export * from './pastEvent';
 export * from './paymentCondition';
 export * from './periodType';
+export * from './previousClaim';
 export * from './profileDetails';
 export * from './programType';
 export * from './progressReport';
