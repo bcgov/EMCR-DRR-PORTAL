@@ -413,6 +413,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             ret.TotalProjectCost.ShouldBe(fpToUpdate.TotalProjectCost);
             ret.HowWasNeedIdentified.ShouldBe(fpToUpdate.HowWasNeedIdentified);
             ret.Contingency.ShouldBe(fpToUpdate.Contingency);
+            ret.ContingencyComments.ShouldBe(fpToUpdate.ContingencyComments);
             ret.ProposedActivities.Count().ShouldBe(fpToUpdate.ProposedActivities.Count());
             ret.CostEstimateClass.ShouldBe(fpToUpdate.CostEstimateClass);
             ret.TotalProjectCostChangeComments.ShouldBe(fpToUpdate.TotalProjectCostChangeComments);
@@ -1018,6 +1019,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             });
             application.CostEstimateClass = EMCR.DRR.Controllers.CostEstimateClass.ClassA;
             application.Contingency = 10;
+            application.ContingencyComments = "some very good reason";
             application.TotalEligibleCosts = 55;
 
             return application;
