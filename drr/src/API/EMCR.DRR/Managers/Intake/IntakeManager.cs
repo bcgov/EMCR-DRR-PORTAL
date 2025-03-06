@@ -552,12 +552,13 @@ namespace EMCR.DRR.Managers.Intake
 
         public async Task<FileQueryResult> Handle(DownloadAttachment cmd)
         {
-            var recordType = (await documentRepository.Query(new DocumentQuery { Id = cmd.Id })).Document.RecordType;
+            var result = await documentRepository.Query(new DocumentQuery { Id = cmd.Id });
 
-            switch (recordType)
+            switch (result.Document.RecordType)
             {
-                case RecordType.FullProposal: return await DownloadApplicationDocument(cmd);
-                case RecordType.ProgressReport: return await DownloadProgressReportDocument(cmd);
+                case RecordType.FullProposal: return await DownloadApplicationDocument(cmd, result);
+                case RecordType.ProgressReport: return await DownloadProgressReportDocument(cmd, result);
+                case RecordType.Invoice: return await DownloadInvoiceDocument(cmd, result);
                 default: throw new BusinessValidationException("Unsupported Record Type");
             }
         }
@@ -574,23 +575,33 @@ namespace EMCR.DRR.Managers.Intake
             return mapper.Map<EntitiesQueryResult>(res);
         }
 
-        private async Task<FileQueryResult> DownloadApplicationDocument(DownloadAttachment cmd)
+        private async Task<FileQueryResult> DownloadApplicationDocument(DownloadAttachment cmd, QueryDocumentCommandResult documentRes)
         {
             var canAccess = await CanAccessApplicationFromDocumentId(cmd.Id, cmd.UserInfo.BusinessId);
             if (!canAccess) throw new ForbiddenException("Not allowed to access this application.");
-            var recordId = (await documentRepository.Query(new DocumentQuery { Id = cmd.Id })).RecordId;
+            //var recordId = (await documentRepository.Query(new DocumentQuery { Id = cmd.Id })).RecordId;
 
-            var res = await s3Provider.HandleQuery(new FileQuery { Key = cmd.Id, Folder = $"{RecordType.FullProposal.ToDescriptionString()}/{recordId}" });
+            var res = await s3Provider.HandleQuery(new FileQuery { Key = cmd.Id, Folder = $"{RecordType.FullProposal.ToDescriptionString()}/{documentRes.RecordId}" });
             return (FileQueryResult)res;
         }
 
-        private async Task<FileQueryResult> DownloadProgressReportDocument(DownloadAttachment cmd)
+        private async Task<FileQueryResult> DownloadProgressReportDocument(DownloadAttachment cmd, QueryDocumentCommandResult documentRes)
         {
             var canAccess = await CanAccessProgressReportFromDocumentId(cmd.Id, cmd.UserInfo.BusinessId);
             if (!canAccess) throw new ForbiddenException("Not allowed to access this progress report.");
-            var recordId = (await documentRepository.Query(new DocumentQuery { Id = cmd.Id })).RecordId;
+            //var recordId = (await documentRepository.Query(new DocumentQuery { Id = cmd.Id })).RecordId;
 
-            var res = await s3Provider.HandleQuery(new FileQuery { Key = cmd.Id, Folder = $"{RecordType.ProgressReport.ToDescriptionString()}/{recordId}" });
+            var res = await s3Provider.HandleQuery(new FileQuery { Key = cmd.Id, Folder = $"{RecordType.ProgressReport.ToDescriptionString()}/{documentRes.RecordId}" });
+            return (FileQueryResult)res;
+        }
+
+        private async Task<FileQueryResult> DownloadInvoiceDocument(DownloadAttachment cmd, QueryDocumentCommandResult documentRes)
+        {
+            var canAccess = await CanAccessInvoiceFromDocumentId(cmd.Id, cmd.UserInfo.BusinessId);
+            if (!canAccess) throw new ForbiddenException("Not allowed to access this invoice.");
+            //var recordId = (await documentRepository.Query(new DocumentQuery { Id = cmd.Id })).RecordId;
+
+            var res = await s3Provider.HandleQuery(new FileQuery { Key = cmd.Id, Folder = $"{RecordType.Invoice.ToDescriptionString()}/{documentRes.RecordId}" });
             return (FileQueryResult)res;
         }
 
