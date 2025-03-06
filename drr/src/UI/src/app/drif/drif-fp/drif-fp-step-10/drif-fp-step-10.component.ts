@@ -2,6 +2,7 @@ import { CommonModule, CurrencyPipe } from '@angular/common';
 import { Component, inject, Input } from '@angular/core';
 import {
   FormArray,
+  FormControl,
   FormsModule,
   ReactiveFormsModule,
   Validators,
@@ -149,7 +150,10 @@ export class DrifFpStep10Component {
     }))
     .sort((a, b) => a.label.localeCompare(b.label));
 
+  // temp variable to store the original total project cost
   originalTotalProjectCost?: number;
+  // TODO: temp solution to overcome the issue of the total project cost not being updated
+  totalProjectCostCopy = new FormControl();
 
   ngOnInit() {
     this.budgetForm
@@ -158,16 +162,6 @@ export class DrifFpStep10Component {
       .subscribe((years: YearOverYearFundingForm[]) => {
         const total = years.reduce((acc, year) => acc + Number(year.amount), 0);
         this.budgetForm.get('totalDrifFundingRequest')?.setValue(total);
-
-        if (total !== this.budgetForm.get('eligibleFundingRequest')?.value) {
-          this.budgetForm
-            .get('discrepancyComment')
-            ?.setValidators(Validators.required);
-        } else {
-          this.budgetForm.get('discrepancyComment')?.clearValidators();
-        }
-
-        this.budgetForm.get('discrepancyComment')?.updateValueAndValidity();
       });
 
     this.budgetForm
@@ -189,6 +183,7 @@ export class DrifFpStep10Component {
       .get('totalProjectCost')!
       .valueChanges.pipe(distinctUntilChanged())
       .subscribe((value) => {
+        this.totalProjectCostCopy.setValue(value);
         this.calculateRemainingAmount();
 
         if (value === null) {
@@ -447,6 +442,15 @@ export class DrifFpStep10Component {
       this.budgetForm.get('eligibleFundingRequest')?.value;
 
     this.budgetForm.get('fundingRequestDiscrepancy')?.setValue(discrepancy);
+    if (discrepancy !== 0) {
+      this.budgetForm
+        .get('discrepancyComment')
+        ?.setValidators(Validators.required);
+    } else {
+      this.budgetForm.get('discrepancyComment')?.clearValidators();
+    }
+
+    this.budgetForm.get('discrepancyComment')?.updateValueAndValidity();
   }
 
   getFormArray(formArrayName: string) {

@@ -223,7 +223,7 @@ export class DrifFpComponent {
   load(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.appService.dRIFApplicationGetFP(this.id!).subscribe({
-        next: (response) => {
+        next: (response: DraftFpApplication) => {
           const profileData = this.profileStore.getProfile();
 
           const resetSubmitter =
