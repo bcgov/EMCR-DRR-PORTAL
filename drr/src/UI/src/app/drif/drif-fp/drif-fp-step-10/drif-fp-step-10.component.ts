@@ -313,15 +313,18 @@ export class DrifFpStep10Component {
           let contingency = 0;
 
           // fetch contingency value from costEstimate array and calculate what % of total cost it is
-          const contingencyCostEstimate = this.getFormArray(
-            'costEstimates',
-          ).controls.find(
-            (costEstimate) =>
-              costEstimate.get('costCategory')?.value ===
-              CostCategory.Contingency,
-          );
-          const contingencyTotalCost =
-            contingencyCostEstimate?.get('totalCost')?.value;
+          // combine all contingency cost estimates
+
+          const contingencyTotalCost = this.getFormArray('costEstimates')
+            .controls.filter(
+              (costEstimate) =>
+                costEstimate.get('costCategory')?.value ===
+                CostCategory.Contingency,
+            )
+            .reduce(
+              (acc, costEstimate) => acc + costEstimate.get('totalCost')?.value,
+              0,
+            );
 
           if (contingencyTotalCost) {
             contingency = (contingencyTotalCost / totalCost) * 100;

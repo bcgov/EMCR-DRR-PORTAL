@@ -44,9 +44,12 @@ import { DrrTextareaComponent } from '../../../../shared/controls/drr-textarea/d
 import { FileService } from '../../../../shared/services/file.service';
 import { OptionsStore } from '../../../../store/options.store';
 import { ProfileStore } from '../../../../store/profile.store';
-import { AttachmentForm } from '../../../drif-fp/drif-fp-form';
 import { DrrAttahcmentComponent } from '../../../drif-fp/drif-fp-step-11/drif-fp-attachment.component';
-import { ClaimForm, InvoiceForm } from '../drif-claim-form';
+import {
+  ClaimForm,
+  InvoiceAttachmentForm,
+  InvoiceForm,
+} from '../drif-claim-form';
 
 export enum InvoiceDocumentType {
   Invoice = 'Invoice',
@@ -143,6 +146,7 @@ export class DrifClaimCreateComponent {
   projectType!: InterimProjectType;
 
   costCategoryOptions: DrrSelectOption[] = Object.values(CostCategory)
+    .filter((value) => value !== CostCategory.Contingency)
     .map((value) => ({
       value,
       label: this.translocoService.translate(value),
@@ -274,6 +278,35 @@ export class DrifClaimCreateComponent {
               },
             } as ClaimForm);
 
+            // iterate over invoices and add attachments if they are missing
+            formData.expenditure.invoices?.forEach((invoice) => {
+              if (!invoice.attachments || invoice.attachments.length === 0) {
+                invoice.attachments = [];
+              }
+
+              if (
+                !invoice.attachments.some(
+                  (attachment) =>
+                    attachment.documentType === this.invoiceDocumentType,
+                )
+              ) {
+                invoice.attachments.push({
+                  documentType: this.invoiceDocumentType,
+                } as InvoiceAttachmentForm);
+              }
+
+              if (
+                !invoice.attachments.some(
+                  (attachment) =>
+                    attachment.documentType === this.proofOfPaymentDocumentType,
+                )
+              ) {
+                invoice.attachments.push({
+                  documentType: this.proofOfPaymentDocumentType,
+                } as InvoiceAttachmentForm);
+              }
+            });
+
             this.claimForm = this.formBuilder.formGroup(ClaimForm, formData);
 
             this.formChanged = false;
@@ -315,6 +348,15 @@ export class DrifClaimCreateComponent {
 
   getFormValue(): DraftProjectClaim {
     const claimForm = this.claimForm?.value as ClaimForm;
+
+    // iterate over invoices and remove attachments if they are empty
+    claimForm.expenditure.invoices?.forEach((invoice) => {
+      if (invoice.attachments) {
+        invoice.attachments = invoice.attachments.filter(
+          (attachment) => attachment.id,
+        );
+      }
+    });
 
     return {
       claimComment: claimForm.expenditure.claimComment,
@@ -518,11 +560,11 @@ export class DrifClaimCreateComponent {
   }
 
   uploadFiles(
-    event: any,
+    files: any,
     invoiceControl: AbstractControl,
     docType: InvoiceDocumentType,
   ) {
-    event.files.forEach(async (file: any) => {
+    files.forEach(async (file: any) => {
       if (file == null) {
         return;
       }
@@ -533,7 +575,7 @@ export class DrifClaimCreateComponent {
         .attachmentUploadAttachment({
           recordId: invoiceControl.get('id')?.value,
           recordType: RecordType.Invoice,
-          documentType: event.documentType,
+          documentType: docType,
           name: file.name,
           contentType:
             file.type === ''
@@ -545,18 +587,25 @@ export class DrifClaimCreateComponent {
           next: (attachment) => {
             const attachmentFormData = {
               name: file.name,
-              comments: '',
               id: attachment.id,
-              documentType: event.documentType,
-            } as AttachmentForm;
+              documentType: docType,
+            } as InvoiceAttachmentForm;
 
-            const attachmentsArray = invoiceControl.get(
-              'attachments',
-            ) as FormArray;
-
-            attachmentsArray.push(
-              this.formBuilder.formGroup(AttachmentForm, attachmentFormData),
+            const attachments = invoiceControl.get('attachments') as FormArray;
+            const attachmentControl = attachments.controls.find(
+              (control) => control.get('documentType')?.value === docType,
             );
+
+            if (attachmentControl) {
+              attachmentControl.patchValue(attachmentFormData);
+            } else {
+              attachments.push(
+                this.formBuilder.formGroup(
+                  InvoiceAttachmentForm,
+                  attachmentFormData,
+                ),
+              );
+            }
           },
           error: () => {
             this.toastService.close();
@@ -602,7 +651,9 @@ export class DrifClaimCreateComponent {
     );
   }
 
-  removeFile(fileId: string, invoiceId: string) {
+  removeFile(fileId: string, invoiceControl: AbstractControl) {
+    const invoiceId = invoiceControl.get('id')?.value;
+
     this.attachmentsService
       .attachmentDeleteAttachment(fileId, {
         id: fileId,
@@ -610,6 +661,12 @@ export class DrifClaimCreateComponent {
       })
       .subscribe({
         next: () => {
+          const attachments = invoiceControl.get('attachments') as FormArray;
+          const index = attachments.controls.findIndex(
+            (control) => control.get('id')?.value === fileId,
+          );
+          attachments.removeAt(index);
+
           this.toastService.close();
           this.toastService.success('File removed successfully');
         },
