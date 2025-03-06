@@ -2,6 +2,7 @@ import { CommonModule, CurrencyPipe } from '@angular/common';
 import { Component, inject, Input } from '@angular/core';
 import {
   FormArray,
+  FormControl,
   FormsModule,
   ReactiveFormsModule,
   Validators,
@@ -149,7 +150,10 @@ export class DrifFpStep10Component {
     }))
     .sort((a, b) => a.label.localeCompare(b.label));
 
+  // temp variable to store the original total project cost
   originalTotalProjectCost?: number;
+  // TODO: temp solution to overcome the issue of the total project cost not being updated
+  totalProjectCostCopy = new FormControl();
 
   ngOnInit() {
     this.budgetForm
@@ -189,6 +193,7 @@ export class DrifFpStep10Component {
       .get('totalProjectCost')!
       .valueChanges.pipe(distinctUntilChanged())
       .subscribe((value) => {
+        this.totalProjectCostCopy.setValue(value);
         this.calculateRemainingAmount();
 
         if (value === null) {
