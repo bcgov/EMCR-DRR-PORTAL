@@ -560,11 +560,11 @@ export class DrifClaimCreateComponent {
   }
 
   uploadFiles(
-    event: any,
+    files: any,
     invoiceControl: AbstractControl,
     docType: InvoiceDocumentType,
   ) {
-    event.files.forEach(async (file: any) => {
+    files.forEach(async (file: any) => {
       if (file == null) {
         return;
       }
@@ -575,7 +575,7 @@ export class DrifClaimCreateComponent {
         .attachmentUploadAttachment({
           recordId: invoiceControl.get('id')?.value,
           recordType: RecordType.Invoice,
-          documentType: event.documentType,
+          documentType: docType,
           name: file.name,
           contentType:
             file.type === ''
@@ -588,19 +588,24 @@ export class DrifClaimCreateComponent {
             const attachmentFormData = {
               name: file.name,
               id: attachment.id,
-              documentType: event.documentType,
+              documentType: docType,
             } as InvoiceAttachmentForm;
 
-            const attachmentsArray = invoiceControl.get(
-              'attachments',
-            ) as FormArray;
-
-            attachmentsArray.push(
-              this.formBuilder.formGroup(
-                InvoiceAttachmentForm,
-                attachmentFormData,
-              ),
+            const attachments = invoiceControl.get('attachments') as FormArray;
+            const attachmentControl = attachments.controls.find(
+              (control) => control.get('documentType')?.value === docType,
             );
+
+            if (attachmentControl) {
+              attachmentControl.patchValue(attachmentFormData);
+            } else {
+              attachments.push(
+                this.formBuilder.formGroup(
+                  InvoiceAttachmentForm,
+                  attachmentFormData,
+                ),
+              );
+            }
           },
           error: () => {
             this.toastService.close();
@@ -646,7 +651,9 @@ export class DrifClaimCreateComponent {
     );
   }
 
-  removeFile(fileId: string, invoiceId: string) {
+  removeFile(fileId: string, invoiceControl: AbstractControl) {
+    const invoiceId = invoiceControl.get('id')?.value;
+
     this.attachmentsService
       .attachmentDeleteAttachment(fileId, {
         id: fileId,
@@ -654,6 +661,12 @@ export class DrifClaimCreateComponent {
       })
       .subscribe({
         next: () => {
+          const attachments = invoiceControl.get('attachments') as FormArray;
+          const index = attachments.controls.findIndex(
+            (control) => control.get('id')?.value === fileId,
+          );
+          attachments.removeAt(index);
+
           this.toastService.close();
           this.toastService.success('File removed successfully');
         },

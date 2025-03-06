@@ -226,7 +226,7 @@
                             (click)="
                               removeFile(
                                 getInvoiceDocument(invoice)?.get('id')?.value,
-                                invoice.get('id')?.value
+                                invoice
                               )
                             "
                             type="button"
@@ -242,11 +242,7 @@
                         >
                         <drr-file-upload
                           (filesSelected)="
-                            uploadFiles(
-                              $event,
-                              invoice.get('id')?.value,
-                              invoiceDocumentType
-                            )
+                            uploadFiles($event, invoice, invoiceDocumentType)
                           "
                           [attachButtonLabel]="t('uploadInvoice')"
                           [multiple]="false"
@@ -287,7 +283,7 @@
                               removeFile(
                                 getInvoiceProofOfPayment(invoice)?.get('id')
                                   ?.value,
-                                invoice.get('id')?.value
+                                invoice
                               )
                             "
                             type="button"
@@ -306,8 +302,8 @@
                           (filesSelected)="
                             uploadFiles(
                               $event,
-                              invoice.get('id')?.value,
-                              invoiceDocumentType
+                              invoice,
+                              proofOfPaymentDocumentType
                             )
                           "
                           [attachButtonLabel]="t('uploadProofOfPayment')"
