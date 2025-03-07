@@ -44,7 +44,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var queryRes = await manager.Handle(new DrrProjectsQuery { BusinessId = GetTestUserInfo().BusinessId });
             var projects = mapper.Map<IEnumerable<DraftDrrProject>>(queryRes.Items);
             projects.Count().ShouldBeGreaterThan(1);
-            //projects.ShouldAllBe(s => s.ProgramType == ProgramType.DRIF);
+            projects.ShouldAllBe(s => s.Status != EMCR.DRR.Controllers.ProjectStatus.NotStarted);
         }
 
         [Test]
@@ -78,6 +78,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var claim = claims.SingleOrDefault();
             claim.Invoices.Count().ShouldBeGreaterThan(0);
             claim.ProjectType.ShouldNotBeNull();
+            claim.TotalProjectAmount.ShouldNotBeNull();
         }
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 #pragma warning restore CS8604 // Possible null reference argument.

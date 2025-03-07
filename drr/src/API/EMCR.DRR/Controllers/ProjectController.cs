@@ -180,6 +180,23 @@ namespace EMCR.DRR.Controllers
             }
         }
 
+        [HttpPatch("{projectId}/interim-reports/{reportId}/claims/{claimId}/submit")]
+        public async Task<ActionResult<ProjectClaimResult>> SubmitClaim([FromBody] ProjectClaim claim, string claimId)
+        {
+            try
+            {
+                claim.Id = claimId;
+                claim.Status = ClaimStatus.Draft;
+
+                var drr_id = await intakeManager.Handle(new SubmitClaimCommand { Claim = claim, UserInfo = GetCurrentUser() });
+                return Ok(new ProjectClaimResult { Id = drr_id });
+            }
+            catch (Exception e)
+            {
+                return errorParser.Parse(e, logger);
+            }
+        }
+
         [HttpPost("{projectId}/interim-reports/{reportId}/claims/{claimId}/invoice")]
         public async Task<ActionResult<CreateInvoiceResult>> CreateInvoice([FromBody] CreateInvoice inv, string claimId)
         {
@@ -202,23 +219,6 @@ namespace EMCR.DRR.Controllers
             {
                 var invoiceId = inv.Id ?? Guid.NewGuid().ToString();
                 var drr_id = await intakeManager.Handle(new DeleteInvoiceCommand { ClaimId = claimId, InvoiceId = invoiceId, UserInfo = GetCurrentUser() });
-                return Ok(new ProjectClaimResult { Id = drr_id });
-            }
-            catch (Exception e)
-            {
-                return errorParser.Parse(e, logger);
-            }
-        }
-
-        [HttpPatch("{projectId}/interim-reports/{reportId}/claims/{claimId}/submit")]
-        public async Task<ActionResult<ProjectClaimResult>> SubmitClaim([FromBody] ProjectClaim claim, string claimId)
-        {
-            try
-            {
-                claim.Id = claimId;
-                claim.Status = ClaimStatus.Draft;
-
-                var drr_id = await intakeManager.Handle(new SubmitClaimCommand { Claim = claim, UserInfo = GetCurrentUser() });
                 return Ok(new ProjectClaimResult { Id = drr_id });
             }
             catch (Exception e)
@@ -415,15 +415,19 @@ namespace EMCR.DRR.Controllers
         public string? ReportPeriod { get; set; }
         public string? ContractNumber { get; set; }
         public InterimProjectType? ProjectType { get; set; }
+        [Mandatory(typeof(ProjectClaim))]
         public DateTime? PlannedStartDate { get; set; }
+        [Mandatory(typeof(ProjectClaim))]
         public DateTime? PlannedEndDate { get; set; }
         public DateTime? ReportDate { get; set; }
         public DateTime? DateApproved { get; set; }
         public DateTime? DateSubmitted { get; set; }
         public IEnumerable<Invoice>? Invoices { get; set; }
+        [StringLength(500)]
         public string? ClaimComment { get; set; }
         public decimal? ClaimAmount { get; set; }
         public IEnumerable<PreviousClaim>? PreviousClaims { get; set; }
+        public decimal? TotalProjectAmount { get; set; }
         public ContactDetails? AuthorizedRepresentative { get; set; }
         public ClaimStatus? Status { get; set; }
     }

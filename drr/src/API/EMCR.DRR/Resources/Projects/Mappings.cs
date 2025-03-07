@@ -50,7 +50,7 @@ namespace EMCR.DRR.API.Resources.Projects
                 .ValidateMemberList(MemberList.Destination)
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.drr_name))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.drr_progressdescription))
-                .ForMember(dest => dest.DueDate, opt => opt.MapFrom(src => src.drr_reportdate.HasValue ? src.drr_reportdate.Value.UtcDateTime : (DateTime?)null))
+                .ForMember(dest => dest.DueDate, opt => opt.MapFrom(src => src.drr_reportduedate.HasValue ? src.drr_reportduedate.Value.UtcDateTime : (DateTime?)null))
                 .ForMember(dest => dest.ReportDate, opt => opt.MapFrom(src => src.drr_reportdate.HasValue ? src.drr_reportdate.Value.UtcDateTime : (DateTime?)null))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.statuscode.HasValue ? (int?)Enum.Parse<InterimReportStatus>(((ProjectReportStatusOptionSet)src.statuscode).ToString()) : null))
                 .ForMember(dest => dest.ProjectType, opt => opt.MapFrom(src => src.drr_projecttype.HasValue ? (int?)Enum.Parse<InterimProjectType>(((FundingStreamOptionSet)src.drr_projecttype).ToString()) : null))

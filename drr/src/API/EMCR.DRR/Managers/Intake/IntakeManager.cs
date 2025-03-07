@@ -435,6 +435,11 @@ namespace EMCR.DRR.Managers.Intake
             if (claim.Invoices != null && claim.Invoices.Any(i => i.ClaimAmount > i.GrossAmount)) throw new BusinessValidationException("Claim Amount cannot be greater than Gross Amount");
             if (claim.Invoices != null && claim.Invoices.Any(i => i.TotalPST > i.GrossAmount)) throw new BusinessValidationException("PST cannot be greater than Gross Amount");
             if (claim.Invoices != null && claim.Invoices.Any(i => i.TotalGST > i.GrossAmount)) throw new BusinessValidationException("GST cannot be greater than Gross Amount");
+            if (claim.Invoices != null && claim.Invoices.Any(i => i.WorkStartDate > claim.PlannedEndDate)) throw new BusinessValidationException("Work start date cannot be after the planned end date.");
+            if (claim.Invoices != null && claim.Invoices.Any(i => i.WorkEndDate < claim.PlannedStartDate)) throw new BusinessValidationException("Work end date cannot be before the planned start date.");
+            if (claim.Invoices != null && claim.Invoices.Any(i => i.PaymentDate == null)) throw new BusinessValidationException("PaymentDate is required");
+            if (claim.Invoices != null && claim.Invoices.Any(i => i.CostCategory == null)) throw new BusinessValidationException("Cost Category is required");
+
 
 
             var id = (await reportRepository.Manage(new SaveClaim { Claim = claim })).Id;

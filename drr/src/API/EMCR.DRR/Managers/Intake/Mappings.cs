@@ -202,7 +202,6 @@ namespace EMCR.DRR.Managers.Intake
                     }
                 })
                 .ReverseMap()
-                .ReverseMap()
                 ;
 
             CreateMap<DraftProjectClaim, Controllers.ProjectClaim>()
@@ -343,6 +342,7 @@ namespace EMCR.DRR.Managers.Intake
                     }
                 })
                 .ReverseMap()
+                .ForMember(dest => dest.TotalProjectAmount, opt => opt.MapFrom(src => src.Project != null ? src.Project.TotalDRIFFundingRequest : null))
                 .AfterMap((src, dest) =>
                 {
                     dest.PreviousClaims = CalculateClaimTotals(src);
@@ -364,6 +364,7 @@ namespace EMCR.DRR.Managers.Intake
                     }
                 })
                 .ReverseMap()
+                .ForMember(dest => dest.TotalProjectAmount, opt => opt.MapFrom(src => src.Project != null ? src.Project.TotalDRIFFundingRequest : null))
                 .AfterMap((src, dest) =>
                 {
                     dest.PreviousClaims = CalculateClaimTotals(src);
