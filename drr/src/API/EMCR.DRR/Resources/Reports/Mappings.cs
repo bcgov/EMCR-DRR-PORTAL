@@ -19,7 +19,7 @@ namespace EMCR.DRR.API.Resources.Reports
                 .ValidateMemberList(MemberList.Destination)
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.drr_name))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.drr_progressdescription))
-                .ForMember(dest => dest.DueDate, opt => opt.MapFrom(src => src.drr_reportdate.HasValue ? src.drr_reportdate.Value.UtcDateTime : (DateTime?)null))
+                .ForMember(dest => dest.DueDate, opt => opt.MapFrom(src => src.drr_reportduedate.HasValue ? src.drr_reportduedate.Value.UtcDateTime : (DateTime?)null))
                 .ForMember(dest => dest.ReportDate, opt => opt.MapFrom(src => src.drr_reportdate.HasValue ? src.drr_reportdate.Value.UtcDateTime : (DateTime?)null))
                 .ForMember(dest => dest.ProjectType, opt => opt.MapFrom(src => src.drr_projecttype.HasValue ? (int?)Enum.Parse<InterimProjectType>(((FundingStreamOptionSet)src.drr_projecttype).ToString()) : null))
                 .ForMember(dest => dest.PeriodType, opt => opt.MapFrom(src => src.drr_periodtype.HasValue ? (int?)Enum.Parse<PeriodType>(((PeriodTypeOptionSet)src.drr_periodtype).ToString()) : null))
