@@ -801,6 +801,7 @@ namespace EMCR.DRR.Managers.Intake
         public ContactDetails? AuthorizedRepresentative { get; set; }
         public bool? AuthorizedRepresentativeStatement { get; set; }
         public bool? InformationAccuracyStatement { get; set; }
+        public decimal? TotalClaimed { get; set; }
         public ClaimProject? Project { get; set; }
     }
 
