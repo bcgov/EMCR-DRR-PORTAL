@@ -713,6 +713,8 @@
     "invoice": "Invoice",
     "uploadInvoice": "Upload Invoice",
     "uploadProofOfPayment": "Upload Proof of Payment",
-    "proofOfPayment": "Proof of Payment"
+    "proofOfPayment": "Proof of Payment",
+    "totalClaimed": "Total Claimed Amount",
+    "totalProjectAmount": "Total Project Amount"
   }
 }

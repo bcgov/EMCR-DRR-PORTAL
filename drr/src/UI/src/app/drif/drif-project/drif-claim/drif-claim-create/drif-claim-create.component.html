@@ -436,6 +436,33 @@
               ></mat-row>
             </mat-table>
           </div>
+
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              gap: 1rem;
+              margin-top: 2rem;
+            "
+          >
+            <drr-currency-input
+              style="width: 30rem"
+              [label]="t('totalClaimed')"
+              [rxFormControl]="
+                claimForm.get('expenditure')?.get('totalClaimed')
+              "
+              [disabled]="true"
+            ></drr-currency-input>
+
+            <drr-currency-input
+              style="width: 30rem"
+              [label]="t('totalProjectAmount')"
+              [rxFormControl]="
+                claimForm.get('expenditure')?.get('totalProjectAmount')
+              "
+              [disabled]="true"
+            ></drr-currency-input>
+          </div>
         </div>
       }
       <div class="drr-stepper-actions">

@@ -113,6 +113,12 @@ export class ExpenditureForm {
   @prop()
   claimComment?: string;
 
+  @prop()
+  totalClaimed?: number;
+
+  @prop()
+  totalProjectAmount?: number;
+
   constructor(values: ExpenditureForm) {
     Object.assign(this, values);
   }
