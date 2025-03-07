@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
+using System.Text;
 using System.Text.Json.Serialization;
 using AutoMapper;
 using EMCR.DRR.API.Model;
@@ -408,6 +409,12 @@ if (testDataEndpointsEnabled)
         screenerQuestions.EngagedWithFirstNationsOccurred = false;
 
         var fpId = await manager.Handle(new CreateFpFromEoiCommand { EoiId = eoiId, UserInfo = GetCurrentUser(), ScreenerQuestions = screenerQuestions });
+
+        var body = DateTime.Now.ToString();
+        byte[] bytes = Encoding.ASCII.GetBytes(body);
+        var costEstimateFile = new S3File { FileName = "autotest-dce.txt", Content = bytes, ContentType = "text/plain", };
+
+        await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = fpId, RecordType = EMCR.DRR.Managers.Intake.RecordType.FullProposal, File = costEstimateFile, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.DetailedCostEstimate }, UserInfo = GetCurrentUser() });
 
         var fullProposal = (await manager.Handle(new DrrApplicationsQuery { Id = fpId, BusinessId = GetCurrentUser().BusinessId })).Items.SingleOrDefault();
         var fpToUpdate = mapper.Map<FpApplication>(TestHelper.FillInTestFpApplication(mapper.Map<DraftFpApplication>(fullProposal)));
