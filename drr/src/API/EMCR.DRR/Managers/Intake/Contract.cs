@@ -387,6 +387,7 @@ namespace EMCR.DRR.Managers.Intake
         public DateTime? EndDate { get; set; }
 
         //Funding Information - 3
+        public decimal? EstimatedTotalFromEOI { get; set; } //For FP this is OriginalTotalProjectCost
         public decimal? EstimatedTotal { get; set; } //TotalProjectCost on FP
         public decimal? FundingRequest { get; set; }
         public bool? HaveOtherFunding { get; set; }

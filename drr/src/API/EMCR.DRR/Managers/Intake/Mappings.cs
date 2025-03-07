@@ -108,6 +108,7 @@ namespace EMCR.DRR.Managers.Intake
                 .ForMember(dest => dest.ClimateAssessmentTools, opt => opt.MapFrom(src => src.ClimateAssessmentTools.Select(p => p.Name)))
                 .ForMember(dest => dest.CostConsiderations, opt => opt.MapFrom(src => src.CostConsiderations.Select(p => p.Name)))
                 .ForMember(dest => dest.TotalProjectCost, opt => opt.MapFrom(src => src.EstimatedTotal))
+                .ForMember(dest => dest.OriginalTotalProjectCost, opt => opt.MapFrom(src => src.EstimatedTotalFromEOI))
                 //.ForMember(dest => dest.EligibleFundingRequest, opt => opt.MapFrom(src => src.EligibleAmountForFP))
                 .ForMember(dest => dest.Permits, opt => opt.MapFrom(src => src.Permits.Select(p => p.Name)))
                 ;
@@ -155,6 +156,7 @@ namespace EMCR.DRR.Managers.Intake
                 .ForMember(dest => dest.ClimateAssessmentTools, opt => opt.MapFrom(src => src.ClimateAssessmentTools.Select(p => p.Name)))
                 .ForMember(dest => dest.CostConsiderations, opt => opt.MapFrom(src => src.CostConsiderations.Select(p => p.Name)))
                 .ForMember(dest => dest.TotalProjectCost, opt => opt.MapFrom(src => src.EstimatedTotal))
+                .ForMember(dest => dest.OriginalTotalProjectCost, opt => opt.MapFrom(src => src.EstimatedTotalFromEOI))
                 //.ForMember(dest => dest.EligibleFundingRequest, opt => opt.MapFrom(src => src.EligibleAmountForFP))
                 .ForMember(dest => dest.Permits, opt => opt.MapFrom(src => src.Permits.Select(p => p.Name)))
                 ;
@@ -225,6 +227,7 @@ namespace EMCR.DRR.Managers.Intake
 
             CreateMap<DraftProgressReport, ProgressReport>()
                 .ForMember(dest => dest.CrmId, opt => opt.Ignore())
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => IntakeProgressReportStatusMapper(src.Status)))
                 .AfterMap((src, dest) =>
                 {
                     foreach (var prop in dest.GetType().GetProperties())
@@ -236,6 +239,7 @@ namespace EMCR.DRR.Managers.Intake
                     }
                 })
                 .ReverseMap()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => DrrProgressReportStatusMapper(src.Status)))
                 ;
 
             CreateMap<DraftProgressReport, Controllers.ProgressReport>()
