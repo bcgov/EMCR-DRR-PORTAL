@@ -43,6 +43,7 @@ namespace EMCR.DRR.API.Resources.Reports
                 .ForMember(dest => dest.ReportPeriod, opt => opt.MapFrom(src => src.drr_ProjectReport != null ? src.drr_ProjectReport.drr_ReportPeriod != null ? src.drr_ProjectReport.drr_ReportPeriod.drr_name : string.Empty : string.Empty))
                 .ForMember(dest => dest.ContractNumber, opt => opt.MapFrom(src => src.drr_Project != null ? src.drr_Project.drr_contractnumber : string.Empty))
                 .ForMember(dest => dest.ClaimAmount, opt => opt.MapFrom(src => src.drr_claimamount))
+                .ForMember(dest => dest.TotalClaimed, opt => opt.MapFrom(src => src.drr_claimtotal))
                 .ForMember(dest => dest.ProjectType, opt => opt.MapFrom(src => src.drr_Project != null ? src.drr_Project.drr_FullProposalApplication != null ? src.drr_Project.drr_FullProposalApplication.drr_fundingstream.HasValue ? (int?)Enum.Parse<InterimProjectType>(((FundingStreamOptionSet)src.drr_Project.drr_FullProposalApplication.drr_fundingstream).ToString()) : null : null : null))
                 .ForMember(dest => dest.ReportDate, opt => opt.MapFrom(src => src.drr_ProjectReport != null ? src.drr_ProjectReport.drr_reportdate.HasValue ? src.drr_ProjectReport.drr_reportdate.Value.UtcDateTime : (DateTime?)null : (DateTime?)null))
                 .ForMember(dest => dest.PlannedStartDate, opt => opt.MapFrom(src => src.drr_Project != null ? src.drr_Project.drr_plannedstartdate.HasValue ? src.drr_Project.drr_plannedstartdate.Value.UtcDateTime : (DateTime?)null : (DateTime?)null))
