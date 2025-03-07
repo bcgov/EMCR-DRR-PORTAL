@@ -283,6 +283,40 @@ export class ProjectService {
       options,
     );
   }
+  projectSubmitClaim<TData = ProjectClaimResult>(
+    projectId: string,
+    reportId: string,
+    claimId: string,
+    projectClaim: ProjectClaim,
+    options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'body' },
+  ): Observable<TData>;
+  projectSubmitClaim<TData = ProjectClaimResult>(
+    projectId: string,
+    reportId: string,
+    claimId: string,
+    projectClaim: ProjectClaim,
+    options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'response' },
+  ): Observable<AngularHttpResponse<TData>>;
+  projectSubmitClaim<TData = ProjectClaimResult>(
+    projectId: string,
+    reportId: string,
+    claimId: string,
+    projectClaim: ProjectClaim,
+    options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'events' },
+  ): Observable<HttpEvent<TData>>;
+  projectSubmitClaim<TData = ProjectClaimResult>(
+    projectId: string,
+    reportId: string,
+    claimId: string,
+    projectClaim: ProjectClaim,
+    options?: HttpClientOptions,
+  ): Observable<TData> {
+    return this.http.patch<TData>(
+      `/api/project/${projectId}/interim-reports/${reportId}/claims/${claimId}/submit`,
+      projectClaim,
+      options,
+    );
+  }
   projectCreateInvoice<TData = CreateInvoiceResult>(
     projectId: string,
     reportId: string,
@@ -348,40 +382,6 @@ export class ProjectService {
     return this.http.delete<TData>(
       `/api/project/${projectId}/interim-reports/${reportId}/claims/${claimId}/invoice`,
       { body: createInvoice, ...options },
-    );
-  }
-  projectSubmitClaim<TData = ProjectClaimResult>(
-    projectId: string,
-    reportId: string,
-    claimId: string,
-    projectClaim: ProjectClaim,
-    options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'body' },
-  ): Observable<TData>;
-  projectSubmitClaim<TData = ProjectClaimResult>(
-    projectId: string,
-    reportId: string,
-    claimId: string,
-    projectClaim: ProjectClaim,
-    options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'response' },
-  ): Observable<AngularHttpResponse<TData>>;
-  projectSubmitClaim<TData = ProjectClaimResult>(
-    projectId: string,
-    reportId: string,
-    claimId: string,
-    projectClaim: ProjectClaim,
-    options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'events' },
-  ): Observable<HttpEvent<TData>>;
-  projectSubmitClaim<TData = ProjectClaimResult>(
-    projectId: string,
-    reportId: string,
-    claimId: string,
-    projectClaim: ProjectClaim,
-    options?: HttpClientOptions,
-  ): Observable<TData> {
-    return this.http.patch<TData>(
-      `/api/project/${projectId}/interim-reports/${reportId}/claims/${claimId}/submit`,
-      projectClaim,
-      options,
     );
   }
   projectGetProgressReport<TData = DraftProgressReport>(
@@ -522,9 +522,9 @@ export type ProjectCreateReportClientResult = NonNullable<CreateReportResult>;
 export type ProjectGetInterimReportClientResult = NonNullable<InterimReport>;
 export type ProjectGetClaimClientResult = NonNullable<DraftProjectClaim>;
 export type ProjectUpdateClaimClientResult = NonNullable<ProjectClaimResult>;
+export type ProjectSubmitClaimClientResult = NonNullable<ProjectClaimResult>;
 export type ProjectCreateInvoiceClientResult = NonNullable<CreateInvoiceResult>;
 export type ProjectDeleteInvoiceClientResult = NonNullable<CreateInvoiceResult>;
-export type ProjectSubmitClaimClientResult = NonNullable<ProjectClaimResult>;
 export type ProjectGetProgressReportClientResult =
   NonNullable<DraftProgressReport>;
 export type ProjectUpdateProgressReportClientResult =
