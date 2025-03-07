@@ -188,12 +188,12 @@
               <drr-currency-input
                 label="Unit Rate"
                 [rxFormControl]="cost.get('unitRate')"
-                [max]="1000000000"
+                [max]="999999999"
               ></drr-currency-input>
               <drr-currency-input
                 label="Total Cost"
                 [rxFormControl]="cost.get('totalCost')"
-                [max]="1000000000"
+                [max]="999999999"
                 [disabled]="true"
               ></drr-currency-input>
             </div>
@@ -334,7 +334,7 @@
         <drr-currency-input
           [label]="t('forecastedSpend')"
           [rxFormControl]="funding.get('amount')"
-          [max]="1000000000"
+          [max]="999999999"
         ></drr-currency-input>
         @if (i > 0) {
           <button mat-mini-fab color="warn" (click)="removeYear(i)">
