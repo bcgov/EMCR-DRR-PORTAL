@@ -46,5 +46,7 @@ export interface DraftProjectClaim {
   /** @nullable */
   status?: ClaimStatus;
   /** @nullable */
+  totalClaimed?: number;
+  /** @nullable */
   totalProjectAmount?: number;
 }

@@ -300,14 +300,14 @@ export class DrifClaimCreateComponent {
               );
             }
 
-            // this.previousClaimsTotal = claim.totalClaimed || 0;
+            this.previousClaimsTotal = claim.totalClaimed || 0;
 
             const formData = new ClaimForm({
               expenditure: {
                 skipClaimReport: undefined, // claim.skipClaimReport,
                 claimComment: claim.claimComment,
                 invoices: claim.invoices,
-                // totalClaimed: claim.totalClaimed,
+                totalClaimed: claim.totalClaimed,
                 totalProjectAmount: claim.totalProjectAmount,
               },
             } as ClaimForm);
@@ -586,17 +586,16 @@ export class DrifClaimCreateComponent {
     return this.getInvoiceFormArray()?.length;
   }
 
-  getTotalClaimAmount() {
-    return this.getInvoiceFormArray()?.controls.reduce(
-      (total: number, control) => {
+  getTotalClaimAmount(): number {
+    return (
+      this.getInvoiceFormArray()?.controls.reduce((total: number, control) => {
         const claimAmount = control.get('claimAmount')?.value;
         if (!claimAmount) {
           return total;
         }
 
         return total + claimAmount;
-      },
-      0,
+      }, 0) || 0
     );
   }
 
@@ -766,11 +765,9 @@ export class DrifClaimCreateComponent {
     this.claimSummaryItemsDataSource.data = previousClaimSummary;
 
     const currentClaimTotal = this.getTotalClaimAmount();
-    const previousClaimsTotal = this.claimForm?.get(
-      'expenditure.totalClaimed',
-    )?.value;
+
     this.claimForm
       ?.get('expenditure.totalClaimed')
-      ?.setValue(currentClaimTotal + previousClaimsTotal);
+      ?.setValue(currentClaimTotal + this.previousClaimsTotal);
   }
 }
