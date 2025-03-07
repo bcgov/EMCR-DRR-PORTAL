@@ -367,6 +367,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             fullProposal.EoiId.ShouldBe(eoiId);
             fullProposal.HowWasNeedIdentified.ShouldBe(eoi.RationaleForSolution);
             var fpToUpdate = FillInFullProposal(mapper.Map<DraftFpApplication>(fullProposal));
+            fpToUpdate.OriginalTotalProjectCost.ShouldBe(eoi.EstimatedTotal);
             fpToUpdate.ProposedActivities.First().Deliverables = "project deliverables";
             fpToUpdate.ProposedActivities.First().StartDate = DateTime.UtcNow.AddDays(1);
 

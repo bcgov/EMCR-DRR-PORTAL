@@ -205,6 +205,7 @@ namespace EMCR.DRR.Resources.Applications
                 .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.drr_anticipatedprojectstartdate.HasValue ? src.drr_anticipatedprojectstartdate.Value.UtcDateTime : (DateTime?)null))
                 .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.drr_anticipatedprojectenddate.HasValue ? src.drr_anticipatedprojectenddate.Value.UtcDateTime : (DateTime?)null))
                 .ForMember(dest => dest.EstimatedTotal, opt => opt.MapFrom(src => src.drr_estimated_total_project_cost)) //TotalProjectCost on FP
+                .ForMember(dest => dest.EstimatedTotalFromEOI, opt => opt.MapFrom(src => src.drr_EOIApplication != null ? src.drr_EOIApplication.drr_estimated_total_project_cost : null))
                 .ForMember(dest => dest.FundingRequest, opt => opt.MapFrom(src => src.drr_estimateddriffundingprogramrequest))
                 .ForMember(dest => dest.HaveOtherFunding, opt => opt.MapFrom(src => src.drr_otherfundingsources.HasValue ? src.drr_otherfundingsources == (int)DRRTwoOptions.Yes : (bool?)null))
                 .ForMember(dest => dest.OtherFunding, opt => opt.MapFrom(src => src.drr_application_fundingsource_Application))
