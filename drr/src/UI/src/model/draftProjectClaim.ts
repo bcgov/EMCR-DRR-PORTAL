@@ -15,7 +15,11 @@ export interface DraftProjectClaim {
   authorizedRepresentative?: ContactDetails;
   /** @nullable */
   claimAmount?: number;
-  /** @nullable */
+  /**
+   * @minLength 0
+   * @maxLength 500
+   * @nullable
+   */
   claimComment?: string;
   /** @nullable */
   contractNumber?: string;
@@ -41,4 +45,8 @@ export interface DraftProjectClaim {
   reportPeriod?: string;
   /** @nullable */
   status?: ClaimStatus;
+  /** @nullable */
+  totalClaimed?: number;
+  /** @nullable */
+  totalProjectAmount?: number;
 }

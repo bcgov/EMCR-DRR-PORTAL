@@ -1,9 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostListener, inject, ViewChild } from '@angular/core';
-import { AbstractControl, FormArray, FormGroup } from '@angular/forms';
+import {
+  AbstractControl,
+  FormArray,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import {
@@ -19,6 +26,7 @@ import {
   AppFormGroup,
   RxFormBuilder,
   RxFormGroup,
+  RxReactiveFormsModule,
 } from '@rxweb/reactive-form-validators';
 import { distinctUntilChanged, pairwise, startWith } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
@@ -27,6 +35,7 @@ import { ProjectService } from '../../../../../api/project/project.service';
 import {
   CostCategory,
   DeclarationType,
+  DocumentType,
   DraftProjectClaim,
   FormType,
   InterimProjectType,
@@ -46,17 +55,11 @@ import { DrrTextareaComponent } from '../../../../shared/controls/drr-textarea/d
 import { FileService } from '../../../../shared/services/file.service';
 import { OptionsStore } from '../../../../store/options.store';
 import { ProfileStore } from '../../../../store/profile.store';
-import { DrrAttahcmentComponent } from '../../../drif-fp/drif-fp-step-11/drif-fp-attachment.component';
 import {
   ClaimForm,
   InvoiceAttachmentForm,
   InvoiceForm,
 } from '../drif-claim-form';
-
-export enum InvoiceDocumentType {
-  Invoice = 'Invoice',
-  ProofOfPayment = 'ProofOfPayment',
-}
 
 export class ClaimSummaryItem implements PreviousClaim {
   costCategory?: CostCategory;
@@ -70,6 +73,10 @@ export class ClaimSummaryItem implements PreviousClaim {
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    RxReactiveFormsModule,
+    MatFormFieldModule,
     MatStepperModule,
     MatIconModule,
     MatButtonModule,
@@ -86,7 +93,6 @@ export class ClaimSummaryItem implements PreviousClaim {
     DrrTextareaComponent,
     DrrCurrencyInputComponent,
     DrrFileUploadComponent,
-    DrrAttahcmentComponent,
   ],
   templateUrl: './drif-claim-create.component.html',
   styleUrl: './drif-claim-create.component.scss',
@@ -104,8 +110,8 @@ export class DrifClaimCreateComponent {
   toastService = inject(HotToastService);
   fileService = inject(FileService);
 
-  invoiceDocumentType = InvoiceDocumentType.Invoice;
-  proofOfPaymentDocumentType = InvoiceDocumentType.ProofOfPayment;
+  invoiceDocumentType = DocumentType.Invoice;
+  proofOfPaymentDocumentType = DocumentType.ProofOfPayment;
 
   projectId?: string;
   reportId?: string;
@@ -130,6 +136,8 @@ export class DrifClaimCreateComponent {
     'totalForProject',
     'originalEstimate',
   ];
+
+  previousClaimsTotal = 0;
 
   lastSavedAt?: Date;
 
@@ -256,6 +264,8 @@ export class DrifClaimCreateComponent {
                 return;
               }
 
+              this.calculateClaimSummary();
+
               this.claimForm
                 ?.get('declaration.authorizedRepresentativeStatement')
                 ?.reset();
@@ -290,11 +300,15 @@ export class DrifClaimCreateComponent {
               );
             }
 
+            this.previousClaimsTotal = claim.totalClaimed || 0;
+
             const formData = new ClaimForm({
               expenditure: {
-                skipClaimReport: false, // claim.skipClaimReport,
+                skipClaimReport: undefined, // claim.skipClaimReport,
                 claimComment: claim.claimComment,
                 invoices: claim.invoices,
+                totalClaimed: claim.totalClaimed,
+                totalProjectAmount: claim.totalProjectAmount,
               },
             } as ClaimForm);
 
@@ -382,11 +396,7 @@ export class DrifClaimCreateComponent {
 
     // iterate over invoices and remove attachments if they are empty
     claimForm.expenditure.invoices?.forEach((invoice) => {
-      if (invoice.attachments) {
-        invoice.attachments = invoice.attachments.filter(
-          (attachment) => attachment.id,
-        );
-      }
+      invoice.attachments = [];
     });
 
     return {
@@ -576,24 +586,23 @@ export class DrifClaimCreateComponent {
     return this.getInvoiceFormArray()?.length;
   }
 
-  getTotalClaimAmount() {
-    return this.getInvoiceFormArray()?.controls.reduce(
-      (total: number, control) => {
+  getTotalClaimAmount(): number {
+    return (
+      this.getInvoiceFormArray()?.controls.reduce((total: number, control) => {
         const claimAmount = control.get('claimAmount')?.value;
         if (!claimAmount) {
           return total;
         }
 
         return total + claimAmount;
-      },
-      0,
+      }, 0) || 0
     );
   }
 
   uploadFiles(
     files: any,
     invoiceControl: AbstractControl,
-    docType: InvoiceDocumentType,
+    docType: DocumentType,
   ) {
     files.forEach(async (file: any) => {
       if (file == null) {
@@ -709,7 +718,56 @@ export class DrifClaimCreateComponent {
   }
 
   calculateClaimSummary() {
-    // TODO: calculate 
-    this.claimSummaryItemsDataSource.data = this.previousClaimSummaryItems;
+    const currentClaimSummary: { [key: string]: number } = {};
+
+    this.getInvoiceFormArray()?.controls.forEach((control) => {
+      const costCategory = control.get('costCategory')?.value;
+      const claimAmount = control.get('claimAmount')?.value;
+
+      if (costCategory && claimAmount) {
+        if (!currentClaimSummary[costCategory]) {
+          currentClaimSummary[costCategory] = 0;
+        }
+        currentClaimSummary[costCategory] += claimAmount;
+      }
+    });
+
+    // combite current claim cost category with previous claims cost categories
+    // check if current claim has got the same cost category and add the current claim amount on top of the previous claim amount
+    // otherwise insert current claim amount as new cost category
+    const previousClaimSummary = this.previousClaimSummaryItems.map(
+      (claimSummary) => {
+        const currentClaimAmount =
+          currentClaimSummary[claimSummary.costCategory!];
+        if (currentClaimAmount) {
+          claimSummary.currentClaim = currentClaimAmount;
+        }
+        return claimSummary;
+      },
+    );
+
+    // add new cost categories from current claim
+    Object.keys(currentClaimSummary).forEach((currentCostCategory) => {
+      if (
+        !previousClaimSummary.some(
+          (claimSummary) => claimSummary.costCategory === currentCostCategory,
+        )
+      ) {
+        previousClaimSummary.push({
+          costCategory: currentCostCategory as CostCategory,
+          currentClaim: currentClaimSummary[currentCostCategory],
+          totalForProject: 0,
+          originalEstimate: 0,
+        });
+      }
+    });
+
+    this.claimSummaryItemsDataSource.data = previousClaimSummary;
+
+    const currentClaimTotal = this.getTotalClaimAmount();
+
+    this.claimForm
+      ?.get('expenditure.totalClaimed')
+      ?.setValue(currentClaimTotal + this.previousClaimsTotal);
   }
 }
