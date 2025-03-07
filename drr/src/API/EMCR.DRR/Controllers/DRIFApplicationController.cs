@@ -395,6 +395,7 @@ namespace EMCR.DRR.Controllers
 
         //Budget - 10
         public FundingStream? FundingStream { get; set; }
+        public decimal? OriginalTotalProjectCost { get; set; } //EstimatedTotal from EOI
         [Range(ApplicationValidators.FUNDING_MIN_VAL, ApplicationValidators.FUNDING_MAX_VAL)]
         [CurrencyNotNegativeForSubmission(typeof(FpApplication))]
         [Mandatory(typeof(FpApplication))]
