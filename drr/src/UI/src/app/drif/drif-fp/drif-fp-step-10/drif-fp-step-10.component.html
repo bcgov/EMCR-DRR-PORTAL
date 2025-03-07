@@ -449,7 +449,7 @@
     }
 
     <drr-textarea
-      *ngIf="getRemainingAmount() !== 0"
+      *ngIf="getRemainingAmount() > 0"
       style="margin-top: 10px"
       [id]="'intendToSecureFunding'"
       [label]="t('intendToSecureFunding')"
