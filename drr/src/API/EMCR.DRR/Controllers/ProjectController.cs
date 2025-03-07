@@ -427,6 +427,7 @@ namespace EMCR.DRR.Controllers
         public string? ClaimComment { get; set; }
         public decimal? ClaimAmount { get; set; }
         public IEnumerable<PreviousClaim>? PreviousClaims { get; set; }
+        public decimal? TotalClaimed { get; set; }
         public decimal? TotalProjectAmount { get; set; }
         public ContactDetails? AuthorizedRepresentative { get; set; }
         public ClaimStatus? Status { get; set; }
