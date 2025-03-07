@@ -346,9 +346,8 @@
 
           <mat-divider style="margin: 2rem 0"></mat-divider>
 
-          <h5>Claim Summary</h5>
-
           <div>
+            <h5>Curent Claim Summary</h5>
             <table class="claim-summary-table">
               <tr>
                 <td>Earliest Invoice</td>
@@ -387,7 +386,9 @@
           </div>
 
           <div>
+            <h5>All Claims Summary</h5>
             <mat-table
+              style="margin-top: 1rem"
               [dataSource]="claimSummaryItemsDataSource"
               class="mat-elevation-z8"
             >
@@ -396,7 +397,7 @@
                   Cost Category
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                  {{ element.costCategory }}
+                  {{ element.costCategory | transloco }}
                 </mat-cell>
               </ng-container>
 
@@ -411,7 +412,7 @@
 
               <ng-container matColumnDef="totalForProject">
                 <mat-header-cell *matHeaderCellDef>
-                  Total Submitted for Project
+                  Total Claimed for Project
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                   {{ element.totalForProject | currency }}

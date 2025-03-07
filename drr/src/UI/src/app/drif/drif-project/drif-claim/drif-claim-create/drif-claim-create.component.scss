@@ -5,42 +5,33 @@
 }
 
 .claim-summary-table {
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   margin-top: 1rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 
   th,
   td {
-    border-top: 1px solid #ccc;
-    border-left: 1px solid #ccc;
-    padding: 0.5rem;
+    padding: 0.75rem;
     text-align: left;
   }
 
   th {
     background: #e8f3ff;
     font-weight: bold;
+    border-bottom: 1px solid #ccc;
+    border-top: 1px solid #ccc;
   }
 
   td {
     background: #fff;
+    border-bottom: 1px solid #eee;
   }
 
-  th:first-child,
-  td:first-child {
-    border-left: none;
-  }
-
-  th:last-child,
-  td:last-child {
-    border-right: none;
-  }
-
-  tr:first-child td {
-    border-top: none;
-  }
-
-  tr:last-child td {
-    border-bottom: none;
+  tr {
+    &:last-child td {
+      border-bottom: none;
+    }
   }
 }
 
