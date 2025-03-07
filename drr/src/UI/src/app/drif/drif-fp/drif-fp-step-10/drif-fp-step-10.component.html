@@ -260,6 +260,12 @@
           selected cost estimate class.
         </i>
       </p>
+      <drr-textarea
+        style="margin-top: 1rem"
+        [label]="t('contingencyComments')"
+        [maxlength]="2000"
+        [rxFormControl]="budgetForm.get('contingencyComments')"
+      ></drr-textarea>
     }
 
     <mat-label class="drr-label" style="margin-top: 2rem"

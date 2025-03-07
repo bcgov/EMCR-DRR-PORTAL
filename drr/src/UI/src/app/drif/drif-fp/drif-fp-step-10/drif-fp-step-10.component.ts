@@ -513,6 +513,9 @@ export class DrifFpStep10Component {
       this.budgetForm
         .get('isContingencyPercentageThreasholdMet')
         ?.setValue(false, { emitEvent: false });
+      this.budgetForm
+        .get('contingencyComments')
+        ?.setValidators(Validators.required);
       return;
     }
 
@@ -520,11 +523,15 @@ export class DrifFpStep10Component {
       this.budgetForm
         .get('isContingencyPercentageThreasholdMet')
         ?.setValue(false, { emitEvent: false });
+      this.budgetForm
+        .get('contingencyComments')
+        ?.setValidators(Validators.required);
       return;
     }
 
     this.budgetForm
       .get('isContingencyPercentageThreasholdMet')
       ?.setValue(true, { emitEvent: false });
+    this.budgetForm.get('contingencyComments')?.clearValidators();
   }
 }

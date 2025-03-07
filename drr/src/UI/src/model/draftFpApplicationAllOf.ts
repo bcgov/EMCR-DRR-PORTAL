@@ -70,6 +70,8 @@ export type DraftFpApplicationAllOf = {
    */
   contingency?: number;
   /** @nullable */
+  contingencyComments?: string;
+  /** @nullable */
   costConsiderations?: string[];
   /** @nullable */
   costConsiderationsApplied?: boolean;

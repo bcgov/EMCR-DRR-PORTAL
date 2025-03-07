@@ -186,6 +186,7 @@ export class DrifFpViewComponent {
           previousResponseComments: response.previousResponseComments,
           previousResponseCost: response.previousResponseCost,
           contingency: response.contingency,
+          contingencyComments: response.contingencyComments,
           costEstimateClass: response.costEstimateClass,
           totalProjectCostChangeComments:
             response.totalProjectCostChangeComments,
