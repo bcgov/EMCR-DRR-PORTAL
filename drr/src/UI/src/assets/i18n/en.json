@@ -459,6 +459,7 @@
   "totalCost": "Total Cost",
   "description": "Description",
   "contingency": "Contingency",
+  "contingencyComments": "Contingency percentage exceeds its Class Estimate, please provide context.",
   "totalEligibleCosts": "Total Detailed Cost Estimate",
   "Yes": "Yes",
   "No": "No",

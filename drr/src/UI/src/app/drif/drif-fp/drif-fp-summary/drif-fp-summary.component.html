@@ -1114,6 +1114,15 @@
           [rxFormControl]="fullProposalForm.get('budget.contingency')"
           [value]="fullProposalForm.get('budget.contingency')?.value + '%'"
         ></drr-summary-item>
+        @if (
+          fullProposalForm.get("budget.isContingencyPercentageThreasholdMet")
+            ?.value === false
+        ) {
+          <drr-summary-item
+            [label]="t('contingencyComments')"
+            [rxFormControl]="fullProposalForm.get('budget.contingencyComments')"
+          ></drr-summary-item>
+        }
       }
       <drr-summary-item
         [label]="t('fundingRequestDiscrepancy')"

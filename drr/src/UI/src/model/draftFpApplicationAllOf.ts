@@ -70,6 +70,8 @@ export type DraftFpApplicationAllOf = {
    */
   contingency?: number;
   /** @nullable */
+  contingencyComments?: string;
+  /** @nullable */
   costConsiderations?: string[];
   /** @nullable */
   costConsiderationsApplied?: boolean;
@@ -161,6 +163,8 @@ export type DraftFpApplicationAllOf = {
   operationAndMaintenance?: YesNoOption;
   /** @nullable */
   operationAndMaintenanceComments?: string;
+  /** @nullable */
+  originalTotalProjectCost?: number;
   /** @nullable */
   otherEngagement?: YesNoOption;
   /** @nullable */

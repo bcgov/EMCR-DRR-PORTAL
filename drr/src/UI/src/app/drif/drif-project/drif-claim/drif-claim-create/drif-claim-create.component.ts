@@ -11,6 +11,7 @@ import {
   MatStepperModule,
   StepperOrientation,
 } from '@angular/material/stepper';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { HotToastService } from '@ngxpert/hot-toast';
@@ -29,6 +30,7 @@ import {
   DraftProjectClaim,
   FormType,
   InterimProjectType,
+  PreviousClaim,
   RecordType,
 } from '../../../../../model';
 import { DrrCurrencyInputComponent } from '../../../../shared/controls/drr-currency-input/drr-currency-input.component';
@@ -56,6 +58,13 @@ export enum InvoiceDocumentType {
   ProofOfPayment = 'ProofOfPayment',
 }
 
+export class ClaimSummaryItem implements PreviousClaim {
+  costCategory?: CostCategory;
+  currentClaim?: number;
+  totalForProject?: number;
+  originalEstimate?: number;
+}
+
 @Component({
   selector: 'drr-drif-claim-create',
   standalone: true,
@@ -66,6 +75,7 @@ export enum InvoiceDocumentType {
     MatButtonModule,
     MatInputModule,
     MatCardModule,
+    MatTableModule,
     MatDividerModule,
     TranslocoModule,
     RouterModule,
@@ -111,6 +121,16 @@ export class DrifClaimCreateComponent {
 
   claimForm?: RxFormGroup | FormGroup<any> | AppFormGroup<ClaimForm>;
   formChanged = false;
+
+  previousClaimSummaryItems: ClaimSummaryItem[] = [];
+  claimSummaryItemsDataSource = new MatTableDataSource<ClaimSummaryItem>();
+  displayedColumns: string[] = [
+    'costCategory',
+    'currentClaim',
+    'totalForProject',
+    'originalEstimate',
+  ];
+
   lastSavedAt?: Date;
 
   autoSaveCountdown = 0;
@@ -310,6 +330,17 @@ export class DrifClaimCreateComponent {
             this.claimForm = this.formBuilder.formGroup(ClaimForm, formData);
 
             this.formChanged = false;
+
+            this.previousClaimSummaryItems =
+              claim.previousClaims?.map((claim) => {
+                return {
+                  costCategory: claim.costCategory,
+                  currentClaim: 0,
+                  totalForProject: claim.totalForProject,
+                  originalEstimate: claim.originalEstimate,
+                } as ClaimSummaryItem;
+              }) || [];
+            this.calculateClaimSummary();
 
             resolve();
           },
@@ -675,5 +706,10 @@ export class DrifClaimCreateComponent {
           this.toastService.error('Failed to remove file');
         },
       });
+  }
+
+  calculateClaimSummary() {
+    // TODO: calculate 
+    this.claimSummaryItemsDataSource.data = this.previousClaimSummaryItems;
   }
 }

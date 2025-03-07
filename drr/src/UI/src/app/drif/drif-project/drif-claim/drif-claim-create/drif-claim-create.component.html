@@ -385,6 +385,58 @@
               </tr>
             </table>
           </div>
+
+          <h5>Total Claims Summary</h5>
+
+          <div>
+            <mat-table
+              [dataSource]="claimSummaryItemsDataSource"
+              class="mat-elevation-z8"
+            >
+              <ng-container matColumnDef="costCategory">
+                <mat-header-cell *matHeaderCellDef>
+                  Cost Category
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                  {{ element.costCategory }}
+                </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="currentClaim">
+                <mat-header-cell *matHeaderCellDef>
+                  Total for This Claim
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                  {{ element.currentClaim | currency }}
+                </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="totalForProject">
+                <mat-header-cell *matHeaderCellDef>
+                  Total Submitted for Project
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                  {{ element.totalForProject | currency }}
+                </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="originalEstimate">
+                <mat-header-cell *matHeaderCellDef>
+                  Original Estimate
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                  {{ element.originalEstimate | currency }}
+                </mat-cell>
+              </ng-container>
+
+              <mat-header-row
+                *matHeaderRowDef="displayedColumns"
+              ></mat-header-row>
+              <mat-row
+                *matRowDef="let row; columns: displayedColumns"
+              ></mat-row>
+            </mat-table>
+          </div>
         </div>
       }
       <div class="drr-stepper-actions">

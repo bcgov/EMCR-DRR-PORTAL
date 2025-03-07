@@ -260,6 +260,12 @@
           selected cost estimate class.
         </i>
       </p>
+      <drr-textarea
+        style="margin-top: 1rem"
+        [label]="t('contingencyComments')"
+        [maxlength]="2000"
+        [rxFormControl]="budgetForm.get('contingencyComments')"
+      ></drr-textarea>
     }
 
     <mat-label class="drr-label" style="margin-top: 2rem"
@@ -443,7 +449,7 @@
     }
 
     <drr-textarea
-      *ngIf="getRemainingAmount() !== 0"
+      *ngIf="getRemainingAmount() > 0"
       style="margin-top: 10px"
       [id]="'intendToSecureFunding'"
       [label]="t('intendToSecureFunding')"

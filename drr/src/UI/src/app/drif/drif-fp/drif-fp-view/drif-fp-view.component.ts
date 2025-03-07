@@ -175,6 +175,7 @@ export class DrifFpViewComponent {
           haveOtherFunding: response.haveOtherFunding,
           eligibleFundingRequest: response.eligibleFundingRequest,
           totalProjectCost: response.totalProjectCost,
+          originalTotalProjectCost: response.originalTotalProjectCost,
           remainingAmount: response.remainingAmount,
           discrepancyComment: response.discrepancyComment,
           totalDrifFundingRequest: response.totalDrifFundingRequest,
@@ -186,6 +187,7 @@ export class DrifFpViewComponent {
           previousResponseComments: response.previousResponseComments,
           previousResponseCost: response.previousResponseCost,
           contingency: response.contingency,
+          contingencyComments: response.contingencyComments,
           costEstimateClass: response.costEstimateClass,
           totalProjectCostChangeComments:
             response.totalProjectCostChangeComments,

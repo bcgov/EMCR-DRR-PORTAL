@@ -274,6 +274,9 @@ export class BudgetForm {
   totalProjectCost?: number;
 
   @prop()
+  originalTotalProjectCost?: number;
+
+  @prop()
   totalProjectCostChangeComments?: string;
 
   @prop()
@@ -281,6 +284,9 @@ export class BudgetForm {
 
   @prop()
   isContingencyPercentageThreasholdMet?: boolean;
+
+  @prop()
+  contingencyComments?: string;
 
   @prop()
   estimatedUnfundedAmount?: number;
