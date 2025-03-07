@@ -74,8 +74,10 @@ namespace EMCR.DRR.API.Utilities.TestData
             ;
         }
 
-        public static Faker<DraftFpApplication> WithApplicationRules(this Faker<DraftFpApplication> faker, ContactDetails? submitter = null)
+        public static Faker<DraftFpApplication> WithApplicationRules(this Faker<DraftFpApplication> faker, DraftFpApplication? originalFp = null, ContactDetails? submitter = null)
         {
+            var otherFundingTotal = originalFp != null ? originalFp.OtherFunding.Select(f => f.Amount).Sum() : 0;
+
             return faker
             .RuleFor(a => a.Id, f => null)
             .RuleFor(a => a.EoiId, f => null)
@@ -100,7 +102,7 @@ namespace EMCR.DRR.API.Utilities.TestData
             .RuleFor(a => a.OwnershipDescription, f => f.Lorem.Sentence())
             .RuleFor(a => a.HaveAuthorityToDevelop, f => f.Random.Bool())
             .RuleFor(a => a.OperationAndMaintenance, f => f.Random.Enum<YesNoOption>())
-            .RuleFor(a => a.OperationAndMaintenanceComments, (f, a) => a.OperationAndMaintenance == YesNoOption.Yes ? f.Lorem.Sentence() : null)
+            .RuleFor(a => a.OperationAndMaintenanceComments, (f, a) => f.Lorem.Sentence())
             .RuleFor(a => a.FirstNationsAuthorizedByPartners, f => f.Random.Enum<YesNoOption>())
             .RuleFor(a => a.LocalGovernmentAuthorizedByPartners, f => f.Random.Enum<YesNoOption>())
             .RuleFor(a => a.AuthorizationOrEndorsementComments, f => f.Lorem.Sentence())
@@ -133,7 +135,7 @@ namespace EMCR.DRR.API.Utilities.TestData
 
             //Project Engagement - 5
             .RuleFor(a => a.EngagedWithFirstNationsOccurred, f => f.Random.Bool())
-            .RuleFor(a => a.EngagedWithFirstNationsComments, (f, a) => a.EngagedWithFirstNationsOccurred == true ? f.Lorem.Sentence() : null)
+            .RuleFor(a => a.EngagedWithFirstNationsComments, (f, a) => f.Lorem.Sentence())
             .RuleFor(a => a.OtherEngagement, f => f.Random.Enum<YesNoOption>())
             .RuleFor(a => a.AffectedParties, (f, a) => a.OtherEngagement == YesNoOption.Yes ? Enumerable.Range(0, f.Random.Int(1, 5)).Select(x => f.Company.CompanyName()).ToList() : null)
             .RuleFor(a => a.OtherEngagementComments, f => f.Lorem.Sentence())
@@ -143,6 +145,7 @@ namespace EMCR.DRR.API.Utilities.TestData
             //Climate Adaptation - 6
             .RuleFor(a => a.IncorporateFutureClimateConditions, f => f.Random.Bool())
             .RuleFor(a => a.ClimateAdaptation, f => f.Lorem.Sentence())
+            .RuleFor(a => a.ClimateAssessment, f => f.Random.Bool())
             .RuleFor(a => a.ClimateAssessmentTools, (f, a) => a.ClimateAssessment == true ? Enumerable.Range(0, f.Random.Int(1, 5)).Select(x => f.Lorem.Word()).ToList() : null)
             .RuleFor(a => a.ClimateAssessmentComments, (f, a) => a.ClimateAssessment == true ? f.Lorem.Sentence() : null)
 
@@ -171,7 +174,7 @@ namespace EMCR.DRR.API.Utilities.TestData
             .RuleFor(a => a.ProduceCoBenefits, f => f.Random.Bool())
             .RuleFor(a => a.CoBenefits, (f, a) => a.ProduceCoBenefits == true ? Enumerable.Range(0, f.Random.Int(1, 5)).Select(x => f.Lorem.Word()).ToList() : null)
             .RuleFor(a => a.CoBenefitComments, (f, a) => a.ProduceCoBenefits == true ? f.Lorem.Sentence() : null)
-            .RuleFor(a => a.IncreasedResiliency, f => Enumerable.Range(0, f.Random.Int(0, 5)).Select(x => f.Lorem.Word()).ToList())
+            .RuleFor(a => a.IncreasedResiliency, f => Enumerable.Range(1, f.Random.Int(1, 5)).Select(x => f.Lorem.Word()).ToList())
             .RuleFor(a => a.IncreasedResiliencyComments, f => f.Lorem.Sentence())
 
 
@@ -189,13 +192,13 @@ namespace EMCR.DRR.API.Utilities.TestData
             .RuleFor(a => a.CapacityRisks, (f, a) => a.CapacityRiskMitigated == true ? Enumerable.Range(0, f.Random.Int(1, 5)).Select(x => f.Lorem.Word()).ToList() : null)
             .RuleFor(a => a.CapacityRiskComments, (f, a) => a.CapacityRiskMitigated == true ? f.Lorem.Sentence() : null)
             .RuleFor(a => a.RiskTransferMigigated, f => f.Random.Bool())
-            .RuleFor(a => a.IncreasedOrTransferred, f => Enumerable.Range(1, f.Random.Int(1, 2)).Select(x => f.Random.Enum<IncreasedOrTransferred>()).Distinct().ToList())
-            .RuleFor(a => a.IncreasedOrTransferredComments, f => f.Lorem.Sentence())
+            .RuleFor(a => a.IncreasedOrTransferred, (f, a) => a.RiskTransferMigigated == true ? Enumerable.Range(1, f.Random.Int(1, 2)).Select(x => f.Random.Enum<IncreasedOrTransferred>()).Distinct().ToList() : null)
+            .RuleFor(a => a.IncreasedOrTransferredComments, (f, a) => a.RiskTransferMigigated == true ? f.Lorem.Sentence() : null)
 
 
             //Budget - 10
             .RuleFor(a => a.FundingStream, f => f.Random.Enum<FundingStream>())
-            .RuleFor(a => a.TotalProjectCost, f => f.Random.Number(10, 1000) * 1000)
+            .RuleFor(a => a.TotalProjectCost, f => originalFp != null && originalFp.TotalProjectCost != null ? originalFp.TotalProjectCost - otherFundingTotal : f.Random.Number(10, 1000) * 1000)
             .RuleFor(a => a.TotalProjectCostChangeComments, f => f.Lorem.Sentence())
             .RuleFor(a => a.TotalDrifFundingRequest, (f, a) => a.TotalProjectCost)
             .RuleFor(a => a.EligibleFundingRequest, (f, a) => a.TotalProjectCost)
@@ -251,7 +254,7 @@ namespace EMCR.DRR.API.Utilities.TestData
         {
             return faker
                 .RuleFor(i => i.Infrastructure, f => prefix + f.Company.CompanyName())
-                .RuleFor(i => i.Impact, f => f.Lorem.Sentence())
+                .RuleFor(i => i.Impact, f => f.Lorem.Sentence(f.Random.Int(3, 5)))
                 ;
         }
 
@@ -296,6 +299,13 @@ namespace EMCR.DRR.API.Utilities.TestData
         {
             var divisors = GetDivisors(amount);
             divisors = divisors.Where(d => d <= 20).ToList();
+            var dMin = 1;
+            var dMax = divisors.Count() - 1;
+            if (dMax < dMin)
+            {
+                dMax = 0;
+                dMin = dMax;
+            }
             return faker
                 .RuleFor(a => a.Id, f => null)
                 .RuleFor(a => a.TaskName, f => f.Lorem.Word())
@@ -303,7 +313,7 @@ namespace EMCR.DRR.API.Utilities.TestData
                 .RuleFor(a => a.Description, f => f.Lorem.Sentence())
                 .RuleFor(a => a.Resources, f => f.Random.Enum<ResourceCategory>())
                 .RuleFor(a => a.Units, f => f.Random.Enum<CostUnit>())
-                .RuleFor(a => a.Quantity, f => divisors.ElementAt(f.Random.Int(1, divisors.Count() - 1)))
+                .RuleFor(a => a.Quantity, f => divisors.ElementAt(f.Random.Int(dMin, dMax)))
                 .RuleFor(a => a.UnitRate, (f, a) => amount / a.Quantity)
                 .RuleFor(a => a.TotalCost, (f, a) => amount)
                 ;

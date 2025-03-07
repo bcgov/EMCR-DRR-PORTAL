@@ -15,7 +15,7 @@ namespace EMCR.DRR.API.Utilities.TestData
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
         public static DraftFpApplication FillInTestFpApplication(DraftFpApplication originalFp, ContactDetails? submitter = null)
         {
-            var tempFp = new Faker<DraftFpApplication>("en_CA").WithApplicationRules(submitter).Generate();
+            var tempFp = new Faker<DraftFpApplication>("en_CA").WithApplicationRules(originalFp, submitter).Generate();
 
             //Overwrite null/empty properties from original FP
             foreach (PropertyInfo prop in typeof(DraftFpApplication).GetProperties())
@@ -33,6 +33,28 @@ namespace EMCR.DRR.API.Utilities.TestData
                     prop.SetValue(originalFp, prop.GetValue(tempFp));
                 }
             }
+
+            originalFp.Standards = tempFp.Standards;
+            originalFp.IncreasedOrTransferred = tempFp.IncreasedOrTransferred;
+            if (originalFp.Standards != null) originalFp.Standards = originalFp.Standards.DistinctBy(s => s.Category);
+
+            if (originalFp.ProposedActivities != null)
+            {
+                foreach (var activity in originalFp.ProposedActivities)
+                {
+                    if (!activity.StartDate.HasValue) activity.StartDate = DateTime.UtcNow.AddDays(1);
+                    if (!activity.EndDate.HasValue) activity.EndDate = DateTime.UtcNow.AddDays(5);
+                }
+            }
+
+            if (originalFp.Attachments != null)
+            {
+                foreach (var attachment in originalFp.Attachments)
+                {
+                    attachment.Comments = "attachment comment";
+                }
+            }
+
             return originalFp;
         }
 #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.

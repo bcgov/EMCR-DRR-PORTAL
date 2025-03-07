@@ -78,6 +78,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var claim = claims.SingleOrDefault();
             claim.Invoices.Count().ShouldBeGreaterThan(0);
             claim.ProjectType.ShouldNotBeNull();
+            claim.TotalProjectAmount.ShouldNotBeNull();
         }
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 #pragma warning restore CS8604 // Possible null reference argument.

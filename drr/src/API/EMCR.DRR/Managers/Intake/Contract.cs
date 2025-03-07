@@ -807,6 +807,7 @@ namespace EMCR.DRR.Managers.Intake
     public class ClaimProject
     {
         public string? Id { get; set; }
+        public decimal? TotalDRIFFundingRequest { get; set; }
         public IEnumerable<ClaimDetails>? Claims { get; set; }
         public ProjectApplication? FullProposal { get; set; }
     }

@@ -99,6 +99,7 @@ namespace EMCR.DRR.API.Resources.Reports
                 .ReverseMap()
                 .ValidateMemberList(MemberList.Destination)
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.drr_name))
+                .ForMember(dest => dest.TotalDRIFFundingRequest, opt => opt.MapFrom(src => src.drr_fundingamount))
                 .ForMember(dest => dest.FullProposal, opt => opt.MapFrom(src => src.drr_FullProposalApplication))
                 .ForMember(dest => dest.Claims, opt => opt.MapFrom(src => src.drr_drr_project_drr_projectclaim_Project.Where(c => c.statecode == (int)EntityState.Active)))
                 ;
