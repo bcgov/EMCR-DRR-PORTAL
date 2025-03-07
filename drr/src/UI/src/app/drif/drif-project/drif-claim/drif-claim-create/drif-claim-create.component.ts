@@ -1,9 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostListener, inject, ViewChild } from '@angular/core';
-import { AbstractControl, FormArray, FormGroup } from '@angular/forms';
+import {
+  AbstractControl,
+  FormArray,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import {
@@ -19,6 +26,7 @@ import {
   AppFormGroup,
   RxFormBuilder,
   RxFormGroup,
+  RxReactiveFormsModule,
 } from '@rxweb/reactive-form-validators';
 import { distinctUntilChanged, pairwise, startWith } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
@@ -27,6 +35,7 @@ import { ProjectService } from '../../../../../api/project/project.service';
 import {
   CostCategory,
   DeclarationType,
+  DocumentType,
   DraftProjectClaim,
   FormType,
   InterimProjectType,
@@ -46,17 +55,11 @@ import { DrrTextareaComponent } from '../../../../shared/controls/drr-textarea/d
 import { FileService } from '../../../../shared/services/file.service';
 import { OptionsStore } from '../../../../store/options.store';
 import { ProfileStore } from '../../../../store/profile.store';
-import { DrrAttahcmentComponent } from '../../../drif-fp/drif-fp-step-11/drif-fp-attachment.component';
 import {
   ClaimForm,
   InvoiceAttachmentForm,
   InvoiceForm,
 } from '../drif-claim-form';
-
-export enum InvoiceDocumentType {
-  Invoice = 'Invoice',
-  ProofOfPayment = 'ProofOfPayment',
-}
 
 export class ClaimSummaryItem implements PreviousClaim {
   costCategory?: CostCategory;
@@ -70,6 +73,10 @@ export class ClaimSummaryItem implements PreviousClaim {
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    RxReactiveFormsModule,
+    MatFormFieldModule,
     MatStepperModule,
     MatIconModule,
     MatButtonModule,
@@ -86,7 +93,6 @@ export class ClaimSummaryItem implements PreviousClaim {
     DrrTextareaComponent,
     DrrCurrencyInputComponent,
     DrrFileUploadComponent,
-    DrrAttahcmentComponent,
   ],
   templateUrl: './drif-claim-create.component.html',
   styleUrl: './drif-claim-create.component.scss',
@@ -104,8 +110,8 @@ export class DrifClaimCreateComponent {
   toastService = inject(HotToastService);
   fileService = inject(FileService);
 
-  invoiceDocumentType = InvoiceDocumentType.Invoice;
-  proofOfPaymentDocumentType = InvoiceDocumentType.ProofOfPayment;
+  invoiceDocumentType = DocumentType.Invoice;
+  proofOfPaymentDocumentType = DocumentType.ProofOfPayment;
 
   projectId?: string;
   reportId?: string;
@@ -294,7 +300,7 @@ export class DrifClaimCreateComponent {
 
             const formData = new ClaimForm({
               expenditure: {
-                skipClaimReport: false, // claim.skipClaimReport,
+                skipClaimReport: undefined, // claim.skipClaimReport,
                 claimComment: claim.claimComment,
                 invoices: claim.invoices,
               },
@@ -591,7 +597,7 @@ export class DrifClaimCreateComponent {
   uploadFiles(
     files: any,
     invoiceControl: AbstractControl,
-    docType: InvoiceDocumentType,
+    docType: DocumentType,
   ) {
     files.forEach(async (file: any) => {
       if (file == null) {

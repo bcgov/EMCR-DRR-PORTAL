@@ -691,6 +691,7 @@
     "ClaimsReporting": "Claims Contact - Claims Reporting"
   },
   "claim": {
+    "skipClaimReport": "Do you have any claims to report?",
     "invoiceNumber": "Invoice Number",
     "invoiceDate": "Date of Invoice",
     "workStartDate": "Start Date",
