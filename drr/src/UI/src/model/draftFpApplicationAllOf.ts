@@ -164,6 +164,8 @@ export type DraftFpApplicationAllOf = {
   /** @nullable */
   operationAndMaintenanceComments?: string;
   /** @nullable */
+  originalTotalProjectCost?: number;
+  /** @nullable */
   otherEngagement?: YesNoOption;
   /** @nullable */
   otherEngagementComments?: string;

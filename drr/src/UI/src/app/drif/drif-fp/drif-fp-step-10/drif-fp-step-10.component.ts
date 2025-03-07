@@ -150,8 +150,6 @@ export class DrifFpStep10Component {
     }))
     .sort((a, b) => a.label.localeCompare(b.label));
 
-  // temp variable to store the original total project cost
-  originalTotalProjectCost?: number;
   // TODO: temp solution to overcome the issue of the total project cost not being updated
   totalProjectCostCopy = new FormControl();
 
@@ -185,17 +183,6 @@ export class DrifFpStep10Component {
       .subscribe((value) => {
         this.totalProjectCostCopy.setValue(value);
         this.calculateRemainingAmount();
-
-        if (value === null) {
-          return;
-        }
-
-        if (
-          this.originalTotalProjectCost === undefined &&
-          !this.originalTotalProjectCost
-        ) {
-          this.originalTotalProjectCost = value;
-        }
 
         const totalProjectCostChangeComments = this.budgetForm.get(
           'totalProjectCostChangeComments',
@@ -368,7 +355,7 @@ export class DrifFpStep10Component {
   hasTotalProjectCostChanged() {
     return (
       this.budgetForm.get('totalProjectCost')?.value !==
-      this.originalTotalProjectCost
+      this.budgetForm.get('originalTotalProjectCost')?.value
     );
   }
 
