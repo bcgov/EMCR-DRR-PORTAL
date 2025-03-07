@@ -256,6 +256,8 @@ export class DrifClaimCreateComponent {
                 return;
               }
 
+              this.calculateClaimSummary();
+
               this.claimForm
                 ?.get('declaration.authorizedRepresentativeStatement')
                 ?.reset();
@@ -382,11 +384,7 @@ export class DrifClaimCreateComponent {
 
     // iterate over invoices and remove attachments if they are empty
     claimForm.expenditure.invoices?.forEach((invoice) => {
-      if (invoice.attachments) {
-        invoice.attachments = invoice.attachments.filter(
-          (attachment) => attachment.id,
-        );
-      }
+      invoice.attachments = [];
     });
 
     return {
@@ -709,7 +707,50 @@ export class DrifClaimCreateComponent {
   }
 
   calculateClaimSummary() {
-    // TODO: calculate 
-    this.claimSummaryItemsDataSource.data = this.previousClaimSummaryItems;
+    const currentClaimSummary: { [key: string]: number } = {};
+
+    this.getInvoiceFormArray()?.controls.forEach((control) => {
+      const costCategory = control.get('costCategory')?.value;
+      const claimAmount = control.get('claimAmount')?.value;
+
+      if (costCategory && claimAmount) {
+        if (!currentClaimSummary[costCategory]) {
+          currentClaimSummary[costCategory] = 0;
+        }
+        currentClaimSummary[costCategory] += claimAmount;
+      }
+    });
+
+    // combite current claim cost category with previous claims cost categories
+    // check if current claim has got the same cost category and add the current claim amount on top of the previous claim amount
+    // otherwise insert current claim amount as new cost category
+    const previousClaimSummary = this.previousClaimSummaryItems.map(
+      (claimSummary) => {
+        const currentClaimAmount =
+          currentClaimSummary[claimSummary.costCategory!];
+        if (currentClaimAmount) {
+          claimSummary.currentClaim = currentClaimAmount;
+        }
+        return claimSummary;
+      },
+    );
+
+    // add new cost categories from current claim
+    Object.keys(currentClaimSummary).forEach((currentCostCategory) => {
+      if (
+        !previousClaimSummary.some(
+          (claimSummary) => claimSummary.costCategory === currentCostCategory,
+        )
+      ) {
+        previousClaimSummary.push({
+          costCategory: currentCostCategory as CostCategory,
+          currentClaim: currentClaimSummary[currentCostCategory],
+          totalForProject: 0,
+          originalEstimate: 0,
+        });
+      }
+    });
+
+    this.claimSummaryItemsDataSource.data = previousClaimSummary;
   }
 }
