@@ -209,7 +209,7 @@ namespace EMCR.DRR.API.Utilities.TestData
             .RuleFor(a => a.CostEffectiveComments, f => f.Lorem.Sentence())
             .RuleFor(a => a.PreviousResponse, f => f.Random.Enum<YesNoOption>())
             .RuleFor(a => a.PreviousResponseCost, (f, a) => a.PreviousResponse == YesNoOption.Yes ? f.Random.Number(10, 1000) * 10 : null)
-            .RuleFor(a => a.PreviousResponseComments, (f, a) => a.PreviousResponse == YesNoOption.Yes ? f.Lorem.Sentence() : null)
+            .RuleFor(a => a.PreviousResponseComments, (f, a) => f.Lorem.Sentence())
             .RuleFor(a => a.CostConsiderationsApplied, f => f.Random.Bool())
             .RuleFor(a => a.CostConsiderations, (f, a) => a.CostConsiderationsApplied == true ? Enumerable.Range(0, f.Random.Int(1, 5)).Select(x => f.Lorem.Word()).ToList() : null)
             .RuleFor(a => a.CostConsiderationsComments, (f, a) => a.CostConsiderationsApplied == true ? f.Lorem.Sentence() : null)
