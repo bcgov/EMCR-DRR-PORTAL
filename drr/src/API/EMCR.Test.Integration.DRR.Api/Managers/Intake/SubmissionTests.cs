@@ -85,7 +85,8 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var userInfo = GetTestUserInfo();
             //var userInfo = GetCRAFTUserInfo();
 
-            var eoi = mapper.Map<EoiApplication>(CreateNewTestEOIApplication());
+            //var eoi = mapper.Map<EoiApplication>(CreateNewTestEOIApplication());
+            var eoi = mapper.Map<EoiApplication>(TestHelper.CreateNewTestEOIApplication());
             eoi.Status = SubmissionPortalStatus.EligibleInvited;
             eoi.AuthorizedRepresentativeStatement = true;
             eoi.FOIPPAConfirmation = true;
@@ -109,7 +110,8 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             fullProposal.Id.ShouldBe(fpId);
             fullProposal.EoiId.ShouldBe(eoiId);
 
-            var fpToSubmit = mapper.Map<FpApplication>(FillInFullProposal(mapper.Map<DraftFpApplication>(fullProposal)));
+            //var fpToSubmit = mapper.Map<FpApplication>(FillInFullProposal(mapper.Map<DraftFpApplication>(fullProposal)));
+            var fpToSubmit = mapper.Map<FpApplication>(TestHelper.FillInTestFpApplication(mapper.Map<DraftFpApplication>(fullProposal)));
             fpToSubmit.Submitter = eoi.Submitter;
             fpToSubmit.AuthorizedRepresentativeStatement = true;
             fpToSubmit.InformationAccuracyStatement = true;

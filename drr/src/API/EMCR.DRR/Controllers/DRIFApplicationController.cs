@@ -395,11 +395,11 @@ namespace EMCR.DRR.Controllers
 
         //Budget - 10
         public FundingStream? FundingStream { get; set; }
-        public decimal? OriginalTotalProjectCost { get; set; } //EstimatedTotal from EOI
+        public decimal? OriginalTotalProjectCost { get; set; } //For Display only - EstimatedTotal from the related EOI
         [Range(ApplicationValidators.FUNDING_MIN_VAL, ApplicationValidators.FUNDING_MAX_VAL)]
         [CurrencyNotNegativeForSubmission(typeof(FpApplication))]
         [Mandatory(typeof(FpApplication))]
-        public decimal? TotalProjectCost { get; set; } //EstimatedTotal from EOI
+        public decimal? TotalProjectCost { get; set; } //Same field as EstimatedTotal EOI
         public string? TotalProjectCostChangeComments { get; set; }
         [Range(ApplicationValidators.FUNDING_MIN_VAL, ApplicationValidators.FUNDING_MAX_VAL)]
         [CurrencyNotNegativeForSubmission(typeof(FpApplication))]
