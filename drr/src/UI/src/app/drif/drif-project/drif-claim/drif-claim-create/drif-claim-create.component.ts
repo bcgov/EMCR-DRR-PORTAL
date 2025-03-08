@@ -3,7 +3,6 @@ import { Component, HostListener, inject, ViewChild } from '@angular/core';
 import {
   AbstractControl,
   FormArray,
-  FormGroup,
   FormsModule,
   ReactiveFormsModule,
 } from '@angular/forms';
@@ -23,9 +22,8 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { HotToastService } from '@ngxpert/hot-toast';
 import {
-  AppFormGroup,
+  IFormGroup,
   RxFormBuilder,
-  RxFormGroup,
   RxReactiveFormsModule,
 } from '@rxweb/reactive-form-validators';
 import { distinctUntilChanged, pairwise, startWith } from 'rxjs';
@@ -60,6 +58,7 @@ import {
   InvoiceAttachmentForm,
   InvoiceForm,
 } from '../drif-claim-form';
+import { DrifClaimSummaryComponent } from '../drif-claim-summary/drif-claim-summary.component';
 
 export class ClaimSummaryItem implements PreviousClaim {
   costCategory?: CostCategory;
@@ -93,6 +92,7 @@ export class ClaimSummaryItem implements PreviousClaim {
     DrrTextareaComponent,
     DrrCurrencyInputComponent,
     DrrFileUploadComponent,
+    DrifClaimSummaryComponent,
   ],
   templateUrl: './drif-claim-create.component.html',
   styleUrl: './drif-claim-create.component.scss',
@@ -125,7 +125,7 @@ export class DrifClaimCreateComponent {
   @ViewChild(MatStepper) stepper!: MatStepper;
   stepperOrientation: StepperOrientation = 'horizontal';
 
-  claimForm?: RxFormGroup | FormGroup<any> | AppFormGroup<ClaimForm>;
+  claimForm?: IFormGroup<ClaimForm>;
   formChanged = false;
 
   previousClaimSummaryItems: ClaimSummaryItem[] = [];
@@ -341,7 +341,10 @@ export class DrifClaimCreateComponent {
               }
             });
 
-            this.claimForm = this.formBuilder.formGroup(ClaimForm, formData);
+            this.claimForm = this.formBuilder.formGroup(
+              ClaimForm,
+              formData,
+            ) as IFormGroup<ClaimForm>;
 
             this.formChanged = false;
 
