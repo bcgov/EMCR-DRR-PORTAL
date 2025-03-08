@@ -290,4 +290,8 @@ export class ProgressReportForm implements DraftProgressReport {
 
   @propObject(DeclarationForm)
   declaration?: DeclarationForm = new DeclarationForm({});
+
+  constructor(values: ProgressReportForm) {
+    Object.assign(this, values);
+  }
 }

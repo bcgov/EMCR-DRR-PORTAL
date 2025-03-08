@@ -373,29 +373,32 @@ export class DrifProgressReportCreateComponent {
           next: (report: DraftProgressReport) => {
             this.reportName = `${report.reportPeriod} Progress Report`;
 
-            report.workplan?.workplanActivities?.map((activity) => {
-              const activityForm = this.formBuilder.formGroup(
-                new WorkplanActivityForm(activity),
-              );
+            this.progressReportForm = this.formBuilder.formGroup(
+              new ProgressReportForm({
+                workplan: report.workplan,
+                eventInformation: report.eventInformation,
+                attachments: report.attachments,
+                declaration: {
+                  authorizedRepresentativeStatement: false,
+                  informationAccuracyStatement: false,
+                  // TODO: API needs to return submitter details if such have been saved
+                  // submitter: report.declaration,
+                },
+                projectType: report.projectType,
+              }),
+            ) as IFormGroup<ProgressReportForm>;
 
-              this.setValidationsForActivity(activityForm);
-              this.workplanActivitiesArray?.push(activityForm);
+            this.getActivitiesFormArray().controls.forEach((control) => {
+              this.setValidationsForActivity(control);
+              control.get('status')?.updateValueAndValidity();
             });
 
-            if (
-              report?.workplan?.fundingSignage
-                ? report?.workplan?.fundingSignage.length > 0
-                : false
-            ) {
+            if (!report?.workplan?.signageRequired) {
               this.getSignageFormArray().clear();
+              this.progressReportForm
+                .get('workplan.signageNotRequiredComments')
+                ?.setValidators(Validators.required);
             }
-            report.workplan?.fundingSignage?.map((signage) => {
-              const signageForm = this.formBuilder.formGroup(
-                new FundingSignageForm(signage),
-              );
-
-              this.getSignageFormArray()?.push(signageForm);
-            });
 
             this.progressReportForm
               .get('workplan.fundingSourcesChanged')
@@ -403,13 +406,9 @@ export class DrifProgressReportCreateComponent {
                 const comment = this.progressReportForm.get(
                   'workplan.fundingSourcesChangedComment',
                 );
-
-                if (value) {
-                  comment?.addValidators(Validators.required);
-                } else {
-                  comment?.removeValidators(Validators.required);
-                }
-
+                value
+                  ? comment?.addValidators(Validators.required)
+                  : comment?.removeValidators(Validators.required);
                 comment?.updateValueAndValidity();
               });
 
@@ -419,13 +418,9 @@ export class DrifProgressReportCreateComponent {
                 const comment = this.progressReportForm.get(
                   'workplan.outstandingIssuesComments',
                 );
-
-                if (value) {
-                  comment?.addValidators(Validators.required);
-                } else {
-                  comment?.removeValidators(Validators.required);
-                }
-
+                value
+                  ? comment?.addValidators(Validators.required)
+                  : comment?.removeValidators(Validators.required);
                 comment?.updateValueAndValidity();
               });
 
@@ -451,18 +446,6 @@ export class DrifProgressReportCreateComponent {
                 comment?.updateValueAndValidity();
               });
 
-            report.eventInformation?.pastEvents?.map((event) => {
-              this.getPastEventsArray()?.push(
-                this.formBuilder.formGroup(new PastEventForm(event)),
-              );
-            });
-
-            report.eventInformation?.upcomingEvents?.map((event) => {
-              this.getUpcomingEventsArray()?.push(
-                this.formBuilder.formGroup(new ProjectEventForm(event)),
-              );
-            });
-
             this.eventInformationForm
               ?.get('eventsOccurredSinceLastReport')
               ?.valueChanges.subscribe((value) => {
@@ -487,14 +470,6 @@ export class DrifProgressReportCreateComponent {
                   this.getUpcomingEventsArray()?.clear();
                 }
               });
-
-            report.attachments?.map((attachment) => {
-              const attachmentForm = this.formBuilder.formGroup(
-                new AttachmentForm(attachment),
-              );
-
-              this.getAttachmentsFormArray().push(attachmentForm);
-            });
 
             this.progressReportForm
               .get('workplan.projectProgress')
@@ -555,7 +530,27 @@ export class DrifProgressReportCreateComponent {
                 aheadOfScheduleComments?.updateValueAndValidity();
               });
 
-            this.progressReportForm.patchValue(report);
+            this.progressReportForm
+              .get('workplan.signageRequired')
+              ?.valueChanges.subscribe((value) => {
+                const signageNotRequiredComments = this.progressReportForm.get(
+                  'workplan.signageNotRequiredComments',
+                );
+
+                if (value) {
+                  signageNotRequiredComments?.clearValidators();
+                  signageNotRequiredComments?.reset();
+                  this.addSignage();
+                } else {
+                  signageNotRequiredComments?.addValidators(
+                    Validators.required,
+                  );
+                  this.getSignageFormArray()?.clear();
+                }
+
+                signageNotRequiredComments?.updateValueAndValidity();
+              });
+
             resolve();
           },
           error: () => {
