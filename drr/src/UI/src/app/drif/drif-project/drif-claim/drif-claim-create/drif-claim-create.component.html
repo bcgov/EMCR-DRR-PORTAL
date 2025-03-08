@@ -479,7 +479,10 @@
       [stepControl]="claimForm?.get('declaraion')!"
       [errorMessage]="'stepError' | transloco"
     >
-      <div></div>
+      <drif-claim-summary
+        [claimForm]="claimForm!"
+        [isReadOnlyView]="false"
+      ></drif-claim-summary>
       <div class="drr-stepper-actions">
         <button mat-stroked-button color="primary" matStepperPrevious>
           Back

@@ -1,0 +1,145 @@
+<div class="summary-container" *transloco="let t">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>{{ t("steps.claimSummary.step1") }}</mat-card-title>
+      <mat-card-subtitle>Step 1</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div *ngFor="let invoice of getInvoiceFormArray()?.controls">
+        <div class="summary-row">
+          <drr-summary-item
+            [label]="t('claim.invoiceNumber')"
+            [rxFormControl]="invoice.get('invoiceNumber')"
+          ></drr-summary-item>
+          <drr-summary-item
+            [label]="t('claim.invoiceDate')"
+            [rxFormControl]="invoice.get('date')"
+            controlType="date"
+          ></drr-summary-item>
+          <drr-summary-item
+            [label]="t('claim.workStartDate')"
+            [rxFormControl]="invoice.get('workStartDate')"
+            controlType="date"
+          ></drr-summary-item>
+          <drr-summary-item
+            [label]="t('claim.workEndDate')"
+            [rxFormControl]="invoice.get('workEndDate')"
+            controlType="date"
+          ></drr-summary-item>
+          <drr-summary-item
+            [label]="t('claim.paymentDate')"
+            [rxFormControl]="invoice.get('paymentDate')"
+            controlType="date"
+          ></drr-summary-item>
+          <drr-summary-item
+            [label]="t('claim.supplierName')"
+            [rxFormControl]="invoice.get('supplierName')"
+          ></drr-summary-item>
+          <drr-summary-item
+            [label]="t('claim.costCategory')"
+            [rxFormControl]="invoice.get('costCategory')"
+            controlType="select"
+          ></drr-summary-item>
+        </div>
+        <div class="summary-row">
+          <drr-summary-item
+            [label]="t('claim.description')"
+            [rxFormControl]="invoice.get('description')"
+            controlType="textarea"
+          ></drr-summary-item>
+        </div>
+        <div class="summary-row">
+          <drr-summary-item
+            [label]="t('claim.grossAmount')"
+            [rxFormControl]="invoice.get('grossAmount')"
+            controlType="currency"
+          ></drr-summary-item>
+          <drr-summary-item
+            [label]="t('claim.taxRebate')"
+            [rxFormControl]="invoice.get('taxRebate')"
+            controlType="currency"
+          ></drr-summary-item>
+          <drr-summary-item
+            [label]="t('claim.totalPST')"
+            [rxFormControl]="invoice.get('totalPST')"
+            controlType="currency"
+          ></drr-summary-item>
+          <drr-summary-item
+            [label]="t('claim.totalGST')"
+            [rxFormControl]="invoice.get('totalGST')"
+            controlType="currency"
+          ></drr-summary-item>
+          <drr-summary-item
+            [label]="t('claim.claimAmount')"
+            [rxFormControl]="invoice.get('claimAmount')"
+            controlType="currency"
+          ></drr-summary-item>
+        </div>
+      </div>
+      <drr-summary-item
+        [label]="t('claim.claimComment')"
+        [rxFormControl]="claimForm?.get('expenditure.claimComment')"
+        controlType="textarea"
+      ></drr-summary-item>
+      <drr-summary-item
+        [label]="t('claim.totalClaimed')"
+        [rxFormControl]="claimForm?.get('expenditure.totalClaimed')"
+        controlType="currency"
+      ></drr-summary-item>
+      <drr-summary-item
+        [label]="t('claim.totalProjectAmount')"
+        [rxFormControl]="claimForm?.get('expenditure.totalProjectAmount')"
+        controlType="currency"
+      ></drr-summary-item>
+    </mat-card-content>
+  </mat-card>
+  <mat-card *ngIf="isReadOnlyView">
+    <mat-card-header>
+      <mat-card-title>{{ t("steps.claimSummary.step3") }}</mat-card-title>
+      <mat-card-subtitle>Step 3</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div>
+        <mat-label class="drr-label">{{ t("submitter") }}</mat-label>
+        <div class="summary-row">
+          <drr-summary-item
+            [label]="t('claim.firstName')"
+            [rxFormControl]="claimForm?.get('declaration.submitter.firstName')"
+          >
+          </drr-summary-item>
+
+          <drr-summary-item
+            [label]="t('claim.lastName')"
+            [rxFormControl]="claimForm?.get('declaration.submitter.lastName')"
+          >
+          </drr-summary-item>
+
+          <drr-summary-item
+            [label]="t('claim.title')"
+            [rxFormControl]="claimForm?.get('declaration.submitter.title')"
+          >
+          </drr-summary-item>
+
+          <drr-summary-item
+            [label]="t('claim.department')"
+            [rxFormControl]="claimForm?.get('declaration.submitter.department')"
+          >
+          </drr-summary-item>
+
+          <drr-summary-item
+            [label]="t('claim.phone')"
+            [rxFormControl]="claimForm?.get('declaration.submitter.phone')"
+            controlType="phone"
+          >
+          </drr-summary-item>
+
+          <drr-summary-item
+            [label]="t('claim.email')"
+            [rxFormControl]="claimForm?.get('declaration.submitter.email')"
+          >
+          </drr-summary-item>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

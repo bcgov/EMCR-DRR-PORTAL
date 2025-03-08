@@ -7,7 +7,7 @@
       class="grants-input"
       [label]="t('amount')"
       [rxFormControl]="funding.get('amount')"
-      [max]="1000000000"
+      [max]="999999999"
     ></drr-currency-input>
 
     <drr-input
@@ -33,16 +33,18 @@
       [rxFormControl]="funding.get('otherDescription')"
       [maxlength]="100"
     ></drr-input>
-    @if (i > 0) { @if (isMobile) {
-    <button mat-stroked-button color="warn" (click)="removeOtherSource(i)">
-      {{ t("delete") }}
-    </button>
-    <mat-divider style="width: 100%; margin: 1rem 0"></mat-divider>
-    } @else {
-    <button mat-mini-fab color="warn" (click)="removeOtherSource(i)">
-      <mat-icon>delete</mat-icon>
-    </button>
-    } }
+    @if (i > 0) {
+      @if (isMobile) {
+        <button mat-stroked-button color="warn" (click)="removeOtherSource(i)">
+          {{ t("delete") }}
+        </button>
+        <mat-divider style="width: 100%; margin: 1rem 0"></mat-divider>
+      } @else {
+        <button mat-mini-fab color="warn" (click)="removeOtherSource(i)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      }
+    }
   </div>
   <button
     *ngIf="fundingFormArray.enabled"

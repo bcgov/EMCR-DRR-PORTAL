@@ -7,7 +7,7 @@
       [id]="'estimatedTotal'"
       [label]="t('estimatedTotal')"
       [rxFormControl]="fundingInformationForm.get('estimatedTotal')"
-      [max]="1000000000"
+      [max]="999999999"
     ></drr-currency-input>
 
     <mat-label class="drr-label">{{ t("fundingRequest") }}</mat-label>
@@ -17,7 +17,7 @@
       [id]="'fundingRequest'"
       [label]="t('fundingRequest')"
       [rxFormControl]="fundingInformationForm.get('fundingRequest')"
-      [max]="1000000000"
+      [max]="999999999"
     ></drr-currency-input>
 
     <mat-label class="drr-label">{{ t("otherFunding") }}</mat-label>
@@ -25,10 +25,10 @@
       [rxFormControl]="fundingInformationForm.get('haveOtherFunding')"
     ></drr-radio-button>
 
-    @if(fundingInformationForm.get('haveOtherFunding')?.value === true) {
-    <drr-funding-list
-      [fundingFormArray]="getFormArray('otherFunding')"
-    ></drr-funding-list>
+    @if (fundingInformationForm.get("haveOtherFunding")?.value === true) {
+      <drr-funding-list
+        [fundingFormArray]="getFormArray('otherFunding')"
+      ></drr-funding-list>
     }
 
     <div
