@@ -5,4 +5,7 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type ProgressReportAllOf = { [key: string]: unknown };
+export type ProgressReportAllOf = {
+  authorizedRepresentativeStatement?: boolean;
+  informationAccuracyStatement?: boolean;
+};

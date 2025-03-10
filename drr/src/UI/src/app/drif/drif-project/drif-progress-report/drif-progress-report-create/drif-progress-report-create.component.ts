@@ -343,52 +343,13 @@ export class DrifProgressReportCreateComponent {
                 declaration: {
                   authorizedRepresentativeStatement: false,
                   informationAccuracyStatement: false,
-                  // TODO: API needs to return submitter details if such have been saved
-                  // submitter: report.declaration,
+                  authorizedRepresentative: report.authorizedRepresentative,
                 },
                 projectType: report.projectType,
               }),
             ) as IFormGroup<ProgressReportForm>;
 
-            const profileData = this.profileStore.getProfile();
-
-            const submitterForm = this.progressReportForm.get(
-              'declaration.submitter',
-            );
-            if (profileData.firstName?.()) {
-              submitterForm
-                ?.get('firstName')
-                ?.setValue(profileData.firstName(), { emitEvent: false });
-              submitterForm?.get('firstName')?.disable();
-            }
-            if (profileData.lastName?.()) {
-              submitterForm
-                ?.get('lastName')
-                ?.setValue(profileData.lastName(), { emitEvent: false });
-              submitterForm?.get('lastName')?.disable();
-            }
-            if (profileData.title?.()) {
-              submitterForm?.get('title')?.setValue(profileData.title(), {
-                emitEvent: false,
-              });
-            }
-            if (profileData.department?.()) {
-              submitterForm
-                ?.get('department')
-                ?.setValue(profileData.department(), {
-                  emitEvent: false,
-                });
-            }
-            if (profileData.phone?.()) {
-              submitterForm?.get('phone')?.setValue(profileData.phone(), {
-                emitEvent: false,
-              });
-            }
-            if (profileData.email?.()) {
-              submitterForm?.get('email')?.setValue(profileData.email(), {
-                emitEvent: false,
-              });
-            }
+            this.setAuthorizedRepresentative();
 
             this.getActivitiesFormArray().controls.forEach((control) => {
               this.setValidationsForActivity(control);
@@ -570,6 +531,63 @@ export class DrifProgressReportCreateComponent {
           },
         });
     });
+  }
+
+  setAuthorizedRepresentative() {
+    const profileData = this.profileStore.getProfile();
+
+    const authorizedRepresentativeForm = this.progressReportForm.get(
+      'declaration.authorizedRepresentative',
+    );
+    if (
+      profileData.firstName?.() &&
+      !authorizedRepresentativeForm?.value?.firstName
+    ) {
+      authorizedRepresentativeForm
+        ?.get('firstName')
+        ?.setValue(profileData.firstName(), { emitEvent: false });
+      authorizedRepresentativeForm?.get('firstName')?.disable();
+    }
+    if (
+      profileData.lastName?.() &&
+      !authorizedRepresentativeForm?.value?.lastName
+    ) {
+      authorizedRepresentativeForm
+        ?.get('lastName')
+        ?.setValue(profileData.lastName(), { emitEvent: false });
+      authorizedRepresentativeForm?.get('lastName')?.disable();
+    }
+    if (profileData.title?.() && !authorizedRepresentativeForm?.value?.title) {
+      authorizedRepresentativeForm
+        ?.get('title')
+        ?.setValue(profileData.title(), {
+          emitEvent: false,
+        });
+    }
+    if (
+      profileData.department?.() &&
+      !authorizedRepresentativeForm?.value?.department
+    ) {
+      authorizedRepresentativeForm
+        ?.get('department')
+        ?.setValue(profileData.department(), {
+          emitEvent: false,
+        });
+    }
+    if (profileData.phone?.() && !authorizedRepresentativeForm?.value?.phone) {
+      authorizedRepresentativeForm
+        ?.get('phone')
+        ?.setValue(profileData.phone(), {
+          emitEvent: false,
+        });
+    }
+    if (profileData.email?.() && !authorizedRepresentativeForm?.value?.email) {
+      authorizedRepresentativeForm
+        ?.get('email')
+        ?.setValue(profileData.email(), {
+          emitEvent: false,
+        });
+    }
   }
 
   stepperSelectionChange(event: StepperSelectionEvent) {
