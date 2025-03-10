@@ -730,6 +730,7 @@ namespace EMCR.DRR.API.Resources.Reports
             {
                 ctx.LoadPropertyAsync(pr, nameof(drr_projectprogress.drr_Project), ct),
                 ctx.LoadPropertyAsync(pr, nameof(drr_projectprogress.drr_ProjectReport), ct),
+                ctx.LoadPropertyAsync(pr, nameof(drr_projectprogress.drr_AuthorizedRepresentativeContact), ct),
                 ctx.LoadPropertyAsync(pr, nameof(drr_projectprogress.drr_drr_projectprogress_drr_projectworkplanactivity_ProjectProgressReport), ct),
                 ctx.LoadPropertyAsync(pr, nameof(drr_projectprogress.drr_drr_projectprogress_drr_projectevent_ProjectProgress), ct),
                 ctx.LoadPropertyAsync(pr, nameof(drr_projectprogress.drr_drr_projectprogress_drr_projectpastevent_ProjectProgress), ct),
