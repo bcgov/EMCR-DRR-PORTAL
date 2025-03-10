@@ -837,6 +837,9 @@ namespace EMCR.DRR.Managers.Intake
         public WorkplanDetails? Workplan { get; set; }
         public EventInformationDetails? EventInformation { get; set; }
         public IEnumerable<BcGovDocument>? Attachments { get; set; }
+        public ContactDetails? AuthorizedRepresentative { get; set; }
+        public bool? AuthorizedRepresentativeStatement { get; set; }
+        public bool? InformationAccuracyStatement { get; set; }
     }
 
     public class ProjectEvent

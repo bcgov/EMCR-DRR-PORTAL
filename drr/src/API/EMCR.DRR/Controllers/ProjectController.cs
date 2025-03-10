@@ -362,7 +362,8 @@ namespace EMCR.DRR.Controllers
 
     public class ProgressReport : DraftProgressReport
     {
-
+        public required bool AuthorizedRepresentativeStatement { get; set; }
+        public required bool InformationAccuracyStatement { get; set; }
     }
 
     public class DraftProgressReport
@@ -378,6 +379,7 @@ namespace EMCR.DRR.Controllers
         public EventInformation? EventInformation { get; set; }
         public ProgressReportStatus? Status { get; set; }
         public IEnumerable<Attachment>? Attachments { get; set; }
+        public ContactDetails? AuthorizedRepresentative { get; set; }
     }
 
     public class Forecast : DraftForecast

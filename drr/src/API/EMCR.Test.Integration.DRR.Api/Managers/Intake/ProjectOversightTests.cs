@@ -133,6 +133,25 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             updatedProgressReport.EventInformation.UpcomingEvents.Count().ShouldBe(1);
         }
 
+        //[Test]
+        //public async Task CanSubmitProgressReport()
+        //{
+        //    //var userInfo = GetTestUserInfo();
+        //    var userInfo = GetCRAFTUserInfo();
+
+        //    var progressReportId = "DRIF-PR-1176";
+        //    var progressReport = mapper.Map<EMCR.DRR.Controllers.ProgressReport>((await manager.Handle(new DrrProgressReportsQuery { Id = progressReportId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+
+        //    progressReport.Status = EMCR.DRR.Controllers.ProgressReportStatus.Draft;
+        //    progressReport.AuthorizedRepresentativeStatement = true;
+        //    progressReport.InformationAccuracyStatement = true;
+
+        //    await manager.Handle(new SubmitProgressReportCommand { ProgressReport = progressReport, UserInfo = userInfo });
+
+        //    var updatedProgressReport = mapper.Map<DraftProgressReport>((await manager.Handle(new DrrProgressReportsQuery { Id = progressReport.Id, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+        //    updatedProgressReport.Status.ShouldBe(EMCR.DRR.Controllers.ProgressReportStatus.Submitted);
+        //}
+
         [Test]
         public async Task CanUpdateClaim()
         {
