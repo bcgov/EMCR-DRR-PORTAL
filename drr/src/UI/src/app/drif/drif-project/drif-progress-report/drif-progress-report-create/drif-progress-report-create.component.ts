@@ -41,6 +41,7 @@ import {
   DraftProgressReport,
   FormType,
   InterimProjectType,
+  ProgressReport,
   ProjectProgressStatus,
   RecordType,
   SignageType,
@@ -628,7 +629,7 @@ export class DrifProgressReportCreateComponent {
         this.projectId,
         this.reportId,
         this.progressReportId,
-        this.progressReportForm.getRawValue(),
+        this.getFormValue(),
       )
       .subscribe({
         next: () => {
@@ -684,7 +685,7 @@ export class DrifProgressReportCreateComponent {
         this.projectId,
         this.reportId,
         this.progressReportId,
-        this.progressReportForm.getRawValue(),
+        this.getFormValue(),
       )
       .subscribe({
         next: (response) => {
@@ -699,6 +700,20 @@ export class DrifProgressReportCreateComponent {
           console.error(error);
         },
       });
+  }
+
+  getFormValue(): ProgressReport {
+    const rawValue = this.progressReportForm.getRawValue();
+    return {
+      workplan: rawValue.workplan,
+      eventInformation: rawValue.eventInformation,
+      attachments: rawValue.attachments,
+      authorizedRepresentative: rawValue.declaration.authorizedRepresentative,
+      authorizedRepresentativeStatement:
+        rawValue.declaration.authorizedRepresentativeStatement,
+      informationAccuracyStatement:
+        rawValue.declaration.informationAccuracyStatement,
+    };
   }
 
   getActivitiesFormArray() {
