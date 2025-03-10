@@ -673,7 +673,7 @@ export class DrifProgressReportCreateComponent {
           this.toastService.close();
           this.toastService.success('Your report has been received.');
 
-          this.goBack();
+          this.router.navigate(['drif-projects', this.projectId]);
         },
         error: (error) => {
           this.toastService.close();
