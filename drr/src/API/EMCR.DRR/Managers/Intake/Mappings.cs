@@ -242,12 +242,16 @@ namespace EMCR.DRR.Managers.Intake
                 ;
 
             CreateMap<DraftProgressReport, Controllers.ProgressReport>()
+                .ForMember(dest => dest.AuthorizedRepresentativeStatement, opt => opt.Ignore())
+                .ForMember(dest => dest.InformationAccuracyStatement, opt => opt.Ignore())
                 .ReverseMap()
                 ;
 
             CreateMap<DraftProgressReport, ProgressReportDetails>()
                 .ForMember(dest => dest.CrmId, opt => opt.Ignore())
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => IntakeProgressReportStatusMapper(src.Status)))
+                .ForMember(dest => dest.AuthorizedRepresentativeStatement, opt => opt.Ignore())
+                .ForMember(dest => dest.InformationAccuracyStatement, opt => opt.Ignore())
                 .AfterMap((src, dest) =>
                 {
                     foreach (var prop in dest.GetType().GetProperties())
@@ -277,6 +281,8 @@ namespace EMCR.DRR.Managers.Intake
                 })
                 .ReverseMap()
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => DrrProgressReportStatusMapper(src.Status)))
+                .ForMember(dest => dest.AuthorizedRepresentativeStatement, opt => opt.Ignore())
+                .ForMember(dest => dest.InformationAccuracyStatement, opt => opt.Ignore())
                 ;
 
             CreateMap<DraftForecast, Controllers.Forecast>()
