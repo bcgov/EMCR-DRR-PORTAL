@@ -4,8 +4,11 @@
       <mat-card-title>{{ t("steps.claimSummary.step1") }}</mat-card-title>
       <mat-card-subtitle>Step 1</mat-card-subtitle>
     </mat-card-header>
-    <mat-card-content>
-      <div *ngFor="let invoice of getInvoiceFormArray()?.controls">
+    <mat-card-content style="gap: 2rem">
+      <div
+        class="invoice-summary-row"
+        *ngFor="let invoice of getInvoiceFormArray()?.controls"
+      >
         <div class="summary-row">
           <drr-summary-item
             [label]="t('claim.invoiceNumber')"
@@ -74,6 +77,26 @@
             [rxFormControl]="invoice.get('claimAmount')"
             controlType="currency"
           ></drr-summary-item>
+        </div>
+        <div class="summary-row">
+          <div
+            *ngFor="let attachment of getInvoiceAttachments(invoice).controls"
+          >
+            <drr-summary-item
+              [label]="t('attachments.name')"
+              [rxFormControl]="attachment.get('name')"
+            >
+            </drr-summary-item>
+            <button
+              *ngIf="isReadOnlyView"
+              style="align-self: center"
+              mat-button
+              color="primary"
+              (click)="onDownloadFile(attachment.get('id')?.value)"
+            >
+              Download
+            </button>
+          </div>
         </div>
       </div>
       <drr-summary-item
