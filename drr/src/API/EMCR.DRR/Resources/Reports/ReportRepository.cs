@@ -105,6 +105,7 @@ namespace EMCR.DRR.API.Resources.Reports
 
             var loadTasks = new List<Task>
             {
+                ctx.LoadPropertyAsync(existingProgressReport, nameof(drr_projectprogress.drr_AuthorizedRepresentativeContact)),
                 ctx.LoadPropertyAsync(existingProgressReport, nameof(drr_projectprogress.drr_drr_projectprogress_drr_projectworkplanactivity_ProjectProgressReport)),
                 ctx.LoadPropertyAsync(existingProgressReport, nameof(drr_projectprogress.drr_drr_projectprogress_drr_projectpastevent_ProjectProgress)),
                 ctx.LoadPropertyAsync(existingProgressReport, nameof(drr_projectprogress.drr_drr_projectprogress_drr_projectevent_ProjectProgress)),
@@ -133,6 +134,9 @@ namespace EMCR.DRR.API.Resources.Reports
                 projectActivityMasterListTask,
             ]);
             var projectActivityMasterList = projectActivityMasterListTask.Result;
+            var authorizedRep = drrProgressReport.drr_AuthorizedRepresentativeContact;
+            if (authorizedRep != null) SaveProgressReportAuthrizedRepresentative(ctx, drrProgressReport, authorizedRep, existingProgressReport.drr_AuthorizedRepresentativeContact);
+
 
             AddWorkplanActivities(ctx, drrProgressReport, projectActivityMasterList, existingProgressReport);
             AddPastEvents(ctx, drrProgressReport, existingProgressReport);
@@ -260,6 +264,21 @@ namespace EMCR.DRR.API.Resources.Reports
             //return new ManageReportCommandResult { Id = $"DRIF-{createdReport.drr_autonumber}" };
             return new ManageReportCommandResult { Id = createdReport.drr_name };
 
+        }
+
+        private static void SaveProgressReportAuthrizedRepresentative(DRRContext drrContext, drr_projectprogress progressReport, contact authorizedRep, contact existingRep)
+        {
+            if (existingRep == null || existingRep.contactid == null || authorizedRep.contactid != existingRep.contactid)
+            {
+                drrContext.AddTocontacts(authorizedRep);
+                drrContext.AddLink(authorizedRep, nameof(authorizedRep.drr_contact_drr_projectprogress_AuthorizedRepresentativeContact), progressReport);
+                drrContext.SetLink(progressReport, nameof(drr_projectprogress.drr_AuthorizedRepresentativeContact), authorizedRep);
+            }
+            else
+            {
+                drrContext.AttachTo(nameof(drrContext.contacts), authorizedRep);
+                drrContext.UpdateObject(authorizedRep);
+            }
         }
 
         private void RemoveOldProgressReportData(DRRContext ctx, drr_projectprogress existingProgressReport, drr_projectprogress drrProgressReport)
