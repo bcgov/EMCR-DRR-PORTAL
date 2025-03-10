@@ -555,7 +555,9 @@
     "Submitted": "Submitted",
     "Draft": "Draft",
     "UpdateNeeded": "Update Needed",
-    "Skipped": "Skipped"
+    "Skipped": "Skipped",
+    "view": "View",
+    "edit": "Edit"
   },
   "interimReport": "Interim Report",
   "NotMet": "Not Met",
