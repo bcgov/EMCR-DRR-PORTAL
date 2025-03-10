@@ -136,15 +136,25 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
         //[Test]
         //public async Task CanSubmitProgressReport()
         //{
+        //    var uniqueSignature = TestPrefix + "-" + Guid.NewGuid().ToString().Substring(0, 4);
         //    //var userInfo = GetTestUserInfo();
         //    var userInfo = GetCRAFTUserInfo();
 
-        //    var progressReportId = "DRIF-PR-1176";
+        //    var progressReportId = "DRIF-PR-1147";
         //    var progressReport = mapper.Map<EMCR.DRR.Controllers.ProgressReport>((await manager.Handle(new DrrProgressReportsQuery { Id = progressReportId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
-
+        //    progressReport = FillInProgressReport(progressReport, uniqueSignature);
         //    progressReport.Status = EMCR.DRR.Controllers.ProgressReportStatus.Draft;
         //    progressReport.AuthorizedRepresentativeStatement = true;
         //    progressReport.InformationAccuracyStatement = true;
+        //    progressReport.AuthorizedRepresentative = new EMCR.DRR.Controllers.ContactDetails
+        //    {
+        //        FirstName = "Joe",
+        //        LastName = "autotest",
+        //        Department = "dep",
+        //        Title = "title",
+        //        Email = "email@test.com",
+        //        Phone = "6041234567"
+        //    };
 
         //    await manager.Handle(new SubmitProgressReportCommand { ProgressReport = progressReport, UserInfo = userInfo });
 
