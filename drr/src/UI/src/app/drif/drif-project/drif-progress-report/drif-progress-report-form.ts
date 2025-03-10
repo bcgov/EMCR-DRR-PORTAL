@@ -256,7 +256,7 @@ export class EventInformationForm implements EventInformation {
 export class DeclarationForm {
   @required()
   @propObject(ContactDetailsForm)
-  submitter?: ContactDetailsForm = new ContactDetailsForm({});
+  authorizedRepresentative?: ContactDetailsForm = new ContactDetailsForm({});
 
   @prop()
   @required()

@@ -5,6 +5,7 @@
  * OpenAPI spec version: 1.0.0
  */
 import type { Attachment } from './attachment';
+import type { ContactDetails } from './contactDetails';
 import type { EventInformation } from './eventInformation';
 import type { InterimProjectType } from './interimProjectType';
 import type { ProgressReportStatus } from './progressReportStatus';
@@ -13,6 +14,8 @@ import type { Workplan } from './workplan';
 export interface DraftProgressReport {
   /** @nullable */
   attachments?: Attachment[];
+  /** @nullable */
+  authorizedRepresentative?: ContactDetails;
   /** @nullable */
   dateApproved?: string;
   /** @nullable */
