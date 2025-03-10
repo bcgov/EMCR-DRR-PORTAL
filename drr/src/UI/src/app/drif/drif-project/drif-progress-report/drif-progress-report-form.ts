@@ -150,7 +150,6 @@ export class WorkplanForm implements Workplan {
   projectCompletionPercentage?: number;
 
   @prop()
-  @required()
   @minNumber({ value: 0 })
   @maxNumber({ value: 100 })
   constructionCompletionPercentage?: number;
@@ -180,7 +179,6 @@ export class WorkplanForm implements Workplan {
   fundingSourcesChangedComment?: string;
 
   @prop()
-  @required()
   signageRequired?: boolean;
 
   @propArray(FundingSignageForm)

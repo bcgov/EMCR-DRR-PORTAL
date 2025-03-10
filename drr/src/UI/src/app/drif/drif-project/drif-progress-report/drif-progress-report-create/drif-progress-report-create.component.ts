@@ -280,44 +280,6 @@ export class DrifProgressReportCreateComponent {
         FormType.Report,
       );
 
-      const profileData = this.profileStore.getProfile();
-
-      const submitterForm = this.progressReportForm.get(
-        'declaration.submitter',
-      );
-      if (profileData.firstName?.()) {
-        submitterForm
-          ?.get('firstName')
-          ?.setValue(profileData.firstName(), { emitEvent: false });
-        submitterForm?.get('firstName')?.disable();
-      }
-      if (profileData.lastName?.()) {
-        submitterForm
-          ?.get('lastName')
-          ?.setValue(profileData.lastName(), { emitEvent: false });
-        submitterForm?.get('lastName')?.disable();
-      }
-      if (profileData.title?.()) {
-        submitterForm?.get('title')?.setValue(profileData.title(), {
-          emitEvent: false,
-        });
-      }
-      if (profileData.department?.()) {
-        submitterForm?.get('department')?.setValue(profileData.department(), {
-          emitEvent: false,
-        });
-      }
-      if (profileData.phone?.()) {
-        submitterForm?.get('phone')?.setValue(profileData.phone(), {
-          emitEvent: false,
-        });
-      }
-      if (profileData.email?.()) {
-        submitterForm?.get('email')?.setValue(profileData.email(), {
-          emitEvent: false,
-        });
-      }
-
       this.load().then(() => {
         this.formChanged = false;
         setTimeout(() => {
@@ -388,17 +350,50 @@ export class DrifProgressReportCreateComponent {
               }),
             ) as IFormGroup<ProgressReportForm>;
 
+            const profileData = this.profileStore.getProfile();
+
+            const submitterForm = this.progressReportForm.get(
+              'declaration.submitter',
+            );
+            if (profileData.firstName?.()) {
+              submitterForm
+                ?.get('firstName')
+                ?.setValue(profileData.firstName(), { emitEvent: false });
+              submitterForm?.get('firstName')?.disable();
+            }
+            if (profileData.lastName?.()) {
+              submitterForm
+                ?.get('lastName')
+                ?.setValue(profileData.lastName(), { emitEvent: false });
+              submitterForm?.get('lastName')?.disable();
+            }
+            if (profileData.title?.()) {
+              submitterForm?.get('title')?.setValue(profileData.title(), {
+                emitEvent: false,
+              });
+            }
+            if (profileData.department?.()) {
+              submitterForm
+                ?.get('department')
+                ?.setValue(profileData.department(), {
+                  emitEvent: false,
+                });
+            }
+            if (profileData.phone?.()) {
+              submitterForm?.get('phone')?.setValue(profileData.phone(), {
+                emitEvent: false,
+              });
+            }
+            if (profileData.email?.()) {
+              submitterForm?.get('email')?.setValue(profileData.email(), {
+                emitEvent: false,
+              });
+            }
+
             this.getActivitiesFormArray().controls.forEach((control) => {
               this.setValidationsForActivity(control);
               control.get('status')?.updateValueAndValidity();
             });
-
-            if (!report?.workplan?.signageRequired) {
-              this.getSignageFormArray().clear();
-              this.progressReportForm
-                .get('workplan.signageNotRequiredComments')
-                ?.setValidators(Validators.required);
-            }
 
             this.progressReportForm
               .get('workplan.fundingSourcesChanged')
@@ -530,26 +525,43 @@ export class DrifProgressReportCreateComponent {
                 aheadOfScheduleComments?.updateValueAndValidity();
               });
 
-            this.progressReportForm
-              .get('workplan.signageRequired')
-              ?.valueChanges.subscribe((value) => {
-                const signageNotRequiredComments = this.progressReportForm.get(
-                  'workplan.signageNotRequiredComments',
-                );
+            if (!report?.workplan?.signageRequired) {
+              this.getSignageFormArray().clear();
+              this.progressReportForm
+                .get('workplan.signageNotRequiredComments')
+                ?.setValidators(Validators.required);
+            }
 
-                if (value) {
-                  signageNotRequiredComments?.clearValidators();
-                  signageNotRequiredComments?.reset();
-                  this.addSignage();
-                } else {
-                  signageNotRequiredComments?.addValidators(
-                    Validators.required,
-                  );
-                  this.getSignageFormArray()?.clear();
-                }
+            if (report.projectType === InterimProjectType.Stream2) {
+              this.progressReportForm
+                ?.get('signageRequired')
+                ?.addValidators(Validators.required);
+              this.progressReportForm
+                ?.get('constructionCompletionPercentage')
+                ?.addValidators(Validators.required);
 
-                signageNotRequiredComments?.updateValueAndValidity();
-              });
+              this.progressReportForm
+                .get('workplan.signageRequired')
+                ?.valueChanges.subscribe((value) => {
+                  const signageNotRequiredComments =
+                    this.progressReportForm.get(
+                      'workplan.signageNotRequiredComments',
+                    );
+
+                  if (value) {
+                    signageNotRequiredComments?.clearValidators();
+                    signageNotRequiredComments?.reset();
+                    this.addSignage();
+                  } else {
+                    signageNotRequiredComments?.addValidators(
+                      Validators.required,
+                    );
+                    this.getSignageFormArray()?.clear();
+                  }
+
+                  signageNotRequiredComments?.updateValueAndValidity();
+                });
+            }
 
             resolve();
           },
