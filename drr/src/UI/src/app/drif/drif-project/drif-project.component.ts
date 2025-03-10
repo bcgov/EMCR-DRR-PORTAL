@@ -21,11 +21,14 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { ProjectService } from '../../../api/project/project.service';
 import {
   Attachment,
+  ClaimStatus,
   ContactDetails,
   DraftDrrProject,
+  ForecastStatus,
   InterimReport,
   InterimReportStatus,
   PaymentCondition,
+  ProgressReportStatus,
 } from '../../../model';
 import { DrrInputComponent } from '../../shared/controls/drr-input/drr-input.component';
 import { DrifProjectContactDialogComponent } from './drif-project-contact-dialog.component';
@@ -44,7 +47,7 @@ export interface InterimSubReport {
   status?: string;
   dueDate?: string;
   submittedDate?: string;
-  actions?: [];
+  actions?: string[];
 }
 
 @Component({
@@ -102,6 +105,24 @@ export class DrifProjectComponent {
 
   attachmentsDataSource = new MatTableDataSource<Attachment>([]);
 
+  private progressReadonlyStatuses: ProgressReportStatus[] = [
+    ProgressReportStatus.Submitted,
+    ProgressReportStatus.Approved,
+    ProgressReportStatus.Skipped,
+  ];
+
+  private claimReadonlyStatuses: ClaimStatus[] = [
+    ClaimStatus.Submitted,
+    ClaimStatus.Approved,
+    ClaimStatus.Skipped,
+  ];
+
+  private forecastReadonlyStatuses: ForecastStatus[] = [
+    ForecastStatus.Submitted,
+    ForecastStatus.Approved,
+    ForecastStatus.Skipped,
+  ];
+
   ngOnInit() {
     this.projectId = this.route.snapshot.params['projectId'];
 
@@ -136,6 +157,11 @@ export class DrifProjectComponent {
               ),
               dueDate: report.dueDate,
               submittedDate: report.progressReport?.dateSubmitted,
+              actions: this.progressReadonlyStatuses.includes(
+                report.progressReport?.status!,
+              )
+                ? ['view']
+                : ['edit'],
             });
           }
           if (report.projectClaim) {
@@ -148,7 +174,12 @@ export class DrifProjectComponent {
                 `project.${report.projectClaim?.status!}`,
               ),
               dueDate: report.dueDate,
-              // submittedDate: report.projectClaim?.submittedDate,
+              submittedDate: report.projectClaim?.dateSubmitted,
+              actions: this.claimReadonlyStatuses.includes(
+                report.projectClaim?.status!,
+              )
+                ? ['view']
+                : ['edit'],
             });
           }
           if (report.forecast) {
@@ -161,7 +192,12 @@ export class DrifProjectComponent {
                 `project.${report.forecast?.status!}`,
               ),
               dueDate: report.dueDate,
-              // submittedDate: report.forecast?.submittedDate,
+              submittedDate: report.forecast?.dateSubmitted,
+              actions: this.forecastReadonlyStatuses.includes(
+                report.forecast?.status!,
+              )
+                ? ['view']
+                : ['edit'],
             });
           }
         });
@@ -187,7 +223,7 @@ export class DrifProjectComponent {
     ]);
   }
 
-  getSubReportRoute(subReport: InterimSubReport) {
+  getSubReportRoute(subReport: InterimSubReport, action: string) {
     const sectionToRouteMap = {
       [InterimSubReportSection.Progress]: 'progress-reports',
       [InterimSubReportSection.Claim]: 'claims',
@@ -201,7 +237,7 @@ export class DrifProjectComponent {
       subReport.parentId,
       sectionToRouteMap[subReport.section!],
       subReport.id,
-      'edit',
+      action,
     ];
   }
 
