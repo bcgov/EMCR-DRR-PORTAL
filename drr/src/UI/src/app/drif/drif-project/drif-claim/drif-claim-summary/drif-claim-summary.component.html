@@ -1,8 +1,7 @@
-<div class="summary-container" *transloco="let t">
+<div class="summary-container" *transloco="let t; read: 'claim'">
   <mat-card>
     <mat-card-header>
-      <mat-card-title>{{ t("steps.claimSummary.step1") }}</mat-card-title>
-      <mat-card-subtitle>Step 1</mat-card-subtitle>
+      <mat-card-title>{{ t("step2") }}</mat-card-title>
     </mat-card-header>
     <mat-card-content style="gap: 2rem">
       <div
@@ -11,69 +10,69 @@
       >
         <div class="summary-row">
           <drr-summary-item
-            [label]="t('claim.invoiceNumber')"
+            [label]="t('invoiceNumber')"
             [rxFormControl]="invoice.get('invoiceNumber')"
           ></drr-summary-item>
           <drr-summary-item
-            [label]="t('claim.invoiceDate')"
+            [label]="t('invoiceDate')"
             [rxFormControl]="invoice.get('date')"
             controlType="date"
           ></drr-summary-item>
           <drr-summary-item
-            [label]="t('claim.workStartDate')"
+            [label]="t('workStartDate')"
             [rxFormControl]="invoice.get('workStartDate')"
             controlType="date"
           ></drr-summary-item>
           <drr-summary-item
-            [label]="t('claim.workEndDate')"
+            [label]="t('workEndDate')"
             [rxFormControl]="invoice.get('workEndDate')"
             controlType="date"
           ></drr-summary-item>
           <drr-summary-item
-            [label]="t('claim.paymentDate')"
+            [label]="t('paymentDate')"
             [rxFormControl]="invoice.get('paymentDate')"
             controlType="date"
           ></drr-summary-item>
           <drr-summary-item
-            [label]="t('claim.supplierName')"
+            [label]="t('supplierName')"
             [rxFormControl]="invoice.get('supplierName')"
           ></drr-summary-item>
           <drr-summary-item
-            [label]="t('claim.costCategory')"
+            [label]="t('costCategory')"
             [rxFormControl]="invoice.get('costCategory')"
             controlType="select"
           ></drr-summary-item>
         </div>
         <div class="summary-row">
           <drr-summary-item
-            [label]="t('claim.description')"
+            [label]="t('description')"
             [rxFormControl]="invoice.get('description')"
             controlType="textarea"
           ></drr-summary-item>
         </div>
         <div class="summary-row">
           <drr-summary-item
-            [label]="t('claim.grossAmount')"
+            [label]="t('grossAmount')"
             [rxFormControl]="invoice.get('grossAmount')"
             controlType="currency"
           ></drr-summary-item>
           <drr-summary-item
-            [label]="t('claim.taxRebate')"
+            [label]="t('taxRebate')"
             [rxFormControl]="invoice.get('taxRebate')"
             controlType="currency"
           ></drr-summary-item>
           <drr-summary-item
-            [label]="t('claim.totalPST')"
+            [label]="t('totalPST')"
             [rxFormControl]="invoice.get('totalPST')"
             controlType="currency"
           ></drr-summary-item>
           <drr-summary-item
-            [label]="t('claim.totalGST')"
+            [label]="t('totalGST')"
             [rxFormControl]="invoice.get('totalGST')"
             controlType="currency"
           ></drr-summary-item>
           <drr-summary-item
-            [label]="t('claim.claimAmount')"
+            [label]="t('claimAmount')"
             [rxFormControl]="invoice.get('claimAmount')"
             controlType="currency"
           ></drr-summary-item>
@@ -83,7 +82,7 @@
             *ngFor="let attachment of getInvoiceAttachments(invoice).controls"
           >
             <drr-summary-item
-              [label]="t('attachments.name')"
+              [label]="t('fileName')"
               [rxFormControl]="attachment.get('name')"
             >
             </drr-summary-item>
@@ -100,17 +99,17 @@
         </div>
       </div>
       <drr-summary-item
-        [label]="t('claim.claimComment')"
+        [label]="t('claimComment')"
         [rxFormControl]="claimForm?.get('expenditure.claimComment')"
         controlType="textarea"
       ></drr-summary-item>
       <drr-summary-item
-        [label]="t('claim.totalClaimed')"
+        [label]="t('totalClaimed')"
         [rxFormControl]="claimForm?.get('expenditure.totalClaimed')"
         controlType="currency"
       ></drr-summary-item>
       <drr-summary-item
-        [label]="t('claim.totalProjectAmount')"
+        [label]="t('totalProjectAmount')"
         [rxFormControl]="claimForm?.get('expenditure.totalProjectAmount')"
         controlType="currency"
       ></drr-summary-item>
@@ -118,46 +117,45 @@
   </mat-card>
   <mat-card *ngIf="isReadOnlyView">
     <mat-card-header>
-      <mat-card-title>{{ t("steps.claimSummary.step3") }}</mat-card-title>
-      <mat-card-subtitle>Step 3</mat-card-subtitle>
+      <mat-card-title>{{ t("step3") }}</mat-card-title>
     </mat-card-header>
     <mat-card-content>
       <div>
         <mat-label class="drr-label">{{ t("submitter") }}</mat-label>
         <div class="summary-row">
           <drr-summary-item
-            [label]="t('claim.firstName')"
+            [label]="t('firstName')"
             [rxFormControl]="claimForm?.get('declaration.submitter.firstName')"
           >
           </drr-summary-item>
 
           <drr-summary-item
-            [label]="t('claim.lastName')"
+            [label]="t('lastName')"
             [rxFormControl]="claimForm?.get('declaration.submitter.lastName')"
           >
           </drr-summary-item>
 
           <drr-summary-item
-            [label]="t('claim.title')"
+            [label]="t('title')"
             [rxFormControl]="claimForm?.get('declaration.submitter.title')"
           >
           </drr-summary-item>
 
           <drr-summary-item
-            [label]="t('claim.department')"
+            [label]="t('department')"
             [rxFormControl]="claimForm?.get('declaration.submitter.department')"
           >
           </drr-summary-item>
 
           <drr-summary-item
-            [label]="t('claim.phone')"
+            [label]="t('phone')"
             [rxFormControl]="claimForm?.get('declaration.submitter.phone')"
             controlType="phone"
           >
           </drr-summary-item>
 
           <drr-summary-item
-            [label]="t('claim.email')"
+            [label]="t('email')"
             [rxFormControl]="claimForm?.get('declaration.submitter.email')"
           >
           </drr-summary-item>

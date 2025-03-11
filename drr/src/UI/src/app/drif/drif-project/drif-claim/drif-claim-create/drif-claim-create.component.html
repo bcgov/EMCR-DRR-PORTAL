@@ -40,7 +40,7 @@
     [orientation]="stepperOrientation"
     #stepper
   >
-    <mat-step label="Instructions">
+    <mat-step [label]="t('step1')">
       <div>
         <p>
           This form captures the expenses you are claiming for the current
@@ -61,7 +61,7 @@
       </div>
     </mat-step>
     <mat-step
-      label="Summary of Expenditures"
+      [label]="t('step2')"
       [stepControl]="claimForm?.get('expenditure')!"
       [errorMessage]="'stepError' | transloco"
     >
@@ -200,7 +200,7 @@
                       <mat-label>{{ t("invoice") }} *</mat-label>
                       @if (getInvoiceDocument(invoice)?.get("id")?.value) {
                         <drr-input
-                          [label]="'fileName'"
+                          [label]="t('fileName')"
                           [rxFormControl]="
                             getInvoiceDocument(invoice)?.get('name')
                           "
@@ -255,7 +255,7 @@
                         getInvoiceProofOfPayment(invoice)?.get("id")?.value
                       ) {
                         <drr-input
-                          [label]="'fileName'"
+                          [label]="t('fileName')"
                           [rxFormControl]="
                             getInvoiceProofOfPayment(invoice)?.get('name')
                           "
@@ -475,8 +475,8 @@
       </div>
     </mat-step>
     <mat-step
-      label="Review & Declaration"
-      [stepControl]="claimForm?.get('declaraion')!"
+      [label]="t('step3')"
+      [stepControl]="claimForm?.get('declaration')!"
       [errorMessage]="'stepError' | transloco"
     >
       <drif-claim-summary
