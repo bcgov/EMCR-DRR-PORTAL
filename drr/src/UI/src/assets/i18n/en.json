@@ -693,6 +693,9 @@
     "ClaimsReporting": "Claims Contact - Claims Reporting"
   },
   "claim": {
+    "step1": "Instructions",
+    "step2": "Summary of Expenditures",
+    "step3": "Review & Declaration",
     "skipClaimReport": "Do you have any claims to report?",
     "invoiceNumber": "Invoice Number",
     "invoiceDate": "Date of Invoice",
@@ -717,6 +720,7 @@
     "uploadProofOfPayment": "Upload Proof of Payment",
     "proofOfPayment": "Proof of Payment",
     "totalClaimed": "Total Claimed Amount",
-    "totalProjectAmount": "Total Project Amount"
+    "totalProjectAmount": "Total Project Amount",
+    "fileName": "File Name"
   }
 }

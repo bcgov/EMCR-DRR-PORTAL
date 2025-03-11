@@ -357,6 +357,11 @@ export class DrifProgressReportCreateComponent {
               control.get('status')?.updateValueAndValidity();
             });
 
+            if (report.workplan?.fundingSourcesChanged) {
+              this.progressReportForm
+                .get('workplan.fundingSourcesChangedComment')
+                ?.setValidators(Validators.required);
+            }
             this.progressReportForm
               .get('workplan.fundingSourcesChanged')
               ?.valueChanges.subscribe((value) => {
@@ -365,9 +370,18 @@ export class DrifProgressReportCreateComponent {
                 );
                 value
                   ? comment?.addValidators(Validators.required)
-                  : comment?.removeValidators(Validators.required);
+                  : [
+                      comment?.removeValidators(Validators.required),
+                      comment?.reset(),
+                    ];
                 comment?.updateValueAndValidity();
               });
+
+            if (report.workplan?.outstandingIssues) {
+              this.progressReportForm
+                .get('workplan.outstandingIssuesComments')
+                ?.setValidators(Validators.required);
+            }
 
             this.progressReportForm
               .get('workplan.outstandingIssues')
@@ -377,9 +391,21 @@ export class DrifProgressReportCreateComponent {
                 );
                 value
                   ? comment?.addValidators(Validators.required)
-                  : comment?.removeValidators(Validators.required);
+                  : [
+                      comment?.removeValidators(Validators.required),
+                      comment?.reset(),
+                    ];
                 comment?.updateValueAndValidity();
               });
+
+            if (report.workplan?.mediaAnnouncement) {
+              this.progressReportForm
+                .get('workplan.mediaAnnouncementDate')
+                ?.setValidators(Validators.required);
+              this.progressReportForm
+                .get('workplan.mediaAnnouncementComment')
+                ?.setValidators(Validators.required);
+            }
 
             this.progressReportForm
               .get('workplan.mediaAnnouncement')
@@ -395,8 +421,8 @@ export class DrifProgressReportCreateComponent {
                   date?.addValidators(Validators.required);
                   comment?.addValidators(Validators.required);
                 } else {
-                  date?.removeValidators(Validators.required);
-                  comment?.removeValidators(Validators.required);
+                  date?.clearValidators();
+                  comment?.clearValidators();
                 }
 
                 date?.updateValueAndValidity();
@@ -618,6 +644,18 @@ export class DrifProgressReportCreateComponent {
   }
 
   save() {
+    // log all invalid controls form
+    const workplanGroup = this.progressReportForm?.get(
+      'workplan',
+    ) as RxFormGroup;
+    workplanGroup.markAllAsTouched();
+    Object.keys(workplanGroup.controls).forEach((key) => {
+      const control = workplanGroup.get(key);
+      if (control?.invalid) {
+        console.log(key, control.errors);
+      }
+    });
+
     if (!this.formChanged) {
       return;
     }

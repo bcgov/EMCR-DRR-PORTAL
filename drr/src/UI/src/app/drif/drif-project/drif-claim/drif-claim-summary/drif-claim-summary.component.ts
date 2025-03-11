@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, Input } from '@angular/core';
-import { FormArray } from '@angular/forms';
+import { AbstractControl, FormArray } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -36,6 +36,10 @@ export class DrifClaimSummaryComponent {
 
   getInvoiceFormArray(): FormArray {
     return this.claimForm?.get('expenditure.invoices') as FormArray;
+  }
+
+  getInvoiceAttachments(invoiceControl: AbstractControl) {
+    return invoiceControl.get('attachments') as FormArray;
   }
 
   onDownloadFile(fileId: string) {
