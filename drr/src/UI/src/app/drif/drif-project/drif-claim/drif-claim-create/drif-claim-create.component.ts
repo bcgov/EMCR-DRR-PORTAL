@@ -55,6 +55,7 @@ import { OptionsStore } from '../../../../store/options.store';
 import { ProfileStore } from '../../../../store/profile.store';
 import {
   ClaimForm,
+  DeclarationForm,
   InvoiceAttachmentForm,
   InvoiceForm,
 } from '../drif-claim-form';
@@ -300,6 +301,7 @@ export class DrifClaimCreateComponent {
               );
             }
 
+            // TODO: bug here, calculates twice as API returns totalClaimed. use previousClaimsTotal instead
             this.previousClaimsTotal = claim.totalClaimed || 0;
 
             const formData = new ClaimForm({
@@ -346,6 +348,8 @@ export class DrifClaimCreateComponent {
               formData,
             ) as IFormGroup<ClaimForm>;
 
+            this.setAuthorizedRepresentative();
+
             this.formChanged = false;
 
             this.previousClaimSummaryItems =
@@ -366,6 +370,63 @@ export class DrifClaimCreateComponent {
           },
         });
     });
+  }
+
+  setAuthorizedRepresentative() {
+    const profileData = this.profileStore.getProfile();
+
+    const authorizedRepresentativeForm = this.claimForm?.get(
+      'declaration.authorizedRepresentative',
+    );
+    if (
+      profileData.firstName?.() &&
+      !authorizedRepresentativeForm?.value?.firstName
+    ) {
+      authorizedRepresentativeForm
+        ?.get('firstName')
+        ?.setValue(profileData.firstName(), { emitEvent: false });
+      authorizedRepresentativeForm?.get('firstName')?.disable();
+    }
+    if (
+      profileData.lastName?.() &&
+      !authorizedRepresentativeForm?.value?.lastName
+    ) {
+      authorizedRepresentativeForm
+        ?.get('lastName')
+        ?.setValue(profileData.lastName(), { emitEvent: false });
+      authorizedRepresentativeForm?.get('lastName')?.disable();
+    }
+    if (profileData.title?.() && !authorizedRepresentativeForm?.value?.title) {
+      authorizedRepresentativeForm
+        ?.get('title')
+        ?.setValue(profileData.title(), {
+          emitEvent: false,
+        });
+    }
+    if (
+      profileData.department?.() &&
+      !authorizedRepresentativeForm?.value?.department
+    ) {
+      authorizedRepresentativeForm
+        ?.get('department')
+        ?.setValue(profileData.department(), {
+          emitEvent: false,
+        });
+    }
+    if (profileData.phone?.() && !authorizedRepresentativeForm?.value?.phone) {
+      authorizedRepresentativeForm
+        ?.get('phone')
+        ?.setValue(profileData.phone(), {
+          emitEvent: false,
+        });
+    }
+    if (profileData.email?.() && !authorizedRepresentativeForm?.value?.email) {
+      authorizedRepresentativeForm
+        ?.get('email')
+        ?.setValue(profileData.email(), {
+          emitEvent: false,
+        });
+    }
   }
 
   stepperSelectionChange(event: any) {
@@ -772,5 +833,9 @@ export class DrifClaimCreateComponent {
     this.claimForm
       ?.get('expenditure.totalClaimed')
       ?.setValue(currentClaimTotal + this.previousClaimsTotal);
+  }
+
+  getDelcarationForm() {
+    return this.claimForm?.get('declaration') as IFormGroup<DeclarationForm>;
   }
 }
