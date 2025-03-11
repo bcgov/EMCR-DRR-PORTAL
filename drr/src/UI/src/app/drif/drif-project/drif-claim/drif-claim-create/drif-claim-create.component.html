@@ -488,7 +488,9 @@
           [formGroup]="getDelcarationForm()"
           style="display: flex; flex-direction: column; gap: 1rem"
         >
-          <mat-label class="drr-label">{{ t("submitter") }}</mat-label>
+          <mat-label class="drr-label">{{
+            "authorizedRepresentative" | transloco
+          }}</mat-label>
           <div class="contacts-container">
             <drr-input
               [label]="t('firstName')"
@@ -539,12 +541,12 @@
           </div>
 
           <mat-label class="drr-label">
-            {{ t("authorizedRepresentativeStatement") }}
+            {{ "authorizedRepresentativeStatement" | transloco }}
           </mat-label>
           <div style="display: flex; flex-direction: column">
             <mat-label> {{ authorizedRepresentativeText }} *</mat-label>
             <mat-checkbox formControlName="authorizedRepresentativeStatement">
-              {{ t("agree") }}
+              {{ "agree" | transloco }}
             </mat-checkbox>
             <mat-error
               *ngIf="
@@ -554,17 +556,17 @@
                   ?.get('declaration.authorizedRepresentativeStatement')
                   ?.hasError('requiredTrue')
               "
-              >{{ t("required") }}</mat-error
+              >{{ "required" | transloco }}</mat-error
             >
           </div>
 
           <mat-label class="drr-label">{{
-            t("informationAccuracyStatement")
+            "informationAccuracyStatement" | transloco
           }}</mat-label>
           <div style="display: flex; flex-direction: column">
             <mat-label> {{ accuracyOfInformationText }} *</mat-label>
             <mat-checkbox formControlName="informationAccuracyStatement">
-              {{ t("agree") }}
+              {{ "agree" | transloco }}
             </mat-checkbox>
             <mat-error
               *ngIf="
@@ -574,7 +576,7 @@
                   ?.get('declaration.informationAccuracyStatement')
                   ?.hasError('requiredTrue')
               "
-              >{{ t("required") }}</mat-error
+              >{{ "required" | transloco }}</mat-error
             >
           </div>
         </form>

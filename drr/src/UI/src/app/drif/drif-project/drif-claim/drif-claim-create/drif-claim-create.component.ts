@@ -8,6 +8,7 @@ import {
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -81,6 +82,7 @@ export class ClaimSummaryItem implements PreviousClaim {
     MatIconModule,
     MatButtonModule,
     MatInputModule,
+    MatCheckboxModule,
     MatCardModule,
     MatTableModule,
     MatDividerModule,
@@ -126,7 +128,9 @@ export class DrifClaimCreateComponent {
   @ViewChild(MatStepper) stepper!: MatStepper;
   stepperOrientation: StepperOrientation = 'horizontal';
 
-  claimForm?: IFormGroup<ClaimForm>;
+  claimForm?: IFormGroup<ClaimForm> = this.formBuilder.formGroup(
+    ClaimForm,
+  ) as IFormGroup<ClaimForm>;
   formChanged = false;
 
   previousClaimSummaryItems: ClaimSummaryItem[] = [];
@@ -202,42 +206,6 @@ export class DrifClaimCreateComponent {
         FormType.Report,
       );
 
-      const profileData = this.profileStore.getProfile();
-
-      // const submitterForm = this.claimForm?.get('declaration.submitter');
-      // if (profileData.firstName?.()) {
-      //   submitterForm
-      //     ?.get('firstName')
-      //     ?.setValue(profileData.firstName(), { emitEvent: false });
-      //   submitterForm?.get('firstName')?.disable();
-      // }
-      // if (profileData.lastName?.()) {
-      //   submitterForm
-      //     ?.get('lastName')
-      //     ?.setValue(profileData.lastName(), { emitEvent: false });
-      //   submitterForm?.get('lastName')?.disable();
-      // }
-      // if (profileData.title?.()) {
-      //   submitterForm?.get('title')?.setValue(profileData.title(), {
-      //     emitEvent: false,
-      //   });
-      // }
-      // if (profileData.department?.()) {
-      //   submitterForm?.get('department')?.setValue(profileData.department(), {
-      //     emitEvent: false,
-      //   });
-      // }
-      // if (profileData.phone?.()) {
-      //   submitterForm?.get('phone')?.setValue(profileData.phone(), {
-      //     emitEvent: false,
-      //   });
-      // }
-      // if (profileData.email?.()) {
-      //   submitterForm?.get('email')?.setValue(profileData.email(), {
-      //     emitEvent: false,
-      //   });
-      // }
-
       this.load().then(() => {
         this.formChanged = false;
         setTimeout(() => {
@@ -311,6 +279,11 @@ export class DrifClaimCreateComponent {
                 invoices: claim.invoices,
                 totalClaimed: claim.totalClaimed,
                 totalProjectAmount: claim.totalProjectAmount,
+              },
+              declaration: {
+                authorizedRepresentativeStatement: false,
+                informationAccuracyStatement: false,
+                authorizedRepresentative: claim.authorizedRepresentative,
               },
             } as ClaimForm);
 

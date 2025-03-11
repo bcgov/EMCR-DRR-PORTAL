@@ -90,6 +90,7 @@
   "partneringProponentsSummary": "Partnering Proponents",
   "addProponent": "Add additional partnering proponent",
   "submitter": "Authorized Representative Contact Information",
+  "authorizedRepresentative": "Authorized Representative Contact Information",
   "additionalContact": "Additional Contact",
   "firstName": "First Name",
   "lastName": "Last Name",
@@ -721,6 +722,13 @@
     "proofOfPayment": "Proof of Payment",
     "totalClaimed": "Total Claimed Amount",
     "totalProjectAmount": "Total Project Amount",
-    "fileName": "File Name"
+    "fileName": "File Name",
+    "fileSize": "File Size",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "title": "Title",
+    "department": "Department",
+    "phone": "Phone",
+    "email": "Email"
   }
 }
