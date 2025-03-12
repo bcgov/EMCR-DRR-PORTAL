@@ -194,6 +194,34 @@ namespace EMCR.DRR.Managers.Intake
             }
             var res = await reportRepository.Query(new ClaimsQuery { Id = q.Id, BusinessId = q.BusinessId });
 
+            //Also load previous claim total...
+            if (res.Length == 1)
+            {
+                var claim = res.Items.Single();
+                if (claim.Project != null)
+                {
+                    var project = (await Handle(new DrrProjectsQuery { Id = claim.Project.Id, BusinessId = q.BusinessId })).Items.SingleOrDefault();
+                    if (project != null && project.InterimReports != null)
+                    {
+                        var reports = project.InterimReports.ToList();
+                        var currentReport = reports.Where(r => r.ProjectClaim?.Id == claim.Id).SingleOrDefault();
+                        if (currentReport != null)
+                        {
+                            var previousReportIndex = reports.IndexOf(currentReport) + 1;
+                            if (previousReportIndex >= 0 && previousReportIndex < reports.Count)
+                            {
+                                var previousReport = reports.ElementAt(previousReportIndex);
+                                if (previousReport != null && previousReport.ProjectClaim != null)
+                                {
+                                    var previousClaim = (await reportRepository.Query(new ClaimsQuery { Id = previousReport.ProjectClaim.Id, BusinessId = q.BusinessId })).Items.SingleOrDefault();
+                                    claim.PreviousClaimTotal = previousClaim?.TotalClaimed ?? 0;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             return new ClaimsQueryResponse { Items = res.Items, Length = res.Length };
         }
 
@@ -272,11 +300,11 @@ namespace EMCR.DRR.Managers.Intake
             application.ProponentName = cmd.UserInfo.BusinessName;
             if (application.Submitter != null) application.Submitter.BCeId = cmd.UserInfo.UserId;
 
+            //TODO - verify allowed to update application - i.e. it is not already submitted
+
             //cost category cannot be Contingency if stream 1 - only available in stream 2
             if (application.FundingStream == FundingStream.Stream1 && application.CostEstimates != null && application.CostEstimates.Any(c => c.CostCategory == CostCategory.Contingency))
                 throw new BusinessValidationException("Contingency Cost Category is only available for Stream 2");
-
-
 
             var id = (await applicationRepository.Manage(new SaveApplication { Application = application })).Id;
             return id;

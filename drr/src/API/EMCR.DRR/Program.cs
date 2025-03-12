@@ -353,7 +353,7 @@ if (testDataEndpointsEnabled)
             return new UserInfo { BusinessId = GetCurrentBusinessId(), BusinessName = GetCurrentBusinessName(), UserId = GetCurrentUserId() };
         }
 
-        var application = TestHelper.CreateNewTestEOIApplication();
+        var application = TestHelper.CreateNewTestEOIApplication("autogen-");
         var manager = ctx.RequestServices.GetRequiredService<IIntakeManager>();
         var mapper = ctx.RequestServices.GetRequiredService<IMapper>();
         var eoiId = await manager.Handle(new EoiSaveApplicationCommand { Application = mapper.Map<EoiApplication>(application), UserInfo = GetCurrentUser() });
@@ -396,7 +396,7 @@ if (testDataEndpointsEnabled)
             };
         }
 
-        var eoi = mapper.Map<EoiApplication>(TestHelper.CreateNewTestEOIApplication());
+        var eoi = mapper.Map<EoiApplication>(TestHelper.CreateNewTestEOIApplication("autogen-"));
         eoi.Status = SubmissionPortalStatus.EligibleInvited;
         eoi.AuthorizedRepresentativeStatement = true;
         eoi.FOIPPAConfirmation = true;
@@ -417,7 +417,7 @@ if (testDataEndpointsEnabled)
         await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = fpId, RecordType = EMCR.DRR.Managers.Intake.RecordType.FullProposal, File = costEstimateFile, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.DetailedCostEstimate }, UserInfo = GetCurrentUser() });
 
         var fullProposal = (await manager.Handle(new DrrApplicationsQuery { Id = fpId, BusinessId = GetCurrentUser().BusinessId })).Items.SingleOrDefault();
-        var fpToUpdate = mapper.Map<FpApplication>(TestHelper.FillInTestFpApplication(mapper.Map<DraftFpApplication>(fullProposal)));
+        var fpToUpdate = mapper.Map<FpApplication>(TestHelper.FillInTestFpApplication(mapper.Map<DraftFpApplication>(fullProposal), "autogen-"));
         await manager.Handle(new FpSaveApplicationCommand { Application = mapper.Map<FpApplication>(fpToUpdate), UserInfo = GetCurrentUser() });
 
         ctx.Response.StatusCode = (int)HttpStatusCode.Created;

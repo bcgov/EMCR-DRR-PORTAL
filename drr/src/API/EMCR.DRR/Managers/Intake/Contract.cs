@@ -796,11 +796,13 @@ namespace EMCR.DRR.Managers.Intake
         public DateTime? PlannedStartDate { get; set; }
         public DateTime? PlannedEndDate { get; set; }
         public InterimProjectType? ProjectType { get; set; }
+        public bool? SkipClaim { get; set; }
         public IEnumerable<Invoice>? Invoices { get; set; }
         public string? ClaimComment { get; set; }
         public ContactDetails? AuthorizedRepresentative { get; set; }
         public bool? AuthorizedRepresentativeStatement { get; set; }
         public bool? InformationAccuracyStatement { get; set; }
+        public decimal? PreviousClaimTotal { get; set; } = 0;
         public decimal? TotalClaimed { get; set; }
         public ClaimProject? Project { get; set; }
     }

@@ -6,16 +6,16 @@ namespace EMCR.DRR.API.Utilities.TestData
 {
     public static class TestHelper
     {
-        public static DraftEoiApplication CreateNewTestEOIApplication(ContactDetails? submitter = null)
+        public static DraftEoiApplication CreateNewTestEOIApplication(string prefix = "autotest-", ContactDetails? submitter = null)
         {
-            var eoi = new Faker<DraftEoiApplication>("en_CA").WithApplicationRules(submitter).Generate();
+            var eoi = new Faker<DraftEoiApplication>("en_CA").WithApplicationRules(prefix, submitter).Generate();
             return eoi;
         }
 
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
-        public static DraftFpApplication FillInTestFpApplication(DraftFpApplication originalFp, ContactDetails? submitter = null)
+        public static DraftFpApplication FillInTestFpApplication(DraftFpApplication originalFp, string prefix = "autotest-", ContactDetails? submitter = null)
         {
-            var tempFp = new Faker<DraftFpApplication>("en_CA").WithApplicationRules(originalFp, submitter).Generate();
+            var tempFp = new Faker<DraftFpApplication>("en_CA").WithApplicationRules(prefix, originalFp, submitter).Generate();
 
             //Overwrite null/empty properties from original FP
             foreach (PropertyInfo prop in typeof(DraftFpApplication).GetProperties())

@@ -1,7 +1,9 @@
 ﻿using System.Text;
 using AutoMapper;
+using EMCR.DRR.API.Resources.Projects;
 using EMCR.DRR.API.Services.S3;
 using EMCR.DRR.Controllers;
+using EMCR.DRR.Dynamics;
 using EMCR.DRR.Managers.Intake;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
@@ -18,6 +20,8 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
         private string CRAFTD1BusinessId = "9F4430C64A2546C08B1F129F4071C1B4";
         private string CRAFTD1BusinessName = "EMCR CRAFT BCeID DEV";
         private string CRAFTD1UserId = "FAAA14A088F94B78B121C8A025F7304D";
+
+        private string TestProjectId = "DRIF-PRJ-1104";
 
         private UserInfo GetTestUserInfo()
         {
@@ -70,9 +74,31 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
 #pragma warning disable CS8604 // Possible null reference argument.
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
         [Test]
+        public async Task QueryClaims_PreviousClaimTotal_PopulatesCorrectly()
+        {
+            var userInfo = GetTestUserInfo();
+            //var userInfo = GetCRAFTUserInfo();
+
+            var project = (await manager.Handle(new DrrProjectsQuery { Id = TestProjectId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault();
+            for (var i = 0; i < project.InterimReports.Count() - 1; ++i)
+            {
+                var currentClaimId = project.InterimReports.ElementAt(i).ProjectClaim.Id;
+                var previousClaimId = project.InterimReports.ElementAt(i + 1).ProjectClaim.Id;
+                var currentClaim = mapper.Map<EMCR.DRR.Controllers.ProjectClaim>((await manager.Handle(new DrrClaimsQuery { Id = currentClaimId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+                var previousClaim = mapper.Map<EMCR.DRR.Controllers.ProjectClaim>((await manager.Handle(new DrrClaimsQuery { Id = previousClaimId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+
+                if ((currentClaim.PreviousClaimTotal == null || currentClaim.PreviousClaimTotal == 0) && (previousClaim.TotalClaimed == null || previousClaim.TotalClaimed == 0)) continue;
+                currentClaim.PreviousClaimTotal.ShouldBe(previousClaim.TotalClaimed);
+            }
+        }
+
+        [Test]
         public async Task QueryClaims_CanFilterById()
         {
-            var queryRes = await manager.Handle(new DrrClaimsQuery { Id = "DRIF-CLAIM-1039", BusinessId = GetCRAFTUserInfo().BusinessId });
+            var userInfo = GetTestUserInfo();
+            //var userInfo = GetCRAFTUserInfo();
+
+            var queryRes = await manager.Handle(new DrrClaimsQuery { Id = "DRIF-CLAIM-1073", BusinessId = userInfo.BusinessId });
             var claims = mapper.Map<IEnumerable<DraftProjectClaim>>(queryRes.Items);
             claims.Count().ShouldBe(1);
             var claim = claims.SingleOrDefault();
@@ -133,62 +159,146 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             updatedProgressReport.EventInformation.UpcomingEvents.Count().ShouldBe(1);
         }
 
-        //[Test]
-        //public async Task CanSubmitProgressReport()
-        //{
-        //    var uniqueSignature = TestPrefix + "-" + Guid.NewGuid().ToString().Substring(0, 4);
-        //    //var userInfo = GetTestUserInfo();
-        //    var userInfo = GetCRAFTUserInfo();
+        [Test]
+        public async Task CanSubmitProgressReport()
+        {
+            var uniqueSignature = TestPrefix + "-" + Guid.NewGuid().ToString().Substring(0, 4);
+            var userInfo = GetTestUserInfo();
+            //var userInfo = GetCRAFTUserInfo();
+            var project = (await manager.Handle(new DrrProjectsQuery { Id = TestProjectId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault();
+            if (!project.InterimReports.Any())
+            {
+                await CanCreateReport();
+                project = (await manager.Handle(new DrrProjectsQuery { Id = TestProjectId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault();
+            }
 
-        //    var progressReportId = "DRIF-PR-1147";
-        //    var progressReport = mapper.Map<EMCR.DRR.Controllers.ProgressReport>((await manager.Handle(new DrrProgressReportsQuery { Id = progressReportId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
-        //    progressReport = FillInProgressReport(progressReport, uniqueSignature);
-        //    progressReport.Status = EMCR.DRR.Controllers.ProgressReportStatus.Draft;
-        //    progressReport.AuthorizedRepresentativeStatement = true;
-        //    progressReport.InformationAccuracyStatement = true;
-        //    progressReport.AuthorizedRepresentative = new EMCR.DRR.Controllers.ContactDetails
-        //    {
-        //        FirstName = "Joe",
-        //        LastName = "autotest",
-        //        Department = "dep",
-        //        Title = "title",
-        //        Email = "email@test.com",
-        //        Phone = "6041234567"
-        //    };
+            var interimReport = project.InterimReports.First();
+            var progressReportId = interimReport.ProgressReport.Id;
+            var progressReport = mapper.Map<EMCR.DRR.Controllers.ProgressReport>((await manager.Handle(new DrrProgressReportsQuery { Id = progressReportId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+            progressReport = FillInProgressReport(progressReport, uniqueSignature);
+            progressReport.Status = EMCR.DRR.Controllers.ProgressReportStatus.Draft;
+            progressReport.AuthorizedRepresentativeStatement = true;
+            progressReport.InformationAccuracyStatement = true;
+            progressReport.AuthorizedRepresentative = new EMCR.DRR.Controllers.ContactDetails
+            {
+                FirstName = "Joe",
+                LastName = "autotest",
+                Department = "dep",
+                Title = "title",
+                Email = "email@test.com",
+                Phone = "6041234567"
+            };
 
-        //    await manager.Handle(new SubmitProgressReportCommand { ProgressReport = progressReport, UserInfo = userInfo });
+            await manager.Handle(new SubmitProgressReportCommand { ProgressReport = progressReport, UserInfo = userInfo });
 
-        //    var updatedProgressReport = mapper.Map<DraftProgressReport>((await manager.Handle(new DrrProgressReportsQuery { Id = progressReport.Id, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
-        //    updatedProgressReport.Status.ShouldBe(EMCR.DRR.Controllers.ProgressReportStatus.Submitted);
-        //}
+            var updatedProgressReport = mapper.Map<DraftProgressReport>((await manager.Handle(new DrrProgressReportsQuery { Id = progressReport.Id, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+            updatedProgressReport.Status.ShouldBe(EMCR.DRR.Controllers.ProgressReportStatus.Submitted);
+        }
 
         [Test]
         public async Task CanUpdateClaim()
         {
-            //var userInfo = GetTestUserInfo();
-            var userInfo = GetCRAFTUserInfo();
+            var userInfo = GetTestUserInfo();
+            //var userInfo = GetCRAFTUserInfo();
 
-            var claimId = "DRIF-CLAIM-1039";
+            var project = (await manager.Handle(new DrrProjectsQuery { Id = TestProjectId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault();
+            if (!project.InterimReports.Any())
+            {
+                await CanCreateReport();
+                project = (await manager.Handle(new DrrProjectsQuery { Id = TestProjectId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault();
+            }
+
+            var interimReport = project.InterimReports.First();
+
+            var claimId = interimReport.ProjectClaim.Id;
+            Console.WriteLine(claimId);
             var uniqueSignature = TestPrefix + "-" + Guid.NewGuid().ToString().Substring(0, 4);
             var claim = mapper.Map<EMCR.DRR.Controllers.ProjectClaim>((await manager.Handle(new DrrClaimsQuery { Id = claimId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+            if (claim.Invoices.Any())
+            {
+                foreach (var invoice in claim.Invoices)
+                {
+                    await manager.Handle(new DeleteInvoiceCommand { ClaimId = claim.Id, InvoiceId = invoice.Id, UserInfo = userInfo });
+                }
+                claim.Invoices = [];
+            }
 
             claim = FillInClaim(claim, uniqueSignature);
             claim.Status = EMCR.DRR.Controllers.ClaimStatus.Draft;
 
             //Console.WriteLine(progressReport.Id);
             await manager.Handle(new SaveClaimCommand { Claim = claim, UserInfo = userInfo });
-            var invoiceId = await manager.Handle(new CreateInvoiceCommand { ClaimId = claim.Id, InvoiceId = Guid.NewGuid().ToString(), UserInfo = userInfo });
+            await manager.Handle(new CreateInvoiceCommand { ClaimId = claim.Id, InvoiceId = Guid.NewGuid().ToString(), UserInfo = userInfo });
+            await manager.Handle(new CreateInvoiceCommand { ClaimId = claim.Id, InvoiceId = Guid.NewGuid().ToString(), UserInfo = userInfo });
+            await manager.Handle(new CreateInvoiceCommand { ClaimId = claim.Id, InvoiceId = Guid.NewGuid().ToString(), UserInfo = userInfo });
 
 
             var updatedClaim = mapper.Map<DraftProjectClaim>((await manager.Handle(new DrrClaimsQuery { Id = claim.Id, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
             updatedClaim.Status.ShouldBe(claim.Status);
-            updatedClaim.Invoices.Any(i => i.Id == invoiceId).ShouldBeTrue();
+            updatedClaim.Invoices.Count().ShouldBe(3);
+            var num = 0;
+            DateTime startDate = project.StartDate ?? DateTime.UtcNow;
+            DateTime endDate = project.EndDate ?? DateTime.UtcNow.AddDays(30);
+            foreach (var invoice in updatedClaim.Invoices)
+            {
+                invoice.InvoiceNumber = $"Inv-{++num}";
+                invoice.Date = startDate.AddDays(num);
+                invoice.WorkStartDate = startDate.AddDays(num);
+                invoice.WorkEndDate = endDate.AddDays(-num);
+                invoice.PaymentDate = endDate.AddDays(-num);
+                invoice.CostCategory = EMCR.DRR.Controllers.CostCategory.Mapping;
+                invoice.SupplierName = $"Supplier-{num}";
+                invoice.Description = $"description";
+                invoice.GrossAmount = 5000;
+                invoice.TaxRebate = 500;
+                invoice.ClaimAmount = 5500;
+                invoice.TotalPST = 700;
+                invoice.TotalGST = 300;
+            }
 
-            await manager.Handle(new DeleteInvoiceCommand { ClaimId = claim.Id, InvoiceId = invoiceId, UserInfo = userInfo });
-
-            updatedClaim = mapper.Map<DraftProjectClaim>((await manager.Handle(new DrrClaimsQuery { Id = claim.Id, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
-            updatedClaim.Invoices.Any(i => i.Id == invoiceId).ShouldBeFalse();
+            await manager.Handle(new SaveClaimCommand { Claim = mapper.Map<EMCR.DRR.Controllers.ProjectClaim>(updatedClaim), UserInfo = userInfo });
+            var twiceUpdatedClaim = mapper.Map<DraftProjectClaim>((await manager.Handle(new DrrClaimsQuery { Id = updatedClaim.Id, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+            twiceUpdatedClaim.Invoices.Count().ShouldBe(updatedClaim.Invoices.Count());
         }
+
+        //[Test]
+        //public async Task UpdateClaim100Invoices()
+        //{
+        //    //var userInfo = GetTestUserInfo();
+        //    var userInfo = GetCRAFTUserInfo();
+
+        //    var claimId = "DRIF-CLAIM-1039";
+        //    var uniqueSignature = TestPrefix + "-" + Guid.NewGuid().ToString().Substring(0, 4);
+        //    var claim = mapper.Map<EMCR.DRR.Controllers.ProjectClaim>((await manager.Handle(new DrrClaimsQuery { Id = claimId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+
+        //    claim = FillInClaim(claim, uniqueSignature);
+        //    claim.Status = EMCR.DRR.Controllers.ClaimStatus.Draft;
+
+        //    //Console.WriteLine(progressReport.Id);
+        //    await manager.Handle(new SaveClaimCommand { Claim = claim, UserInfo = userInfo });
+        //    for (var i = 0; i < 100; i++)
+        //    {
+        //        var invoiceId = await manager.Handle(new CreateInvoiceCommand { ClaimId = claim.Id, InvoiceId = Guid.NewGuid().ToString(), UserInfo = userInfo });
+        //    }
+
+        //    var updatedClaim = mapper.Map<DraftProjectClaim>((await manager.Handle(new DrrClaimsQuery { Id = claim.Id, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+        //    updatedClaim.Status.ShouldBe(claim.Status);
+        //    updatedClaim.Invoices.Count().ShouldBeGreaterThan(90);
+        //    updatedClaim.Invoices = [];
+
+        //    Stopwatch stopwatch = new Stopwatch();
+        //    // Start the stopwatch
+        //    stopwatch.Start();
+
+        //    await manager.Handle(new SaveClaimCommand { Claim = claim, UserInfo = userInfo });
+
+        //    stopwatch.Stop();
+        //    // Get the elapsed time in milliseconds
+        //    Console.WriteLine($"Time taken: {stopwatch.ElapsedMilliseconds} milliseconds");
+
+        //    var twiceUpdatedClaim = mapper.Map<DraftProjectClaim>((await manager.Handle(new DrrClaimsQuery { Id = claim.Id, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+        //    twiceUpdatedClaim.Invoices.ShouldBeEmpty();
+        //}
 
         [Test]
         public async Task CanAddAttachmentsToClaimInvoice()
@@ -248,43 +358,52 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             res.CanCreate.ShouldBe(false);
         }
 
-        //[Test]
-        //public async Task CanCreateReport()
-        //{
-        //    var queryOptions = new QueryOptions { Filter = "programType=DRIF,applicationType=FP,status=*UnderReview\\|EligiblePending" };
-        //    var queryRes = await manager.Handle(new DrrProjectsQuery { Id = "DRIF-PRJ-1013", BusinessId = GetCRAFTUserInfo().BusinessId, QueryOptions = queryOptions });
-        //    var project = queryRes.Items.SingleOrDefault();
-        //    var res = await manager.Handle(new CreateInterimReportCommand { ProjectId = project.Id, ReportType = EMCR.DRR.Managers.Intake.ReportType.Interim, UserInfo = GetCRAFTUserInfo() });
-        //    project = (await manager.Handle(new DrrProjectsQuery { Id = "DRIF-PRJ-1013", BusinessId = GetCRAFTUserInfo().BusinessId, QueryOptions = queryOptions })).Items.SingleOrDefault();
-        //    project.InterimReports.First().ProgressReport.ShouldNotBeNull();
-        //    project.InterimReports.First().ProjectClaim.ShouldNotBeNull();
-        //    project.InterimReports.First().Forecast.ShouldNotBeNull();
-        //    res.ShouldNotBeNullOrEmpty();
-        //}
+        [Test]
+        public async Task CanCreateReport()
+        {
+            var userInfo = GetTestUserInfo();
+            //var userInfo = GetCRAFTUserInfo();
 
-        //[Test]
-        //public async Task CanSubmitProgressReport()
-        //{
-        //    var progressReportId = "DRIF-PR-1044";
-        //    var uniqueSignature = TestPrefix + "-" + Guid.NewGuid().ToString().Substring(0, 4);
-        //    var progressReport = mapper.Map<EMCR.DRR.Controllers.ProgressReport>((await manager.Handle(new DrrProgressReportsQuery { Id = progressReportId, BusinessId = GetTestUserInfo().BusinessId })).Items.SingleOrDefault());
+            //await ClearAllReportsForProject(TestProjectId);
+            await AllReportsApprovedForProject(TestProjectId);
+            var queryOptions = new QueryOptions { Filter = "programType=DRIF,applicationType=FP,status=*UnderReview\\|EligiblePending" };
+            var project = (await manager.Handle(new DrrProjectsQuery { Id = TestProjectId, BusinessId = userInfo.BusinessId, QueryOptions = queryOptions })).Items.SingleOrDefault();
+            project.InterimReports.ShouldAllBe(r => r.Status == EMCR.DRR.Managers.Intake.InterimReportStatus.Approved);
+            var res = await manager.Handle(new CreateInterimReportCommand { ProjectId = project.Id, ReportType = EMCR.DRR.Managers.Intake.ReportType.Interim, UserInfo = userInfo });
+            project = (await manager.Handle(new DrrProjectsQuery { Id = TestProjectId, BusinessId = userInfo.BusinessId, QueryOptions = queryOptions })).Items.SingleOrDefault();
+            project.InterimReports.First().ProgressReport.ShouldNotBeNull();
+            project.InterimReports.First().ProjectClaim.ShouldNotBeNull();
+            project.InterimReports.First().Forecast.ShouldNotBeNull();
+        }
 
-        //    progressReport = FillInProgressReport(progressReport, uniqueSignature);
+        private async Task AllReportsApprovedForProject(string projectId)
+        {
+            var host = Application.Host;
+            var factory = host.Services.GetRequiredService<IDRRContextFactory>();
+            var ctx = factory.Create();
+            var project = (await ctx.drr_projects.Expand(p => p.drr_drr_project_drr_projectreport_Project).Where(p => p.drr_name == projectId).GetAllPagesAsync()).SingleOrDefault();
+            foreach (var report in project.drr_drr_project_drr_projectreport_Project)
+            {
+                //ctx.AttachTo(nameof(ctx.drr_projectreports), report);
+                report.statuscode = (int)ProjectReportStatusOptionSet.Approved;
+                ctx.UpdateObject(report);
+            }
+            await ctx.SaveChangesAsync();
+        }
 
-        //    //Console.WriteLine(progressReport.Id);
-        //    await manager.Handle(new SubmitProgressReportCommand { ProgressReport = progressReport, UserInfo = GetTestUserInfo() });
-
-
-        //    var submittedProgressReport = mapper.Map<EMCR.DRR.Controllers.ProgressReport>((await manager.Handle(new DrrProgressReportsQuery { Id = progressReport.Id, BusinessId = GetTestUserInfo().BusinessId })).Items.SingleOrDefault());
-        //    submittedProgressReport.Workplan.MediaAnnouncementComment.ShouldBe(progressReport.Workplan.MediaAnnouncementComment);
-        //    submittedProgressReport.Workplan.ProjectProgress.ShouldBe(progressReport.Workplan.ProjectProgress);
-        //    submittedProgressReport.Workplan.MediaAnnouncement.ShouldBe(progressReport.Workplan.MediaAnnouncement);
-        //    submittedProgressReport.Workplan.OtherDelayReason.ShouldBe(progressReport.Workplan.OtherDelayReason);
-        //    submittedProgressReport.EventInformation.PastEvents.Count().ShouldBe(1);
-        //    submittedProgressReport.EventInformation.UpcomingEvents.Count().ShouldBe(1);
-        //    submittedProgressReport.DateSubmitted.ShouldNotBeNull();
-        //    submittedProgressReport.Status.ShouldBe(EMCR.DRR.Controllers.ProgressReportStatus.Submitted);
-        //}
+        private async Task ClearAllReportsForProject(string projectId)
+        {
+            var host = Application.Host;
+            var factory = host.Services.GetRequiredService<IDRRContextFactory>();
+            var ctx = factory.Create();
+            var project = (await ctx.drr_projects.Expand(p => p.drr_drr_project_drr_projectreport_Project).Where(p => p.drr_name == projectId).GetAllPagesAsync()).SingleOrDefault();
+            foreach (var report in project.drr_drr_project_drr_projectreport_Project)
+            {
+                //ctx.AttachTo(nameof(ctx.drr_projectreports), report);
+                ctx.DeleteObject(report);
+            }
+            await ctx.SaveChangesAsync();
+        }
 
         [Test]
         public async Task CanAddAttachmentToProgressReport()
@@ -357,19 +476,19 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             progressReport.Workplan.FundingSourcesChangedComment = "funding change description";
 
 
-            if (progressReport.Workplan.WorkplanActivities.Count() > 0)
-                progressReport.Workplan.WorkplanActivities = progressReport.Workplan.WorkplanActivities = progressReport.Workplan.WorkplanActivities.Take(progressReport.Workplan.WorkplanActivities.Count() - 1).ToArray();
-            progressReport.Workplan.WorkplanActivities = progressReport.Workplan.WorkplanActivities.Append(new WorkplanActivity
-            {
-                Activity = EMCR.DRR.Controllers.ActivityType.Mapping,
-                ActualCompletionDate = DateTime.UtcNow.AddDays(11),
-                ActualStartDate = DateTime.UtcNow.AddDays(4),
-                Comment = $"{uniqueSignature} - mapping comment",
-                Id = Guid.NewGuid().ToString(),
-                PlannedCompletionDate = DateTime.UtcNow.AddDays(10),
-                PlannedStartDate = DateTime.UtcNow.AddDays(3),
-                Status = EMCR.DRR.Controllers.WorkplanStatus.NotStarted,
-            }).ToArray();
+            //if (progressReport.Workplan.WorkplanActivities.Count() > 0)
+            //    progressReport.Workplan.WorkplanActivities = progressReport.Workplan.WorkplanActivities = progressReport.Workplan.WorkplanActivities.Take(progressReport.Workplan.WorkplanActivities.Count() - 1).ToArray();
+            //progressReport.Workplan.WorkplanActivities = progressReport.Workplan.WorkplanActivities.Append(new WorkplanActivity
+            //{
+            //    Activity = EMCR.DRR.Controllers.ActivityType.Mapping,
+            //    ActualCompletionDate = DateTime.UtcNow.AddDays(11),
+            //    ActualStartDate = DateTime.UtcNow.AddDays(4),
+            //    Comment = $"{uniqueSignature} - mapping comment",
+            //    Id = Guid.NewGuid().ToString(),
+            //    PlannedCompletionDate = DateTime.UtcNow.AddDays(10),
+            //    PlannedStartDate = DateTime.UtcNow.AddDays(3),
+            //    Status = EMCR.DRR.Controllers.WorkplanStatus.NotStarted,
+            //}).ToArray();
             if (progressReport.Workplan.FundingSignage.Count() > 0) progressReport.Workplan.FundingSignage = progressReport.Workplan.FundingSignage.Take(progressReport.Workplan.FundingSignage.Count() - 1).ToArray();
             progressReport.Workplan.FundingSignage = progressReport.Workplan.FundingSignage.Append(new EMCR.DRR.Controllers.FundingSignage
             {
