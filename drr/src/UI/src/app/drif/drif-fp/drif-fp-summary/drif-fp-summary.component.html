@@ -1296,10 +1296,10 @@
         fullProposalForm.get("budget.costConsiderationsApplied")?.value === true
       ) {
         <drr-summary-item
-          [label]="t('costConsiderationsAppliedComments')"
-          [rxFormControl]="
-            fullProposalForm.get('budget.costConsiderationsAppliedComments')
-          "
+          [label]="t('costConsiderationsQuestions')"
+          [rxFormControl]="fullProposalForm.get('budget.costConsiderations')"
+          controlType="array"
+          [translate]="false"
         ></drr-summary-item>
       }
       <drr-summary-item
