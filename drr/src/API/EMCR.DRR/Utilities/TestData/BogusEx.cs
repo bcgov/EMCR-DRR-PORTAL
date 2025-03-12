@@ -164,7 +164,7 @@ namespace EMCR.DRR.API.Utilities.TestData
             .RuleFor(a => a.Standards, (f, a) => new Faker<StandardInfo>("en_CA").WithStandardInfoRules().GenerateBetween(1, 5))
             .RuleFor(a => a.StandardsComments, f => f.Lorem.Sentence())
             .RuleFor(a => a.ProfessionalGuidance, f => f.Random.Bool())
-            .RuleFor(a => a.Professionals, (f, a) => a.ProfessionalGuidance == true ? Enumerable.Range(0, f.Random.Int(1, 5)).Select(x => f.PickRandom(professionalOptions)).ToList() : null)
+            .RuleFor(a => a.Professionals, (f, a) => a.ProfessionalGuidance == true ? (Enumerable.Range(0, f.Random.Int(1, 5)).Select(x => f.PickRandom(professionalOptions))).Distinct().ToList() : null)
             .RuleFor(a => a.ProfessionalGuidanceComments, f => f.Lorem.Sentence())
             .RuleFor(a => a.KnowledgeHolders, f => f.Lorem.Sentence())
             .RuleFor(a => a.MeetsRegulatoryRequirements, f => f.Random.Bool())
