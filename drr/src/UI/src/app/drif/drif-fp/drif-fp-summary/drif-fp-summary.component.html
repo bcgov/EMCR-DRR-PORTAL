@@ -1168,12 +1168,15 @@
         "
         controlType="currency"
       ></drr-summary-item>
-      <drr-summary-item
-        [label]="t('discrepancyComment')"
-        [rxFormControl]="fullProposalForm.get('budget.discrepancyComment')"
-        controlType="textarea"
-      ></drr-summary-item>
-
+      @if (
+        fullProposalForm.get("budget.fundingRequestDiscrepancy")?.value != 0
+      ) {
+        <drr-summary-item
+          [label]="t('discrepancyComment')"
+          [rxFormControl]="fullProposalForm.get('budget.discrepancyComment')"
+          controlType="textarea"
+        ></drr-summary-item>
+      }
       <mat-label class="drr-label">Financial Forecasting</mat-label>
       <div
         class="summary-row"
