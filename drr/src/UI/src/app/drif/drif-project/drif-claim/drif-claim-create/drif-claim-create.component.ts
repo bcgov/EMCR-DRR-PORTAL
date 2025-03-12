@@ -142,7 +142,7 @@ export class DrifClaimCreateComponent {
     'originalEstimate',
   ];
 
-  previousClaimsTotal = 0;
+  previousClaimTotal = 0;
 
   lastSavedAt?: Date;
 
@@ -269,12 +269,11 @@ export class DrifClaimCreateComponent {
               );
             }
 
-            // TODO: bug here, calculates twice as API returns totalClaimed. use previousClaimsTotal instead
-            this.previousClaimsTotal = claim.totalClaimed || 0;
+            this.previousClaimTotal = claim.previousClaimTotal || 0;
 
             const formData = new ClaimForm({
               expenditure: {
-                skipClaimReport: undefined, // claim.skipClaimReport,
+                skipClaimReport: claim.skipClaim,
                 claimComment: claim.claimComment,
                 invoices: claim.invoices,
                 totalClaimed: claim.totalClaimed,
@@ -813,7 +812,7 @@ export class DrifClaimCreateComponent {
 
     this.claimForm
       ?.get('expenditure.totalClaimed')
-      ?.setValue(currentClaimTotal + this.previousClaimsTotal);
+      ?.setValue(currentClaimTotal + this.previousClaimTotal);
   }
 
   getDelcarationForm() {

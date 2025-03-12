@@ -38,11 +38,15 @@ export interface DraftProjectClaim {
   /** @nullable */
   previousClaims?: PreviousClaim[];
   /** @nullable */
+  previousClaimTotal?: number;
+  /** @nullable */
   projectType?: InterimProjectType;
   /** @nullable */
   reportDate?: string;
   /** @nullable */
   reportPeriod?: string;
+  /** @nullable */
+  skipClaim?: boolean;
   /** @nullable */
   status?: ClaimStatus;
   /** @nullable */
