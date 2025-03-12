@@ -6,10 +6,10 @@ namespace EMCR.DRR.API.Utilities.TestData
 {
     public static class BogusExtensions
     {
-        private static readonly string prefix = "autotest-";
+        //private static readonly string prefix = "autotest-";
 
 #pragma warning disable CS8629 // Nullable value type may be null.
-        public static Faker<DraftEoiApplication> WithApplicationRules(this Faker<DraftEoiApplication> faker, ContactDetails? submitter = null)
+        public static Faker<DraftEoiApplication> WithApplicationRules(this Faker<DraftEoiApplication> faker, string prefix, ContactDetails? submitter = null)
         {
             return faker
             .RuleFor(a => a.Id, f => null)
@@ -17,12 +17,12 @@ namespace EMCR.DRR.API.Utilities.TestData
 
             //Proponent Information - 1
             .RuleFor(a => a.ProponentType, f => f.Random.Enum<ProponentType>())
-            .RuleFor(a => a.Submitter, f => submitter ?? new Faker<ContactDetails>("en_CA").WithContactDetailsRules().Generate())
-            .RuleFor(a => a.ProjectContact, f => new Faker<ContactDetails>("en_CA").WithContactDetailsRules().Generate())
+            .RuleFor(a => a.Submitter, f => submitter ?? new Faker<ContactDetails>("en_CA").WithContactDetailsRules(prefix).Generate())
+            .RuleFor(a => a.ProjectContact, f => new Faker<ContactDetails>("en_CA").WithContactDetailsRules(prefix).Generate())
             .RuleFor(a => a.AdditionalContacts, f =>
             {
                 var contactFaker = new Faker<ContactDetails>("en_CA");
-                return contactFaker.WithContactDetailsRules().GenerateBetween(1, 2);
+                return contactFaker.WithContactDetailsRules(prefix).GenerateBetween(1, 2);
             })
             .RuleFor(a => a.PartneringProponents, f => Enumerable.Range(0, f.Random.Int(0, 5)).Select(x => f.Company.CompanyName()).ToList())
 
@@ -41,7 +41,7 @@ namespace EMCR.DRR.API.Utilities.TestData
             .RuleFor(a => a.FundingRequest, (f, a) => f.Random.Number(10, (int)a.EstimatedTotal.Value / 1000) * 1000)
             .RuleFor(a => a.HaveOtherFunding, f => f.Random.Bool())
             //.RuleFor(a => a.HaveOtherFunding, f => true)
-            .RuleFor(a => a.OtherFunding, (f, a) => CreateOtherFunding(f, (bool)a.HaveOtherFunding, f.Random.Number(0, (int)(a.EstimatedTotal - a.FundingRequest))))
+            .RuleFor(a => a.OtherFunding, (f, a) => CreateOtherFunding(f, (bool)a.HaveOtherFunding, f.Random.Number(0, (int)(a.EstimatedTotal - a.FundingRequest)), prefix))
             .RuleFor(a => a.RemainingAmount, (f, a) => a.EstimatedTotal - (a.FundingRequest + a.OtherFunding.Select(fund => fund.Amount).Sum()))
             .RuleFor(a => a.IntendToSecureFunding, f => f.Lorem.Sentence())
 
@@ -55,7 +55,7 @@ namespace EMCR.DRR.API.Utilities.TestData
             .RuleFor(a => a.EstimatedPeopleImpacted, f => f.Random.Enum<EstimatedNumberOfPeople>())
             .RuleFor(a => a.CommunityImpact, f => f.Lorem.Sentence())
             .RuleFor(a => a.IsInfrastructureImpacted, f => f.Random.Bool())
-            .RuleFor(a => a.InfrastructureImpacted, (f, a) => a.IsInfrastructureImpacted == true ? new Faker<InfrastructureImpacted>("en_CA").WithInfrastructureImpactedRules().GenerateBetween(1, 5) : Array.Empty<InfrastructureImpacted>())
+            .RuleFor(a => a.InfrastructureImpacted, (f, a) => a.IsInfrastructureImpacted == true ? new Faker<InfrastructureImpacted>("en_CA").WithInfrastructureImpactedRules(prefix).GenerateBetween(1, 5) : Array.Empty<InfrastructureImpacted>())
             .RuleFor(a => a.DisasterRiskUnderstanding, f => f.Lorem.Sentence())
             .RuleFor(a => a.AdditionalBackgroundInformation, f => f.Lorem.Sentence())
             .RuleFor(a => a.AddressRisksAndHazards, f => f.Lorem.Sentence())
@@ -74,7 +74,7 @@ namespace EMCR.DRR.API.Utilities.TestData
             ;
         }
 
-        public static Faker<DraftFpApplication> WithApplicationRules(this Faker<DraftFpApplication> faker, DraftFpApplication? originalFp = null, ContactDetails? submitter = null)
+        public static Faker<DraftFpApplication> WithApplicationRules(this Faker<DraftFpApplication> faker, string prefix, DraftFpApplication? originalFp = null, ContactDetails? submitter = null)
         {
             var otherFundingTotal = originalFp != null ? originalFp.OtherFunding.Select(f => f.Amount).Sum() : 0;
 
@@ -82,14 +82,14 @@ namespace EMCR.DRR.API.Utilities.TestData
             .RuleFor(a => a.Id, f => null)
             .RuleFor(a => a.EoiId, f => null)
             .RuleFor(a => a.Status, f => EMCR.DRR.API.Model.SubmissionPortalStatus.Draft)
-            .RuleFor(a => a.Submitter, f => submitter ?? new Faker<ContactDetails>("en_CA").WithContactDetailsRules().Generate())
+            .RuleFor(a => a.Submitter, f => submitter ?? new Faker<ContactDetails>("en_CA").WithContactDetailsRules(prefix).Generate())
 
             //Proponent & Project Information - 1
-            .RuleFor(a => a.ProjectContact, f => new Faker<ContactDetails>("en_CA").WithContactDetailsRules().Generate())
+            .RuleFor(a => a.ProjectContact, f => new Faker<ContactDetails>("en_CA").WithContactDetailsRules(prefix).Generate())
             .RuleFor(a => a.AdditionalContacts, f =>
             {
                 var contactFaker = new Faker<ContactDetails>("en_CA");
-                return contactFaker.WithContactDetailsRules().GenerateBetween(1, 2);
+                return contactFaker.WithContactDetailsRules(prefix).GenerateBetween(1, 2);
             })
             .RuleFor(a => a.PartneringProponents, f => Enumerable.Range(0, f.Random.Int(0, 5)).Select(x => f.Company.CompanyName()).ToList())
             .RuleFor(a => a.RegionalProject, f => f.Random.Bool())
@@ -118,7 +118,7 @@ namespace EMCR.DRR.API.Utilities.TestData
             .RuleFor(a => a.CommunityImpact, f => f.Lorem.Sentence())
             .RuleFor(a => a.EstimatedPeopleImpactedFP, f => f.Random.Enum<EstimatedNumberOfPeopleFP>())
             .RuleFor(a => a.IsInfrastructureImpacted, f => f.Random.Bool())
-            .RuleFor(a => a.InfrastructureImpacted, (f, a) => a.IsInfrastructureImpacted == true ? new Faker<InfrastructureImpacted>("en_CA").WithInfrastructureImpactedRules().GenerateBetween(1, 5) : Array.Empty<InfrastructureImpacted>())
+            .RuleFor(a => a.InfrastructureImpacted, (f, a) => a.IsInfrastructureImpacted == true ? new Faker<InfrastructureImpacted>("en_CA").WithInfrastructureImpactedRules(prefix).GenerateBetween(1, 5) : Array.Empty<InfrastructureImpacted>())
 
 
             //Project Plan - 4
@@ -228,7 +228,7 @@ namespace EMCR.DRR.API.Utilities.TestData
             ;
         }
 
-        public static Faker<ContactDetails> WithContactDetailsRules(this Faker<ContactDetails> faker)
+        public static Faker<ContactDetails> WithContactDetailsRules(this Faker<ContactDetails> faker, string prefix)
         {
             return faker
                 .RuleFor(c => c.FirstName, f => prefix + f.Person.FirstName)
@@ -240,7 +240,7 @@ namespace EMCR.DRR.API.Utilities.TestData
                 ;
         }
 
-        public static Faker<FundingInformation> WithFundingInformationRules(this Faker<FundingInformation> faker, int amount)
+        public static Faker<FundingInformation> WithFundingInformationRules(this Faker<FundingInformation> faker, int amount, string prefix)
         {
             return faker
                 .RuleFor(fund => fund.Name, f => prefix + f.Person.FirstName)
@@ -250,7 +250,7 @@ namespace EMCR.DRR.API.Utilities.TestData
                 ;
         }
 
-        public static Faker<InfrastructureImpacted> WithInfrastructureImpactedRules(this Faker<InfrastructureImpacted> faker)
+        public static Faker<InfrastructureImpacted> WithInfrastructureImpactedRules(this Faker<InfrastructureImpacted> faker, string prefix)
         {
             return faker
                 .RuleFor(i => i.Infrastructure, f => prefix + f.Company.CompanyName())
@@ -353,7 +353,7 @@ namespace EMCR.DRR.API.Utilities.TestData
             return ret;
         }
 
-        private static IEnumerable<FundingInformation> CreateOtherFunding(Faker f, bool haveOtherFunding, int total)
+        private static IEnumerable<FundingInformation> CreateOtherFunding(Faker f, bool haveOtherFunding, int total, string prefix)
         {
             if (!haveOtherFunding) return Enumerable.Empty<FundingInformation>();
 
@@ -362,7 +362,7 @@ namespace EMCR.DRR.API.Utilities.TestData
             var ret = new FundingInformation[length];
             for (int i = 0; i < length; i++)
             {
-                ret[i] = new Faker<FundingInformation>("en_CA").WithFundingInformationRules(amounts[i]);
+                ret[i] = new Faker<FundingInformation>("en_CA").WithFundingInformationRules(amounts[i], prefix);
             }
 
             return ret;

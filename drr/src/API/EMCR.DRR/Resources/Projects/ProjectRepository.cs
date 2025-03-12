@@ -82,12 +82,13 @@ namespace EMCR.DRR.API.Resources.Projects
             //The SSL connection could not be established, see inner exception.
             //----> System.IO.IOException : Unable to read data from the transport connection: An existing connection was forcibly closed by the remote host..----> System.Net.Sockets.SocketException : An existing connection was forcibly closed by the remote host.
             //But if I load these in two steps, it works consistently...
+
             var loadTasks2 = new List<Task>
             {
-                ctx.LoadPropertyAsync(project, nameof(drr_project.drr_drr_project_drr_projectclaim_Project), ct),
                 ctx.LoadPropertyAsync(project, nameof(drr_project.drr_drr_project_drr_projectprogress_Project), ct),
-                ctx.LoadPropertyAsync(project, nameof(drr_project.drr_drr_project_drr_projectcondition_Project), ct),
+                ctx.LoadPropertyAsync(project, nameof(drr_project.drr_drr_project_drr_projectclaim_Project), ct),
                 ctx.LoadPropertyAsync(project, nameof(drr_project.drr_drr_project_drr_projectbudgetforecast_Project), ct),
+                ctx.LoadPropertyAsync(project, nameof(drr_project.drr_drr_project_drr_projectcondition_Project), ct),
                 ctx.LoadPropertyAsync(project, nameof(drr_project.drr_drr_project_drr_projectevent_Project), ct),
             };
 
@@ -100,6 +101,11 @@ namespace EMCR.DRR.API.Resources.Projects
                 ParallelLoadClaims(ctx, project, ct),
                 ParallelLoadConditions(ctx, project, ct),
                 ]);
+
+            project.drr_drr_project_drr_projectreport_Project = new System.Collections.ObjectModel.Collection<drr_projectreport>(project.drr_drr_project_drr_projectreport_Project.OrderByDescending(rep => rep.drr_reportdate).ToList());
+            project.drr_drr_project_drr_projectprogress_Project = new System.Collections.ObjectModel.Collection<drr_projectprogress>(project.drr_drr_project_drr_projectprogress_Project.OrderByDescending(rep => rep.drr_datesubmitted).ToList());
+            project.drr_drr_project_drr_projectbudgetforecast_Project = new System.Collections.ObjectModel.Collection<drr_projectbudgetforecast>(project.drr_drr_project_drr_projectbudgetforecast_Project.OrderByDescending(rep => rep.drr_submissiondate).ToList());
+            project.drr_drr_project_drr_projectclaim_Project = new System.Collections.ObjectModel.Collection<drr_projectclaim>(project.drr_drr_project_drr_projectclaim_Project.OrderBy(rep => rep.drr_claimnumber).ToList());
         }
 
         private static async Task ParallelLoadReportDetails(DRRContext ctx, drr_project project, CancellationToken ct)

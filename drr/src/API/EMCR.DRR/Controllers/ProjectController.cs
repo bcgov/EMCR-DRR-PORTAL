@@ -424,11 +424,13 @@ namespace EMCR.DRR.Controllers
         public DateTime? ReportDate { get; set; }
         public DateTime? DateApproved { get; set; }
         public DateTime? DateSubmitted { get; set; }
+        public bool? SkipClaim {  get; set; }
         public IEnumerable<Invoice>? Invoices { get; set; }
         [StringLength(500)]
         public string? ClaimComment { get; set; }
         public decimal? ClaimAmount { get; set; }
         public IEnumerable<PreviousClaim>? PreviousClaims { get; set; }
+        public decimal? PreviousClaimTotal { get; set; }
         public decimal? TotalClaimed { get; set; }
         public decimal? TotalProjectAmount { get; set; }
         public ContactDetails? AuthorizedRepresentative { get; set; }
