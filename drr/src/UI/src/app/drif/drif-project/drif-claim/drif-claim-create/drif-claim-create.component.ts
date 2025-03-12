@@ -321,6 +321,14 @@ export class DrifClaimCreateComponent {
               formData,
             ) as IFormGroup<ClaimForm>;
 
+            this.claimForm
+              ?.get('expenditure.totalClaimed')
+              ?.disable({ emitEvent: false });
+
+            this.claimForm
+              ?.get('expenditure.totalProjectAmount')
+              ?.disable({ emitEvent: false });
+
             this.setAuthorizedRepresentative();
 
             this.formChanged = false;
