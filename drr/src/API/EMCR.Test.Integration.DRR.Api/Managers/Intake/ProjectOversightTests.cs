@@ -74,12 +74,31 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
 #pragma warning disable CS8604 // Possible null reference argument.
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
         [Test]
+        public async Task QueryClaims_PreviousClaimTotal_PopulatesCorrectly()
+        {
+            var userInfo = GetTestUserInfo();
+            //var userInfo = GetCRAFTUserInfo();
+
+            var project = (await manager.Handle(new DrrProjectsQuery { Id = TestProjectId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault();
+            for (var i = 0; i < project.InterimReports.Count() - 1; ++i)
+            {
+                var currentClaimId = project.InterimReports.ElementAt(i).ProjectClaim.Id;
+                var previousClaimId = project.InterimReports.ElementAt(i + 1).ProjectClaim.Id;
+                var currentClaim = mapper.Map<EMCR.DRR.Controllers.ProjectClaim>((await manager.Handle(new DrrClaimsQuery { Id = currentClaimId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+                var previousClaim = mapper.Map<EMCR.DRR.Controllers.ProjectClaim>((await manager.Handle(new DrrClaimsQuery { Id = previousClaimId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+
+                if ((currentClaim.PreviousClaimTotal == null || currentClaim.PreviousClaimTotal == 0) && (previousClaim.TotalClaimed == null || previousClaim.TotalClaimed == 0)) continue;
+                currentClaim.PreviousClaimTotal.ShouldBe(previousClaim.TotalClaimed);
+            }
+        }
+
+        [Test]
         public async Task QueryClaims_CanFilterById()
         {
             var userInfo = GetTestUserInfo();
             //var userInfo = GetCRAFTUserInfo();
 
-            var queryRes = await manager.Handle(new DrrClaimsQuery { Id = "DRIF-CLAIM-1069", BusinessId = userInfo.BusinessId });
+            var queryRes = await manager.Handle(new DrrClaimsQuery { Id = "DRIF-CLAIM-1073", BusinessId = userInfo.BusinessId });
             var claims = mapper.Map<IEnumerable<DraftProjectClaim>>(queryRes.Items);
             claims.Count().ShouldBe(1);
             var claim = claims.SingleOrDefault();

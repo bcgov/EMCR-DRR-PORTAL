@@ -203,11 +203,20 @@ namespace EMCR.DRR.Managers.Intake
                     var project = (await Handle(new DrrProjectsQuery { Id = claim.Project.Id, BusinessId = q.BusinessId })).Items.SingleOrDefault();
                     if (project != null && project.InterimReports != null)
                     {
-                        var previousReport = project.InterimReports.Skip(1).Take(1).FirstOrDefault();
-                        if (previousReport != null && previousReport.ProjectClaim != null)
+                        var reports = project.InterimReports.ToList();
+                        var currentReport = reports.Where(r => r.ProjectClaim?.Id == claim.Id).SingleOrDefault();
+                        if (currentReport != null)
                         {
-                            var previousClaim = (await reportRepository.Query(new ClaimsQuery { Id = previousReport.ProjectClaim.Id, BusinessId = q.BusinessId })).Items.SingleOrDefault();
-                            claim.PreviousClaimTotal = previousClaim?.TotalClaimed ?? 0;
+                            var previousReportIndex = reports.IndexOf(currentReport) + 1;
+                            if (previousReportIndex >= 0 && previousReportIndex < reports.Count)
+                            {
+                                var previousReport = reports.ElementAt(previousReportIndex);
+                                if (previousReport != null && previousReport.ProjectClaim != null)
+                                {
+                                    var previousClaim = (await reportRepository.Query(new ClaimsQuery { Id = previousReport.ProjectClaim.Id, BusinessId = q.BusinessId })).Items.SingleOrDefault();
+                                    claim.PreviousClaimTotal = previousClaim?.TotalClaimed ?? 0;
+                                }
+                            }
                         }
                     }
                 }
