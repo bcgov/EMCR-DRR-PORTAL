@@ -86,18 +86,9 @@ export class InvoiceForm implements Invoice {
   totalGST?: number;
 
   @propArray(InvoiceAttachmentForm)
-  attachments?: InvoiceAttachmentForm[] = [
-    // {
-    //   documentType: DocumentType.Invoice,
-    // },
-    // {
-    //   documentType: DocumentType.ProofOfPayment,
-    // },
-  ];
+  attachments?: InvoiceAttachmentForm[] = [];
 
   constructor(value: InvoiceForm) {
-    // TODO: check if I can initiate formArray from within the constructor
-    // perhaps I should reinstantiate the whole form instead of patching value after API call
     Object.assign(this, value);
   }
 }
@@ -127,7 +118,7 @@ export class ExpenditureForm {
 export class DeclarationForm {
   @required()
   @propObject(ContactDetailsForm)
-  submitter?: ContactDetailsForm = new ContactDetailsForm({});
+  authorizedRepresentative?: ContactDetailsForm = new ContactDetailsForm({});
 
   @prop()
   @required()
@@ -154,10 +145,4 @@ export class ClaimForm {
   constructor(values: ClaimForm) {
     Object.assign(this, values);
   }
-}
-function requiredFalse(): (
-  target: InvoiceForm,
-  propertyKey: 'paymentDate',
-) => void {
-  throw new Error('Function not implemented.');
 }
