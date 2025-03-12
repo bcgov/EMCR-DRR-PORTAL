@@ -57,6 +57,50 @@ namespace EMCR.DRR.API.Utilities.TestData
 
             return originalFp;
         }
+
+        public static IEnumerable<Invoice> CreateInvoices(DateTime startDate, DateTime endDate, CostCategory[] categoryOptions, decimal? total = null, string prefix = "autotest-")
+        {
+            var length = new Random().Next(2, 6);
+            if (total == null) total = 100000;
+            var amounts = GenerateRandomNumbersWithTargetSum((int)total, length);
+            var ret = new Invoice[length];
+            for (int i = 0; i < length; i++)
+            {
+                ret[i] = new Faker<Invoice>("en_CA").WithInvoiceRules(i + 1, startDate, endDate, categoryOptions, prefix, amounts[i]);
+            }
+
+            return ret;
+        }
+
+        public static Invoice CreateNewTestInvoice(string id, int index, DateTime startDate, DateTime endDate, CostCategory[] categoryOptions, string prefix = "autotest-", decimal? total = null)
+        {
+            var invoice = new Faker<Invoice>("en_CA").WithInvoiceRules(index, startDate, endDate, categoryOptions, prefix, total).Generate();
+            invoice.Id = id;
+            return invoice;
+        }
+
+        public static int[] GenerateRandomNumbersWithTargetSum(int target, int count)
+        {
+            Random rand = new Random();
+            int[] points = new int[count + 1];
+
+            // Generate random partition points
+            for (int i = 1; i < count; i++)
+            {
+                points[i] = rand.Next(1, target);
+            }
+            points[count] = target;
+            Array.Sort(points);
+
+            // Compute differences to get numbers that sum to target
+            int[] result = new int[count];
+            for (int i = 0; i < count; i++)
+            {
+                result[i] = points[i + 1] - points[i];
+            }
+
+            return result;
+        }
 #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
     }
 }

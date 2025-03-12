@@ -2,6 +2,7 @@
 using AutoMapper;
 using EMCR.DRR.API.Resources.Projects;
 using EMCR.DRR.API.Services.S3;
+using EMCR.DRR.API.Utilities.TestData;
 using EMCR.DRR.Controllers;
 using EMCR.DRR.Dynamics;
 using EMCR.DRR.Managers.Intake;
@@ -195,6 +196,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             updatedProgressReport.Status.ShouldBe(EMCR.DRR.Controllers.ProgressReportStatus.Submitted);
         }
 
+#pragma warning disable CS8629 // Nullable value type may be null.
         [Test]
         public async Task CanUpdateClaim()
         {
@@ -214,6 +216,8 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             Console.WriteLine(claimId);
             var uniqueSignature = TestPrefix + "-" + Guid.NewGuid().ToString().Substring(0, 4);
             var claim = mapper.Map<EMCR.DRR.Controllers.ProjectClaim>((await manager.Handle(new DrrClaimsQuery { Id = claimId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+            var categoryOptions = claim?.PreviousClaims != null ? claim.PreviousClaims.Select(c => c.CostCategory.Value).ToArray() : Enum.GetValues(typeof(EMCR.DRR.Controllers.CostCategory)).Cast<EMCR.DRR.Controllers.CostCategory>().Where(e => e != EMCR.DRR.Controllers.CostCategory.Contingency).ToArray();
+
             if (claim.Invoices.Any())
             {
                 foreach (var invoice in claim.Invoices)
@@ -226,40 +230,31 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             claim = FillInClaim(claim, uniqueSignature);
             claim.Status = EMCR.DRR.Controllers.ClaimStatus.Draft;
 
-            //Console.WriteLine(progressReport.Id);
             await manager.Handle(new SaveClaimCommand { Claim = claim, UserInfo = userInfo });
-            await manager.Handle(new CreateInvoiceCommand { ClaimId = claim.Id, InvoiceId = Guid.NewGuid().ToString(), UserInfo = userInfo });
-            await manager.Handle(new CreateInvoiceCommand { ClaimId = claim.Id, InvoiceId = Guid.NewGuid().ToString(), UserInfo = userInfo });
-            await manager.Handle(new CreateInvoiceCommand { ClaimId = claim.Id, InvoiceId = Guid.NewGuid().ToString(), UserInfo = userInfo });
-
-
-            var updatedClaim = mapper.Map<DraftProjectClaim>((await manager.Handle(new DrrClaimsQuery { Id = claim.Id, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
-            updatedClaim.Status.ShouldBe(claim.Status);
-            updatedClaim.Invoices.Count().ShouldBe(3);
-            var num = 0;
+            var invoiceTotal = new Random().Next(20, 101) * 1000;
             DateTime startDate = project.StartDate ?? DateTime.UtcNow;
             DateTime endDate = project.EndDate ?? DateTime.UtcNow.AddDays(30);
-            foreach (var invoice in updatedClaim.Invoices)
+            var invoices = TestHelper.CreateInvoices(startDate, endDate, categoryOptions, invoiceTotal);
+            for (int i = 0; i < invoices.Count(); i++)
             {
-                invoice.InvoiceNumber = $"Inv-{++num}";
-                invoice.Date = startDate.AddDays(num);
-                invoice.WorkStartDate = startDate.AddDays(num);
-                invoice.WorkEndDate = endDate.AddDays(-num);
-                invoice.PaymentDate = endDate.AddDays(-num);
-                invoice.CostCategory = EMCR.DRR.Controllers.CostCategory.Mapping;
-                invoice.SupplierName = $"Supplier-{num}";
-                invoice.Description = $"description";
-                invoice.GrossAmount = 5000;
-                invoice.TaxRebate = 500;
-                invoice.ClaimAmount = 5500;
-                invoice.TotalPST = 700;
-                invoice.TotalGST = 300;
+                await manager.Handle(new CreateInvoiceCommand { ClaimId = claim.Id, InvoiceId = Guid.NewGuid().ToString(), UserInfo = userInfo });
             }
 
+            var updatedClaim = mapper.Map<DraftProjectClaim>((await manager.Handle(new DrrClaimsQuery { Id = claim.Id, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+
+            updatedClaim.Status.ShouldBe(claim.Status);
+            updatedClaim.Invoices.Count().ShouldBe(invoices.Count());
+            for (int i = 0; i < invoices.Count(); i++)
+            {
+                invoices.ElementAt(i).Id = updatedClaim.Invoices.ElementAt(i).Id;
+            }
+
+            updatedClaim.Invoices = invoices;
             await manager.Handle(new SaveClaimCommand { Claim = mapper.Map<EMCR.DRR.Controllers.ProjectClaim>(updatedClaim), UserInfo = userInfo });
             var twiceUpdatedClaim = mapper.Map<DraftProjectClaim>((await manager.Handle(new DrrClaimsQuery { Id = updatedClaim.Id, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
             twiceUpdatedClaim.Invoices.Count().ShouldBe(updatedClaim.Invoices.Count());
         }
+#pragma warning restore CS8629 // Nullable value type may be null.
 
         //[Test]
         //public async Task UpdateClaim100Invoices()
