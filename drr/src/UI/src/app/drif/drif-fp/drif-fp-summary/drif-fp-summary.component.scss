@@ -41,14 +41,14 @@
 
 .summary-grid-row {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 15rem));
   gap: 1rem;
   margin-left: 1rem;
 }
 
 .cost-estimate-row {
   display: grid;
-  grid-template-columns: repeat(7, minmax(200px, 1fr));
+  grid-template-columns: repeat(7, minmax(100px, 1fr));
   gap: 1rem;
   margin: 1rem 0 0 1rem;
   text-wrap: break-word;

@@ -6,6 +6,11 @@
   min-height: 2rem;
 }
 
+.textarea {
+  text-wrap: break-word;
+  word-break: break-all;
+}
+
 .drr-summary-value {
   margin-left: 1rem;
 }

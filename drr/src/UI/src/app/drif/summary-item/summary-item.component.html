@@ -3,5 +3,9 @@
   <mat-label *ngIf="!value" [class.required]="isRequired()">
     ({{ isRequired() ? "Required" : "Optional" }})</mat-label
   >
-  <mat-label class="drr-summary-value">{{ value }}</mat-label>
+  <mat-label
+    class="drr-summary-value"
+    [class.textarea]="controlType === 'textarea'"
+    >{{ value }}</mat-label
+  >
 </div>

@@ -155,6 +155,7 @@
             'proponentAndProjectInformation.regionalProjectComments'
           )
         "
+        controlType="textarea"
       >
       </drr-summary-item>
 
@@ -171,6 +172,7 @@
         [rxFormControl]="
           fullProposalForm.get('proponentAndProjectInformation.mainDeliverable')
         "
+        controlType="textarea"
       >
       </drr-summary-item>
     </mat-card-content>
@@ -196,6 +198,7 @@
         [rxFormControl]="
           fullProposalForm.get('ownershipAndAuthorization.ownershipDescription')
         "
+        controlType="textarea"
       >
       </drr-summary-item>
 
@@ -228,6 +231,7 @@
             'ownershipAndAuthorization.operationAndMaintenanceComments'
           )
         "
+        controlType="textarea"
       >
       </drr-summary-item>
 
@@ -258,6 +262,7 @@
             'ownershipAndAuthorization.authorizationOrEndorsementComments'
           )
         "
+        controlType="textarea"
       ></drr-summary-item>
     </mat-card-content>
   </mat-card>
@@ -273,6 +278,7 @@
         [rxFormControl]="
           fullProposalForm.get('projectArea.locationDescription')
         "
+        controlType="textarea"
       >
       </drr-summary-item>
 
@@ -287,7 +293,7 @@
         <drr-summary-item
           [label]="t('units')"
           [rxFormControl]="fullProposalForm.get('projectArea.units')"
-          [controlType]="'select'"
+          controlType="select"
         >
         </drr-summary-item>
       </div>
@@ -314,12 +320,14 @@
       <drr-summary-item
         [label]="t('areaDescriptionText')"
         [rxFormControl]="fullProposalForm.get('projectArea.areaDescription')"
+        controlType="textarea"
       >
       </drr-summary-item>
 
       <drr-summary-item
         [label]="t('communityImpactText')"
         [rxFormControl]="fullProposalForm.get('projectArea.communityImpact')"
+        controlType="textarea"
       >
       </drr-summary-item>
 
@@ -393,6 +401,7 @@
       <drr-summary-item
         [label]="t('projectDescription')"
         [rxFormControl]="fullProposalForm.get('projectPlan.projectDescription')"
+        controlType="textarea"
       >
       </drr-summary-item>
       <div>
@@ -414,7 +423,7 @@
                 ? t('activityType.' + control.get('activity')?.value)
                 : ''
             "
-            [controlType]="'select'"
+            controlType="select"
           >
           </drr-summary-item>
 
@@ -435,12 +444,14 @@
           <drr-summary-item
             [label]="t('tasks')"
             [rxFormControl]="control.get('tasks')"
+            controlType="textarea"
           >
           </drr-summary-item>
 
           <drr-summary-item
             [label]="t('deliverables')"
             [rxFormControl]="control.get('deliverables')"
+            controlType="textarea"
           >
           </drr-summary-item>
         </div>
@@ -461,6 +472,7 @@
         [rxFormControl]="
           fullProposalForm.get('projectPlan.howWasNeedIdentified')
         "
+        controlType="textarea"
       >
       </drr-summary-item>
 
@@ -469,6 +481,7 @@
         [rxFormControl]="
           fullProposalForm.get('projectPlan.addressRisksAndHazards')
         "
+        controlType="textarea"
       >
       </drr-summary-item>
 
@@ -477,6 +490,7 @@
         [rxFormControl]="
           fullProposalForm.get('projectPlan.disasterRiskUnderstanding')
         "
+        controlType="textarea"
       >
       </drr-summary-item>
 
@@ -485,6 +499,7 @@
         [rxFormControl]="
           fullProposalForm.get('projectPlan.rationaleForFunding')
         "
+        controlType="textarea"
       >
       </drr-summary-item>
 
@@ -493,6 +508,7 @@
         [rxFormControl]="
           fullProposalForm.get('projectPlan.projectAlternateOptions')
         "
+        controlType="textarea"
       >
       </drr-summary-item>
     </mat-card-content>
@@ -522,6 +538,7 @@
             'projectEngagement.engagedWithFirstNationsComments'
           )
         "
+        controlType="textarea"
       >
       </drr-summary-item>
 
@@ -549,6 +566,7 @@
         [rxFormControl]="
           fullProposalForm.get('projectEngagement.otherEngagementComments')
         "
+        controlType="textarea"
       >
       </drr-summary-item>
 
@@ -557,6 +575,7 @@
         [rxFormControl]="
           fullProposalForm.get('projectEngagement.collaborationComments')
         "
+        controlType="textarea"
       >
       </drr-summary-item>
     </mat-card-content>
@@ -584,6 +603,7 @@
         [rxFormControl]="
           fullProposalForm.get('climateAdaptation.climateAdaptation')
         "
+        controlType="textarea"
       >
       </drr-summary-item>
 
@@ -617,6 +637,7 @@
         [rxFormControl]="
           fullProposalForm.get('climateAdaptation.climateAssessmentComments')
         "
+        controlType="textarea"
       >
       </drr-summary-item>
     </mat-card-content>
@@ -680,6 +701,7 @@
             'permitsRegulationsAndStandards.standardsComments'
           )
         "
+        controlType="textarea"
       >
       </drr-summary-item>
 
@@ -718,6 +740,7 @@
             'permitsRegulationsAndStandards.professionalGuidanceComments'
           )
         "
+        controlType="textarea"
       >
       </drr-summary-item>
 
@@ -728,6 +751,7 @@
             'permitsRegulationsAndStandards.knowledgeHolders'
           )
         "
+        controlType="textarea"
       >
       </drr-summary-item>
 
@@ -748,6 +772,7 @@
             'permitsRegulationsAndStandards.meetsRegulatoryComments'
           )
         "
+        controlType="textarea"
       >
       </drr-summary-item>
 
@@ -791,6 +816,7 @@
             'permitsRegulationsAndStandards.meetsEligibilityComments'
           )
         "
+        controlType="textarea"
       >
       </drr-summary-item>
     </mat-card-content>
@@ -813,6 +839,7 @@
         [rxFormControl]="
           fullProposalForm.get('projectOutcomes.publicBenefitComments')
         "
+        controlType="textarea"
       >
       </drr-summary-item>
       <drr-summary-item
@@ -841,6 +868,7 @@
           [rxFormControl]="
             fullProposalForm.get('projectOutcomes.costReductionComments')
           "
+          controlType="textarea"
         >
         </drr-summary-item>
       }
@@ -868,6 +896,7 @@
           [rxFormControl]="
             fullProposalForm.get('projectOutcomes.coBenefitComments')
           "
+          controlType="textarea"
         ></drr-summary-item>
       }
 
@@ -884,6 +913,7 @@
         [rxFormControl]="
           fullProposalForm.get('projectOutcomes.increasedResiliencyComments')
         "
+        controlType="textarea"
       ></drr-summary-item>
     </mat-card-content>
   </mat-card>
@@ -916,6 +946,7 @@
           [rxFormControl]="
             fullProposalForm.get('projectRisks.complexityRiskComments')
           "
+          controlType="textarea"
         ></drr-summary-item>
       }
       <drr-summary-item
@@ -940,6 +971,7 @@
           [rxFormControl]="
             fullProposalForm.get('projectRisks.readinessRiskComments')
           "
+          controlType="textarea"
         ></drr-summary-item>
       }
 
@@ -967,6 +999,7 @@
           [rxFormControl]="
             fullProposalForm.get('projectRisks.sensitivityRiskComments')
           "
+          controlType="textarea"
         ></drr-summary-item>
       }
       <drr-summary-item
@@ -991,6 +1024,7 @@
           [rxFormControl]="
             fullProposalForm.get('projectRisks.capacityRiskComments')
           "
+          controlType="textarea"
         ></drr-summary-item>
       }
       <drr-summary-item
@@ -1017,6 +1051,7 @@
           [rxFormControl]="
             fullProposalForm.get('projectRisks.increasedOrTransferredComments')
           "
+          controlType="textarea"
         ></drr-summary-item>
       }
     </mat-card-content>
@@ -1039,6 +1074,7 @@
           [rxFormControl]="
             fullProposalForm.get('budget.totalProjectCostChangeComments')
           "
+          controlType="textarea"
         ></drr-summary-item>
       }
       <drr-summary-item
@@ -1069,17 +1105,17 @@
           <drr-summary-item
             [label]="t('costCategory')"
             [rxFormControl]="control.get('costCategory')"
-            [controlType]="'select'"
+            controlType="select"
           ></drr-summary-item>
           <drr-summary-item
             [label]="t('resources')"
             [rxFormControl]="control.get('resources')"
-            [controlType]="'select'"
+            controlType="select"
           ></drr-summary-item>
           <drr-summary-item
             [label]="t('costUnits')"
             [rxFormControl]="control.get('units')"
-            [controlType]="'select'"
+            controlType="select"
           ></drr-summary-item>
           <drr-summary-item
             [label]="t('quantity')"
@@ -1121,6 +1157,7 @@
           <drr-summary-item
             [label]="t('contingencyComments')"
             [rxFormControl]="fullProposalForm.get('budget.contingencyComments')"
+            controlType="textarea"
           ></drr-summary-item>
         }
       }
@@ -1134,6 +1171,7 @@
       <drr-summary-item
         [label]="t('discrepancyComment')"
         [rxFormControl]="fullProposalForm.get('budget.discrepancyComment')"
+        controlType="textarea"
       ></drr-summary-item>
 
       <mat-label class="drr-label">Financial Forecasting</mat-label>
@@ -1215,10 +1253,12 @@
         *ngIf="fullProposalForm.get('budget.remainingAmount')?.value > 0"
         [label]="t('intendToSecureFunding')"
         [rxFormControl]="fullProposalForm.get('budget.intendToSecureFunding')"
+        controlType="textarea"
       ></drr-summary-item>
       <drr-summary-item
         [label]="t('costEffectiveComments')"
         [rxFormControl]="fullProposalForm.get('budget.costEffectiveComments')"
+        controlType="textarea"
       ></drr-summary-item>
       <drr-summary-item
         [label]="t('previousResponseQuestion')"
@@ -1243,6 +1283,7 @@
         [rxFormControl]="
           fullProposalForm.get('budget.previousResponseComments')
         "
+        controlType="textarea"
       ></drr-summary-item>
       <drr-summary-item
         [label]="t('costConsiderationsApplied')"
@@ -1266,6 +1307,7 @@
         [rxFormControl]="
           fullProposalForm.get('budget.costConsiderationsComments')
         "
+        controlType="textarea"
       ></drr-summary-item>
     </mat-card-content>
   </mat-card>
@@ -1296,6 +1338,7 @@
                   'comments'
                 )
               "
+              controlType="textarea"
             >
             </drr-summary-item>
             <button
@@ -1339,6 +1382,7 @@
               [rxFormControl]="
                 getAttachmentByDocumentType('SitePlan').get('comments')
               "
+              controlType="textarea"
             >
             </drr-summary-item>
             <button
@@ -1379,6 +1423,7 @@
               [rxFormControl]="
                 getAttachmentByDocumentType('PreliminaryDesign').get('comments')
               "
+              controlType="textarea"
             >
             </drr-summary-item>
             <button
@@ -1430,6 +1475,7 @@
                 [rxFormControl]="
                   getAttachmentByDocumentType('Resolution').get('comments')
                 "
+                controlType="textarea"
               >
               </drr-summary-item>
               <button
@@ -1474,6 +1520,7 @@
           <drr-summary-item
             [label]="t('attachments.comments')"
             [rxFormControl]="attachment.get('comments')"
+            controlType="textarea"
           >
           </drr-summary-item>
           <button
