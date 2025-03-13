@@ -77,7 +77,15 @@ namespace EMCR.DRR.API.Utilities.TestData
         public static Faker<DraftFpApplication> WithApplicationRules(this Faker<DraftFpApplication> faker, string prefix, DraftFpApplication? originalFp = null, ContactDetails? submitter = null)
         {
             var otherFundingTotal = originalFp != null ? originalFp.OtherFunding.Select(f => f.Amount).Sum() : 0;
-
+            var professionalOptions = new[]
+            {
+                "British Columbia Land Surveyor",
+                "Professional agrologist",
+                "Professional archaeologist",
+                "Professional engineer",
+                "Professional forester / forest technologist",
+                "Professional geoscientist"
+            };
             return faker
             .RuleFor(a => a.Id, f => null)
             .RuleFor(a => a.EoiId, f => null)
@@ -156,7 +164,7 @@ namespace EMCR.DRR.API.Utilities.TestData
             .RuleFor(a => a.Standards, (f, a) => new Faker<StandardInfo>("en_CA").WithStandardInfoRules().GenerateBetween(1, 5))
             .RuleFor(a => a.StandardsComments, f => f.Lorem.Sentence())
             .RuleFor(a => a.ProfessionalGuidance, f => f.Random.Bool())
-            .RuleFor(a => a.Professionals, (f, a) => a.ProfessionalGuidance == true ? Enumerable.Range(0, f.Random.Int(1, 5)).Select(x => f.Lorem.Word()).ToList() : null)
+            .RuleFor(a => a.Professionals, (f, a) => a.ProfessionalGuidance == true ? (Enumerable.Range(0, f.Random.Int(1, 5)).Select(x => f.PickRandom(professionalOptions))).Distinct().ToList() : null)
             .RuleFor(a => a.ProfessionalGuidanceComments, f => f.Lorem.Sentence())
             .RuleFor(a => a.KnowledgeHolders, f => f.Lorem.Sentence())
             .RuleFor(a => a.MeetsRegulatoryRequirements, f => f.Random.Bool())
@@ -214,7 +222,7 @@ namespace EMCR.DRR.API.Utilities.TestData
             .RuleFor(a => a.CostConsiderations, (f, a) => a.CostConsiderationsApplied == true ? Enumerable.Range(0, f.Random.Int(1, 5)).Select(x => f.Lorem.Word()).ToList() : null)
             .RuleFor(a => a.CostConsiderationsComments, (f, a) => a.CostConsiderationsApplied == true ? f.Lorem.Sentence() : null)
             .RuleFor(a => a.CostEstimateClass, f => f.Random.Enum<CostEstimateClass>())
-            .RuleFor(a => a.CostEstimates, (f, a) => CreateCostEstimates(f, (int)a.EligibleFundingRequest))
+            .RuleFor(a => a.CostEstimates, (f, a) => CreateCostEstimates(f, (int)a.EligibleFundingRequest, a.FundingStream.Value))
             .RuleFor(a => a.EstimatesMatchFundingRequest, f => false)
             .RuleFor(a => a.Contingency, f => f.Random.Int(0, 25))
             .RuleFor(a => a.ContingencyComments, f => f.Lorem.Sentence())
@@ -226,6 +234,29 @@ namespace EMCR.DRR.API.Utilities.TestData
             .RuleFor(a => a.Attachments, f => [])
 
             ;
+        }
+
+        public static Faker<Invoice> WithInvoiceRules(this Faker<Invoice> faker, int index, DateTime startDate, DateTime endDate, CostCategory[] categoryOptions, string prefix, decimal? total = null)
+        {
+            int midPoint = (endDate - startDate).Days / 2;
+
+            return faker
+                .RuleFor(i => i.Id, f => Guid.NewGuid().ToString())
+                .RuleFor(i => i.InvoiceNumber, f => $"{prefix}Inv-{index}")
+                .RuleFor(i => i.Date, f => f.Date.Between(startDate, endDate))
+                .RuleFor(i => i.WorkStartDate, f => f.Date.Between(startDate, startDate.AddDays(midPoint)))
+                .RuleFor(i => i.WorkEndDate, (f, i) => f.Date.Between(i.WorkStartDate.Value, endDate))
+                .RuleFor(i => i.PaymentDate, (f, i) => f.Date.Between(i.WorkEndDate.Value, endDate))
+                .RuleFor(i => i.CostCategory, f => f.PickRandom(categoryOptions))
+                .RuleFor(i => i.SupplierName, f => f.Company.CompanyName())
+                .RuleFor(i => i.Description, f => f.Lorem.Sentence())
+                .RuleFor(i => i.GrossAmount, f => f.Random.Decimal(0, total ?? 50000))
+                .RuleFor(i => i.TaxRebate, (f, i) => f.Random.Decimal(0, i.GrossAmount.Value * (decimal)0.1))
+                .RuleFor(i => i.ClaimAmount, (f, i) => f.Random.Decimal(i.GrossAmount.Value * (decimal)0.8, i.GrossAmount.Value))
+                .RuleFor(i => i.TotalPST, (f, i) => f.Random.Decimal(0, i.GrossAmount.Value * (decimal)0.05))
+                .RuleFor(i => i.TotalGST, (f, i) => f.Random.Decimal(0, i.GrossAmount.Value * (decimal)0.05))
+                .RuleFor(i => i.Attachments, f => [])
+                ;
         }
 
         public static Faker<ContactDetails> WithContactDetailsRules(this Faker<ContactDetails> faker, string prefix)
@@ -295,7 +326,7 @@ namespace EMCR.DRR.API.Utilities.TestData
             return divisors.ToList();
         }
 
-        public static Faker<CostEstimate> WithCostEstimateRules(this Faker<CostEstimate> faker, int amount)
+        public static Faker<CostEstimate> WithCostEstimateRules(this Faker<CostEstimate> faker, int amount, CostCategory[] categoryOptions)
         {
             var divisors = GetDivisors(amount);
             divisors = divisors.Where(d => d <= 20).ToList();
@@ -309,7 +340,7 @@ namespace EMCR.DRR.API.Utilities.TestData
             return faker
                 .RuleFor(a => a.Id, f => null)
                 .RuleFor(a => a.TaskName, f => f.Lorem.Word())
-                .RuleFor(a => a.CostCategory, f => f.Random.Enum<CostCategory>())
+                .RuleFor(a => a.CostCategory, f => f.PickRandom(categoryOptions))
                 .RuleFor(a => a.Description, f => f.Lorem.Sentence())
                 .RuleFor(a => a.Resources, f => f.Random.Enum<ResourceCategory>())
                 .RuleFor(a => a.Units, f => f.Random.Enum<CostUnit>())
@@ -330,7 +361,7 @@ namespace EMCR.DRR.API.Utilities.TestData
         private static IEnumerable<YearOverYearFunding> CreateYearOverYearFunding(Faker f, int total)
         {
             var length = f.Random.Number(1, 4);
-            var amounts = GenerateRandomNumbersWithTargetSum(total, length);
+            var amounts = TestHelper.GenerateRandomNumbersWithTargetSum(total, length);
             var ret = new YearOverYearFunding[length];
             for (int i = 0; i < length; i++)
             {
@@ -340,14 +371,16 @@ namespace EMCR.DRR.API.Utilities.TestData
             return ret;
         }
 
-        private static IEnumerable<CostEstimate> CreateCostEstimates(Faker f, int total)
+        private static IEnumerable<CostEstimate> CreateCostEstimates(Faker f, int total, FundingStream stream)
         {
+            var categoryOptions = Enum.GetValues(typeof(CostCategory)).Cast<CostCategory>().ToArray();
+            if (stream == FundingStream.Stream1) categoryOptions = categoryOptions.Where(e => e != CostCategory.Contingency).ToArray();
             var length = f.Random.Number(1, 4);
-            var amounts = GenerateRandomNumbersWithTargetSum(total, length);
+            var amounts = TestHelper.GenerateRandomNumbersWithTargetSum(total, length);
             var ret = new CostEstimate[length];
             for (int i = 0; i < length; i++)
             {
-                ret[i] = new Faker<CostEstimate>("en_CA").WithCostEstimateRules(amounts[i]);
+                ret[i] = new Faker<CostEstimate>("en_CA").WithCostEstimateRules(amounts[i], categoryOptions);
             }
 
             return ret;
@@ -358,7 +391,7 @@ namespace EMCR.DRR.API.Utilities.TestData
             if (!haveOtherFunding) return Enumerable.Empty<FundingInformation>();
 
             var length = f.Random.Number(1, 6);
-            var amounts = GenerateRandomNumbersWithTargetSum(total, length);
+            var amounts = TestHelper.GenerateRandomNumbersWithTargetSum(total, length);
             var ret = new FundingInformation[length];
             for (int i = 0; i < length; i++)
             {
@@ -366,29 +399,6 @@ namespace EMCR.DRR.API.Utilities.TestData
             }
 
             return ret;
-        }
-
-        private static int[] GenerateRandomNumbersWithTargetSum(int target, int count)
-        {
-            Random rand = new Random();
-            int[] points = new int[count + 1];
-
-            // Generate random partition points
-            for (int i = 1; i < count; i++)
-            {
-                points[i] = rand.Next(1, target);
-            }
-            points[count] = target;
-            Array.Sort(points);
-
-            // Compute differences to get numbers that sum to target
-            int[] result = new int[count];
-            for (int i = 0; i < count; i++)
-            {
-                result[i] = points[i + 1] - points[i];
-            }
-
-            return result;
         }
 
         private static IEnumerable<string> CategoryNames = new[]
