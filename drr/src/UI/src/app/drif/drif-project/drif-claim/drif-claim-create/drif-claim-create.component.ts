@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, CurrencyPipe } from '@angular/common';
 import { Component, HostListener, inject, ViewChild } from '@angular/core';
 import {
   AbstractControl,
@@ -51,6 +51,7 @@ import {
   DrrSelectOption,
 } from '../../../../shared/controls/drr-select/drr-select.component';
 import { DrrTextareaComponent } from '../../../../shared/controls/drr-textarea/drr-textarea.component';
+import { DrrAlertComponent } from '../../../../shared/drr-alert/drr-alert.component';
 import { FileService } from '../../../../shared/services/file.service';
 import { OptionsStore } from '../../../../store/options.store';
 import { ProfileStore } from '../../../../store/profile.store';
@@ -96,10 +97,11 @@ export class ClaimSummaryItem implements PreviousClaim {
     DrrCurrencyInputComponent,
     DrrFileUploadComponent,
     DrifClaimSummaryComponent,
+    DrrAlertComponent,
   ],
   templateUrl: './drif-claim-create.component.html',
   styleUrl: './drif-claim-create.component.scss',
-  providers: [RxFormBuilder],
+  providers: [RxFormBuilder, CurrencyPipe],
 })
 export class DrifClaimCreateComponent {
   formBuilder = inject(RxFormBuilder);
@@ -112,6 +114,7 @@ export class DrifClaimCreateComponent {
   translocoService = inject(TranslocoService);
   toastService = inject(HotToastService);
   fileService = inject(FileService);
+  currencyPipe = inject(CurrencyPipe);
 
   invoiceDocumentType = DocumentType.Invoice;
   proofOfPaymentDocumentType = DocumentType.ProofOfPayment;
@@ -143,6 +146,12 @@ export class DrifClaimCreateComponent {
   ];
 
   previousClaimTotal = 0;
+  // TODO: to be set by API
+  activeConditionLimit = {
+    conditionName: 'Construction Permits and Approvals',
+    conditionPercentage: 10,
+    conditionAmount: 100000,
+  };
 
   lastSavedAt?: Date;
 
