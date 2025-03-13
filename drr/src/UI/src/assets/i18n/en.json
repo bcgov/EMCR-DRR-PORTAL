@@ -699,6 +699,7 @@
     "step3": "Review & Declaration",
     "haveClaimExpensesTitle": "Claim Expenses?",
     "haveClaimExpenses": "Do you have expenses for this reporting period that you want to claim?",
+    "claimIntentIssueMessage": "You must delete each invoice entry before you can submit the claim.",
     "invoiceNumber": "Invoice Number",
     "invoiceDate": "Date of Invoice",
     "workStartDate": "Start Date",

@@ -81,14 +81,10 @@
             [label]="t('haveClaimExpenses')"
             [rxFormControl]="claimForm.get('expenditure.haveClaimExpenses')"
           ></drr-radio-button>
-          @if (
-            claimForm.get("expenditure.haveClaimExpenses")?.value === false &&
-            getInvoiceFormArray()?.length! > 0
-          ) {
+          @if (hasClaimIntentIssue()) {
             <drr-alert [type]="'warning'">
               <p>
-                You must delete each invoice entry before you can submit the
-                claim.
+                {{ t("claimIntentIssueMessage") }}
               </p>
             </drr-alert>
           }

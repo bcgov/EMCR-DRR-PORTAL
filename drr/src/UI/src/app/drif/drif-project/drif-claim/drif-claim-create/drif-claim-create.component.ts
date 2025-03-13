@@ -528,6 +528,13 @@ export class DrifClaimCreateComponent {
       return;
     }
 
+    if (this.hasClaimIntentIssue()) {
+      this.toastService.error(
+        this.translocoService.translate('claim.claimIntentIssueMessage'),
+      );
+      return;
+    }
+
     const claimValue = this.getFormValue();
 
     this.projectService
@@ -850,5 +857,12 @@ export class DrifClaimCreateComponent {
 
   getDelcarationForm() {
     return this.claimForm?.get('declaration') as IFormGroup<DeclarationForm>;
+  }
+
+  hasClaimIntentIssue() {
+    return (
+      this.claimForm?.get('expenditure.haveClaimExpenses')?.value === false &&
+      this.getInvoiceFormArray()?.length! > 0
+    );
   }
 }
