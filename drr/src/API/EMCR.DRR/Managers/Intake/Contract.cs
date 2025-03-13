@@ -805,6 +805,7 @@ namespace EMCR.DRR.Managers.Intake
         public decimal? PreviousClaimTotal { get; set; } = 0;
         public decimal? TotalClaimed { get; set; }
         public ClaimProject? Project { get; set; }
+        public ActiveCondition? ActiveCondition { get; set; }
     }
 
     public class ClaimProject
@@ -813,6 +814,13 @@ namespace EMCR.DRR.Managers.Intake
         public decimal? TotalDRIFFundingRequest { get; set; }
         public IEnumerable<ClaimDetails>? Claims { get; set; }
         public ProjectApplication? FullProposal { get; set; }
+    }
+
+    public class ActiveCondition
+    {
+        public string? ConditionName { get; set; }
+        public decimal? ConditionPercentage { get; set; }
+        public decimal? ConditionAmount { get; set; }
     }
 
     public class ProjectApplication

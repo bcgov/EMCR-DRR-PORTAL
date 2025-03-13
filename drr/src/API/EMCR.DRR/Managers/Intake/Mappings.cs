@@ -202,6 +202,7 @@ namespace EMCR.DRR.Managers.Intake
                     }
                 })
                 .ReverseMap()
+                .ForMember(dest => dest.ActiveCondition, opt => opt.Ignore())
                 ;
 
             CreateMap<DraftProjectClaim, Controllers.ProjectClaim>()
@@ -222,6 +223,7 @@ namespace EMCR.DRR.Managers.Intake
                     }
                 })
                 .ReverseMap()
+                .ForMember(dest => dest.ActiveCondition, opt => opt.Ignore())
                 ;
 
             CreateMap<DraftProgressReport, ProgressReport>()
@@ -601,6 +603,10 @@ namespace EMCR.DRR.Managers.Intake
                         }
                     }
                 })
+                .ReverseMap()
+                ;
+
+            CreateMap<Controllers.ActiveCondition, ActiveCondition>()
                 .ReverseMap()
                 ;
 

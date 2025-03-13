@@ -194,28 +194,45 @@ namespace EMCR.DRR.Managers.Intake
             }
             var res = await reportRepository.Query(new ClaimsQuery { Id = q.Id, BusinessId = q.BusinessId });
 
-            //Also load previous claim total...
+            //Also load previous claim total and project conditions
             if (res.Length == 1)
             {
                 var claim = res.Items.Single();
                 if (claim.Project != null)
                 {
                     var project = (await Handle(new DrrProjectsQuery { Id = claim.Project.Id, BusinessId = q.BusinessId })).Items.SingleOrDefault();
-                    if (project != null && project.InterimReports != null)
+                    if (project != null)
                     {
-                        var reports = project.InterimReports.ToList();
-                        var currentReport = reports.Where(r => r.ProjectClaim?.Id == claim.Id).SingleOrDefault();
-                        if (currentReport != null)
+                        if (project.InterimReports != null)
                         {
-                            var previousReportIndex = reports.IndexOf(currentReport) + 1;
-                            if (previousReportIndex >= 0 && previousReportIndex < reports.Count)
+                            var reports = project.InterimReports.ToList();
+                            var currentReport = reports.Where(r => r.ProjectClaim?.Id == claim.Id).SingleOrDefault();
+                            if (currentReport != null)
                             {
-                                var previousReport = reports.ElementAt(previousReportIndex);
-                                if (previousReport != null && previousReport.ProjectClaim != null)
+                                var previousReportIndex = reports.IndexOf(currentReport) + 1;
+                                if (previousReportIndex >= 0 && previousReportIndex < reports.Count)
                                 {
-                                    var previousClaim = (await reportRepository.Query(new ClaimsQuery { Id = previousReport.ProjectClaim.Id, BusinessId = q.BusinessId })).Items.SingleOrDefault();
-                                    claim.PreviousClaimTotal = previousClaim?.TotalClaimed ?? 0;
+                                    var previousReport = reports.ElementAt(previousReportIndex);
+                                    if (previousReport != null && previousReport.ProjectClaim != null)
+                                    {
+                                        var previousClaim = (await reportRepository.Query(new ClaimsQuery { Id = previousReport.ProjectClaim.Id, BusinessId = q.BusinessId })).Items.SingleOrDefault();
+                                        claim.PreviousClaimTotal = previousClaim?.TotalClaimed ?? 0;
+                                    }
                                 }
+                            }
+                        }
+
+                        if (project.Conditions != null)
+                        {
+                            var unmetCondition = project.Conditions.FirstOrDefault(c => c.ConditionMet == false);
+                            if (unmetCondition != null)
+                            {
+                                claim.ActiveCondition = new ActiveCondition
+                                {
+                                    ConditionName = unmetCondition.ConditionName,
+                                    ConditionPercentage = unmetCondition.Limit,
+                                    ConditionAmount = claim.Project.TotalDRIFFundingRequest * (unmetCondition.Limit / 100)
+                                };
                             }
                         }
                     }
@@ -456,6 +473,7 @@ namespace EMCR.DRR.Managers.Intake
 
             var claim = mapper.Map<ClaimDetails>(cmd.Claim);
             var now = DateTime.UtcNow;
+            if (claim.SkipClaim == true && claim.Invoices != null && claim.Invoices.Any()) throw new BusinessValidationException("Cannot include any Invoices when skipping Claim");
             if (claim.Invoices != null && claim.Invoices.Any(i => string.IsNullOrEmpty(i.InvoiceNumber))) throw new BusinessValidationException("InvoiceNumber is required");
             if (claim.Invoices != null && claim.Invoices.Any(i => i.Date > now)) throw new BusinessValidationException("Invoice date cannot be in the future");
             if (claim.Invoices != null && claim.Invoices.Any(i => i.Date > i.PaymentDate)) throw new BusinessValidationException("Payment date cannot be before invoice date");

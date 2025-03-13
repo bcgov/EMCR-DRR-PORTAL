@@ -86,8 +86,8 @@ namespace EMCR.DRR.API.Resources.Projects
             var loadTasks2 = new List<Task>
             {
                 ctx.LoadPropertyAsync(project, nameof(drr_project.drr_drr_project_drr_projectprogress_Project), ct),
-                ctx.LoadPropertyAsync(project, nameof(drr_project.drr_drr_project_drr_projectclaim_Project), ct),
                 ctx.LoadPropertyAsync(project, nameof(drr_project.drr_drr_project_drr_projectbudgetforecast_Project), ct),
+                ctx.LoadPropertyAsync(project, nameof(drr_project.drr_drr_project_drr_projectclaim_Project), ct),
                 ctx.LoadPropertyAsync(project, nameof(drr_project.drr_drr_project_drr_projectcondition_Project), ct),
                 ctx.LoadPropertyAsync(project, nameof(drr_project.drr_drr_project_drr_projectevent_Project), ct),
             };
@@ -106,6 +106,7 @@ namespace EMCR.DRR.API.Resources.Projects
             project.drr_drr_project_drr_projectprogress_Project = new System.Collections.ObjectModel.Collection<drr_projectprogress>(project.drr_drr_project_drr_projectprogress_Project.OrderByDescending(rep => rep.drr_datesubmitted).ToList());
             project.drr_drr_project_drr_projectbudgetforecast_Project = new System.Collections.ObjectModel.Collection<drr_projectbudgetforecast>(project.drr_drr_project_drr_projectbudgetforecast_Project.OrderByDescending(rep => rep.drr_submissiondate).ToList());
             project.drr_drr_project_drr_projectclaim_Project = new System.Collections.ObjectModel.Collection<drr_projectclaim>(project.drr_drr_project_drr_projectclaim_Project.OrderBy(rep => rep.drr_claimnumber).ToList());
+            project.drr_drr_project_drr_projectcondition_Project = new System.Collections.ObjectModel.Collection<drr_projectcondition>(project.drr_drr_project_drr_projectcondition_Project.OrderBy(rep => rep.drr_conditionpercentagelimit).ToList());
         }
 
         private static async Task ParallelLoadReportDetails(DRRContext ctx, drr_project project, CancellationToken ct)
