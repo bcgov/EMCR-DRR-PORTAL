@@ -31,6 +31,8 @@ export interface DraftProjectClaim {
   /** @nullable */
   dateSubmitted?: string;
   /** @nullable */
+  haveClaimExpenses?: boolean;
+  /** @nullable */
   id?: string;
   /** @nullable */
   invoices?: Invoice[];
@@ -48,8 +50,6 @@ export interface DraftProjectClaim {
   reportDate?: string;
   /** @nullable */
   reportPeriod?: string;
-  /** @nullable */
-  skipClaim?: boolean;
   /** @nullable */
   status?: ClaimStatus;
   /** @nullable */

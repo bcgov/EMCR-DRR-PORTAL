@@ -96,7 +96,7 @@ export class InvoiceForm implements Invoice {
 export class ExpenditureForm {
   @prop()
   @required()
-  skipClaimReport?: boolean;
+  haveClaimExpenses?: boolean;
 
   @propArray(InvoiceForm)
   invoices?: InvoiceForm[] = [];

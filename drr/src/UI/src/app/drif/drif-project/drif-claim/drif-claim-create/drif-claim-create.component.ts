@@ -5,6 +5,7 @@ import {
   FormArray,
   FormsModule,
   ReactiveFormsModule,
+  Validators,
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -32,6 +33,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { AttachmentService } from '../../../../../api/attachment/attachment.service';
 import { ProjectService } from '../../../../../api/project/project.service';
 import {
+  ActiveCondition,
   CostCategory,
   DeclarationType,
   DocumentType,
@@ -146,12 +148,7 @@ export class DrifClaimCreateComponent {
   ];
 
   previousClaimTotal = 0;
-  // TODO: to be set by API
-  activeConditionLimit = {
-    conditionName: 'Construction Permits and Approvals',
-    conditionPercentage: 10,
-    conditionAmount: 100000,
-  };
+  activeConditionLimit?: ActiveCondition;
 
   lastSavedAt?: Date;
 
@@ -279,10 +276,11 @@ export class DrifClaimCreateComponent {
             }
 
             this.previousClaimTotal = claim.previousClaimTotal || 0;
+            this.activeConditionLimit = claim.activeCondition;
 
             const formData = new ClaimForm({
               expenditure: {
-                skipClaimReport: claim.skipClaim,
+                haveClaimExpenses: claim.haveClaimExpenses,
                 claimComment: claim.claimComment,
                 invoices: claim.invoices,
                 totalClaimed: claim.totalClaimed,
@@ -329,6 +327,8 @@ export class DrifClaimCreateComponent {
               formData,
             ) as IFormGroup<ClaimForm>;
 
+            this.setupClaimQuestionnaire(claim.haveClaimExpenses);
+
             this.claimForm
               ?.get('expenditure.totalClaimed')
               ?.disable({ emitEvent: false });
@@ -359,6 +359,26 @@ export class DrifClaimCreateComponent {
           },
         });
     });
+  }
+
+  setupClaimQuestionnaire(haveClaimExpenses?: boolean) {
+    const claimCommentControl = this.claimForm?.get('expenditure.claimComment');
+    if (haveClaimExpenses === false) {
+      claimCommentControl?.setValidators([Validators.required]);
+    }
+
+    this.claimForm
+      ?.get('expenditure.haveClaimExpenses')
+      ?.valueChanges.subscribe((value) => {
+        value
+          ? [
+              claimCommentControl?.clearValidators(),
+              claimCommentControl?.reset(),
+            ]
+          : claimCommentControl?.setValidators([Validators.required]);
+
+        claimCommentControl?.updateValueAndValidity();
+      });
   }
 
   setAuthorizedRepresentative() {
@@ -453,8 +473,9 @@ export class DrifClaimCreateComponent {
     });
 
     return {
-      claimComment: claimForm.expenditure.claimComment,
+      haveClaimExpenses: claimForm.expenditure.haveClaimExpenses,
       invoices: claimForm.expenditure.invoices,
+      claimComment: claimForm.expenditure.claimComment,
     };
   }
 
@@ -501,6 +522,13 @@ export class DrifClaimCreateComponent {
 
     if (this.claimForm?.invalid) {
       this.toastService.error('Please fill in all required fields');
+      return;
+    }
+
+    if (this.hasClaimIntentIssue()) {
+      this.toastService.error(
+        this.translocoService.translate('claim.claimIntentIssueErrorMessage'),
+      );
       return;
     }
 
@@ -826,5 +854,12 @@ export class DrifClaimCreateComponent {
 
   getDelcarationForm() {
     return this.claimForm?.get('declaration') as IFormGroup<DeclarationForm>;
+  }
+
+  hasClaimIntentIssue() {
+    return (
+      this.claimForm?.get('expenditure.haveClaimExpenses')?.value === false &&
+      this.getInvoiceFormArray()?.length! > 0
+    );
   }
 }

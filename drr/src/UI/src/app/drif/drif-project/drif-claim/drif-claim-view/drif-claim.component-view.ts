@@ -51,7 +51,7 @@ export class DrifClaimComponent {
 
             const formData = new ClaimForm({
               expenditure: {
-                skipClaimReport: claim.skipClaim,
+                haveClaimExpenses: claim.haveClaimExpenses,
                 claimComment: claim.claimComment,
                 invoices: claim.invoices,
                 totalClaimed: claim.totalClaimed,
