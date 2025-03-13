@@ -3,11 +3,18 @@
     <mat-card-header>
       <mat-card-title>{{ t("step2") }}</mat-card-title>
     </mat-card-header>
-    <mat-card-content style="gap: 2rem">
+    <mat-card-content style="gap: 1rem">
+      <drr-summary-item
+        [label]="t('haveClaimExpenses')"
+        [rxFormControl]="claimForm?.get('expenditure.haveClaimExpenses')"
+        controlType="radio"
+      ></drr-summary-item>
+      <mat-label class="drr-label">Invoices</mat-label>
       <div
         class="invoice-summary-row"
-        *ngFor="let invoice of getInvoiceFormArray()?.controls"
+        *ngFor="let invoice of getInvoiceFormArray()?.controls; let i = index"
       >
+        <mat-label>Invoice {{ i + 1 }}</mat-label>
         <div class="summary-row">
           <drr-summary-item
             [label]="t('invoiceNumber')"
@@ -78,12 +85,10 @@
           ></drr-summary-item>
         </div>
         <div class="summary-row">
-          <div
-            *ngFor="let attachment of getInvoiceAttachments(invoice).controls"
-          >
+          <div>
             <drr-summary-item
-              [label]="t('fileName')"
-              [rxFormControl]="attachment.get('name')"
+              [label]="t('invoice')"
+              [rxFormControl]="getInvoceAttachment(invoice)?.get('name')"
             >
             </drr-summary-item>
             <button
@@ -91,7 +96,31 @@
               style="align-self: center"
               mat-button
               color="primary"
-              (click)="onDownloadFile(attachment.get('id')?.value)"
+              (click)="
+                onDownloadFile(getInvoceAttachment(invoice)?.get('id')?.value)
+              "
+            >
+              Download
+            </button>
+          </div>
+          <div>
+            <drr-summary-item
+              [label]="t('proofOfPayment')"
+              [rxFormControl]="
+                getProofOfPaymentAttachment(invoice)?.get('name')
+              "
+            >
+            </drr-summary-item>
+            <button
+              *ngIf="isReadOnlyView"
+              style="align-self: center"
+              mat-button
+              color="primary"
+              (click)="
+                onDownloadFile(
+                  getProofOfPaymentAttachment(invoice)?.get('id')?.value
+                )
+              "
             >
               Download
             </button>
