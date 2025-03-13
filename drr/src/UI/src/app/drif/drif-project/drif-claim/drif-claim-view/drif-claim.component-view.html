@@ -1,0 +1,10 @@
+<div class="claim-report-details" *transloco="let t; read: 'claim'">
+  <div class="progress-report-details__header">
+    <h5>{{ t("header", { id: reportName }) }}</h5>
+
+    <button mat-stroked-button color="primary" (click)="goBack()">
+      {{ t("back") }}
+    </button>
+  </div>
+  <drif-claim-summary [claimForm]="claimForm"></drif-claim-summary>
+</div>
