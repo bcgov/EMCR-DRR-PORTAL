@@ -527,7 +527,7 @@ export class DrifClaimCreateComponent {
 
     if (this.hasClaimIntentIssue()) {
       this.toastService.error(
-        this.translocoService.translate('claim.claimIntentIssueMessage'),
+        this.translocoService.translate('claim.claimIntentIssueErrorMessage'),
       );
       return;
     }
