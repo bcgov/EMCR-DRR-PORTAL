@@ -473,7 +473,7 @@ namespace EMCR.DRR.Managers.Intake
 
             var claim = mapper.Map<ClaimDetails>(cmd.Claim);
             var now = DateTime.UtcNow;
-            if (claim.SkipClaim == true && claim.Invoices != null && claim.Invoices.Any()) throw new BusinessValidationException("Cannot include any Invoices when skipping Claim");
+            if (claim.HaveClaimExpenses == false && claim.Invoices != null && claim.Invoices.Any()) throw new BusinessValidationException("Cannot include any Invoices when skipping Claim");
             if (claim.Invoices != null && claim.Invoices.Any(i => string.IsNullOrEmpty(i.InvoiceNumber))) throw new BusinessValidationException("InvoiceNumber is required");
             if (claim.Invoices != null && claim.Invoices.Any(i => i.Date > now)) throw new BusinessValidationException("Invoice date cannot be in the future");
             if (claim.Invoices != null && claim.Invoices.Any(i => i.Date > i.PaymentDate)) throw new BusinessValidationException("Payment date cannot be before invoice date");
