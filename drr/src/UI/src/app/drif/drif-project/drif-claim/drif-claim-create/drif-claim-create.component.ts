@@ -33,6 +33,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { AttachmentService } from '../../../../../api/attachment/attachment.service';
 import { ProjectService } from '../../../../../api/project/project.service';
 import {
+  ActiveCondition,
   CostCategory,
   DeclarationType,
   DocumentType,
@@ -147,12 +148,7 @@ export class DrifClaimCreateComponent {
   ];
 
   previousClaimTotal = 0;
-  // TODO: to be set by API
-  activeConditionLimit = {
-    conditionName: 'Construction Permits and Approvals',
-    conditionPercentage: 10,
-    conditionAmount: 100000,
-  };
+  activeConditionLimit?: ActiveCondition;
 
   lastSavedAt?: Date;
 
@@ -280,6 +276,7 @@ export class DrifClaimCreateComponent {
             }
 
             this.previousClaimTotal = claim.previousClaimTotal || 0;
+            this.activeConditionLimit = claim.activeCondition;
 
             const formData = new ClaimForm({
               expenditure: {

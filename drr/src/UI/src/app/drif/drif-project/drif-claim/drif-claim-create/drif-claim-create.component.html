@@ -473,6 +473,24 @@
               [disabled]="true"
             ></drr-currency-input>
           </div>
+          @if (
+            this.claimForm?.get("expenditure.totalClaimed")?.value >
+            activeConditionLimit?.conditionAmount!
+          ) {
+            <drr-alert [type]="'warning'">
+              <p>
+                The condition "{{ activeConditionLimit?.conditionName }} ({{
+                  activeConditionLimit?.conditionPercentage
+                }}%)" limits your total payments to
+                {{ activeConditionLimit?.conditionAmount | currency }}. This
+                claim would put you over that limit. If you submit the claim, it
+                will not be processed until you clear that condition.
+                Optionally, you can remove some invoices to reduce your current
+                claim below the payment limit. You can then include those
+                invoices on your next claim.
+              </p>
+            </drr-alert>
+          }
         </div>
       }
       <div class="drr-stepper-actions">
@@ -492,18 +510,19 @@
       <div style="margin-top: 2rem">
         @if (
           this.claimForm?.get("expenditure.totalClaimed")?.value >
-          activeConditionLimit.conditionAmount
+          activeConditionLimit?.conditionAmount!
         ) {
           <drr-alert [type]="'warning'">
             <p>
-              Submitting this claim will exceed condition "{{
-                activeConditionLimit.conditionName
-              }}
-              ({{ activeConditionLimit.conditionPercentage }}%)". Maximum amount
-              is {{ activeConditionLimit.conditionAmount | currency }}. You may
-              submit it, but processing will be delayed until condition "{{
-                activeConditionLimit.conditionName
-              }}" is met.
+              The condition "{{ activeConditionLimit?.conditionName }} ({{
+                activeConditionLimit?.conditionPercentage
+              }}%)" limits your total payments to
+              {{ activeConditionLimit?.conditionAmount | currency }}. This claim
+              would put you over that limit. If you submit the claim, it will
+              not be processed until you clear that condition. Optionally, you
+              can remove some invoices to reduce your current claim below the
+              payment limit. You can then include those invoices on your next
+              claim.
             </p>
           </drr-alert>
         }
