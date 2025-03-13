@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { IFormGroup, RxFormBuilder } from '@rxweb/reactive-form-validators';
+import { DocumentType } from '../../../../../model';
 import { FileService } from '../../../../shared/services/file.service';
 import { SummaryItemComponent } from '../../../summary-item/summary-item.component';
 import { ClaimForm } from '../drif-claim-form';
@@ -38,8 +39,21 @@ export class DrifClaimSummaryComponent {
     return this.claimForm?.get('expenditure.invoices') as FormArray;
   }
 
-  getInvoiceAttachments(invoiceControl: AbstractControl) {
+  private getInvoiceAttachments(invoiceControl: AbstractControl) {
     return invoiceControl.get('attachments') as FormArray;
+  }
+
+  getProofOfPaymentAttachment(invoiceControl: AbstractControl) {
+    return this.getInvoiceAttachments(invoiceControl).controls.find(
+      (control) =>
+        control.get('documentType')?.value === DocumentType.ProofOfPayment,
+    );
+  }
+
+  getInvoceAttachment(invoiceControl: AbstractControl) {
+    return this.getInvoiceAttachments(invoiceControl).controls.find(
+      (control) => control.get('documentType')?.value === DocumentType.Invoice,
+    );
   }
 
   onDownloadFile(fileId: string) {

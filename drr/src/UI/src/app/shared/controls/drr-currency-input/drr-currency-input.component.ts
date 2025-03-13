@@ -144,9 +144,6 @@ export class DrrCurrencyInputComponent {
   set value(val: number | undefined) {
     // do not set value if the control is pristine since loading the value
     // unless control value is null or undefined
-    if (this.rxFormControl.keyName == 'claimAmount') {
-      console.log(this.rxFormControl.pristine, this.rxFormControl.value);
-    }
     if (
       this.rxFormControl.pristine &&
       this.rxFormControl.value !== null &&
