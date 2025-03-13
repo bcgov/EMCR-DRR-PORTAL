@@ -468,17 +468,11 @@ namespace EMCR.DRR.Resources.Applications
             var primaryProponent = drrApplication.drr_Primary_Proponent_Name;
             primaryProponent = await CheckForExistingProponent(ctx, primaryProponent, application);
 
-            var submitter = drrApplication.drr_SubmitterContact;
-            var primaryProjectContact = drrApplication.drr_PrimaryProjectContact;
-            var additionalContact1 = drrApplication.drr_AdditionalContact1;
-            var additionalContact2 = drrApplication.drr_AdditionalContact2;
-
             AssignPrimaryProponent(ctx, drrApplication, primaryProponent);
-            logger.LogDebug("TODO - update handling of contact");
-            if (submitter != null) AddSubmitter(ctx, drrApplication, submitter);
-            if (primaryProjectContact != null) AddPrimaryProjectContact(ctx, drrApplication, primaryProjectContact);
-            if (additionalContact1 != null) AddAdditionalContact1(ctx, drrApplication, additionalContact1);
-            if (additionalContact2 != null) AddAdditionalContact2(ctx, drrApplication, additionalContact2);
+            if (drrApplication.drr_SubmitterContact != null) AddSubmitter(ctx, drrApplication, drrApplication.drr_SubmitterContact);
+            if (drrApplication.drr_PrimaryProjectContact != null) AddPrimaryProjectContact(ctx, drrApplication, drrApplication.drr_PrimaryProjectContact);
+            if (drrApplication.drr_AdditionalContact1 != null) AddAdditionalContact1(ctx, drrApplication, drrApplication.drr_AdditionalContact1);
+            if (drrApplication.drr_AdditionalContact2 != null) AddAdditionalContact2(ctx, drrApplication, drrApplication.drr_AdditionalContact2);
             AddFundinSources(ctx, drrApplication);
             AddInfrastructureImpacted(ctx, drrApplication);
             AddCostEstimates(ctx, drrApplication, oldApplication);

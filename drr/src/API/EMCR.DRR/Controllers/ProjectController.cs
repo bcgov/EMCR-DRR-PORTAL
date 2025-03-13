@@ -433,8 +433,16 @@ namespace EMCR.DRR.Controllers
         public decimal? PreviousClaimTotal { get; set; }
         public decimal? TotalClaimed { get; set; }
         public decimal? TotalProjectAmount { get; set; }
+        public ActiveCondition? ActiveCondition { get; set; }
         public ContactDetails? AuthorizedRepresentative { get; set; }
         public ClaimStatus? Status { get; set; }
+    }
+
+    public class ActiveCondition
+    {
+        public string? ConditionName { get; set; }
+        public decimal? ConditionPercentage { get; set; }
+        public decimal? ConditionAmount { get; set; }
     }
 
     public class PreviousClaim
