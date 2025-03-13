@@ -453,8 +453,9 @@ export class DrifClaimCreateComponent {
     });
 
     return {
-      claimComment: claimForm.expenditure.claimComment,
+      haveClaimExpenses: claimForm.expenditure.haveClaimExpenses,
       invoices: claimForm.expenditure.invoices,
+      claimComment: claimForm.expenditure.claimComment,
     };
   }
 
