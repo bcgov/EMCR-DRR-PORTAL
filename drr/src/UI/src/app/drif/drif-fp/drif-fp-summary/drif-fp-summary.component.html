@@ -1162,6 +1162,11 @@
         }
       }
       <drr-summary-item
+        [label]="t('updatedDrifProgramFundingRequest')"
+        [rxFormControl]="fullProposalForm.get('budget.totalEligibleCosts')"
+        controlType="currency"
+      ></drr-summary-item>
+      <drr-summary-item
         [label]="t('fundingRequestDiscrepancy')"
         [rxFormControl]="
           fullProposalForm.get('budget.fundingRequestDiscrepancy')
