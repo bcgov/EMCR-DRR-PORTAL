@@ -4,6 +4,7 @@
  * DRR API
  * OpenAPI spec version: 1.0.0
  */
+import type { ActiveCondition } from './activeCondition';
 import type { ContactDetails } from './contactDetails';
 import type { Invoice } from './invoice';
 import type { PreviousClaim } from './previousClaim';
@@ -11,6 +12,8 @@ import type { InterimProjectType } from './interimProjectType';
 import type { ClaimStatus } from './claimStatus';
 
 export interface DraftProjectClaim {
+  /** @nullable */
+  activeCondition?: ActiveCondition;
   /** @nullable */
   authorizedRepresentative?: ContactDetails;
   /** @nullable */
@@ -38,11 +41,15 @@ export interface DraftProjectClaim {
   /** @nullable */
   previousClaims?: PreviousClaim[];
   /** @nullable */
+  previousClaimTotal?: number;
+  /** @nullable */
   projectType?: InterimProjectType;
   /** @nullable */
   reportDate?: string;
   /** @nullable */
   reportPeriod?: string;
+  /** @nullable */
+  skipClaim?: boolean;
   /** @nullable */
   status?: ClaimStatus;
   /** @nullable */

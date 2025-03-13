@@ -479,7 +479,25 @@
       [stepControl]="claimForm?.get('declaration')!"
       [errorMessage]="'stepError' | transloco"
     >
-      <div>
+      <div style="margin-top: 2rem">
+        @if (
+          this.claimForm?.get("expenditure.totalClaimed")?.value >
+          activeConditionLimit.conditionAmount
+        ) {
+          <drr-alert [type]="'warning'">
+            <p>
+              Submitting this claim will exceed condition "{{
+                activeConditionLimit.conditionName
+              }}
+              ({{ activeConditionLimit.conditionPercentage }}%)". Maximum amount
+              is {{ activeConditionLimit.conditionAmount | currency }}. You may
+              submit it, but processing will be delayed until condition "{{
+                activeConditionLimit.conditionName
+              }}" is met.
+            </p>
+          </drr-alert>
+        }
+
         <drif-claim-summary
           [claimForm]="claimForm!"
           [isReadOnlyView]="false"

@@ -191,6 +191,7 @@ export class DrifFpViewComponent {
           costEstimateClass: response.costEstimateClass,
           totalProjectCostChangeComments:
             response.totalProjectCostChangeComments,
+          totalEligibleCosts: response.totalEligibleCosts,
         },
         attachments: {
           haveResolution: response.haveResolution,

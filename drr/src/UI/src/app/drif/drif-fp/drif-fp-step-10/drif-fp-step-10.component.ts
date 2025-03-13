@@ -435,6 +435,7 @@ export class DrifFpStep10Component {
         ?.setValidators(Validators.required);
     } else {
       this.budgetForm.get('discrepancyComment')?.clearValidators();
+      this.budgetForm.get('discrepancyComment')?.reset();
     }
 
     this.budgetForm.get('discrepancyComment')?.updateValueAndValidity();
