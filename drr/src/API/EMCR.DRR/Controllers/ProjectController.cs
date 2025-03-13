@@ -424,7 +424,7 @@ namespace EMCR.DRR.Controllers
         public DateTime? ReportDate { get; set; }
         public DateTime? DateApproved { get; set; }
         public DateTime? DateSubmitted { get; set; }
-        public bool? SkipClaim {  get; set; }
+        public bool? HaveClaimExpenses {  get; set; }
         public IEnumerable<Invoice>? Invoices { get; set; }
         [StringLength(500)]
         public string? ClaimComment { get; set; }
