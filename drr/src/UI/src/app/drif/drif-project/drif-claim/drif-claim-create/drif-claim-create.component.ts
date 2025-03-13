@@ -5,6 +5,7 @@ import {
   FormArray,
   FormsModule,
   ReactiveFormsModule,
+  Validators,
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -329,6 +330,8 @@ export class DrifClaimCreateComponent {
               formData,
             ) as IFormGroup<ClaimForm>;
 
+            this.setupClaimQuestionnaire(claim.haveClaimExpenses);
+
             this.claimForm
               ?.get('expenditure.totalClaimed')
               ?.disable({ emitEvent: false });
@@ -359,6 +362,26 @@ export class DrifClaimCreateComponent {
           },
         });
     });
+  }
+
+  setupClaimQuestionnaire(haveClaimExpenses?: boolean) {
+    const claimCommentControl = this.claimForm?.get('expenditure.claimComment');
+    if (haveClaimExpenses === false) {
+      claimCommentControl?.setValidators([Validators.required]);
+    }
+
+    this.claimForm
+      ?.get('expenditure.haveClaimExpenses')
+      ?.valueChanges.subscribe((value) => {
+        value
+          ? [
+              claimCommentControl?.clearValidators(),
+              claimCommentControl?.reset(),
+            ]
+          : claimCommentControl?.setValidators([Validators.required]);
+
+        claimCommentControl?.updateValueAndValidity();
+      });
   }
 
   setAuthorizedRepresentative() {
