@@ -74,10 +74,13 @@
             padding: 1rem;
           "
         >
+          <mat-label class="drr-label">{{
+            t("haveClaimExpensesTitle")
+          }}</mat-label>
           <drr-radio-button
-            [label]="t('skipClaimReport')"
+            [label]="t('haveClaimExpenses')"
             [rxFormControl]="
-              claimForm.get('expenditure')?.get('skipClaimReport')
+              claimForm.get('expenditure')?.get('haveClaimExpenses')
             "
           ></drr-radio-button>
         </div>

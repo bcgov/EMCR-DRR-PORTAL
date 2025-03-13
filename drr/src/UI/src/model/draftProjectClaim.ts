@@ -5,11 +5,11 @@
  * OpenAPI spec version: 1.0.0
  */
 import type { ActiveCondition } from './activeCondition';
+import type { ClaimStatus } from './claimStatus';
 import type { ContactDetails } from './contactDetails';
+import type { InterimProjectType } from './interimProjectType';
 import type { Invoice } from './invoice';
 import type { PreviousClaim } from './previousClaim';
-import type { InterimProjectType } from './interimProjectType';
-import type { ClaimStatus } from './claimStatus';
 
 export interface DraftProjectClaim {
   /** @nullable */
@@ -49,7 +49,7 @@ export interface DraftProjectClaim {
   /** @nullable */
   reportPeriod?: string;
   /** @nullable */
-  skipClaim?: boolean;
+  haveClaimExpenses?: boolean;
   /** @nullable */
   status?: ClaimStatus;
   /** @nullable */
