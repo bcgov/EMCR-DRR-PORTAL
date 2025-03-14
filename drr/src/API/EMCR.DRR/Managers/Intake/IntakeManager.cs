@@ -7,6 +7,7 @@ using EMCR.DRR.API.Resources.Projects;
 using EMCR.DRR.API.Resources.Reports;
 using EMCR.DRR.API.Services;
 using EMCR.DRR.API.Services.S3;
+using EMCR.DRR.API.Utilities.Extensions;
 using EMCR.DRR.Resources.Applications;
 using EMCR.Utilities.Extensions;
 
@@ -481,10 +482,14 @@ namespace EMCR.DRR.Managers.Intake
             if (claim.Invoices != null && claim.Invoices.Any(i => i.ClaimAmount > i.GrossAmount)) throw new BusinessValidationException("Claim Amount cannot be greater than Gross Amount");
             if (claim.Invoices != null && claim.Invoices.Any(i => i.TotalPST > i.GrossAmount)) throw new BusinessValidationException("PST cannot be greater than Gross Amount");
             if (claim.Invoices != null && claim.Invoices.Any(i => i.TotalGST > i.GrossAmount)) throw new BusinessValidationException("GST cannot be greater than Gross Amount");
-            if (claim.Invoices != null && claim.Invoices.Any(i => i.WorkStartDate < existingClaim.PlannedStartDate)) throw new BusinessValidationException("Work start date cannot be before the planned start date.");
-            if (claim.Invoices != null && claim.Invoices.Any(i => i.WorkStartDate > existingClaim.PlannedEndDate)) throw new BusinessValidationException("Work start date cannot be after the planned end date.");
-            if (claim.Invoices != null && claim.Invoices.Any(i => i.WorkEndDate < existingClaim.PlannedStartDate)) throw new BusinessValidationException("Work end date cannot be before the planned start date.");
-            if (claim.Invoices != null && claim.Invoices.Any(i => i.WorkEndDate > existingClaim.PlannedEndDate)) throw new BusinessValidationException("Work end date cannot be after the planned end date.");
+            if (claim.Invoices != null && claim.Invoices.Any(i => i.WorkStartDate == null)) throw new BusinessValidationException("Work start date is required.");
+            if (claim.Invoices != null && claim.Invoices.Any(i => i.WorkEndDate == null)) throw new BusinessValidationException("Work end date is required.");
+#pragma warning disable CS8629 // Nullable value type may be null.
+            if (claim.Invoices != null && claim.Invoices.Any(i => i.WorkStartDate.Value.ToPST().Date < existingClaim.PlannedStartDate.Value.ToPST().Date)) throw new BusinessValidationException("Work start date cannot be before the planned start date.");
+            if (claim.Invoices != null && claim.Invoices.Any(i => i.WorkStartDate.Value.ToPST().Date > existingClaim.PlannedEndDate.Value.ToPST().Date)) throw new BusinessValidationException("Work start date cannot be after the planned end date.");
+            if (claim.Invoices != null && claim.Invoices.Any(i => i.WorkEndDate.Value.ToPST().Date < existingClaim.PlannedStartDate.Value.ToPST().Date)) throw new BusinessValidationException("Work end date cannot be before the planned start date.");
+            if (claim.Invoices != null && claim.Invoices.Any(i => i.WorkEndDate.Value.ToPST().Date > existingClaim.PlannedEndDate.Value.ToPST().Date)) throw new BusinessValidationException("Work end date cannot be after the planned end date.");
+#pragma warning restore CS8629 // Nullable value type may be null.
             if (claim.Invoices != null && claim.Invoices.Any(i => i.PaymentDate == null)) throw new BusinessValidationException("PaymentDate is required");
             if (claim.Invoices != null && claim.Invoices.Any(i => i.CostCategory == null)) throw new BusinessValidationException("Cost Category is required");
 
