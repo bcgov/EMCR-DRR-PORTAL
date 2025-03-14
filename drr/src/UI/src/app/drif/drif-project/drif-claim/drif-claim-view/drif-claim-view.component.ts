@@ -86,6 +86,6 @@ export class DrifClaimViewComponent {
   }
 
   goBack() {
-    this.router.navigate(['projects', this.projectId]);
+    this.router.navigate(['drif-projects', this.projectId]);
   }
 }
