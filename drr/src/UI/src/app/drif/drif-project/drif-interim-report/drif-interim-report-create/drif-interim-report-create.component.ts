@@ -113,6 +113,11 @@ export class DrifInterimReportCreateComponent {
   }
 
   createReport() {
+    if (!this.canCreateReportResult?.canCreate) {
+      this.router.navigate(['drif-projects', this.projectId]);
+      return;
+    }
+
     this.projectService
       .projectCreateReport(this.projectId!, {
         reportType: this.interimReportForm.value.configuration?.periodType,
