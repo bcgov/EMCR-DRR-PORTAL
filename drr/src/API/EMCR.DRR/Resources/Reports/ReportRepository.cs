@@ -3,6 +3,7 @@ using EMCR.DRR.API.Resources.Projects;
 using EMCR.DRR.API.Services;
 using EMCR.DRR.Dynamics;
 using EMCR.DRR.Managers.Intake;
+using EMCR.DRR.Resources.Applications;
 using EMCR.Utilities.Extensions;
 using Microsoft.Dynamics.CRM;
 
@@ -143,6 +144,7 @@ namespace EMCR.DRR.API.Resources.Reports
             await AddUpcomingEvents(ctx, drrProgressReport, existingProgressReport);
             AddFundingSignage(ctx, drrProgressReport, existingProgressReport);
             UpdateProgressReportDocuments(ctx, drrProgressReport);
+            await SetProgressReportDeclarations(ctx, drrProgressReport);
 
             ctx.UpdateObject(drrProgressReport);
             await ctx.SaveChangesAsync();
@@ -164,6 +166,22 @@ namespace EMCR.DRR.API.Resources.Reports
             return new ManageReportCommandResult { Id = cmd.Id };
         }
 
+        private static async Task SetProgressReportDeclarations(DRRContext drrContext, drr_projectprogress progressReport)
+        {
+            var accuracyDeclaration = (await drrContext.drr_legaldeclarations.Where(d => d.statecode == (int)EntityState.Active && d.drr_declarationtype == (int)DeclarationTypeOptionSet.AccuracyOfInformation && d.drr_formtype == (int)FormTypeOptionSet.Report).GetAllPagesAsync()).FirstOrDefault();
+            var representativeDeclaration = (await drrContext.drr_legaldeclarations.Where(d => d.statecode == (int)EntityState.Active && d.drr_declarationtype == (int)DeclarationTypeOptionSet.AuthorizedRepresentative && d.drr_formtype == (int)FormTypeOptionSet.Report).GetAllPagesAsync()).FirstOrDefault();
+
+            if (accuracyDeclaration != null)
+            {
+                drrContext.SetLink(progressReport, nameof(drr_projectprogress.drr_AccuracyofInformationDeclaration), accuracyDeclaration);
+            }
+
+            if (representativeDeclaration != null)
+            {
+                drrContext.SetLink(progressReport, nameof(drr_projectprogress.drr_AuthorizedRepresentativeDeclaration), representativeDeclaration);
+            }
+        }
+
         //HandleSaveClaim
         public async Task<ManageReportCommandResult> HandleSaveClaim(SaveClaim cmd)
         {
@@ -174,6 +192,7 @@ namespace EMCR.DRR.API.Resources.Reports
             var loadTasks = new List<Task>
             {
                 ctx.LoadPropertyAsync(existingClaim, nameof(drr_projectclaim.drr_drr_projectclaim_drr_projectexpenditure_Claim)),
+                ctx.LoadPropertyAsync(existingClaim, nameof(drr_projectclaim.drr_AuthorizedRepresentativeContact)),
             };
 
             await Task.WhenAll(loadTasks);
@@ -185,7 +204,10 @@ namespace EMCR.DRR.API.Resources.Reports
             //RemoveOldClaimData(ctx, existingClaim, drrClaim); //if we use this, it would be for invoices - but we're doing separate commands to create/delete invoices
             ctx.AttachTo(nameof(ctx.drr_projectclaims), drrClaim);
 
+            var authorizedRep = drrClaim.drr_AuthorizedRepresentativeContact;
+            if (authorizedRep != null) SaveClaimAuthrizedRepresentative(ctx, drrClaim, authorizedRep, existingClaim.drr_AuthorizedRepresentativeContact);
             UpdateInvoices(ctx, drrClaim, existingClaim);
+            await SetClaimDeclarations(ctx, drrClaim);
 
             ctx.UpdateObject(drrClaim);
             await ctx.SaveChangesAsync();
@@ -204,6 +226,37 @@ namespace EMCR.DRR.API.Resources.Reports
             await ctx.SaveChangesAsync();
             ctx.DetachAll();
             return new ManageReportCommandResult { Id = cmd.Id };
+        }
+
+        private static async Task SetClaimDeclarations(DRRContext drrContext, drr_projectclaim claim)
+        {
+            var accuracyDeclaration = (await drrContext.drr_legaldeclarations.Where(d => d.statecode == (int)EntityState.Active && d.drr_declarationtype == (int)DeclarationTypeOptionSet.AccuracyOfInformation && d.drr_formtype == (int)FormTypeOptionSet.Report).GetAllPagesAsync()).FirstOrDefault();
+            var representativeDeclaration = (await drrContext.drr_legaldeclarations.Where(d => d.statecode == (int)EntityState.Active && d.drr_declarationtype == (int)DeclarationTypeOptionSet.AuthorizedRepresentative && d.drr_formtype == (int)FormTypeOptionSet.Report).GetAllPagesAsync()).FirstOrDefault();
+
+            if (accuracyDeclaration != null)
+            {
+                drrContext.SetLink(claim, nameof(drr_projectclaim.drr_AccuracyofInformationDeclaration), accuracyDeclaration);
+            }
+
+            if (representativeDeclaration != null)
+            {
+                drrContext.SetLink(claim, nameof(drr_projectclaim.drr_AuthorizedRepresentativeDeclaration), representativeDeclaration);
+            }
+        }
+
+        private static void SaveClaimAuthrizedRepresentative(DRRContext drrContext, drr_projectclaim progressReport, contact authorizedRep, contact existingRep)
+        {
+            if (existingRep == null || existingRep.contactid == null || authorizedRep.contactid != existingRep.contactid)
+            {
+                drrContext.AddTocontacts(authorizedRep);
+                drrContext.AddLink(authorizedRep, nameof(authorizedRep.drr_contact_drr_projectclaim_AuthorizedRepresentativeContact), progressReport);
+                drrContext.SetLink(progressReport, nameof(drr_projectclaim.drr_AuthorizedRepresentativeContact), authorizedRep);
+            }
+            else
+            {
+                drrContext.AttachTo(nameof(drrContext.contacts), authorizedRep);
+                drrContext.UpdateObject(authorizedRep);
+            }
         }
 
         public async Task<ManageReportCommandResult> HandleCreateInvoice(CreateInvoice cmd)
@@ -650,6 +703,7 @@ namespace EMCR.DRR.API.Resources.Reports
             {
                 ctx.LoadPropertyAsync(claim, nameof(drr_projectclaim.drr_Project), ct),
                 ctx.LoadPropertyAsync(claim, nameof(drr_projectclaim.drr_ProjectReport), ct),
+                ctx.LoadPropertyAsync(claim, nameof(drr_projectclaim.drr_AuthorizedRepresentativeContact), ct),
                 ctx.LoadPropertyAsync(claim, nameof(drr_projectclaim.drr_drr_projectclaim_drr_projectexpenditure_Claim), ct), //Invoices
                 
                 //These might be for future...

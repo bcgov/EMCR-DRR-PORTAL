@@ -243,7 +243,7 @@ namespace EMCR.DRR.API.Utilities.TestData
             return faker
                 .RuleFor(i => i.Id, f => Guid.NewGuid().ToString())
                 .RuleFor(i => i.InvoiceNumber, f => $"{prefix}Inv-{index}")
-                .RuleFor(i => i.Date, f => f.Date.Between(startDate, endDate))
+                .RuleFor(i => i.Date, f => f.Date.Between(startDate, DateTime.UtcNow))
                 .RuleFor(i => i.WorkStartDate, f => f.Date.Between(startDate, startDate.AddDays(midPoint)))
                 .RuleFor(i => i.WorkEndDate, (f, i) => f.Date.Between(i.WorkStartDate.Value, endDate))
                 .RuleFor(i => i.PaymentDate, (f, i) => f.Date.Between(i.WorkEndDate.Value, endDate))

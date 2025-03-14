@@ -33,7 +33,6 @@ namespace EMCR.DRR.API.Resources.Reports
 #pragma warning disable CS8604 // Possible null reference argument.
             CreateMap<ClaimDetails, drr_projectclaim>(MemberList.None)
                 .ForMember(dest => dest.drr_name, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.drr_claimamount, opt => opt.MapFrom(src => src.ClaimAmount))
                 .ForMember(dest => dest.drr_claimcomment, opt => opt.MapFrom(src => src.ClaimComment))
                 .ForMember(dest => dest.drr_isclaimtoreport, opt => opt.MapFrom(src => src.HaveClaimExpenses))
                 .ForMember(dest => dest.drr_drr_projectclaim_drr_projectexpenditure_Claim, opt => opt.MapFrom(src => src.Invoices))
@@ -46,7 +45,6 @@ namespace EMCR.DRR.API.Resources.Reports
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.drr_name))
                 .ForMember(dest => dest.ReportPeriod, opt => opt.MapFrom(src => src.drr_ProjectReport != null ? src.drr_ProjectReport.drr_ReportPeriod != null ? src.drr_ProjectReport.drr_ReportPeriod.drr_name : string.Empty : string.Empty))
                 .ForMember(dest => dest.ContractNumber, opt => opt.MapFrom(src => src.drr_Project != null ? src.drr_Project.drr_contractnumber : string.Empty))
-                .ForMember(dest => dest.ClaimAmount, opt => opt.MapFrom(src => src.drr_claimamount))
                 .ForMember(dest => dest.PreviousClaimTotal, opt => opt.Ignore())
                 .ForMember(dest => dest.TotalClaimed, opt => opt.MapFrom(src => src.drr_claimtotal))
                 .ForMember(dest => dest.ProjectType, opt => opt.MapFrom(src => src.drr_Project != null ? src.drr_Project.drr_FullProposalApplication != null ? src.drr_Project.drr_FullProposalApplication.drr_fundingstream.HasValue ? (int?)Enum.Parse<InterimProjectType>(((FundingStreamOptionSet)src.drr_Project.drr_FullProposalApplication.drr_fundingstream).ToString()) : null : null : null))
@@ -61,8 +59,8 @@ namespace EMCR.DRR.API.Resources.Reports
                 .ForMember(dest => dest.Project, opt => opt.MapFrom(src => src.drr_Project))
                 .ForMember(dest => dest.AuthorizedRepresentative, opt => opt.MapFrom(src => src.drr_AuthorizedRepresentativeContact))
                 .ForMember(dest => dest.ActiveCondition, opt => opt.Ignore())
-                .ForMember(dest => dest.AuthorizedRepresentativeStatement, opt => opt.Ignore())
-                .ForMember(dest => dest.InformationAccuracyStatement, opt => opt.Ignore())
+                .ForMember(dest => dest.AuthorizedRepresentativeStatement, opt => opt.MapFrom(src => src.drr_authorizedrepresentative == (int)DRRTwoOptions.Yes))
+                .ForMember(dest => dest.InformationAccuracyStatement, opt => opt.MapFrom(src => src.drr_accuracyofinformation == (int)DRRTwoOptions.Yes))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.statuscode.HasValue ? (int?)Enum.Parse<ClaimStatus>(((ProjectClaimStatusOptionSet)src.statuscode).ToString()) : null))
             ;
 

@@ -336,8 +336,6 @@ namespace EMCR.DRR.Managers.Intake
                 ;
 
             CreateMap<Controllers.ProjectClaim, ClaimDetails>()
-                .ForMember(dest => dest.AuthorizedRepresentativeStatement, opt => opt.Ignore())
-                .ForMember(dest => dest.InformationAccuracyStatement, opt => opt.Ignore())
                 .ForMember(dest => dest.Project, opt => opt.Ignore())
                 .AfterMap((src, dest) =>
                 {
