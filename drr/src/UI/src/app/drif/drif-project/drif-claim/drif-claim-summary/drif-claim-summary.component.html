@@ -150,42 +150,56 @@
     </mat-card-header>
     <mat-card-content>
       <div>
-        <mat-label class="drr-label">{{ t("submitter") }}</mat-label>
+        <mat-label class="drr-label">{{
+          "authorizedRepresentative" | transloco
+        }}</mat-label>
         <div class="summary-row">
           <drr-summary-item
             [label]="t('firstName')"
-            [rxFormControl]="claimForm?.get('declaration.submitter.firstName')"
+            [rxFormControl]="
+              claimForm?.get('declaration.authorizedRepresentative.firstName')
+            "
           >
           </drr-summary-item>
 
           <drr-summary-item
             [label]="t('lastName')"
-            [rxFormControl]="claimForm?.get('declaration.submitter.lastName')"
+            [rxFormControl]="
+              claimForm?.get('declaration.authorizedRepresentative.lastName')
+            "
           >
           </drr-summary-item>
 
           <drr-summary-item
             [label]="t('title')"
-            [rxFormControl]="claimForm?.get('declaration.submitter.title')"
+            [rxFormControl]="
+              claimForm?.get('declaration.authorizedRepresentative.title')
+            "
           >
           </drr-summary-item>
 
           <drr-summary-item
             [label]="t('department')"
-            [rxFormControl]="claimForm?.get('declaration.submitter.department')"
+            [rxFormControl]="
+              claimForm?.get('declaration.authorizedRepresentative.department')
+            "
           >
           </drr-summary-item>
 
           <drr-summary-item
             [label]="t('phone')"
-            [rxFormControl]="claimForm?.get('declaration.submitter.phone')"
+            [rxFormControl]="
+              claimForm?.get('declaration.authorizedRepresentative.phone')
+            "
             controlType="phone"
           >
           </drr-summary-item>
 
           <drr-summary-item
             [label]="t('email')"
-            [rxFormControl]="claimForm?.get('declaration.submitter.email')"
+            [rxFormControl]="
+              claimForm?.get('declaration.authorizedRepresentative.email')
+            "
           >
           </drr-summary-item>
         </div>
