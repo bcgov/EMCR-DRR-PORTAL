@@ -481,11 +481,12 @@ namespace EMCR.DRR.Managers.Intake
             if (claim.Invoices != null && claim.Invoices.Any(i => i.ClaimAmount > i.GrossAmount)) throw new BusinessValidationException("Claim Amount cannot be greater than Gross Amount");
             if (claim.Invoices != null && claim.Invoices.Any(i => i.TotalPST > i.GrossAmount)) throw new BusinessValidationException("PST cannot be greater than Gross Amount");
             if (claim.Invoices != null && claim.Invoices.Any(i => i.TotalGST > i.GrossAmount)) throw new BusinessValidationException("GST cannot be greater than Gross Amount");
+            if (claim.Invoices != null && claim.Invoices.Any(i => i.WorkStartDate < existingClaim.PlannedStartDate)) throw new BusinessValidationException("Work start date cannot be before the planned start date.");
             if (claim.Invoices != null && claim.Invoices.Any(i => i.WorkStartDate > existingClaim.PlannedEndDate)) throw new BusinessValidationException("Work start date cannot be after the planned end date.");
             if (claim.Invoices != null && claim.Invoices.Any(i => i.WorkEndDate < existingClaim.PlannedStartDate)) throw new BusinessValidationException("Work end date cannot be before the planned start date.");
+            if (claim.Invoices != null && claim.Invoices.Any(i => i.WorkEndDate > existingClaim.PlannedEndDate)) throw new BusinessValidationException("Work end date cannot be after the planned end date.");
             if (claim.Invoices != null && claim.Invoices.Any(i => i.PaymentDate == null)) throw new BusinessValidationException("PaymentDate is required");
             if (claim.Invoices != null && claim.Invoices.Any(i => i.CostCategory == null)) throw new BusinessValidationException("Cost Category is required");
-
 
             var id = (await reportRepository.Manage(new SaveClaim { Claim = claim })).Id;
             await reportRepository.Manage(new SubmitClaim { Id = id });
@@ -540,18 +541,6 @@ namespace EMCR.DRR.Managers.Intake
             if (!validationRes.CanCreate) throw new BusinessValidationException(validationRes.Description);
 
             var reportPeriodName = validationRes.Description;
-
-            //if (project.InterimReports == null || project.InterimReports.Count() == 0)
-            //{
-            //    reportPeriodName = GetReportPeriod(project.ReportingScheduleType, project.StartDate.Value);
-            //}
-            //else
-            //{
-            //    var lastReport = project.InterimReports.OrderByDescending(r => r.ReportDate).First();
-            //    if (lastReport.ReportDate == null) throw new BusinessValidationException($"Invalid Report Date for report {lastReport.Id}");
-            //    reportPeriodName = GetNextReportPeriod(project.ReportingScheduleType, lastReport.ReportDate.Value);
-            //}
-
             var id = (await reportRepository.Manage(new CreateProjectReport { ProjectId = cmd.ProjectId, ReportPeriodName = reportPeriodName, ReportType = cmd.ReportType })).Id;
             return id;
         }
