@@ -787,7 +787,6 @@ namespace EMCR.DRR.Managers.Intake
         public DateTime? ReportDate { get; set; }
         public DateTime? DateApproved { get; set; }
         public DateTime? DateSubmitted { get; set; }
-        public decimal? ClaimAmount { get; set; }
         public ClaimStatus? Status { get; set; }
     }
 

@@ -22,6 +22,10 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
         private string CRAFTD1BusinessName = "EMCR CRAFT BCeID DEV";
         private string CRAFTD1UserId = "FAAA14A088F94B78B121C8A025F7304D";
 
+        private string CRAFTD2BusinessId = "727C37D2C2CD44ED9F379624FF960465";
+        private string CRAFTD2BusinessName = "CRAFT Development Community 2";
+        private string CRAFTD2UserId = "...";
+
         private string TestProjectId = "DRIF-PRJ-1104";
 
         private UserInfo GetTestUserInfo()
@@ -32,6 +36,10 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
         private UserInfo GetCRAFTUserInfo()
         {
             return new UserInfo { BusinessId = CRAFTD1BusinessId, BusinessName = CRAFTD1BusinessName, UserId = CRAFTD1UserId };
+        }
+        private UserInfo GetCRAFT2UserInfo()
+        {
+            return new UserInfo { BusinessId = CRAFTD2BusinessId, BusinessName = CRAFTD2BusinessName, UserId = CRAFTD2UserId };
         }
         private readonly IIntakeManager manager;
         private readonly IMapper mapper;
@@ -204,7 +212,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             //var userInfo = GetCRAFTUserInfo();
 
             var project = (await manager.Handle(new DrrProjectsQuery { Id = TestProjectId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault();
-            if (!project.InterimReports.Any())
+            if (!project.InterimReports.Any() || project.InterimReports.First().ProjectClaim == null || project.InterimReports.First().ProjectClaim.Status == EMCR.DRR.Managers.Intake.ClaimStatus.Submitted)
             {
                 await CanCreateReport();
                 project = (await manager.Handle(new DrrProjectsQuery { Id = TestProjectId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault();
@@ -230,6 +238,11 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             claim = FillInClaim(claim, uniqueSignature);
             claim.Status = EMCR.DRR.Controllers.ClaimStatus.Draft;
 
+            if (claim.AuthorizedRepresentative == null)
+            {
+                claim.AuthorizedRepresentative = CreateNewTestContact(uniqueSignature, "submitter");
+            }
+
             await manager.Handle(new SaveClaimCommand { Claim = claim, UserInfo = userInfo });
             var invoiceTotal = new Random().Next(20, 101) * 1000;
             DateTime startDate = project.StartDate ?? DateTime.UtcNow;
@@ -253,6 +266,76 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             await manager.Handle(new SaveClaimCommand { Claim = mapper.Map<EMCR.DRR.Controllers.ProjectClaim>(updatedClaim), UserInfo = userInfo });
             var twiceUpdatedClaim = mapper.Map<DraftProjectClaim>((await manager.Handle(new DrrClaimsQuery { Id = updatedClaim.Id, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
             twiceUpdatedClaim.Invoices.Count().ShouldBe(updatedClaim.Invoices.Count());
+        }
+
+        [Test]
+        public async Task CanSubmitClaim()
+        {
+            var userInfo = GetTestUserInfo();
+            //var userInfo = GetCRAFTUserInfo();
+
+            var project = (await manager.Handle(new DrrProjectsQuery { Id = TestProjectId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault();
+            if (!project.InterimReports.Any() || project.InterimReports.First().ProjectClaim == null || project.InterimReports.First().ProjectClaim.Status == EMCR.DRR.Managers.Intake.ClaimStatus.Submitted)
+            {
+                await CanCreateReport();
+                project = (await manager.Handle(new DrrProjectsQuery { Id = TestProjectId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault();
+            }
+
+            var interimReport = project.InterimReports.First();
+
+            var claimId = interimReport.ProjectClaim.Id;
+            Console.WriteLine(claimId);
+            var uniqueSignature = TestPrefix + "-" + Guid.NewGuid().ToString().Substring(0, 4);
+            var claim = mapper.Map<EMCR.DRR.Controllers.ProjectClaim>((await manager.Handle(new DrrClaimsQuery { Id = claimId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+            var categoryOptions = claim?.PreviousClaims != null ? claim.PreviousClaims.Select(c => c.CostCategory.Value).ToArray() : Enum.GetValues(typeof(EMCR.DRR.Controllers.CostCategory)).Cast<EMCR.DRR.Controllers.CostCategory>().Where(e => e != EMCR.DRR.Controllers.CostCategory.Contingency).ToArray();
+
+            if (claim.Invoices.Any())
+            {
+                foreach (var invoice in claim.Invoices)
+                {
+                    await manager.Handle(new DeleteInvoiceCommand { ClaimId = claim.Id, InvoiceId = invoice.Id, UserInfo = userInfo });
+                }
+                claim.Invoices = [];
+            }
+
+            claim = FillInClaim(claim, uniqueSignature);
+            claim.Status = EMCR.DRR.Controllers.ClaimStatus.Draft;
+
+            if (claim.AuthorizedRepresentative == null)
+            {
+                claim.AuthorizedRepresentative = CreateNewTestContact(uniqueSignature, "submitter");
+            }
+
+            await manager.Handle(new SaveClaimCommand { Claim = claim, UserInfo = userInfo });
+            var invoiceTotal = new Random().Next(20, 101) * 1000;
+            DateTime startDate = project.StartDate ?? DateTime.UtcNow;
+            DateTime endDate = project.EndDate ?? DateTime.UtcNow.AddDays(30);
+            var invoices = TestHelper.CreateInvoices(startDate, endDate, categoryOptions, invoiceTotal);
+            for (int i = 0; i < invoices.Count(); i++)
+            {
+                await manager.Handle(new CreateInvoiceCommand { ClaimId = claim.Id, InvoiceId = Guid.NewGuid().ToString(), UserInfo = userInfo });
+            }
+
+            var updatedClaim = mapper.Map<DraftProjectClaim>((await manager.Handle(new DrrClaimsQuery { Id = claim.Id, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+
+            updatedClaim.Status.ShouldBe(claim.Status);
+            updatedClaim.Invoices.Count().ShouldBe(invoices.Count());
+            for (int i = 0; i < invoices.Count(); i++)
+            {
+                invoices.ElementAt(i).Id = updatedClaim.Invoices.ElementAt(i).Id;
+            }
+
+            updatedClaim.Invoices = invoices;
+            var claimToSubmit = mapper.Map<EMCR.DRR.Controllers.ProjectClaim>(updatedClaim);
+            claimToSubmit.AuthorizedRepresentativeStatement = true;
+            claimToSubmit.InformationAccuracyStatement = true;
+            await manager.Handle(new SubmitClaimCommand { Claim = claimToSubmit, UserInfo = userInfo });
+            var submittedClaim = mapper.Map<EMCR.DRR.Controllers.ProjectClaim>((await manager.Handle(new DrrClaimsQuery { Id = updatedClaim.Id, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+            submittedClaim.Invoices.Count().ShouldBe(updatedClaim.Invoices.Count());
+            submittedClaim.Status.ShouldBe(EMCR.DRR.Controllers.ClaimStatus.Submitted);
+            submittedClaim.AuthorizedRepresentative.ShouldNotBeNull();
+            submittedClaim.AuthorizedRepresentativeStatement.ShouldBe(true);
+            submittedClaim.InformationAccuracyStatement.ShouldBe(true);
         }
 #pragma warning restore CS8629 // Nullable value type may be null.
 
@@ -346,10 +429,15 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
         [Test]
         public async Task ValidateCanCreateReport_ValidationFalse()
         {
+            //var userInfo = GetTestUserInfo();
+            var userInfo = GetCRAFTUserInfo();
+            //var userInfo = GetCRAFT2UserInfo();
+
             var queryOptions = new QueryOptions { Filter = "programType=DRIF,applicationType=FP,status=*UnderReview\\|EligiblePending" };
-            var queryRes = await manager.Handle(new DrrProjectsQuery { Id = "DRIF-PRJ-1015", BusinessId = GetCRAFTUserInfo().BusinessId, QueryOptions = queryOptions });
+            var queryRes = await manager.Handle(new DrrProjectsQuery { Id = "DRIF-PRJ-1015", BusinessId = userInfo.BusinessId, QueryOptions = queryOptions });
+            //var queryRes = await manager.Handle(new DrrProjectsQuery { Id = "DRIF-PRJ-1108", BusinessId = userInfo.BusinessId, QueryOptions = queryOptions });
             var project = queryRes.Items.SingleOrDefault();
-            var res = await manager.Handle(new ValidateCanCreateReportCommand { ProjectId = project.Id, ReportType = EMCR.DRR.Managers.Intake.ReportType.Interim, UserInfo = GetCRAFTUserInfo() });
+            var res = await manager.Handle(new ValidateCanCreateReportCommand { ProjectId = project.Id, ReportType = EMCR.DRR.Managers.Intake.ReportType.Interim, UserInfo = userInfo });
             res.CanCreate.ShouldBe(false);
         }
 
@@ -446,8 +534,9 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
 
         private EMCR.DRR.Controllers.ProjectClaim FillInClaim(EMCR.DRR.Controllers.ProjectClaim claim, string uniqueSignature = "autotest")
         {
+            claim.HaveClaimExpenses = true;
             claim.ClaimComment = $"{uniqueSignature} - claim comment";
-            claim.ClaimAmount = 5000;
+            //claim.ClaimAmount = 5000;
             return claim;
         }
 

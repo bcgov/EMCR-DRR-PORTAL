@@ -68,7 +68,6 @@ namespace EMCR.DRR.API.Resources.Projects
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.drr_name))
                 .ForMember(dest => dest.ReportPeriod, opt => opt.MapFrom(src => src.drr_ProjectReport != null ? src.drr_ProjectReport.drr_ReportPeriod != null ? src.drr_ProjectReport.drr_ReportPeriod.drr_name : string.Empty : string.Empty))
                 .ForMember(dest => dest.ContractNumber, opt => opt.MapFrom(src => src.drr_Project != null ? src.drr_Project.drr_contractnumber : string.Empty))
-                .ForMember(dest => dest.ClaimAmount, opt => opt.MapFrom(src => src.drr_claimamount))
                 .ForMember(dest => dest.ReportDate, opt => opt.MapFrom(src => src.drr_ProjectReport != null ? src.drr_ProjectReport.drr_reportdate.HasValue ? src.drr_ProjectReport.drr_reportdate.Value.UtcDateTime : (DateTime?)null : (DateTime?)null))
                 .ForMember(dest => dest.DateApproved, opt => opt.MapFrom(src => src.drr_dateapproved.HasValue ? src.drr_dateapproved.Value.UtcDateTime : (DateTime?)null))
                 .ForMember(dest => dest.DateSubmitted, opt => opt.MapFrom(src => src.drr_datesubmitted.HasValue ? src.drr_datesubmitted.Value.UtcDateTime : (DateTime?)null))

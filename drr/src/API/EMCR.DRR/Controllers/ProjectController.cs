@@ -417,9 +417,7 @@ namespace EMCR.DRR.Controllers
         public string? ReportPeriod { get; set; }
         public string? ContractNumber { get; set; }
         public InterimProjectType? ProjectType { get; set; }
-        [Mandatory(typeof(ProjectClaim))]
         public DateTime? PlannedStartDate { get; set; }
-        [Mandatory(typeof(ProjectClaim))]
         public DateTime? PlannedEndDate { get; set; }
         public DateTime? ReportDate { get; set; }
         public DateTime? DateApproved { get; set; }
@@ -427,8 +425,8 @@ namespace EMCR.DRR.Controllers
         public bool? HaveClaimExpenses {  get; set; }
         public IEnumerable<Invoice>? Invoices { get; set; }
         [StringLength(500)]
+        [MandatoryIf(typeof(ProjectClaim), "HaveClaimExpenses", false)]
         public string? ClaimComment { get; set; }
-        public decimal? ClaimAmount { get; set; }
         public IEnumerable<PreviousClaim>? PreviousClaims { get; set; }
         public decimal? PreviousClaimTotal { get; set; }
         public decimal? TotalClaimed { get; set; }
