@@ -144,7 +144,7 @@ export class DrifProjectComponent {
         reportsDue.forEach((report) => {
           subReportsDue.push({
             id: report.id,
-            name: `${report.reportPeriod} Report`,
+            name: `${report.reportPeriod} Interim Report`,
           });
           if (report.progressReport) {
             subReportsDue.push({
