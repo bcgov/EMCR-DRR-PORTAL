@@ -41,6 +41,7 @@ import {
   FormType,
   InterimProjectType,
   PreviousClaim,
+  ProjectClaim,
   RecordType,
 } from '../../../../../model';
 import { DrrCurrencyInputComponent } from '../../../../shared/controls/drr-currency-input/drr-currency-input.component';
@@ -464,7 +465,7 @@ export class DrifClaimCreateComponent {
     }
   }
 
-  getFormValue(): DraftProjectClaim {
+  getFormValue(): ProjectClaim {
     const claimForm = this.claimForm?.value as ClaimForm;
 
     // iterate over invoices and remove attachments if they are empty
