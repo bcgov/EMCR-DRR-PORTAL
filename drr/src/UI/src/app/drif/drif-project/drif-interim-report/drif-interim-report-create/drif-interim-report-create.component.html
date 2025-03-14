@@ -11,7 +11,7 @@
     <div>
       <div class="header-actions">
         <button mat-stroked-button color="primary" (click)="goBack()">
-          {{ t("exitForm") }}
+          Cancel
         </button>
       </div>
       <!-- <div class="save-info">
@@ -84,7 +84,7 @@
               <p>
                 This will create the
                 {{ canCreateReportResult?.description }} interim report. Do you
-                want to proceed?
+                want to continue?
               </p>
             } @else {
               <p>
@@ -143,7 +143,7 @@
           type="button"
           (click)="createReport()"
         >
-          {{ canCreateReportResult?.canCreate ? t("create") : t("close") }}
+          {{ canCreateReportResult?.canCreate ? "Ok" : t("close") }}
         </button>
       </div></mat-step
     >
