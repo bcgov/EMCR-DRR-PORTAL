@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TranslocoModule } from '@ngneat/transloco';
 import { IFormGroup, RxFormBuilder } from '@rxweb/reactive-form-validators';
 import { ProjectService } from '../../../../../api/project/project.service';
 import { DraftProjectClaim } from '../../../../../model';
@@ -10,12 +12,17 @@ import { DrifClaimSummaryComponent } from '../drif-claim-summary/drif-claim-summ
 @Component({
   selector: 'drr-drif-claim',
   standalone: true,
-  imports: [CommonModule, DrifClaimSummaryComponent],
-  templateUrl: './drif-claim.component-view.html',
-  styleUrl: './drif-claim.component-view.scss',
+  imports: [
+    CommonModule,
+    DrifClaimSummaryComponent,
+    TranslocoModule,
+    MatButtonModule,
+  ],
+  templateUrl: './drif-claim-view.component.html',
+  styleUrl: './drif-claim-view.component.scss',
   providers: [RxFormBuilder],
 })
-export class DrifClaimComponent {
+export class DrifClaimViewComponent {
   route = inject(ActivatedRoute);
   router = inject(Router);
   projectService = inject(ProjectService);
