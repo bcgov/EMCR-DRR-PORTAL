@@ -800,6 +800,12 @@ namespace EMCR.DRR.API.Resources.Reports
                 ParallelLoadDocumentTypes(ctx, pr, ct),
             };
 
+            if (pr.drr_ProjectReport != null)
+            {
+                ctx.AttachTo(nameof(DRRContext.drr_projectreports), pr.drr_ProjectReport);
+                secondLoadTasks.Add(ctx.LoadPropertyAsync(pr.drr_ProjectReport, nameof(drr_projectreport.drr_ReportPeriod), ct));
+            }
+
             await Task.WhenAll(secondLoadTasks);
         }
 
