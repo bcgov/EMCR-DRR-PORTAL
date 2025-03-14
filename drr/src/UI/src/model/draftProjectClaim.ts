@@ -16,6 +16,8 @@ export interface DraftProjectClaim {
   activeCondition?: ActiveCondition;
   /** @nullable */
   authorizedRepresentative?: ContactDetails;
+  authorizedRepresentativeStatement?: boolean;
+  informationAccuracyStatement?: boolean;
   /** @nullable */
   claimAmount?: number;
   /**

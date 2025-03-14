@@ -476,6 +476,12 @@ export class DrifClaimCreateComponent {
       haveClaimExpenses: claimForm.expenditure.haveClaimExpenses,
       invoices: claimForm.expenditure.invoices,
       claimComment: claimForm.expenditure.claimComment,
+      authorizedRepresentative: claimForm.declaration.authorizedRepresentative,
+      totalClaimed: claimForm.expenditure.totalClaimed,
+      authorizedRepresentativeStatement:
+        claimForm.declaration.authorizedRepresentativeStatement,
+      informationAccuracyStatement:
+        claimForm.declaration.informationAccuracyStatement,
     };
   }
 
