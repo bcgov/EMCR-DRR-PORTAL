@@ -2,9 +2,6 @@
   <div class="app-stepper-header">
     <div style="flex: 1">
       <h5 style="font-size: 1.2rem; margin-bottom: 0.5rem">{{ reportName }}</h5>
-      <!-- <span>
-            {{ t("project") }}: {{ project?.name }} ({{ project?.id }})
-          </span> -->
     </div>
     <div>
       <div class="header-actions">
@@ -42,6 +39,7 @@
   >
     <mat-step [label]="t('step1')">
       <div>
+        <h5>General Instructions</h5>
         <p>
           This form captures the expenses you are claiming for the current
           reporting period. You will need to attach all invoices and your proofs
@@ -53,6 +51,41 @@
           updating your claim to ensure it remains under the maximum payment, or
           submitting the claim so that it can be paid once the condition is met.
         </p>
+        <h5>Understanding the Dollar Values</h5>
+        <p>
+          You will be asked to enter the following dollar values for each
+          invoice:
+        </p>
+        <ol>
+          <li>
+            Gross Invoice Amount - enter the total amount for the invoice,
+            including taxes, but deduct any unpaid holdbacks.
+          </li>
+          <li>
+            Proponent claim amount - enter the total amount you are claiming
+            under the DRIF program. This may be less than the gross amount if
+            you are only claiming a portion of this expense under the DRIF
+            program. For example, you might pay for 50% of this invoice under
+            DRIF, and the other 50% from some other source. Regardless, this
+            amount can never exceed the gross invoice amount minus the GST.
+          </li>
+          <li>
+            Total PST Paid - enter the total PST paid on the invoice. If you are
+            only claiming a portion of the gross amount, then reduce the PST
+            accordingly. For example, if you claim 50% of the gross, then enter
+            50% of the PST paid.
+          </li>
+          <li>
+            Total GSP Paid - enter the total GST paid on the invoice. If you are
+            only claiming a portion of the gross amount, then reduce the PST
+            accordingly. For example, if you claim 50% of the gross, then enter
+            50% of the GST paid.
+          </li>
+          <li>
+            Tax Rebate - enter the total taxes you can recover from the Federal
+            government.
+          </li>
+        </ol>
       </div>
       <div class="drr-stepper-action">
         <button mat-flat-button color="primary" matStepperNext type="button">
