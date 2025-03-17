@@ -9,7 +9,7 @@
     <div>
       <div class="header-actions">
         <button mat-stroked-button color="primary" (click)="goBack()">
-          {{ t("exitForm") }}
+          {{ "exitForm" | transloco }}
         </button>
         <button mat-flat-button color="primary" (click)="save()">
           <mat-icon>save</mat-icon>
@@ -58,7 +58,7 @@
       </div>
       <div class="drr-stepper-action">
         <button mat-flat-button color="primary" matStepperNext type="button">
-          {{ t("next") }}
+          {{ "next" | transloco }}
         </button>
       </div>
     </mat-step>
@@ -112,10 +112,10 @@
       </div>
       <div class="drr-stepper-actions">
         <button mat-stroked-button color="primary" matStepperPrevious>
-          {{ t("back") }}
+          {{ "back" | transloco }}
         </button>
         <button mat-flat-button color="primary" matStepperNext type="button">
-          {{ t("next") }}
+          {{ "next" | transloco }}
         </button>
       </div>
     </mat-step>
@@ -123,10 +123,10 @@
       <div></div>
       <div class="drr-stepper-actions">
         <button mat-stroked-button color="primary" matStepperPrevious>
-          {{ t("back") }}
+          {{ "back" | transloco }}
         </button>
         <button mat-flat-button color="primary" matStepperNext type="button">
-          {{ t("next") }}
+          {{ "next" | transloco }}
         </button>
       </div>
     </mat-step>
@@ -134,10 +134,10 @@
       <div></div>
       <div class="drr-stepper-actions">
         <button mat-stroked-button color="primary" matStepperPrevious>
-          {{ t("back") }}
+          {{ "back" | transloco }}
         </button>
         <button mat-flat-button color="primary" matStepperNext type="button">
-          {{ t("submit") }}
+          {{ "submit" | transloco }}
         </button>
       </div>
     </mat-step>

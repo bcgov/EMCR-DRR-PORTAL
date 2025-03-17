@@ -1,11 +1,13 @@
+import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
 import { FormArray } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import {
+  MatStepper,
   MatStepperModule,
   StepperOrientation,
 } from '@angular/material/stepper';
@@ -49,6 +51,7 @@ export class DrifForecastCreateComponent {
   router = inject(Router);
   projectService = inject(ProjectService);
 
+  @ViewChild(MatStepper) stepper!: MatStepper;
   stepperOrientation: StepperOrientation = 'horizontal';
 
   projectId?: string;
@@ -120,11 +123,34 @@ export class DrifForecastCreateComponent {
     return this.forecastForm.get('yearForecasts') as FormArray;
   }
 
-  stepperSelectionChange(event: any) {}
+  stepperSelectionChange(event: StepperSelectionEvent) {
+    if (event.previouslySelectedIndex === 0) {
+      return;
+    }
+
+    this.save();
+
+    event.previouslySelectedStep.stepControl.markAllAsTouched();
+
+    if (this.stepperOrientation === 'horizontal') {
+      return;
+    }
+
+    const stepId = this.stepper._getStepLabelId(event.selectedIndex);
+    const stepElement = document.getElementById(stepId);
+    if (stepElement) {
+      setTimeout(() => {
+        stepElement.scrollIntoView({
+          block: 'start',
+          inline: 'nearest',
+          behavior: 'smooth',
+        });
+      }, 250);
+    }
+  }
 
   goBack() {
-    // TODO: save
-
+    this.save();
     this.router.navigate(['drif-projects', this.projectId]);
   }
 
