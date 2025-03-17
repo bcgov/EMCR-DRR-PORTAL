@@ -1,17 +1,23 @@
+import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
-import { FormArray } from '@angular/forms';
+import { Component, inject, ViewChild } from '@angular/core';
+import { FormArray, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import {
+  MatStepper,
   MatStepperModule,
   StepperOrientation,
 } from '@angular/material/stepper';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
-import { IFormGroup, RxFormBuilder } from '@rxweb/reactive-form-validators';
+import {
+  IFormGroup,
+  RxFormBuilder,
+  RxReactiveFormsModule,
+} from '@rxweb/reactive-form-validators';
 import { ProjectService } from '../../../../../api/project/project.service';
 import { DrrCurrencyInputComponent } from '../../../../shared/controls/drr-currency-input/drr-currency-input.component';
 import { DrrDatepickerComponent } from '../../../../shared/controls/drr-datepicker/drr-datepicker.component';
@@ -19,13 +25,22 @@ import { DrrInputComponent } from '../../../../shared/controls/drr-input/drr-inp
 import { DrrRadioButtonComponent } from '../../../../shared/controls/drr-radio-button/drr-radio-button.component';
 import { DrrSelectComponent } from '../../../../shared/controls/drr-select/drr-select.component';
 import { DrrTextareaComponent } from '../../../../shared/controls/drr-textarea/drr-textarea.component';
-import { ForecastForm, YearForecastForm } from '../drif-forecast-form';
+import {
+  BudgetForecastForm,
+  ForecastAttachmentsForm,
+  ForecastDeclarationForm,
+  ForecastForm,
+  YearForecastForm,
+} from '../drif-forecast-form';
 
 @Component({
   selector: 'drr-drif-forecast-create',
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    RxReactiveFormsModule,
     MatStepperModule,
     MatIconModule,
     MatButtonModule,
@@ -49,6 +64,7 @@ export class DrifForecastCreateComponent {
   router = inject(Router);
   projectService = inject(ProjectService);
 
+  @ViewChild(MatStepper) stepper!: MatStepper;
   stepperOrientation: StepperOrientation = 'horizontal';
 
   projectId?: string;
@@ -57,9 +73,27 @@ export class DrifForecastCreateComponent {
 
   reportName?: string;
 
-  forecastForm = this.formBuilder.formGroup(
+  forecastForm?: IFormGroup<ForecastForm> = this.formBuilder.formGroup(
     ForecastForm,
   ) as IFormGroup<ForecastForm>;
+
+  get budgetForecastForm() {
+    return this.forecastForm?.get(
+      'budgetForecast',
+    ) as IFormGroup<BudgetForecastForm>;
+  }
+
+  get attachmentsForm() {
+    return this.forecastForm?.get(
+      'attachments',
+    ) as IFormGroup<ForecastAttachmentsForm>;
+  }
+
+  get declarationForm() {
+    return this.forecastForm?.get(
+      'declaration',
+    ) as IFormGroup<ForecastDeclarationForm>;
+  }
 
   ngOnInit() {
     this.route.params.subscribe((params) => {
@@ -99,7 +133,11 @@ export class DrifForecastCreateComponent {
   load(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.projectService
-        .projectGetClaim(this.projectId!, this.reportId!, this.forecastId!)
+        .projectGetForecastReport(
+          this.projectId!,
+          this.reportId!,
+          this.forecastId!,
+        )
         .subscribe({
           next: (forecast) => {
             this.reportName = `${forecast.reportPeriod} Forecast`;
@@ -113,14 +151,37 @@ export class DrifForecastCreateComponent {
   }
 
   getYearForecastFormArray() {
-    return this.forecastForm.get('yearForecasts') as FormArray;
+    return this.budgetForecastForm.get('yearForecasts') as FormArray;
   }
 
-  stepperSelectionChange(event: any) {}
+  stepperSelectionChange(event: StepperSelectionEvent) {
+    if (event.previouslySelectedIndex === 0) {
+      return;
+    }
+
+    this.save();
+
+    event.previouslySelectedStep.stepControl.markAllAsTouched();
+
+    if (this.stepperOrientation === 'horizontal') {
+      return;
+    }
+
+    const stepId = this.stepper._getStepLabelId(event.selectedIndex);
+    const stepElement = document.getElementById(stepId);
+    if (stepElement) {
+      setTimeout(() => {
+        stepElement.scrollIntoView({
+          block: 'start',
+          inline: 'nearest',
+          behavior: 'smooth',
+        });
+      }, 250);
+    }
+  }
 
   goBack() {
-    // TODO: save
-
+    this.save();
     this.router.navigate(['drif-projects', this.projectId]);
   }
 

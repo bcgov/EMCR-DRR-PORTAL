@@ -1,4 +1,4 @@
-<div class="app-stepper-container" *transloco="let t">
+<div class="app-stepper-container" *transloco="let t; read: 'forecast'">
   <div class="app-stepper-header">
     <div style="flex: 1">
       <h5 style="font-size: 1.2rem; margin-bottom: 0.5rem">{{ reportName }}</h5>
@@ -9,7 +9,7 @@
     <div>
       <div class="header-actions">
         <button mat-stroked-button color="primary" (click)="goBack()">
-          {{ t("exitForm") }}
+          {{ "exitForm" | transloco }}
         </button>
         <button mat-flat-button color="primary" (click)="save()">
           <mat-icon>save</mat-icon>
@@ -58,11 +58,11 @@
       </div>
       <div class="drr-stepper-action">
         <button mat-flat-button color="primary" matStepperNext type="button">
-          {{ t("next") }}
+          {{ "next" | transloco }}
         </button>
       </div>
     </mat-step>
-    <mat-step label="Budget Forecast Report">
+    <mat-step label="Budget Forecast Report" [stepControl]="budgetForecastForm">
       <div style="display: flex; flex-direction: column; gap: 1rem">
         <div
           *ngFor="
@@ -112,32 +112,32 @@
       </div>
       <div class="drr-stepper-actions">
         <button mat-stroked-button color="primary" matStepperPrevious>
-          {{ t("back") }}
+          {{ "back" | transloco }}
         </button>
         <button mat-flat-button color="primary" matStepperNext type="button">
-          {{ t("next") }}
+          {{ "next" | transloco }}
         </button>
       </div>
     </mat-step>
-    <mat-step label="Attachments">
+    <mat-step label="Attachments" [stepControl]="attachmentsForm">
       <div></div>
       <div class="drr-stepper-actions">
         <button mat-stroked-button color="primary" matStepperPrevious>
-          {{ t("back") }}
+          {{ "back" | transloco }}
         </button>
         <button mat-flat-button color="primary" matStepperNext type="button">
-          {{ t("next") }}
+          {{ "next" | transloco }}
         </button>
       </div>
     </mat-step>
-    <mat-step label="Review">
+    <mat-step label="Review & Declaration" [stepControl]="declarationForm">
       <div></div>
       <div class="drr-stepper-actions">
         <button mat-stroked-button color="primary" matStepperPrevious>
-          {{ t("back") }}
+          {{ "back" | transloco }}
         </button>
         <button mat-flat-button color="primary" matStepperNext type="button">
-          {{ t("submit") }}
+          {{ "submit" | transloco }}
         </button>
       </div>
     </mat-step>
