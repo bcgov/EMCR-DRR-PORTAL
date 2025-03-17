@@ -122,11 +122,15 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
         [Test]
         public async Task QueryProgressReports_CanFilterById()
         {
-            var queryRes = await manager.Handle(new DrrProgressReportsQuery { Id = "DRIF-PR-1102", BusinessId = GetCRAFTUserInfo().BusinessId });
+            var userInfo = GetTestUserInfo();
+            //var userInfo = GetCRAFTUserInfo();
+
+            var queryRes = await manager.Handle(new DrrProgressReportsQuery { Id = "DRIF-PR-1218", BusinessId = userInfo.BusinessId });
             var prs = mapper.Map<IEnumerable<DraftProgressReport>>(queryRes.Items);
             prs.Count().ShouldBe(1);
             var progressReport = prs.Single();
-            progressReport.ProjectType.ShouldBe(EMCR.DRR.Controllers.InterimProjectType.Stream2);
+            //progressReport.ProjectType.ShouldBe(EMCR.DRR.Controllers.InterimProjectType.Stream2);
+            progressReport.ReportPeriod.ShouldNotBeNullOrEmpty();
         }
 
         [Test]

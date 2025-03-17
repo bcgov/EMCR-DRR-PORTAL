@@ -7,6 +7,7 @@ using EMCR.DRR.API.Resources.Projects;
 using EMCR.DRR.API.Resources.Reports;
 using EMCR.DRR.API.Services;
 using EMCR.DRR.API.Services.S3;
+using EMCR.DRR.API.Utilities.Extensions;
 using EMCR.DRR.Resources.Applications;
 using EMCR.Utilities.Extensions;
 
@@ -473,6 +474,14 @@ namespace EMCR.DRR.Managers.Intake
 
             var claim = mapper.Map<ClaimDetails>(cmd.Claim);
             var now = DateTime.UtcNow;
+            if (claim.AuthorizedRepresentativeStatement != true || claim.InformationAccuracyStatement != true) throw new BusinessValidationException("Decleration statements are reqruied.");
+            if (claim.AuthorizedRepresentative == null) throw new BusinessValidationException("Authorized Representative is required.");
+            if (string.IsNullOrEmpty(claim.AuthorizedRepresentative.FirstName)) throw new BusinessValidationException("Authorized Representative first name is required.");
+            if (string.IsNullOrEmpty(claim.AuthorizedRepresentative.LastName)) throw new BusinessValidationException("Authorized Representative last name is required.");
+            if (string.IsNullOrEmpty(claim.AuthorizedRepresentative.Department)) throw new BusinessValidationException("Authorized Representative department is required.");
+            if (string.IsNullOrEmpty(claim.AuthorizedRepresentative.Email)) throw new BusinessValidationException("Authorized Representative email is required.");
+            if (string.IsNullOrEmpty(claim.AuthorizedRepresentative.Phone)) throw new BusinessValidationException("Authorized Representative phone number is required.");
+            if (string.IsNullOrEmpty(claim.AuthorizedRepresentative.Title)) throw new BusinessValidationException("Authorized Representative title is required.");
             if (claim.HaveClaimExpenses == false && claim.Invoices != null && claim.Invoices.Any()) throw new BusinessValidationException("Cannot include any Invoices when skipping Claim");
             if (claim.Invoices != null && claim.Invoices.Any(i => string.IsNullOrEmpty(i.InvoiceNumber))) throw new BusinessValidationException("InvoiceNumber is required");
             if (claim.Invoices != null && claim.Invoices.Any(i => i.Date > now)) throw new BusinessValidationException("Invoice date cannot be in the future");
@@ -481,12 +490,18 @@ namespace EMCR.DRR.Managers.Intake
             if (claim.Invoices != null && claim.Invoices.Any(i => i.ClaimAmount > i.GrossAmount)) throw new BusinessValidationException("Claim Amount cannot be greater than Gross Amount");
             if (claim.Invoices != null && claim.Invoices.Any(i => i.TotalPST > i.GrossAmount)) throw new BusinessValidationException("PST cannot be greater than Gross Amount");
             if (claim.Invoices != null && claim.Invoices.Any(i => i.TotalGST > i.GrossAmount)) throw new BusinessValidationException("GST cannot be greater than Gross Amount");
-            if (claim.Invoices != null && claim.Invoices.Any(i => i.WorkStartDate > existingClaim.PlannedEndDate)) throw new BusinessValidationException("Work start date cannot be after the planned end date.");
-            if (claim.Invoices != null && claim.Invoices.Any(i => i.WorkEndDate < existingClaim.PlannedStartDate)) throw new BusinessValidationException("Work end date cannot be before the planned start date.");
+            if (claim.Invoices != null && claim.Invoices.Any(i => i.WorkStartDate == null)) throw new BusinessValidationException("Work start date is required.");
+            if (claim.Invoices != null && claim.Invoices.Any(i => i.WorkEndDate == null)) throw new BusinessValidationException("Work end date is required.");
+#pragma warning disable CS8629 // Nullable value type may be null.
+            if (claim.Invoices != null && claim.Invoices.Any(i => i.WorkStartDate.Value.ToPST().Date < existingClaim.PlannedStartDate.Value.ToPST().Date)) throw new BusinessValidationException("Work start date cannot be before the planned start date.");
+            if (claim.Invoices != null && claim.Invoices.Any(i => i.WorkStartDate.Value.ToPST().Date > existingClaim.PlannedEndDate.Value.ToPST().Date)) throw new BusinessValidationException("Work start date cannot be after the planned end date.");
+            if (claim.Invoices != null && claim.Invoices.Any(i => i.WorkEndDate.Value.ToPST().Date < existingClaim.PlannedStartDate.Value.ToPST().Date)) throw new BusinessValidationException("Work end date cannot be before the planned start date.");
+            if (claim.Invoices != null && claim.Invoices.Any(i => i.WorkEndDate.Value.ToPST().Date > existingClaim.PlannedEndDate.Value.ToPST().Date)) throw new BusinessValidationException("Work end date cannot be after the planned end date.");
+#pragma warning restore CS8629 // Nullable value type may be null.
             if (claim.Invoices != null && claim.Invoices.Any(i => i.PaymentDate == null)) throw new BusinessValidationException("PaymentDate is required");
             if (claim.Invoices != null && claim.Invoices.Any(i => i.CostCategory == null)) throw new BusinessValidationException("Cost Category is required");
 
-
+            claim.AuthorizedRepresentative.BCeId = cmd.UserInfo.UserId;
             var id = (await reportRepository.Manage(new SaveClaim { Claim = claim })).Id;
             await reportRepository.Manage(new SubmitClaim { Id = id });
             return id;
@@ -540,18 +555,6 @@ namespace EMCR.DRR.Managers.Intake
             if (!validationRes.CanCreate) throw new BusinessValidationException(validationRes.Description);
 
             var reportPeriodName = validationRes.Description;
-
-            //if (project.InterimReports == null || project.InterimReports.Count() == 0)
-            //{
-            //    reportPeriodName = GetReportPeriod(project.ReportingScheduleType, project.StartDate.Value);
-            //}
-            //else
-            //{
-            //    var lastReport = project.InterimReports.OrderByDescending(r => r.ReportDate).First();
-            //    if (lastReport.ReportDate == null) throw new BusinessValidationException($"Invalid Report Date for report {lastReport.Id}");
-            //    reportPeriodName = GetNextReportPeriod(project.ReportingScheduleType, lastReport.ReportDate.Value);
-            //}
-
             var id = (await reportRepository.Manage(new CreateProjectReport { ProjectId = cmd.ProjectId, ReportPeriodName = reportPeriodName, ReportType = cmd.ReportType })).Id;
             return id;
         }
