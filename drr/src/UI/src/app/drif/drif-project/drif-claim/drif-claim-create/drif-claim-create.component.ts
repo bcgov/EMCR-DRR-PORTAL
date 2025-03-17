@@ -466,7 +466,7 @@ export class DrifClaimCreateComponent {
   }
 
   getFormValue(): ProjectClaim {
-    const claimForm = this.claimForm?.value as ClaimForm;
+    const claimForm = this.claimForm?.getRawValue() as ClaimForm;
 
     // iterate over invoices and remove attachments if they are empty
     claimForm.expenditure.invoices?.forEach((invoice) => {
