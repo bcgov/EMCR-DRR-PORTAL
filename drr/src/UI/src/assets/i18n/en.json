@@ -733,5 +733,8 @@
     "department": "Department",
     "phone": "Phone",
     "email": "Email"
+  },
+  "forecast": {
+    
   }
 }

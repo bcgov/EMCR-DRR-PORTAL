@@ -5,10 +5,10 @@ import { ActivatedRoute } from '@angular/router';
   selector: 'drr-drif-forecast',
   standalone: true,
   imports: [],
-  templateUrl: './drif-forecast.component.html',
-  styleUrl: './drif-forecast.component.scss',
+  templateUrl: './drif-forecast-view.component.html',
+  styleUrl: './drif-forecast-view.component.scss',
 })
-export class DrifForecastComponent {
+export class DrifForecastViewComponent {
   route = inject(ActivatedRoute);
 
   projectId?: string;

@@ -1,4 +1,4 @@
-<div class="app-stepper-container" *transloco="let t">
+<div class="app-stepper-container" *transloco="let t; read: 'forecast'">
   <div class="app-stepper-header">
     <div style="flex: 1">
       <h5 style="font-size: 1.2rem; margin-bottom: 0.5rem">{{ reportName }}</h5>
@@ -130,7 +130,7 @@
         </button>
       </div>
     </mat-step>
-    <mat-step label="Review">
+    <mat-step label="Review & Declaration">
       <div></div>
       <div class="drr-stepper-actions">
         <button mat-stroked-button color="primary" matStepperPrevious>

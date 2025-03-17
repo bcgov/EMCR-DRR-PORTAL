@@ -507,7 +507,7 @@
             ></drr-currency-input>
           </div>
           @if (
-            this.claimForm?.get("expenditure.totalClaimed")?.value >
+            this.claimForm.get("expenditure.totalClaimed")?.value >
             activeConditionLimit?.conditionAmount!
           ) {
             <drr-alert [type]="'warning'">

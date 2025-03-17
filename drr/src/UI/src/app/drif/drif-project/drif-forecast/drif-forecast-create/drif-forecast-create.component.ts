@@ -99,7 +99,11 @@ export class DrifForecastCreateComponent {
   load(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.projectService
-        .projectGetClaim(this.projectId!, this.reportId!, this.forecastId!)
+        .projectGetForecastReport(
+          this.projectId!,
+          this.reportId!,
+          this.forecastId!,
+        )
         .subscribe({
           next: (forecast) => {
             this.reportName = `${forecast.reportPeriod} Forecast`;
