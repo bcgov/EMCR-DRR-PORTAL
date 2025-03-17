@@ -474,6 +474,14 @@ namespace EMCR.DRR.Managers.Intake
 
             var claim = mapper.Map<ClaimDetails>(cmd.Claim);
             var now = DateTime.UtcNow;
+            if (claim.AuthorizedRepresentativeStatement != true || claim.InformationAccuracyStatement != true) throw new BusinessValidationException("Decleration statements are reqruied.");
+            if (claim.AuthorizedRepresentative == null) throw new BusinessValidationException("Authorized Representative is required.");
+            if (string.IsNullOrEmpty(claim.AuthorizedRepresentative.FirstName)) throw new BusinessValidationException("Authorized Representative first name is required.");
+            if (string.IsNullOrEmpty(claim.AuthorizedRepresentative.LastName)) throw new BusinessValidationException("Authorized Representative last name is required.");
+            if (string.IsNullOrEmpty(claim.AuthorizedRepresentative.Department)) throw new BusinessValidationException("Authorized Representative department is required.");
+            if (string.IsNullOrEmpty(claim.AuthorizedRepresentative.Email)) throw new BusinessValidationException("Authorized Representative email is required.");
+            if (string.IsNullOrEmpty(claim.AuthorizedRepresentative.Phone)) throw new BusinessValidationException("Authorized Representative phone number is required.");
+            if (string.IsNullOrEmpty(claim.AuthorizedRepresentative.Title)) throw new BusinessValidationException("Authorized Representative title is required.");
             if (claim.HaveClaimExpenses == false && claim.Invoices != null && claim.Invoices.Any()) throw new BusinessValidationException("Cannot include any Invoices when skipping Claim");
             if (claim.Invoices != null && claim.Invoices.Any(i => string.IsNullOrEmpty(i.InvoiceNumber))) throw new BusinessValidationException("InvoiceNumber is required");
             if (claim.Invoices != null && claim.Invoices.Any(i => i.Date > now)) throw new BusinessValidationException("Invoice date cannot be in the future");
@@ -493,6 +501,7 @@ namespace EMCR.DRR.Managers.Intake
             if (claim.Invoices != null && claim.Invoices.Any(i => i.PaymentDate == null)) throw new BusinessValidationException("PaymentDate is required");
             if (claim.Invoices != null && claim.Invoices.Any(i => i.CostCategory == null)) throw new BusinessValidationException("Cost Category is required");
 
+            claim.AuthorizedRepresentative.BCeId = cmd.UserInfo.UserId;
             var id = (await reportRepository.Manage(new SaveClaim { Claim = claim })).Id;
             await reportRepository.Manage(new SubmitClaim { Id = id });
             return id;
