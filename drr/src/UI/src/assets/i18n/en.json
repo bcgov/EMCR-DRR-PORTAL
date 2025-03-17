@@ -735,6 +735,11 @@
     "email": "Email"
   },
   "forecast": {
-    
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "title": "Title",
+    "department": "Department",
+    "phone": "Phone",
+    "email": "Email"
   }
 }
