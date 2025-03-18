@@ -93,6 +93,7 @@ export class DrifForecastCreateComponent {
   forecastForm?: IFormGroup<ForecastForm> = this.formBuilder.formGroup(
     ForecastForm,
   ) as IFormGroup<ForecastForm>;
+  formChanged = false;
 
   get budgetForecastForm() {
     return this.forecastForm?.get(
@@ -271,5 +272,33 @@ export class DrifForecastCreateComponent {
     this.router.navigate(['drif-projects', this.projectId]);
   }
 
-  save() {}
+  getFormValue() {}
+
+  save() {
+    if (!this.formChanged) {
+      return;
+    }
+
+    const forecastFormValue = this.getFormValue();
+
+    // this.lastSavedAt = undefined;
+
+    // update forecast
+    // .subscribe({
+    //   next: () => {
+    //     this.lastSavedAt = new Date();
+
+    //     this.toastService.close();
+    //     this.toastService.success('Claim saved successfully');
+
+    //     this.formChanged = false;
+    //     this.resetAutoSaveTimer();
+    //   },
+    //   error: (error) => {
+    //     this.toastService.close();
+    //     this.toastService.error('Failed to save claim');
+    //     console.error(error);
+    //   },
+    // });
+  }
 }
