@@ -597,6 +597,8 @@
     "plannedCompletionDate": "Planned Completion Date",
     "actualStartDate": "Actual Start Date",
     "actualCompletionDate": "Actual Completion Date",
+    "plannedAwardDate": "Planned Award Date",
+    "actualAwardDate": "Award Date",
     "explainDateChange": "Explain Date Change",
     "minStartDateError": "Start Date must be before End Date",
     "minEndDateError": "End Date must be after Start Date",

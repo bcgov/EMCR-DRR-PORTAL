@@ -290,7 +290,7 @@
                     @if (showPlannedStartDate(milestoneActivity)) {
                       <drr-datepicker
                         class="drr-single-input"
-                        [label]="t('plannedStartDate')"
+                        [label]="t('plannedAwardDate')"
                         [rxFormControl]="
                           milestoneActivity.get('plannedStartDate')
                         "
@@ -303,7 +303,7 @@
                     @if (showActualStartDate(milestoneActivity)) {
                       <drr-datepicker
                         class="drr-single-input"
-                        [label]="t('actualStartDate')"
+                        [label]="t('actualAwardDate')"
                         [rxFormControl]="
                           milestoneActivity.get('actualStartDate')
                         "
