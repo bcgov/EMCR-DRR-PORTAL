@@ -156,10 +156,10 @@
             controlType="date"
           ></drr-summary-item>
         }
-        @if (showActualCompletionDate(activity)) {
+        @if (showActualStartDate(activity)) {
           <drr-summary-item
             [label]="t('progressReport.actualAwardDate')"
-            [rxFormControl]="activity.get('actualCompletionDate')"
+            [rxFormControl]="activity.get('actualStartDate')"
             controlType="date"
           ></drr-summary-item>
         }
