@@ -1263,11 +1263,38 @@
         [rxFormControl]="fullProposalForm.get('budget.intendToSecureFunding')"
         controlType="textarea"
       ></drr-summary-item>
+
+      <drr-summary-item
+        [label]="t('costConsiderationsApplied')"
+        [rxFormControl]="
+          fullProposalForm.get('budget.costConsiderationsApplied')
+        "
+        controlType="radio"
+      ></drr-summary-item>
+      @if (
+        fullProposalForm.get("budget.costConsiderationsApplied")?.value === true
+      ) {
+        <drr-summary-item
+          [label]="t('costConsiderationsQuestions')"
+          [rxFormControl]="fullProposalForm.get('budget.costConsiderations')"
+          controlType="array"
+          [translate]="false"
+        ></drr-summary-item>
+      }
+      <drr-summary-item
+        [label]="t('costConsiderationsComments')"
+        [rxFormControl]="
+          fullProposalForm.get('budget.costConsiderationsComments')
+        "
+        controlType="textarea"
+      ></drr-summary-item>
+
       <drr-summary-item
         [label]="t('costEffectiveComments')"
         [rxFormControl]="fullProposalForm.get('budget.costEffectiveComments')"
         controlType="textarea"
       ></drr-summary-item>
+
       <drr-summary-item
         [label]="t('previousResponseQuestion')"
         [rxFormControl]="fullProposalForm.get('budget.previousResponse')"
@@ -1290,30 +1317,6 @@
         [label]="t('previousResponseComments')"
         [rxFormControl]="
           fullProposalForm.get('budget.previousResponseComments')
-        "
-        controlType="textarea"
-      ></drr-summary-item>
-      <drr-summary-item
-        [label]="t('costConsiderationsApplied')"
-        [rxFormControl]="
-          fullProposalForm.get('budget.costConsiderationsApplied')
-        "
-        controlType="radio"
-      ></drr-summary-item>
-      @if (
-        fullProposalForm.get("budget.costConsiderationsApplied")?.value === true
-      ) {
-        <drr-summary-item
-          [label]="t('costConsiderationsQuestions')"
-          [rxFormControl]="fullProposalForm.get('budget.costConsiderations')"
-          controlType="array"
-          [translate]="false"
-        ></drr-summary-item>
-      }
-      <drr-summary-item
-        [label]="t('costConsiderationsComments')"
-        [rxFormControl]="
-          fullProposalForm.get('budget.costConsiderationsComments')
         "
         controlType="textarea"
       ></drr-summary-item>
