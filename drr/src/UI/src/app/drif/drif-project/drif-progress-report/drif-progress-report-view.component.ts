@@ -41,6 +41,8 @@ export class DrifProgressReportViewComponent {
   reportId!: string;
   progressReportId!: string;
 
+  reportName?: string;
+
   progressReportForm = this.formBuilder.formGroup(
     ProgressReportForm,
     {},
@@ -85,6 +87,8 @@ export class DrifProgressReportViewComponent {
           this.progressReportId,
         )
         .subscribe((report: DraftProgressReport) => {
+          this.reportName = `${report.reportPeriod} Progress`;
+
           report.workplan?.workplanActivities?.map((activity) => {
             const activityForm = this.formBuilder.formGroup(
               new WorkplanActivityForm(activity),

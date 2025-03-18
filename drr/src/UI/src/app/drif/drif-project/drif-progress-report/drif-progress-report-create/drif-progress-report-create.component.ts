@@ -334,7 +334,7 @@ export class DrifProgressReportCreateComponent {
         )
         .subscribe({
           next: (report: DraftProgressReport) => {
-            this.reportName = `${report.reportPeriod} Progress Report`;
+            this.reportName = `${report.reportPeriod} Progress`;
 
             this.progressReportForm = this.formBuilder.formGroup(
               new ProgressReportForm({
