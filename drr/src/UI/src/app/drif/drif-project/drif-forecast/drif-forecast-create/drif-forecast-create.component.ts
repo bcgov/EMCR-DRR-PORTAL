@@ -40,6 +40,15 @@ import {
   YearForecastForm,
 } from '../drif-forecast-form';
 
+export class ForecastRow {
+  fiscalYear!: number;
+  forecastAmount!: number;
+  outstandingClaimsAmount!: number;
+  remainingClaimsAmount!: number;
+  originalForecast!: number;
+  projectedExpenditure!: number;
+}
+
 @Component({
   selector: 'drr-drif-forecast-create',
   standalone: true,
@@ -137,25 +146,26 @@ export class DrifForecastCreateComponent {
     // TODO: temp add init values
     this.getYearForecastFormArray().controls.push(
       this.formBuilder.formGroup(YearForecastForm, {
-        fiscalYear: 2021,
+        fiscalYear: '2021/2022',
         originalForecast: 1000,
         projectedExpenditure: 900,
         paidClaimsAmount: 800,
+        notPaidClaimsAmount: 100,
         outstandingClaimsAmount: 100,
         remainingClaimsAmount: 100,
       }),
     );
     this.getYearForecastFormArray().controls.push(
       this.formBuilder.formGroup(YearForecastForm, {
-        fiscalYear: 2022,
+        fiscalYear: '2022/2023',
         originalForecast: 2000,
         projectedExpenditure: 1900,
         paidClaimsAmount: 1800,
+        notPaidClaimsAmount: 100,
         outstandingClaimsAmount: 200,
         remainingClaimsAmount: 200,
       }),
     );
-    this.getYearForecastFormArray().disable();
   }
 
   load(): Promise<void> {

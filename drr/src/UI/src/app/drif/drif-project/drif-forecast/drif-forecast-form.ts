@@ -19,12 +19,17 @@ export class YearForecastForm {
   originalForecast?: number;
 
   @prop()
+  @required()
   projectedExpenditure?: number;
 
   @prop()
   paidClaimsAmount?: number;
 
   @prop()
+  notPaidClaimsAmount?: number;
+
+  @prop()
+  @required()
   outstandingClaimsAmount?: number;
 
   @prop()
