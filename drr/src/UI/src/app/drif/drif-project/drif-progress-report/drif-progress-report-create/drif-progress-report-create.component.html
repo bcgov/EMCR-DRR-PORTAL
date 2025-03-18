@@ -199,19 +199,7 @@
                         [maxErrorLabel]="t('minStartDateError')"
                       ></drr-datepicker>
                     }
-                    @if (showPlannedCompletionDate(preDefinedActivity)) {
-                      <drr-datepicker
-                        class="drr-single-input"
-                        [label]="t('plannedCompletionDate')"
-                        [rxFormControl]="
-                          preDefinedActivity.get('plannedCompletionDate')
-                        "
-                        [min]="
-                          preDefinedActivity.get('plannedStartDate')?.value
-                        "
-                        [minErrorLabel]="t('minEndDateError')"
-                      ></drr-datepicker>
-                    }
+
                     @if (showActualStartDate(preDefinedActivity)) {
                       <drr-datepicker
                         class="drr-single-input"
@@ -225,6 +213,21 @@
                         [maxErrorLabel]="t('minStartDateError')"
                       ></drr-datepicker>
                     }
+
+                    @if (showPlannedCompletionDate(preDefinedActivity)) {
+                      <drr-datepicker
+                        class="drr-single-input"
+                        [label]="t('plannedCompletionDate')"
+                        [rxFormControl]="
+                          preDefinedActivity.get('plannedCompletionDate')
+                        "
+                        [min]="
+                          preDefinedActivity.get('plannedStartDate')?.value
+                        "
+                        [minErrorLabel]="t('minEndDateError')"
+                      ></drr-datepicker>
+                    }
+
                     @if (showActualCompletionDate(preDefinedActivity)) {
                       <drr-datepicker
                         class="drr-single-input"
