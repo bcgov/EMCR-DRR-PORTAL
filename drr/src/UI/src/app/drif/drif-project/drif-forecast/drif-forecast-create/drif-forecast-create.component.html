@@ -64,48 +64,50 @@
     </mat-step>
     <mat-step label="Budget Forecast Report" [stepControl]="budgetForecastForm">
       <div style="display: flex; flex-direction: column; gap: 1rem">
-        <div
-          *ngFor="
-            let yearForecast of getYearForecastFormArray().controls;
-            let i = index
-          "
-        >
-          <mat-card>
-            <mat-card-header>
-              <mat-card-title>Fiscal Year </mat-card-title>
-              <mat-card-subtitle>{{
-                yearForecast.get("fiscalYear")?.value
-              }}</mat-card-subtitle>
-            </mat-card-header>
-            <mat-card-content>
-              <div class="row" style="margin-top: 1rem">
-                <drr-input
-                  label="Paid Claims"
-                  [rxFormControl]="yearForecast.get('paidClaimsAmount')"
-                ></drr-input>
-                <drr-input
-                  label="Outstanding Claims"
-                  [rxFormControl]="yearForecast.get('outstandingClaimsAmount')"
-                ></drr-input>
-                <drr-input
-                  label="Remaining Claims"
-                  [rxFormControl]="yearForecast.get('remainingClaimsAmount')"
-                ></drr-input>
-              </div>
-              <div class="row">
-                <drr-input
-                  label="Original Forecast"
-                  [rxFormControl]="yearForecast.get('originalForecast')"
-                ></drr-input>
-                <drr-input
-                  label="Projected Expenditure"
-                  [rxFormControl]="yearForecast.get('projectedExpenditure')"
-                >
-                </drr-input>
-              </div>
-            </mat-card-content>
-          </mat-card>
-        </div>
+        <table class="forecast-table">
+          <tr>
+            <th>Fiscal Year</th>
+            <th>Forecast</th>
+            <th>Total Projected Expenditure <br />for the fiscal year*</th>
+            <th>Claims Paid to date</th>
+            <th>Claims Submitted Not Paid</th>
+            <th>Claims on this report*</th>
+            <th>
+              Remaining Claims <br />
+              for the fiscal year
+            </th>
+          </tr>
+          <tr
+            *ngFor="
+              let yearForecast of getYearForecastFormArray().controls;
+              let i = index
+            "
+          >
+            <td>{{ yearForecast.get("fiscalYear")?.value }}</td>
+            <td>
+              {{ yearForecast.get("originalForecast")?.value | currency }}
+            </td>
+            <td style="padding-top: 1rem">
+              <drr-currency-input
+                [rxFormControl]="yearForecast.get('projectedExpenditure')"
+              ></drr-currency-input>
+            </td>
+            <td>
+              {{ yearForecast.get("paidClaimsAmount")?.value | currency }}
+            </td>
+            <td>
+              {{ yearForecast.get("notPaidClaimsAmount")?.value | currency }}
+            </td>
+            <td style="padding-top: 1rem">
+              <drr-currency-input
+                [rxFormControl]="yearForecast.get('outstandingClaimsAmount')"
+              ></drr-currency-input>
+            </td>
+            <td>
+              {{ yearForecast.get("remainingClaimsAmount")?.value | currency }}
+            </td>
+          </tr>
+        </table>
 
         <div>total</div>
         <div>variance</div>

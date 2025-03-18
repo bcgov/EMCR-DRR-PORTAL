@@ -2,3 +2,35 @@
   display: flex;
   gap: 1rem;
 }
+
+.forecast-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 1rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+
+  th {
+    padding: 0.75rem;
+    text-align: left;
+  }
+
+  th {
+    background: #e8f3ff;
+    font-weight: bold;
+    border-bottom: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+  }
+
+  td {
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    padding: 0 0.75rem;
+    text-align: left;
+  }
+
+  tr {
+    &:last-child td {
+      border-bottom: none;
+    }
+  }
+}

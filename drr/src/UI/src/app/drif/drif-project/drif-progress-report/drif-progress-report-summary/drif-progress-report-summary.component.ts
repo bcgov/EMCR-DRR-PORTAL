@@ -118,7 +118,9 @@ export class DrifProgressReportSummaryComponent {
     activityControl: AbstractControl<WorkplanActivityForm>,
   ) {
     const status = activityControl?.get('status')?.value as WorkplanStatus;
-    return status === WorkplanStatus.Completed;
+    return (
+      status === WorkplanStatus.Completed || status === WorkplanStatus.Awarded
+    );
   }
 
   getPastEventsArray() {

@@ -41,7 +41,7 @@ import { NgxMaskDirective } from 'ngx-mask';
       >{{ label }}{{ getMandatoryMark() }}</mat-label
     >
     <mat-form-field class="drr-currency-input" *transloco="let t">
-      <mat-label *ngIf="!isMobile">{{ label }}</mat-label>
+      <mat-label *ngIf="!isMobile && label">{{ label }}</mat-label>
       <input
         id="{{ id }}"
         matInput
