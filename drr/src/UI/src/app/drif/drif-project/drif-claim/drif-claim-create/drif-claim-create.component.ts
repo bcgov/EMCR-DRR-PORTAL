@@ -388,19 +388,13 @@ export class DrifClaimCreateComponent {
     const authorizedRepresentativeForm = this.claimForm?.get(
       'declaration.authorizedRepresentative',
     );
-    if (
-      profileData.firstName?.() &&
-      !authorizedRepresentativeForm?.value?.firstName
-    ) {
+    if (profileData.firstName?.()) {
       authorizedRepresentativeForm
         ?.get('firstName')
         ?.setValue(profileData.firstName(), { emitEvent: false });
       authorizedRepresentativeForm?.get('firstName')?.disable();
     }
-    if (
-      profileData.lastName?.() &&
-      !authorizedRepresentativeForm?.value?.lastName
-    ) {
+    if (profileData.lastName?.()) {
       authorizedRepresentativeForm
         ?.get('lastName')
         ?.setValue(profileData.lastName(), { emitEvent: false });
