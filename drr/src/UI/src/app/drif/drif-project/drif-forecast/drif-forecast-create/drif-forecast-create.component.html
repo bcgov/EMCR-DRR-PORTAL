@@ -121,17 +121,51 @@
         </button>
       </div>
     </mat-step>
-    <mat-step label="Attachments" [stepControl]="attachmentsForm">
-      <div></div>
+    <mat-step
+      label="Attachments"
+      [stepControl]="attachmentsForm"
+      [errorMessage]="t('stepError')"
+    >
+      <div class="attachments-container">
+        <drr-attachment
+          *ngFor="
+            let attachmentControl of attachmentsArray.controls;
+            let i = index
+          "
+          [title]="i == 0 ? t('attachments') : ''"
+          [attachmentForm]="attachmentControl"
+          (removeFile)="removeFile($event)"
+          (downloadFile)="downloadFile($event)"
+        ></drr-attachment>
+
+        <div style="display: flex; flex-direction: column; gap: 1rem">
+          <div>
+            <mat-label class="drr-label">
+              {{ t("attachmentUploadText") }}
+            </mat-label>
+          </div>
+
+          <drr-file-upload
+            (filesSelected)="uploadFiles($event)"
+            [attachButtonLabel]="t('uploadAttachment')"
+          ></drr-file-upload>
+        </div>
+      </div>
       <div class="drr-stepper-actions">
         <button mat-stroked-button color="primary" matStepperPrevious>
-          {{ "back" | transloco }}
+          Back
         </button>
-        <button mat-flat-button color="primary" matStepperNext type="button">
-          {{ "next" | transloco }}
+        <button
+          id="next3"
+          mat-flat-button
+          color="primary"
+          matStepperNext
+          type="button"
+        >
+          Next
         </button>
-      </div>
-    </mat-step>
+      </div></mat-step
+    >
     <mat-step label="Review & Declaration" [stepControl]="declarationForm">
       <div>
         <form

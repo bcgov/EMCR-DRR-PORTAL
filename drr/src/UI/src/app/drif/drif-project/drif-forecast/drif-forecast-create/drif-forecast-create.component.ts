@@ -26,12 +26,14 @@ import { ProjectService } from '../../../../../api/project/project.service';
 import { DeclarationType, FormType } from '../../../../../model';
 import { DrrCurrencyInputComponent } from '../../../../shared/controls/drr-currency-input/drr-currency-input.component';
 import { DrrDatepickerComponent } from '../../../../shared/controls/drr-datepicker/drr-datepicker.component';
+import { DrrFileUploadComponent } from '../../../../shared/controls/drr-file-upload/drr-file-upload.component';
 import { DrrInputComponent } from '../../../../shared/controls/drr-input/drr-input.component';
 import { DrrRadioButtonComponent } from '../../../../shared/controls/drr-radio-button/drr-radio-button.component';
 import { DrrSelectComponent } from '../../../../shared/controls/drr-select/drr-select.component';
 import { DrrTextareaComponent } from '../../../../shared/controls/drr-textarea/drr-textarea.component';
 import { OptionsStore } from '../../../../store/options.store';
 import { ProfileStore } from '../../../../store/profile.store';
+import { DrrAttahcmentComponent } from '../../../drif-fp/drif-fp-step-11/drif-fp-attachment.component';
 import {
   BudgetForecastForm,
   ForecastAttachmentsForm,
@@ -74,6 +76,8 @@ export class ForecastRow {
     DrrRadioButtonComponent,
     DrrTextareaComponent,
     DrrCurrencyInputComponent,
+    DrrAttahcmentComponent,
+    DrrFileUploadComponent,
   ],
   templateUrl: './drif-forecast-create.component.html',
   styleUrl: './drif-forecast-create.component.scss',
@@ -114,6 +118,10 @@ export class DrifForecastCreateComponent {
     return this.forecastForm?.get(
       'attachments',
     ) as IFormGroup<ForecastAttachmentsForm>;
+  }
+
+  get attachmentsArray() {
+    return this.attachmentsForm?.get('attachments') as FormArray;
   }
 
   get declarationForm() {
@@ -311,4 +319,10 @@ export class DrifForecastCreateComponent {
     //   },
     // });
   }
+
+  async uploadFiles(files: File[]) {}
+
+  removeFile(fileId: string) {}
+
+  downloadFile(fileId: string) {}
 }
