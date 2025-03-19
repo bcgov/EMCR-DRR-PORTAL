@@ -204,19 +204,13 @@ export class DrifForecastCreateComponent {
     const authorizedRepresentativeForm = this.declarationForm.get(
       'authorizedRepresentative',
     );
-    if (
-      profileData.firstName?.() &&
-      !authorizedRepresentativeForm?.value?.firstName
-    ) {
+    if (profileData.firstName?.()) {
       authorizedRepresentativeForm
         ?.get('firstName')
         ?.setValue(profileData.firstName(), { emitEvent: false });
       authorizedRepresentativeForm?.get('firstName')?.disable();
     }
-    if (
-      profileData.lastName?.() &&
-      !authorizedRepresentativeForm?.value?.lastName
-    ) {
+    if (profileData.lastName?.()) {
       authorizedRepresentativeForm
         ?.get('lastName')
         ?.setValue(profileData.lastName(), { emitEvent: false });
@@ -290,14 +284,20 @@ export class DrifForecastCreateComponent {
     this.router.navigate(['drif-projects', this.projectId]);
   }
 
-  getFormValue() {}
+  getFormValue() {
+    return this.forecastForm?.getRawValue();
+  }
 
   save() {
-    if (!this.formChanged) {
-      return;
-    }
+    // TODO: temp
+    // if (!this.formChanged) {
+    //   return;
+    // }
 
     const forecastFormValue = this.getFormValue();
+
+    // TODO: temp
+    console.log('Saving forecast', forecastFormValue);
 
     // this.lastSavedAt = undefined;
 

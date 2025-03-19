@@ -566,19 +566,13 @@ export class DrifProgressReportCreateComponent {
     const authorizedRepresentativeForm = this.progressReportForm.get(
       'declaration.authorizedRepresentative',
     );
-    if (
-      profileData.firstName?.() &&
-      !authorizedRepresentativeForm?.value?.firstName
-    ) {
+    if (profileData.firstName?.()) {
       authorizedRepresentativeForm
         ?.get('firstName')
         ?.setValue(profileData.firstName(), { emitEvent: false });
       authorizedRepresentativeForm?.get('firstName')?.disable();
     }
-    if (
-      profileData.lastName?.() &&
-      !authorizedRepresentativeForm?.value?.lastName
-    ) {
+    if (profileData.lastName?.()) {
       authorizedRepresentativeForm
         ?.get('lastName')
         ?.setValue(profileData.lastName(), { emitEvent: false });
