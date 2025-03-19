@@ -22,6 +22,7 @@ import {
 } from '@angular/material/stepper';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { HotToastService } from '@ngxpert/hot-toast';
 import {
   IFormGroup,
@@ -79,6 +80,7 @@ import {
 } from '../drif-progress-report-form';
 import { DrifProgressReportSummaryComponent } from '../drif-progress-report-summary/drif-progress-report-summary.component';
 
+@UntilDestroy({ checkProperties: true })
 @Component({
   selector: 'drr-drif-progress-report-create',
   standalone: true,
@@ -639,16 +641,16 @@ export class DrifProgressReportCreateComponent {
 
   save() {
     // log all invalid controls form
-    const workplanGroup = this.progressReportForm?.get(
-      'workplan',
-    ) as RxFormGroup;
-    workplanGroup.markAllAsTouched();
-    Object.keys(workplanGroup.controls).forEach((key) => {
-      const control = workplanGroup.get(key);
-      if (control?.invalid) {
-        console.log(key, control.errors);
-      }
-    });
+    // const workplanGroup = this.progressReportForm?.get(
+    //   'workplan',
+    // ) as RxFormGroup;
+    // workplanGroup.markAllAsTouched();
+    // Object.keys(workplanGroup.controls).forEach((key) => {
+    //   const control = workplanGroup.get(key);
+    //   if (control?.invalid) {
+    //     console.log(key, control.errors);
+    //   }
+    // });
 
     if (!this.formChanged) {
       return;

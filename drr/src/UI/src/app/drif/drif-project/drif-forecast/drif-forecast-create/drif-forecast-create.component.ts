@@ -17,6 +17,7 @@ import {
 import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import {
   IFormGroup,
   RxFormBuilder,
@@ -51,6 +52,7 @@ export class ForecastRow {
   projectedExpenditure!: number;
 }
 
+@UntilDestroy({ checkProperties: true })
 @Component({
   selector: 'drr-drif-forecast-create',
   standalone: true,
@@ -149,31 +151,62 @@ export class DrifForecastCreateComponent {
 
     this.load().then(() => {
       // TODO: after init logic, auto save, etc
-    });
 
-    // TODO: temp add init values
-    this.getYearForecastFormArray().controls.push(
-      this.formBuilder.formGroup(YearForecastForm, {
-        fiscalYear: '2021/2022',
-        originalForecast: 1000,
-        projectedExpenditure: 900,
-        paidClaimsAmount: 800,
-        notPaidClaimsAmount: 100,
-        outstandingClaimsAmount: 100,
-        remainingClaimsAmount: 100,
-      }),
-    );
-    this.getYearForecastFormArray().controls.push(
-      this.formBuilder.formGroup(YearForecastForm, {
-        fiscalYear: '2022/2023',
-        originalForecast: 2000,
-        projectedExpenditure: 1900,
-        paidClaimsAmount: 1800,
-        notPaidClaimsAmount: 100,
-        outstandingClaimsAmount: 200,
-        remainingClaimsAmount: 200,
-      }),
-    );
+      // TODO: temp add init values
+      this.getYearForecastFormArray().controls.push(
+        this.formBuilder.formGroup(YearForecastForm, {
+          fiscalYear: '2021/2022',
+          originalForecast: 1000,
+          projectedExpenditure: 900,
+          paidClaimsAmount: 800,
+          notPaidClaimsAmount: 100,
+          outstandingClaimsAmount: 100,
+          remainingClaimsAmount: 100,
+        }),
+      );
+      this.getYearForecastFormArray().controls.push(
+        this.formBuilder.formGroup(YearForecastForm, {
+          fiscalYear: '2022/2023',
+          originalForecast: 2000,
+          projectedExpenditure: 1900,
+          paidClaimsAmount: 1800,
+          notPaidClaimsAmount: 100,
+          outstandingClaimsAmount: 200,
+          remainingClaimsAmount: 200,
+        }),
+      );
+
+      this.getYearForecastFormArray().controls.forEach((control) => {
+        control.get('projectedExpenditure')?.valueChanges.subscribe(() => {
+          this.calculateTotalProjectedExpenditure();
+        });
+      });
+
+      // disable total controls
+      this.budgetForecastForm?.get('totalProjectedExpenditure')?.disable();
+      this.budgetForecastForm?.get('originalTotalForecast')?.disable();
+      this.budgetForecastForm?.get('variance')?.disable();
+    });
+  }
+
+  calculateTotalProjectedExpenditure() {
+    const totalProjectedExpenditure =
+      this.getYearForecastFormArray().controls.reduce((total, control) => {
+        return total + control.get('projectedExpenditure')?.value;
+      }, 0);
+
+    this.budgetForecastForm
+      ?.get('totalProjectedExpenditure')
+      ?.setValue(totalProjectedExpenditure, { emitEvent: false });
+
+    // calculate variance
+    const originalTotalForecast = this.budgetForecastForm?.get(
+      'originalTotalForecast',
+    )?.value;
+    const variance = totalProjectedExpenditure - originalTotalForecast;
+    this.budgetForecastForm?.get('variance')?.setValue(variance, {
+      emitEvent: false,
+    });
   }
 
   load(): Promise<void> {
@@ -188,7 +221,27 @@ export class DrifForecastCreateComponent {
           next: (forecast) => {
             this.reportName = `${forecast.reportPeriod} Forecast`;
 
+            const formValue = new ForecastForm({
+              budgetForecast: {
+                yearForecasts: [], // TODO: forecast.forecastItems,
+                originalTotalForecast: 1000, // TODO: forecast.originalTotalForecast,
+              },
+              attachments: {
+                attachments: forecast.attachments,
+              },
+              declaration: {
+                authorizedRepresentative: forecast.authorizedRepresentative,
+              },
+            });
+
+            this.forecastForm = this.formBuilder.formGroup(
+              ForecastForm,
+              formValue,
+            ) as IFormGroup<ForecastForm>;
+
             this.setAuthorizedRepresentative();
+
+            resolve();
           },
           error: (error) => {
             console.error('Error loading forecast', error);

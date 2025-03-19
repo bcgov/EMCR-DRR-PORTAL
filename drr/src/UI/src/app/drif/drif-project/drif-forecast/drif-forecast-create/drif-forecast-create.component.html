@@ -109,8 +109,36 @@
           </tr>
         </table>
 
-        <div>total</div>
-        <div>variance</div>
+        <div class="total-conrol">
+          <mat-label class="drr-label">
+            {{ t("totalProjectedExpenditureLabel") }}
+          </mat-label>
+          <drr-currency-input
+            [label]="t('totalProjectedExpenditure')"
+            [rxFormControl]="
+              budgetForecastForm.get('totalProjectedExpenditure')
+            "
+          ></drr-currency-input>
+        </div>
+
+        <div class="total-conrol">
+          <mat-label class="drr-label">
+            {{ t("originalTotalForecast") }}
+          </mat-label>
+          <drr-currency-input
+            [label]="t('originalTotalForecast')"
+            [rxFormControl]="budgetForecastForm.get('originalTotalForecast')"
+          ></drr-currency-input>
+        </div>
+        <div class="total-conrol">
+          <mat-label class="drr-label">
+            {{ t("variance") }}
+          </mat-label>
+          <drr-currency-input
+            [label]="t('variance')"
+            [rxFormControl]="budgetForecastForm.get('variance')"
+          ></drr-currency-input>
+        </div>
       </div>
       <div class="drr-stepper-actions">
         <button mat-stroked-button color="primary" matStepperPrevious>
