@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, Input } from '@angular/core';
 import { FormArray } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
+import { MatInputModule } from '@angular/material/input';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { IFormGroup, RxFormBuilder } from '@rxweb/reactive-form-validators';
 import { FileService } from '../../../../shared/services/file.service';
@@ -16,7 +17,13 @@ import {
 @Component({
   selector: 'drif-forecast-summary',
   standalone: true,
-  imports: [CommonModule, TranslocoModule, MatCardModule, SummaryItemComponent],
+  imports: [
+    CommonModule,
+    TranslocoModule,
+    MatCardModule,
+    SummaryItemComponent,
+    MatInputModule,
+  ],
   templateUrl: './drif-forecast-summary.component.html',
   styleUrl: './drif-forecast-summary.component.scss',
 })
@@ -52,5 +59,9 @@ export class DrifForecastSummaryComponent {
     return this.forecastForm?.get(
       'declaration',
     ) as IFormGroup<ForecastDeclarationForm>;
+  }
+
+  onDownloadFile(fileId: string) {
+    this.fileService.downloadFile(fileId);
   }
 }

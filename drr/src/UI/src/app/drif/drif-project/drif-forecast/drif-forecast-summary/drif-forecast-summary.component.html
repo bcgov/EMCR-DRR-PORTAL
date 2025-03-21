@@ -64,4 +64,97 @@
       ></drr-summary-item>
     </mat-card-content>
   </mat-card>
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title> Attachments </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div
+        class="summary-row"
+        *ngFor="let attachment of attachmentsArray.controls"
+      >
+        <drr-summary-item
+          [label]="t('attachments.name')"
+          [rxFormControl]="attachment.get('name')"
+        >
+        </drr-summary-item>
+        <drr-summary-item
+          [label]="t('attachments.comments')"
+          [rxFormControl]="attachment.get('comments')"
+        >
+        </drr-summary-item>
+        <button
+          *ngIf="isReadOnlyView"
+          style="align-self: center"
+          mat-button
+          color="primary"
+          (click)="onDownloadFile(attachment.get('id')?.value)"
+        >
+          Download
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  <mat-card *ngIf="isReadOnlyView">
+    <mat-card-header>
+      <mat-card-title> Review & Declaration </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div>
+        <mat-label class="drr-label">{{
+          "authorizedRepresentative" | transloco
+        }}</mat-label>
+        <div class="summary-row">
+          <drr-summary-item
+            [label]="t('firstName')"
+            [rxFormControl]="
+              declarationForm.get('authorizedRepresentative.firstName')
+            "
+          >
+          </drr-summary-item>
+
+          <drr-summary-item
+            [label]="t('lastName')"
+            [rxFormControl]="
+              declarationForm.get('authorizedRepresentative.lastName')
+            "
+          >
+          </drr-summary-item>
+
+          <drr-summary-item
+            [label]="t('title')"
+            [rxFormControl]="
+              declarationForm.get('authorizedRepresentative.title')
+            "
+          >
+          </drr-summary-item>
+
+          <drr-summary-item
+            [label]="t('department')"
+            [rxFormControl]="
+              declarationForm.get('authorizedRepresentative.department')
+            "
+          >
+          </drr-summary-item>
+
+          <drr-summary-item
+            [label]="t('phone')"
+            [rxFormControl]="
+              declarationForm.get('authorizedRepresentative.phone')
+            "
+            controlType="phone"
+          >
+          </drr-summary-item>
+
+          <drr-summary-item
+            [label]="t('email')"
+            [rxFormControl]="
+              declarationForm.get('authorizedRepresentative.email')
+            "
+          >
+          </drr-summary-item>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
 </div>
