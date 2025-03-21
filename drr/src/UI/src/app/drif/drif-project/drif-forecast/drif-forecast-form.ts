@@ -44,6 +44,18 @@ export class BudgetForecastForm {
   @propArray(YearForecastForm)
   yearForecasts?: YearForecastForm[] = [];
 
+  @prop()
+  @required()
+  totalProjectedExpenditure?: number;
+
+  @prop()
+  @required()
+  originalTotalForecast?: number;
+
+  @prop()
+  @required()
+  variance?: number;
+
   constructor(data?: Partial<BudgetForecastForm>) {
     Object.assign(this, data);
   }

@@ -393,19 +393,6 @@
                         [maxErrorLabel]="t('minStartDateError')"
                       ></drr-datepicker>
                     }
-                    @if (showPlannedCompletionDate(additionalActivity)) {
-                      <drr-datepicker
-                        class="drr-single-input"
-                        [label]="t('plannedCompletionDate')"
-                        [rxFormControl]="
-                          additionalActivity.get('plannedCompletionDate')
-                        "
-                        [min]="
-                          additionalActivity.get('plannedStartDate')?.value
-                        "
-                        [minErrorLabel]="t('minEndDateError')"
-                      ></drr-datepicker>
-                    }
                     @if (showActualStartDate(additionalActivity)) {
                       <drr-datepicker
                         class="drr-single-input"
@@ -417,6 +404,19 @@
                           additionalActivity.get('actualCompletionDate')?.value
                         "
                         [maxErrorLabel]="t('minStartDateError')"
+                      ></drr-datepicker>
+                    }
+                    @if (showPlannedCompletionDate(additionalActivity)) {
+                      <drr-datepicker
+                        class="drr-single-input"
+                        [label]="t('plannedCompletionDate')"
+                        [rxFormControl]="
+                          additionalActivity.get('plannedCompletionDate')
+                        "
+                        [min]="
+                          additionalActivity.get('plannedStartDate')?.value
+                        "
+                        [minErrorLabel]="t('minEndDateError')"
                       ></drr-datepicker>
                     }
                     @if (showActualCompletionDate(additionalActivity)) {

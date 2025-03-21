@@ -742,6 +742,10 @@
     "title": "Title",
     "department": "Department",
     "phone": "Phone",
-    "email": "Email"
+    "email": "Email",
+    "totalProjectedExpenditureLabel": "Total Projected Expenditures",
+    "totalProjectedExpenditure": "Total",
+    "originalTotalForecast": "Original Forecast",
+    "variance": "Variance"
   }
 }

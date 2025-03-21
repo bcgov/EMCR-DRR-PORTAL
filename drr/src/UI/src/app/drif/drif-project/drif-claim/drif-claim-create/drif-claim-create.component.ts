@@ -22,6 +22,7 @@ import {
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { HotToastService } from '@ngxpert/hot-toast';
 import {
   IFormGroup,
@@ -73,6 +74,7 @@ export class ClaimSummaryItem implements PreviousClaim {
   originalEstimate?: number;
 }
 
+@UntilDestroy({ checkProperties: true })
 @Component({
   selector: 'drr-drif-claim-create',
   standalone: true,
