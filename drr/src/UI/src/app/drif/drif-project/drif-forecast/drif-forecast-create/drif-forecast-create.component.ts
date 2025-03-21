@@ -42,6 +42,7 @@ import {
   ForecastForm,
   YearForecastForm,
 } from '../drif-forecast-form';
+import { DrifForecastSummaryComponent } from '../drif-forecast-summary/drif-forecast-summary.component';
 
 export class ForecastRow {
   fiscalYear!: number;
@@ -80,6 +81,7 @@ export class ForecastRow {
     DrrCurrencyInputComponent,
     DrrAttahcmentComponent,
     DrrFileUploadComponent,
+    DrifForecastSummaryComponent,
   ],
   templateUrl: './drif-forecast-create.component.html',
   styleUrl: './drif-forecast-create.component.scss',

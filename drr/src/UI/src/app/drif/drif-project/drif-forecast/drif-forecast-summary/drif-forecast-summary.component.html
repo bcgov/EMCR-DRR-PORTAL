@@ -1,1 +1,67 @@
-<p>drif-forecast-summary works!</p>
+<div class="summary-container" *transloco="let t; read: 'forecast'">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Budget Forecast Report</mat-card-title>
+    </mat-card-header>
+    <mat-card-content style="display: flex; flex-direction: column; gap: 1rem">
+      <table class="forecast-table">
+        <tr>
+          <th>Fiscal Year</th>
+          <th>Forecast</th>
+          <th>Total Projected Expenditure <br />for the fiscal year*</th>
+          <th>Claims Paid to date</th>
+          <th>Claims Submitted Not Paid</th>
+          <th>Claims on this report*</th>
+          <th>
+            Remaining Claims <br />
+            for the fiscal year
+          </th>
+        </tr>
+        <tr
+          *ngFor="
+            let yearForecast of yearForecastFormArray.controls;
+            let i = index
+          "
+        >
+          <td>{{ yearForecast.get("fiscalYear")?.value }}</td>
+          <td>
+            {{ yearForecast.get("originalForecast")?.value | currency }}
+          </td>
+          <td>
+            {{ yearForecast.get("projectedExpenditure")?.value | currency }}
+          </td>
+          <td>
+            {{ yearForecast.get("paidClaimsAmount")?.value | currency }}
+          </td>
+          <td>
+            {{ yearForecast.get("notPaidClaimsAmount")?.value | currency }}
+          </td>
+          <td>
+            {{ yearForecast.get("outstandingClaimsAmount")?.value | currency }}
+          </td>
+          <td>
+            {{ yearForecast.get("remainingClaimsAmount")?.value | currency }}
+          </td>
+        </tr>
+      </table>
+
+      <drr-summary-item
+        [label]="t('totalProjectedExpenditure')"
+        [rxFormControl]="budgetForecastForm.get('totalProjectedExpenditure')"
+        controlType="currency"
+      ></drr-summary-item>
+
+      <drr-summary-item
+        [label]="t('originalTotalForecast')"
+        [rxFormControl]="budgetForecastForm.get('originalTotalForecast')"
+        controlType="currency"
+      ></drr-summary-item>
+
+      <drr-summary-item
+        [label]="t('variance')"
+        [rxFormControl]="budgetForecastForm.get('variance')"
+        controlType="currency"
+      ></drr-summary-item>
+    </mat-card-content>
+  </mat-card>
+</div>

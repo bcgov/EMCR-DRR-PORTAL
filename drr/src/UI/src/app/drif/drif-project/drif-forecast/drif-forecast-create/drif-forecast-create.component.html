@@ -196,6 +196,12 @@
     >
     <mat-step label="Review & Declaration" [stepControl]="declarationForm">
       <div>
+        <drif-forecast-summary
+          [forecastForm]="forecastForm"
+          [isReadOnlyView]="false"
+        >
+        </drif-forecast-summary>
+
         <form
           [formGroup]="declarationForm"
           style="display: flex; flex-direction: column; gap: 1rem"
