@@ -191,6 +191,7 @@ namespace EMCR.DRR.Managers.Intake
                 ;
 
             CreateMap<DraftProjectClaim, ProjectClaim>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => IntakeClaimStatusMapper(src.Status)))
                 .AfterMap((src, dest) =>
                 {
                     foreach (var prop in dest.GetType().GetProperties())
@@ -202,6 +203,7 @@ namespace EMCR.DRR.Managers.Intake
                     }
                 })
                 .ReverseMap()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => DrrClaimStatusMapper(src.Status)))
                 .ForMember(dest => dest.ActiveCondition, opt => opt.Ignore())
                 ;
 
@@ -294,6 +296,7 @@ namespace EMCR.DRR.Managers.Intake
                 ;
 
             CreateMap<DraftForecast, Forecast>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => IntakeForecastStatusMapper(src.Status)))
                 .AfterMap((src, dest) =>
                 {
                     foreach (var prop in dest.GetType().GetProperties())
@@ -305,6 +308,7 @@ namespace EMCR.DRR.Managers.Intake
                     }
                 })
                 .ReverseMap()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => DrrForecastStatusMapper(src.Status)))
                 ;
 
             CreateMap<Controllers.Forecast, Forecast>()
@@ -336,6 +340,7 @@ namespace EMCR.DRR.Managers.Intake
                 ;
 
             CreateMap<Controllers.ProjectClaim, ClaimDetails>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => IntakeClaimStatusMapper(src.Status)))
                 .ForMember(dest => dest.Project, opt => opt.Ignore())
                 .AfterMap((src, dest) =>
                 {
@@ -348,6 +353,7 @@ namespace EMCR.DRR.Managers.Intake
                     }
                 })
                 .ReverseMap()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => DrrClaimStatusMapper(src.Status)))
                 .ForMember(dest => dest.TotalProjectAmount, opt => opt.MapFrom(src => src.Project != null ? src.Project.TotalDRIFFundingRequest : null))
                 .AfterMap((src, dest) =>
                 {
@@ -359,6 +365,7 @@ namespace EMCR.DRR.Managers.Intake
                 .ForMember(dest => dest.AuthorizedRepresentativeStatement, opt => opt.Ignore())
                 .ForMember(dest => dest.InformationAccuracyStatement, opt => opt.Ignore())
                 .ForMember(dest => dest.Project, opt => opt.Ignore())
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => IntakeClaimStatusMapper(src.Status)))
                 .AfterMap((src, dest) =>
                 {
                     foreach (var prop in dest.GetType().GetProperties())
@@ -370,6 +377,7 @@ namespace EMCR.DRR.Managers.Intake
                     }
                 })
                 .ReverseMap()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => DrrClaimStatusMapper(src.Status)))
                 .ForMember(dest => dest.TotalProjectAmount, opt => opt.MapFrom(src => src.Project != null ? src.Project.TotalDRIFFundingRequest : null))
                 .AfterMap((src, dest) =>
                 {
@@ -397,6 +405,7 @@ namespace EMCR.DRR.Managers.Intake
             CreateMap<Controllers.DraftForecast, ForecastDetails>()
                 .ForMember(dest => dest.AuthorizedRepresentativeStatement, opt => opt.Ignore())
                 .ForMember(dest => dest.InformationAccuracyStatement, opt => opt.Ignore())
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => IntakeForecastStatusMapper(src.Status)))
                 .AfterMap((src, dest) =>
                 {
                     foreach (var prop in dest.GetType().GetProperties())
@@ -408,6 +417,23 @@ namespace EMCR.DRR.Managers.Intake
                     }
                 })
                 .ReverseMap()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => DrrForecastStatusMapper(src.Status)))
+                ;
+
+            CreateMap<Controllers.Forecast, ForecastDetails>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => IntakeForecastStatusMapper(src.Status)))
+                .AfterMap((src, dest) =>
+                {
+                    foreach (var prop in dest.GetType().GetProperties())
+                    {
+                        if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
+                        {
+                            prop.SetValue(dest, "");
+                        }
+                    }
+                })
+                .ReverseMap()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => DrrForecastStatusMapper(src.Status)))
                 ;
 
             CreateMap<Controllers.ForecastItem, ForecastItem>()
@@ -869,7 +895,7 @@ namespace EMCR.DRR.Managers.Intake
                     {
                         dest.ConstructionContractStatus = null;
                         dest.PermitToConstructStatus = null;
-                        dest.ProgressStatus = src.Status != null ? Enum.Parse<WorkplanProgress>(src.Status.ToString()) : null;
+                        dest.ProgressStatus = src.Status != null && src.Status != Controllers.WorkplanStatus.NoLongerNeeded ? Enum.Parse<WorkplanProgress>(src.Status.ToString()) : null;
                         break;
                     }
             }
@@ -915,6 +941,88 @@ namespace EMCR.DRR.Managers.Intake
                 case ProgressReportStatus.Skipped:
                     return Controllers.ProgressReportStatus.Skipped;
                 default: return Controllers.ProgressReportStatus.Draft;
+            }
+        }
+
+        private ClaimStatus IntakeClaimStatusMapper(Controllers.ClaimStatus? status)
+        {
+            switch (status)
+            {
+                case Controllers.ClaimStatus.NotStarted:
+                    return ClaimStatus.NotStarted;
+                case Controllers.ClaimStatus.Draft:
+                    return ClaimStatus.DraftProponent;
+                case Controllers.ClaimStatus.Submitted:
+                    return ClaimStatus.Submitted;
+                case Controllers.ClaimStatus.UpdateNeeded:
+                    return ClaimStatus.UpdateNeeded;
+                case Controllers.ClaimStatus.Approved:
+                    return ClaimStatus.Approved;
+                case Controllers.ClaimStatus.Skipped:
+                    return ClaimStatus.Skipped;
+                default: return ClaimStatus.DraftProponent;
+            }
+        }
+
+        private Controllers.ClaimStatus DrrClaimStatusMapper(ClaimStatus? status)
+        {
+            switch (status)
+            {
+                case ClaimStatus.NotStarted:
+                    return Controllers.ClaimStatus.NotStarted;
+                case ClaimStatus.DraftProponent:
+                case ClaimStatus.DraftStaff:
+                    return Controllers.ClaimStatus.Draft;
+                case ClaimStatus.Submitted:
+                    return Controllers.ClaimStatus.Submitted;
+                case ClaimStatus.UpdateNeeded:
+                    return Controllers.ClaimStatus.UpdateNeeded;
+                case ClaimStatus.Approved:
+                    return Controllers.ClaimStatus.Approved;
+                case ClaimStatus.Skipped:
+                    return Controllers.ClaimStatus.Skipped;
+                default: return Controllers.ClaimStatus.Draft;
+            }
+        }
+
+        private ForecastStatus IntakeForecastStatusMapper(Controllers.ForecastStatus? status)
+        {
+            switch (status)
+            {
+                case Controllers.ForecastStatus.NotStarted:
+                    return ForecastStatus.NotStarted;
+                case Controllers.ForecastStatus.Draft:
+                    return ForecastStatus.DraftProponent;
+                case Controllers.ForecastStatus.Submitted:
+                    return ForecastStatus.Submitted;
+                case Controllers.ForecastStatus.UpdateNeeded:
+                    return ForecastStatus.UpdateNeeded;
+                case Controllers.ForecastStatus.Approved:
+                    return ForecastStatus.Approved;
+                case Controllers.ForecastStatus.Skipped:
+                    return ForecastStatus.Skipped;
+                default: return ForecastStatus.DraftProponent;
+            }
+        }
+
+        private Controllers.ForecastStatus DrrForecastStatusMapper(ForecastStatus? status)
+        {
+            switch (status)
+            {
+                case ForecastStatus.NotStarted:
+                    return Controllers.ForecastStatus.NotStarted;
+                case ForecastStatus.DraftProponent:
+                case ForecastStatus.DraftStaff:
+                    return Controllers.ForecastStatus.Draft;
+                case ForecastStatus.Submitted:
+                    return Controllers.ForecastStatus.Submitted;
+                case ForecastStatus.UpdateNeeded:
+                    return Controllers.ForecastStatus.UpdateNeeded;
+                case ForecastStatus.Approved:
+                    return Controllers.ForecastStatus.Approved;
+                case ForecastStatus.Skipped:
+                    return Controllers.ForecastStatus.Skipped;
+                default: return Controllers.ForecastStatus.Draft;
             }
         }
 
