@@ -139,6 +139,13 @@
             [rxFormControl]="budgetForecastForm.get('variance')"
           ></drr-currency-input>
         </div>
+        @if (budgetForecastForm.get("variance")?.value != 0) {
+          <drr-textarea
+            [label]="t('varianceComment')"
+            [rxFormControl]="budgetForecastForm.get('varianceComment')"
+            [maxlength]="2000"
+          ></drr-textarea>
+        }
       </div>
       <div class="drr-stepper-actions">
         <button mat-stroked-button color="primary" matStepperPrevious>
@@ -195,7 +202,13 @@
       </div></mat-step
     >
     <mat-step label="Review & Declaration" [stepControl]="declarationForm">
-      <div>
+      <div style="display: flex; flex-direction: column; gap: 1rem">
+        <drif-forecast-summary
+          [forecastForm]="forecastForm"
+          [isReadOnlyView]="false"
+        >
+        </drif-forecast-summary>
+
         <form
           [formGroup]="declarationForm"
           style="display: flex; flex-direction: column; gap: 1rem"

@@ -56,6 +56,9 @@ export class BudgetForecastForm {
   @required()
   variance?: number;
 
+  @prop()
+  varianceComment?: string;
+
   constructor(data?: Partial<BudgetForecastForm>) {
     Object.assign(this, data);
   }

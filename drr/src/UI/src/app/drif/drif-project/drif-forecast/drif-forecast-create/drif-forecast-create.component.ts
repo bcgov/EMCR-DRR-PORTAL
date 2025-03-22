@@ -1,7 +1,12 @@
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { CommonModule } from '@angular/common';
 import { Component, inject, ViewChild } from '@angular/core';
-import { FormArray, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormArray,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -18,13 +23,15 @@ import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { HotToastService } from '@ngxpert/hot-toast';
 import {
   IFormGroup,
   RxFormBuilder,
   RxReactiveFormsModule,
 } from '@rxweb/reactive-form-validators';
+import { AttachmentService } from '../../../../../api/attachment/attachment.service';
 import { ProjectService } from '../../../../../api/project/project.service';
-import { DeclarationType, FormType } from '../../../../../model';
+import { DeclarationType, DocumentType, FormType } from '../../../../../model';
 import { DrrCurrencyInputComponent } from '../../../../shared/controls/drr-currency-input/drr-currency-input.component';
 import { DrrDatepickerComponent } from '../../../../shared/controls/drr-datepicker/drr-datepicker.component';
 import { DrrFileUploadComponent } from '../../../../shared/controls/drr-file-upload/drr-file-upload.component';
@@ -32,6 +39,7 @@ import { DrrInputComponent } from '../../../../shared/controls/drr-input/drr-inp
 import { DrrRadioButtonComponent } from '../../../../shared/controls/drr-radio-button/drr-radio-button.component';
 import { DrrSelectComponent } from '../../../../shared/controls/drr-select/drr-select.component';
 import { DrrTextareaComponent } from '../../../../shared/controls/drr-textarea/drr-textarea.component';
+import { FileService } from '../../../../shared/services/file.service';
 import { OptionsStore } from '../../../../store/options.store';
 import { ProfileStore } from '../../../../store/profile.store';
 import { DrrAttahcmentComponent } from '../../../drif-fp/drif-fp-step-11/drif-fp-attachment.component';
@@ -42,6 +50,7 @@ import {
   ForecastForm,
   YearForecastForm,
 } from '../drif-forecast-form';
+import { DrifForecastSummaryComponent } from '../drif-forecast-summary/drif-forecast-summary.component';
 
 export class ForecastRow {
   fiscalYear!: number;
@@ -80,6 +89,7 @@ export class ForecastRow {
     DrrCurrencyInputComponent,
     DrrAttahcmentComponent,
     DrrFileUploadComponent,
+    DrifForecastSummaryComponent,
   ],
   templateUrl: './drif-forecast-create.component.html',
   styleUrl: './drif-forecast-create.component.scss',
@@ -92,6 +102,9 @@ export class DrifForecastCreateComponent {
   projectService = inject(ProjectService);
   optionsStore = inject(OptionsStore);
   profileStore = inject(ProfileStore);
+  fileService = inject(FileService);
+  attachmentsService = inject(AttachmentService);
+  toastService = inject(HotToastService);
 
   @ViewChild(MatStepper) stepper!: MatStepper;
   stepperOrientation: StepperOrientation = 'horizontal';
@@ -207,6 +220,15 @@ export class DrifForecastCreateComponent {
     this.budgetForecastForm?.get('variance')?.setValue(variance, {
       emitEvent: false,
     });
+
+    const varianceComments = this.budgetForecastForm?.get('varianceComment');
+
+    if (variance != 0) {
+      varianceComments?.addValidators(Validators.required);
+    } else {
+      varianceComments?.clearValidators();
+    }
+    varianceComments?.updateValueAndValidity();
   }
 
   load(): Promise<void> {
@@ -373,9 +395,77 @@ export class DrifForecastCreateComponent {
     // });
   }
 
-  async uploadFiles(files: File[]) {}
+  async uploadFiles(files: File[]) {
+    files.forEach(async (file) => {
+      if (file == null) {
+        return;
+      }
 
-  removeFile(fileId: string) {}
+      const base64Content = await this.fileService.fileToBase64(file);
 
-  downloadFile(fileId: string) {}
+      this.attachmentsService
+        .attachmentUploadAttachment({
+          recordId: this.forecastId,
+          // TODO: recordType: RecordType.Forecast,
+          // TODO: documentType: DocumentType.Forecast,
+          name: file.name,
+          contentType:
+            file.type === ''
+              ? this.fileService.getCustomContentType(file)
+              : file.type,
+          content: base64Content.split(',')[1],
+        })
+        .subscribe({
+          next: (attachment) => {
+            const attachmentFormData = {
+              name: file.name,
+              comments: '',
+              id: attachment.id,
+              documentType: DocumentType.ProgressReport,
+            } as ForecastAttachmentsForm;
+
+            this.attachmentsArray.push(
+              this.formBuilder.formGroup(
+                ForecastAttachmentsForm,
+                attachmentFormData,
+              ),
+            );
+          },
+          error: (error) => {
+            this.toastService.close();
+            this.toastService.error('File upload failed');
+            console.error(error);
+          },
+        });
+    });
+  }
+
+  downloadFile(fileId: string) {
+    this.fileService.downloadFile(fileId);
+  }
+
+  removeFile(fileId: string) {
+    this.attachmentsService
+      .attachmentDeleteAttachment(fileId, {
+        recordId: this.forecastId,
+        id: fileId,
+      })
+      .subscribe({
+        next: () => {
+          const fileIndex = this.attachmentsArray.controls.findIndex(
+            (control) => control.value.id === fileId,
+          );
+
+          const documentType = this.attachmentsArray.controls[fileIndex].value
+            .documentType as DocumentType;
+
+          this.attachmentsArray.removeAt(fileIndex);
+        },
+        error: (error) => {
+          this.toastService.close();
+          this.toastService.error('File deletion failed');
+          console.error(error);
+        },
+      });
+  }
 }
