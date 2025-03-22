@@ -62,6 +62,14 @@
         [rxFormControl]="budgetForecastForm.get('variance')"
         controlType="currency"
       ></drr-summary-item>
+
+      @if (budgetForecastForm.get("variance")?.value != 0) {
+        <drr-summary-item
+          [label]="t('varianceComment')"
+          [rxFormControl]="budgetForecastForm.get('varianceComment')"
+          controlType="textarea"
+        ></drr-summary-item>
+      }
     </mat-card-content>
   </mat-card>
   <mat-card>

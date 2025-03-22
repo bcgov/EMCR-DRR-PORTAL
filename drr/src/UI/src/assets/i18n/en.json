@@ -746,6 +746,7 @@
     "totalProjectedExpenditureLabel": "Total Projected Expenditures",
     "totalProjectedExpenditure": "Total",
     "originalTotalForecast": "Original Forecast",
-    "variance": "Variance"
+    "variance": "Variance",
+    "varianceComment": "Variance Comments"
   }
 }

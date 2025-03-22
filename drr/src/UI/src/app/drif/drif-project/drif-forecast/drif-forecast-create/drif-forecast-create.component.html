@@ -139,6 +139,13 @@
             [rxFormControl]="budgetForecastForm.get('variance')"
           ></drr-currency-input>
         </div>
+        @if (budgetForecastForm.get("variance")?.value != 0) {
+          <drr-textarea
+            [label]="t('varianceComment')"
+            [rxFormControl]="budgetForecastForm.get('varianceComment')"
+            [maxlength]="2000"
+          ></drr-textarea>
+        }
       </div>
       <div class="drr-stepper-actions">
         <button mat-stroked-button color="primary" matStepperPrevious>

@@ -1,7 +1,12 @@
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { CommonModule } from '@angular/common';
 import { Component, inject, ViewChild } from '@angular/core';
-import { FormArray, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormArray,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -215,6 +220,15 @@ export class DrifForecastCreateComponent {
     this.budgetForecastForm?.get('variance')?.setValue(variance, {
       emitEvent: false,
     });
+
+    const varianceComments = this.budgetForecastForm?.get('varianceComment');
+
+    if (variance != 0) {
+      varianceComments?.addValidators(Validators.required);
+    } else {
+      varianceComments?.clearValidators();
+    }
+    varianceComments?.updateValueAndValidity();
   }
 
   load(): Promise<void> {
