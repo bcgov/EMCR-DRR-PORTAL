@@ -7,19 +7,19 @@
 
 export interface ForecastItem {
   /** @nullable */
-  claimsOnThisReport?: number; 
+  claimsOnThisReport?: number;
   /** @nullable */
-  claimsPaidToDate?: number; 
+  claimsPaidToDate?: number;
   /** @nullable */
-  claimsSubmittedNotPaid?: number; 
+  claimsSubmittedNotPaid?: number;
   /** @nullable */
-  fiscalYear?: string; 
+  fiscalYear?: string;
   /** @nullable */
-  forecastAmount?: number; 
+  forecastAmount?: number;
   /** @nullable */
   id?: string;
   /** @nullable */
-  remainingClaims?: number; 
+  remainingClaims?: number;
   /** @nullable */
-  totalProjectedExpenditure?: number; 
+  totalProjectedExpenditure?: number;
 }

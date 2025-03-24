@@ -12,4 +12,5 @@ export const RecordType = {
   FullProposal: 'FullProposal',
   ProgressReport: 'ProgressReport',
   Invoice: 'Invoice',
+  ForecastReport: 'ForecastReport',
 } as const;
