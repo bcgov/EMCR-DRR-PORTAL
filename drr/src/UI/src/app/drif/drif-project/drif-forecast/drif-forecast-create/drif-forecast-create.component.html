@@ -2,9 +2,6 @@
   <div class="app-stepper-header">
     <div style="flex: 1">
       <h5 style="font-size: 1.2rem; margin-bottom: 0.5rem">{{ reportName }}</h5>
-      <!-- <span>
-              {{ t("project") }}: {{ project?.name }} ({{ project?.id }})
-            </span> -->
     </div>
     <div>
       <div class="header-actions">
@@ -16,20 +13,20 @@
           Save
         </button>
       </div>
-      <!-- <div class="save-info">
-              <div style="display: flex; flex-direction: row; gap: 1rem">
-                <i *ngIf="autoSaveCountdown <= 30 && autoSaveCountdown > 0"
-                  >Saving in {{ autoSaveCountdown }}
-                  {{ autoSaveCountdown === 1 ? "second" : "seconds" }}...
-                </i>
-                <i
-                  *ngIf="
-                    lastSavedAt && (autoSaveCountdown === 0 || autoSaveCountdown > 30)
-                  "
-                  >Saved at {{ lastSavedAt | date : "mediumTime" }}</i
-                >
-              </div>
-            </div> -->
+      <div class="save-info">
+        <div style="display: flex; flex-direction: row; gap: 1rem">
+          <i *ngIf="autoSaveCountdown <= 30 && autoSaveCountdown > 0"
+            >Saving in {{ autoSaveCountdown }}
+            {{ autoSaveCountdown === 1 ? "second" : "seconds" }}...
+          </i>
+          <i
+            *ngIf="
+              lastSavedAt && (autoSaveCountdown === 0 || autoSaveCountdown > 30)
+            "
+            >Saved at {{ lastSavedAt | date: "mediumTime" }}</i
+          >
+        </div>
+      </div>
     </div>
   </div>
   <mat-stepper

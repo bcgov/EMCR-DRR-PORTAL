@@ -1,6 +1,6 @@
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { CommonModule } from '@angular/common';
-import { Component, inject, ViewChild } from '@angular/core';
+import { Component, HostListener, inject, ViewChild } from '@angular/core';
 import {
   FormArray,
   FormsModule,
@@ -29,6 +29,7 @@ import {
   RxFormBuilder,
   RxReactiveFormsModule,
 } from '@rxweb/reactive-form-validators';
+import { distinctUntilChanged, pairwise, startWith } from 'rxjs';
 import { AttachmentService } from '../../../../../api/attachment/attachment.service';
 import { ProjectService } from '../../../../../api/project/project.service';
 import {
@@ -38,11 +39,8 @@ import {
   FormType,
 } from '../../../../../model';
 import { DrrCurrencyInputComponent } from '../../../../shared/controls/drr-currency-input/drr-currency-input.component';
-import { DrrDatepickerComponent } from '../../../../shared/controls/drr-datepicker/drr-datepicker.component';
 import { DrrFileUploadComponent } from '../../../../shared/controls/drr-file-upload/drr-file-upload.component';
 import { DrrInputComponent } from '../../../../shared/controls/drr-input/drr-input.component';
-import { DrrRadioButtonComponent } from '../../../../shared/controls/drr-radio-button/drr-radio-button.component';
-import { DrrSelectComponent } from '../../../../shared/controls/drr-select/drr-select.component';
 import { DrrTextareaComponent } from '../../../../shared/controls/drr-textarea/drr-textarea.component';
 import { FileService } from '../../../../shared/services/file.service';
 import { OptionsStore } from '../../../../store/options.store';
@@ -76,10 +74,7 @@ import { DrifForecastSummaryComponent } from '../drif-forecast-summary/drif-fore
     MatTableModule,
     MatDividerModule,
     RouterModule,
-    DrrDatepickerComponent,
     DrrInputComponent,
-    DrrSelectComponent,
-    DrrRadioButtonComponent,
     DrrTextareaComponent,
     DrrCurrencyInputComponent,
     DrrAttahcmentComponent,
@@ -112,6 +107,35 @@ export class DrifForecastCreateComponent {
 
   authorizedRepresentativeText?: string;
   accuracyOfInformationText?: string;
+
+  lastSavedAt?: Date;
+
+  autoSaveCountdown = 0;
+  autoSaveTimer: any;
+  autoSaveInterval = 60;
+
+  @HostListener('window:mousemove')
+  @HostListener('window:mousedown')
+  @HostListener('window:keypress')
+  @HostListener('window:scroll')
+  @HostListener('window:touchmove')
+  resetAutoSaveTimer() {
+    if (!this.formChanged) {
+      this.autoSaveCountdown = 0;
+      clearInterval(this.autoSaveTimer);
+      return;
+    }
+
+    this.autoSaveCountdown = this.autoSaveInterval;
+    clearInterval(this.autoSaveTimer);
+    this.autoSaveTimer = setInterval(() => {
+      this.autoSaveCountdown -= 1;
+      if (this.autoSaveCountdown === 0) {
+        this.save();
+        clearInterval(this.autoSaveTimer);
+      }
+    }, 1000);
+  }
 
   forecastForm?: IFormGroup<ForecastForm> = this.formBuilder.formGroup(
     ForecastForm,
@@ -158,7 +182,42 @@ export class DrifForecastCreateComponent {
     );
 
     this.load().then(() => {
-      // TODO: after init logic, auto save, etc
+      this.formChanged = false;
+      setTimeout(() => {
+        this.forecastForm?.valueChanges
+          .pipe(
+            startWith(this.forecastForm.value),
+            pairwise(),
+            distinctUntilChanged((a, b) => {
+              // compare objects but ignore declaration changes
+              delete a[1].declaration.authorizedRepresentativeStatement;
+              delete a[1].declaration.informationAccuracyStatement;
+              delete b[1].declaration.authorizedRepresentativeStatement;
+              delete b[1].declaration.informationAccuracyStatement;
+
+              return JSON.stringify(a[1]) == JSON.stringify(b[1]);
+            }),
+          )
+          .subscribe(([prev, curr]) => {
+            if (
+              prev.declaration.authorizedRepresentativeStatement !==
+                curr.declaration.authorizedRepresentativeStatement ||
+              prev.declaration.informationAccuracyStatement !==
+                curr.declaration.informationAccuracyStatement
+            ) {
+              return;
+            }
+
+            this.declarationForm
+              ?.get('authorizedRepresentativeStatement')
+              ?.reset();
+
+            this.declarationForm?.get('informationAccuracyStatement')?.reset();
+
+            this.formChanged = true;
+            this.resetAutoSaveTimer();
+          });
+      }, 1000);
 
       this.getYearForecastFormArray().controls.forEach((control) => {
         control.get('totalProjectedExpenditure')?.valueChanges.subscribe(() => {
@@ -344,17 +403,13 @@ export class DrifForecastCreateComponent {
   }
 
   save() {
-    // TODO: temp
-    // if (!this.formChanged) {
-    //   return;
-    // }
+    if (!this.formChanged) {
+      return;
+    }
 
     const forecastFormValue = this.getFormValue();
 
-    // TODO: temp
-    console.log('Saving forecast', forecastFormValue);
-
-    // this.lastSavedAt = undefined;
+    this.lastSavedAt = undefined;
 
     this.projectService
       .projectUpdateForecastReport(
@@ -365,13 +420,13 @@ export class DrifForecastCreateComponent {
       )
       .subscribe({
         next: () => {
-          // this.lastSavedAt = new Date();
+          this.lastSavedAt = new Date();
 
           this.toastService.close();
           this.toastService.success('Claim saved successfully');
 
           this.formChanged = false;
-          // this.resetAutoSaveTimer();
+          this.resetAutoSaveTimer();
         },
         error: (error) => {
           this.toastService.close();
