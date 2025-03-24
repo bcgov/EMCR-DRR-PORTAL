@@ -374,6 +374,7 @@ namespace EMCR.DRR.Managers.Intake
                 case RecordType.FullProposal: return await UploadApplicationDocument(cmd);
                 case RecordType.ProgressReport: return await UploadProgressReportDocument(cmd);
                 case RecordType.Invoice: return await UploadInvoiceDocument(cmd);
+                case RecordType.ForecastReport: return await UploadForecastReportDocument(cmd);
                 default: throw new BusinessValidationException("Unsupported Record Type");
             }
         }
@@ -387,6 +388,7 @@ namespace EMCR.DRR.Managers.Intake
                 case RecordType.FullProposal: return await DeleteApplicationDocument(cmd);
                 case RecordType.ProgressReport: return await DeleteProgressReportDocument(cmd);
                 case RecordType.Invoice: return await DeleteInvoiceDocument(cmd);
+                case RecordType.ForecastReport: return await DeleteForecastReportDocument(cmd);
                 default: throw new BusinessValidationException("Unsupported Record Type");
             }
         }
@@ -660,6 +662,7 @@ namespace EMCR.DRR.Managers.Intake
                 case RecordType.FullProposal: return await DownloadApplicationDocument(cmd, result);
                 case RecordType.ProgressReport: return await DownloadProgressReportDocument(cmd, result);
                 case RecordType.Invoice: return await DownloadInvoiceDocument(cmd, result);
+                case RecordType.ForecastReport: return await DownloadForecastReportDocument(cmd, result);
                 default: throw new BusinessValidationException("Unsupported Record Type");
             }
         }
@@ -703,6 +706,16 @@ namespace EMCR.DRR.Managers.Intake
             //var recordId = (await documentRepository.Query(new DocumentQuery { Id = cmd.Id })).RecordId;
 
             var res = await s3Provider.HandleQuery(new FileQuery { Key = cmd.Id, Folder = $"{RecordType.Invoice.ToDescriptionString()}/{documentRes.RecordId}" });
+            return (FileQueryResult)res;
+        }
+
+        private async Task<FileQueryResult> DownloadForecastReportDocument(DownloadAttachment cmd, QueryDocumentCommandResult documentRes)
+        {
+            var canAccess = await CanAccessForecastFromDocumentId(cmd.Id, cmd.UserInfo.BusinessId);
+            if (!canAccess) throw new ForbiddenException("Not allowed to access this forecast.");
+            //var recordId = (await documentRepository.Query(new DocumentQuery { Id = cmd.Id })).RecordId;
+
+            var res = await s3Provider.HandleQuery(new FileQuery { Key = cmd.Id, Folder = $"{RecordType.ForecastReport.ToDescriptionString()}/{documentRes.RecordId}" });
             return (FileQueryResult)res;
         }
 
@@ -762,6 +775,25 @@ namespace EMCR.DRR.Managers.Intake
             var documentRes = (await documentRepository.Manage(new CreateInvoiceDocument { NewDocId = newDocId, InvoiceId = cmd.AttachmentInfo.RecordId, Document = new Document { Name = cmd.AttachmentInfo.File.FileName, DocumentType = cmd.AttachmentInfo.DocumentType, Size = GetFileSize(cmd.AttachmentInfo.File.Content) } }));
             return documentRes.Id;
         }
+        
+        private async Task<string> UploadForecastReportDocument(UploadAttachmentCommand cmd)
+        {
+            var canAccess = await CanAccessForecastFromDocumentId(cmd.AttachmentInfo.Id, cmd.UserInfo.BusinessId);
+            if (!canAccess) throw new ForbiddenException("Not allowed to access this forecast.");
+            var forecast = (await reportRepository.Query(new ForecastsQuery { Id = cmd.AttachmentInfo.RecordId })).Items.SingleOrDefault();
+            if (forecast == null) throw new NotFoundException("Forecast not found");
+            //if (!ApplicationInEditableStatus(progressReport)) throw new BusinessValidationException("Can only edit attachments when application is in Draft");
+            if (cmd.AttachmentInfo.DocumentType != DocumentType.OtherSupportingDocument && forecast.Attachments != null && forecast.Attachments.Any(a => a.DocumentType == cmd.AttachmentInfo.DocumentType))
+            {
+                throw new BusinessValidationException($"A document with type {cmd.AttachmentInfo.DocumentType.ToDescriptionString()} already exists on the forecast {cmd.AttachmentInfo.RecordId}");
+            }
+
+            var newDocId = Guid.NewGuid().ToString();
+
+            await s3Provider.HandleCommand(new UploadFileCommand { Key = newDocId, File = cmd.AttachmentInfo.File, Folder = $"{cmd.AttachmentInfo.RecordType.ToDescriptionString()}/{forecast.CrmId}" });
+            var documentRes = (await documentRepository.Manage(new CreateForecastReportDocument { NewDocId = newDocId, ForecastId = cmd.AttachmentInfo.RecordId, Document = new Document { Name = cmd.AttachmentInfo.File.FileName, DocumentType = cmd.AttachmentInfo.DocumentType, Size = GetFileSize(cmd.AttachmentInfo.File.Content) } }));
+            return documentRes.Id;
+        }
 
         private async Task<string> DeleteApplicationDocument(DeleteAttachmentCommand cmd)
         {
@@ -787,6 +819,15 @@ namespace EMCR.DRR.Managers.Intake
             if (!canAccess) throw new ForbiddenException("Not allowed to access this invoice.");
             var documentRes = await documentRepository.Manage(new DeleteInvoiceDocument { Id = cmd.Id });
             await s3Provider.HandleCommand(new UpdateTagsCommand { Key = cmd.Id, Folder = $"{RecordType.Invoice.ToDescriptionString()}/{documentRes.RecordId}", FileTag = GetDeletedFileTag() });
+            return documentRes.Id;
+        }
+        
+        private async Task<string> DeleteForecastReportDocument(DeleteAttachmentCommand cmd)
+        {
+            var canAccess = await CanAccessForecastFromDocumentId(cmd.Id, cmd.UserInfo.BusinessId);
+            if (!canAccess) throw new ForbiddenException("Not allowed to access this forecast.");
+            var documentRes = await documentRepository.Manage(new DeleteForecastReportDocument { Id = cmd.Id });
+            await s3Provider.HandleCommand(new UpdateTagsCommand { Key = cmd.Id, Folder = $"{RecordType.ForecastReport.ToDescriptionString()}/{documentRes.RecordId}", FileTag = GetDeletedFileTag() });
             return documentRes.Id;
         }
 
@@ -971,6 +1012,13 @@ namespace EMCR.DRR.Managers.Intake
             if (string.IsNullOrEmpty(businessId)) throw new ArgumentNullException("Missing user's BusinessId");
             if (string.IsNullOrEmpty(id)) return true;
             return await reportRepository.CanAccessInvoiceFromDocumentId(id, businessId);
+        }
+        
+        private async Task<bool> CanAccessForecastFromDocumentId(string? id, string? businessId)
+        {
+            if (string.IsNullOrEmpty(businessId)) throw new ArgumentNullException("Missing user's BusinessId");
+            if (string.IsNullOrEmpty(id)) return true;
+            return await reportRepository.CanAccessForecastFromDocumentId(id, businessId);
         }
 
         private FilterOptions ParseFilter(string? filter)

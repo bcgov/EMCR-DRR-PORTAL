@@ -144,7 +144,11 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
         [Test]
         public async Task QueryForecasts_CanFilterById()
         {
-            var queryRes = await manager.Handle(new DrrForecastsQuery { Id = "FORECAST-1054", BusinessId = GetTestUserInfo().BusinessId });
+            //var userInfo = GetTestUserInfo();
+            //var userInfo = GetCRAFTUserInfo();
+            var userInfo = GetCRAFT2UserInfo();
+
+            var queryRes = await manager.Handle(new DrrForecastsQuery { Id = "FORECAST-1086", BusinessId = userInfo.BusinessId });
             var forecasts = mapper.Map<IEnumerable<EMCR.DRR.Controllers.DraftForecast>>(queryRes.Items);
             forecasts.Count().ShouldBe(1);
         }
@@ -633,10 +637,40 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
 
             await manager.Handle(new SaveProgressReportCommand { ProgressReport = progressReportToUpdate, UserInfo = userInfo });
 
-
             var updatedProgressReport = mapper.Map<EMCR.DRR.Controllers.DraftProgressReport>((await manager.Handle(new DrrProgressReportsQuery { Id = progressReportToUpdate.Id, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
             updatedProgressReport.Attachments.First().Comments.ShouldBe(progressReportToUpdate.Attachments.First().Comments);
 
+        }
+
+        [Test]
+        public async Task CanAddAttachmentToForecast()
+        {
+            var userInfo = GetTestUserInfo();
+            //var userInfo = GetCRAFTUserInfo();
+
+            var forecastId = "FORECAST-1054";
+            var forecast = mapper.Map<EMCR.DRR.Controllers.DraftForecast>((await manager.Handle(new DrrForecastsQuery { Id = forecastId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+            foreach (var doc in forecast.Attachments)
+            {
+                await manager.Handle(new DeleteAttachmentCommand { Id = doc.Id, UserInfo = userInfo });
+            }
+
+            var body = DateTime.Now.ToString();
+            var fileName = "autotest.txt";
+            byte[] bytes = Encoding.ASCII.GetBytes(body);
+            var file = new S3File { FileName = fileName, Content = bytes, ContentType = "text/plain", };
+
+            var documentId = await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = forecast.Id, RecordType = EMCR.DRR.Managers.Intake.RecordType.ForecastReport, File = file, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.ForecastReport }, UserInfo = userInfo });
+
+            var forecastToUpdate = mapper.Map<EMCR.DRR.Controllers.Forecast>((await manager.Handle(new DrrForecastsQuery { Id = forecastId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+            forecastToUpdate.Attachments.Count().ShouldBe(1);
+            forecastToUpdate.Attachments.First().DocumentType.ShouldBe(EMCR.DRR.API.Model.DocumentType.ForecastReport);
+            forecastToUpdate.Attachments.First().Comments = "forecast report comments";
+
+            await manager.Handle(new SaveForecastCommand { Forecast = forecastToUpdate, UserInfo = userInfo });
+
+            var updatedForecast = mapper.Map<EMCR.DRR.Controllers.DraftForecast>((await manager.Handle(new DrrForecastsQuery { Id = forecastToUpdate.Id, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+            updatedForecast.Attachments.First().Comments.ShouldBe(forecastToUpdate.Attachments.First().Comments);
         }
 
         [Test]

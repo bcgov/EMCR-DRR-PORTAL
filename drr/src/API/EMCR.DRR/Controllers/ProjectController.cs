@@ -292,11 +292,11 @@ namespace EMCR.DRR.Controllers
         }
 
         [HttpPatch("{projectId}/interim-reports/{reportId}/forecasts/{forecastId}")]
-        public async Task<ActionResult<ProgressReportResult>> UpdateForecastReport([FromBody] DraftForecast forecast, string progressId)
+        public async Task<ActionResult<ProgressReportResult>> UpdateForecastReport([FromBody] DraftForecast forecast, string forecastId)
         {
             try
             {
-                forecast.Id = progressId;
+                forecast.Id = forecastId;
                 forecast.Status = ForecastStatus.Draft;
 
                 var drr_id = await intakeManager.Handle(new SaveForecastCommand { Forecast = mapper.Map<Forecast>(forecast), UserInfo = GetCurrentUser() });
@@ -309,11 +309,11 @@ namespace EMCR.DRR.Controllers
         }
 
         [HttpPatch("{projectId}/interim-reports/{reportId}/forecasts/{forecastId}/submit")]
-        public async Task<ActionResult<ProgressReportResult>> SubmitForecastReport([FromBody] Forecast forecast, string progressId)
+        public async Task<ActionResult<ProgressReportResult>> SubmitForecastReport([FromBody] Forecast forecast, string forecastId)
         {
             try
             {
-                forecast.Id = progressId;
+                forecast.Id = forecastId;
                 forecast.Status = ForecastStatus.Draft; //Need to set the status after final update save
 
                 var drr_id = await intakeManager.Handle(new SubmitForecastCommand { Forecast = mapper.Map<Forecast>(forecast), UserInfo = GetCurrentUser() });
