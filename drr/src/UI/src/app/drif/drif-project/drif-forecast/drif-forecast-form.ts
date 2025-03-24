@@ -5,10 +5,11 @@ import {
   required,
   requiredTrue,
 } from '@rxweb/reactive-form-validators';
+import { ForecastItem } from '../../../../model';
 import { ContactDetailsForm } from '../../drif-eoi/drif-eoi-form';
 import { AttachmentForm } from '../../drif-fp/drif-fp-form';
 
-export class YearForecastForm {
+export class YearForecastForm implements ForecastItem {
   @prop()
   id?: string;
 
@@ -16,24 +17,24 @@ export class YearForecastForm {
   fiscalYear?: string;
 
   @prop()
-  originalForecast?: number;
+  forecastAmount?: number;
 
   @prop()
   @required()
-  projectedExpenditure?: number;
+  totalProjectedExpenditure?: number;
 
   @prop()
-  paidClaimsAmount?: number;
+  claimsPaidToDate?: number;
 
   @prop()
-  notPaidClaimsAmount?: number;
+  claimsSubmittedNotPaid?: number;
 
   @prop()
   @required()
-  outstandingClaimsAmount?: number;
+  claimsOnThisReport?: number;
 
   @prop()
-  remainingClaimsAmount?: number;
+  remainingClaims?: number;
 
   constructor(data?: Partial<YearForecastForm>) {
     Object.assign(this, data);
@@ -50,7 +51,7 @@ export class BudgetForecastForm {
 
   @prop()
   @required()
-  originalTotalForecast?: number;
+  originalForecast?: number;
 
   @prop()
   @required()

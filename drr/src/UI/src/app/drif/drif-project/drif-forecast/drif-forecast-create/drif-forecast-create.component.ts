@@ -1,6 +1,6 @@
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { CommonModule } from '@angular/common';
-import { Component, inject, ViewChild } from '@angular/core';
+import { Component, HostListener, inject, ViewChild } from '@angular/core';
 import {
   FormArray,
   FormsModule,
@@ -29,15 +29,18 @@ import {
   RxFormBuilder,
   RxReactiveFormsModule,
 } from '@rxweb/reactive-form-validators';
+import { distinctUntilChanged, pairwise, startWith } from 'rxjs';
 import { AttachmentService } from '../../../../../api/attachment/attachment.service';
 import { ProjectService } from '../../../../../api/project/project.service';
-import { DeclarationType, DocumentType, FormType } from '../../../../../model';
+import {
+  DeclarationType,
+  DocumentType,
+  DraftForecast,
+  FormType,
+} from '../../../../../model';
 import { DrrCurrencyInputComponent } from '../../../../shared/controls/drr-currency-input/drr-currency-input.component';
-import { DrrDatepickerComponent } from '../../../../shared/controls/drr-datepicker/drr-datepicker.component';
 import { DrrFileUploadComponent } from '../../../../shared/controls/drr-file-upload/drr-file-upload.component';
 import { DrrInputComponent } from '../../../../shared/controls/drr-input/drr-input.component';
-import { DrrRadioButtonComponent } from '../../../../shared/controls/drr-radio-button/drr-radio-button.component';
-import { DrrSelectComponent } from '../../../../shared/controls/drr-select/drr-select.component';
 import { DrrTextareaComponent } from '../../../../shared/controls/drr-textarea/drr-textarea.component';
 import { FileService } from '../../../../shared/services/file.service';
 import { OptionsStore } from '../../../../store/options.store';
@@ -48,18 +51,8 @@ import {
   ForecastAttachmentsForm,
   ForecastDeclarationForm,
   ForecastForm,
-  YearForecastForm,
 } from '../drif-forecast-form';
 import { DrifForecastSummaryComponent } from '../drif-forecast-summary/drif-forecast-summary.component';
-
-export class ForecastRow {
-  fiscalYear!: number;
-  forecastAmount!: number;
-  outstandingClaimsAmount!: number;
-  remainingClaimsAmount!: number;
-  originalForecast!: number;
-  projectedExpenditure!: number;
-}
 
 @UntilDestroy({ checkProperties: true })
 @Component({
@@ -81,10 +74,7 @@ export class ForecastRow {
     MatTableModule,
     MatDividerModule,
     RouterModule,
-    DrrDatepickerComponent,
     DrrInputComponent,
-    DrrSelectComponent,
-    DrrRadioButtonComponent,
     DrrTextareaComponent,
     DrrCurrencyInputComponent,
     DrrAttahcmentComponent,
@@ -117,6 +107,35 @@ export class DrifForecastCreateComponent {
 
   authorizedRepresentativeText?: string;
   accuracyOfInformationText?: string;
+
+  lastSavedAt?: Date;
+
+  autoSaveCountdown = 0;
+  autoSaveTimer: any;
+  autoSaveInterval = 60;
+
+  @HostListener('window:mousemove')
+  @HostListener('window:mousedown')
+  @HostListener('window:keypress')
+  @HostListener('window:scroll')
+  @HostListener('window:touchmove')
+  resetAutoSaveTimer() {
+    if (!this.formChanged) {
+      this.autoSaveCountdown = 0;
+      clearInterval(this.autoSaveTimer);
+      return;
+    }
+
+    this.autoSaveCountdown = this.autoSaveInterval;
+    clearInterval(this.autoSaveTimer);
+    this.autoSaveTimer = setInterval(() => {
+      this.autoSaveCountdown -= 1;
+      if (this.autoSaveCountdown === 0) {
+        this.save();
+        clearInterval(this.autoSaveTimer);
+      }
+    }, 1000);
+  }
 
   forecastForm?: IFormGroup<ForecastForm> = this.formBuilder.formGroup(
     ForecastForm,
@@ -163,41 +182,52 @@ export class DrifForecastCreateComponent {
     );
 
     this.load().then(() => {
-      // TODO: after init logic, auto save, etc
+      this.formChanged = false;
+      setTimeout(() => {
+        this.forecastForm?.valueChanges
+          .pipe(
+            startWith(this.forecastForm.value),
+            pairwise(),
+            distinctUntilChanged((a, b) => {
+              // compare objects but ignore declaration changes
+              delete a[1].declaration.authorizedRepresentativeStatement;
+              delete a[1].declaration.informationAccuracyStatement;
+              delete b[1].declaration.authorizedRepresentativeStatement;
+              delete b[1].declaration.informationAccuracyStatement;
 
-      // TODO: temp add init values
-      this.getYearForecastFormArray().controls.push(
-        this.formBuilder.formGroup(YearForecastForm, {
-          fiscalYear: '2021/2022',
-          originalForecast: 1000,
-          projectedExpenditure: 900,
-          paidClaimsAmount: 800,
-          notPaidClaimsAmount: 100,
-          outstandingClaimsAmount: 100,
-          remainingClaimsAmount: 100,
-        }),
-      );
-      this.getYearForecastFormArray().controls.push(
-        this.formBuilder.formGroup(YearForecastForm, {
-          fiscalYear: '2022/2023',
-          originalForecast: 2000,
-          projectedExpenditure: 1900,
-          paidClaimsAmount: 1800,
-          notPaidClaimsAmount: 100,
-          outstandingClaimsAmount: 200,
-          remainingClaimsAmount: 200,
-        }),
-      );
+              return JSON.stringify(a[1]) == JSON.stringify(b[1]);
+            }),
+          )
+          .subscribe(([prev, curr]) => {
+            if (
+              prev.declaration.authorizedRepresentativeStatement !==
+                curr.declaration.authorizedRepresentativeStatement ||
+              prev.declaration.informationAccuracyStatement !==
+                curr.declaration.informationAccuracyStatement
+            ) {
+              return;
+            }
+
+            this.declarationForm
+              ?.get('authorizedRepresentativeStatement')
+              ?.reset();
+
+            this.declarationForm?.get('informationAccuracyStatement')?.reset();
+
+            this.formChanged = true;
+            this.resetAutoSaveTimer();
+          });
+      }, 1000);
 
       this.getYearForecastFormArray().controls.forEach((control) => {
-        control.get('projectedExpenditure')?.valueChanges.subscribe(() => {
+        control.get('totalProjectedExpenditure')?.valueChanges.subscribe(() => {
           this.calculateTotalProjectedExpenditure();
         });
       });
 
       // disable total controls
       this.budgetForecastForm?.get('totalProjectedExpenditure')?.disable();
-      this.budgetForecastForm?.get('originalTotalForecast')?.disable();
+      this.budgetForecastForm?.get('originalForecast')?.disable();
       this.budgetForecastForm?.get('variance')?.disable();
     });
   }
@@ -205,7 +235,7 @@ export class DrifForecastCreateComponent {
   calculateTotalProjectedExpenditure() {
     const totalProjectedExpenditure =
       this.getYearForecastFormArray().controls.reduce((total, control) => {
-        return total + control.get('projectedExpenditure')?.value;
+        return total + control.get('totalProjectedExpenditure')?.value;
       }, 0);
 
     this.budgetForecastForm
@@ -213,10 +243,9 @@ export class DrifForecastCreateComponent {
       ?.setValue(totalProjectedExpenditure, { emitEvent: false });
 
     // calculate variance
-    const originalTotalForecast = this.budgetForecastForm?.get(
-      'originalTotalForecast',
-    )?.value;
-    const variance = totalProjectedExpenditure - originalTotalForecast;
+    const originalForecast =
+      this.budgetForecastForm?.get('originalForecast')?.value;
+    const variance = totalProjectedExpenditure - originalForecast;
     this.budgetForecastForm?.get('variance')?.setValue(variance, {
       emitEvent: false,
     });
@@ -240,13 +269,14 @@ export class DrifForecastCreateComponent {
           this.forecastId!,
         )
         .subscribe({
-          next: (forecast) => {
+          next: (forecast: DraftForecast) => {
             this.reportName = `${forecast.reportPeriod} Forecast`;
 
             const formValue = new ForecastForm({
               budgetForecast: {
-                yearForecasts: [], // TODO: forecast.forecastItems,
-                originalTotalForecast: 1000, // TODO: forecast.originalTotalForecast,
+                yearForecasts: forecast.forecastItems,
+                totalProjectedExpenditure: forecast.total,
+                originalForecast: forecast.originalForecast,
               },
               attachments: {
                 attachments: forecast.attachments,
@@ -359,40 +389,51 @@ export class DrifForecastCreateComponent {
     this.router.navigate(['drif-projects', this.projectId]);
   }
 
-  getFormValue() {
-    return this.forecastForm?.getRawValue();
+  getFormValue(): DraftForecast {
+    const formValue = this.forecastForm?.getRawValue();
+
+    return {
+      forecastItems: formValue.budgetForecast.yearForecasts,
+      total: formValue.budgetForecast.totalProjectedExpenditure,
+      variance: formValue.budgetForecast.variance,
+      varianceComment: formValue.budgetForecast.varianceComment,
+      attachments: formValue.attachments.attachments,
+      authorizedRepresentative: formValue.declaration.authorizedRepresentative,
+    };
   }
 
   save() {
-    // TODO: temp
-    // if (!this.formChanged) {
-    //   return;
-    // }
+    if (!this.formChanged) {
+      return;
+    }
 
     const forecastFormValue = this.getFormValue();
 
-    // TODO: temp
-    console.log('Saving forecast', forecastFormValue);
+    this.lastSavedAt = undefined;
 
-    // this.lastSavedAt = undefined;
+    this.projectService
+      .projectUpdateForecastReport(
+        this.projectId!,
+        this.reportId!,
+        this.forecastId!,
+        forecastFormValue,
+      )
+      .subscribe({
+        next: () => {
+          this.lastSavedAt = new Date();
 
-    // update forecast
-    // .subscribe({
-    //   next: () => {
-    //     this.lastSavedAt = new Date();
+          this.toastService.close();
+          this.toastService.success('Claim saved successfully');
 
-    //     this.toastService.close();
-    //     this.toastService.success('Claim saved successfully');
-
-    //     this.formChanged = false;
-    //     this.resetAutoSaveTimer();
-    //   },
-    //   error: (error) => {
-    //     this.toastService.close();
-    //     this.toastService.error('Failed to save claim');
-    //     console.error(error);
-    //   },
-    // });
+          this.formChanged = false;
+          this.resetAutoSaveTimer();
+        },
+        error: (error) => {
+          this.toastService.close();
+          this.toastService.error('Failed to save claim');
+          console.error(error);
+        },
+      });
   }
 
   async uploadFiles(files: File[]) {

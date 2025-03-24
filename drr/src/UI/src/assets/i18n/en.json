@@ -745,7 +745,7 @@
     "email": "Email",
     "totalProjectedExpenditureLabel": "Total Projected Expenditures",
     "totalProjectedExpenditure": "Total",
-    "originalTotalForecast": "Original Forecast",
+    "originalForecast": "Original Forecast",
     "variance": "Variance",
     "varianceComment": "Variance Comments"
   }

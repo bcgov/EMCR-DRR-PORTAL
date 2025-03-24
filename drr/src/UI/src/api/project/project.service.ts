@@ -25,6 +25,7 @@ import type {
   DraftProgressReport,
   DraftProjectClaim,
   DrrProject,
+  Forecast,
   InterimReport,
   ProgressReport,
   ProgressReportResult,
@@ -32,6 +33,8 @@ import type {
   ProjectClaimResult,
   ProjectResponse,
   ProjectResult,
+  ProjectSubmitForecastReportParams,
+  ProjectUpdateForecastReportParams,
 } from '../../model';
 
 type HttpClientOptions = {
@@ -510,6 +513,88 @@ export class ProjectService {
       options,
     );
   }
+  projectUpdateForecastReport<TData = ProgressReportResult>(
+    projectId: string,
+    reportId: string,
+    forecastId: string,
+    draftForecast: DraftForecast,
+    params?: ProjectUpdateForecastReportParams,
+    options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'body' },
+  ): Observable<TData>;
+  projectUpdateForecastReport<TData = ProgressReportResult>(
+    projectId: string,
+    reportId: string,
+    forecastId: string,
+    draftForecast: DraftForecast,
+    params?: ProjectUpdateForecastReportParams,
+    options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'response' },
+  ): Observable<AngularHttpResponse<TData>>;
+  projectUpdateForecastReport<TData = ProgressReportResult>(
+    projectId: string,
+    reportId: string,
+    forecastId: string,
+    draftForecast: DraftForecast,
+    params?: ProjectUpdateForecastReportParams,
+    options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'events' },
+  ): Observable<HttpEvent<TData>>;
+  projectUpdateForecastReport<TData = ProgressReportResult>(
+    projectId: string,
+    reportId: string,
+    forecastId: string,
+    draftForecast: DraftForecast,
+    params?: ProjectUpdateForecastReportParams,
+    options?: HttpClientOptions,
+  ): Observable<TData> {
+    return this.http.patch<TData>(
+      `/api/project/${projectId}/interim-reports/${reportId}/forecasts/${forecastId}`,
+      draftForecast,
+      {
+        ...options,
+        params: { ...params, ...options?.params },
+      },
+    );
+  }
+  projectSubmitForecastReport<TData = ProgressReportResult>(
+    projectId: string,
+    reportId: string,
+    forecastId: string,
+    forecast: Forecast,
+    params?: ProjectSubmitForecastReportParams,
+    options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'body' },
+  ): Observable<TData>;
+  projectSubmitForecastReport<TData = ProgressReportResult>(
+    projectId: string,
+    reportId: string,
+    forecastId: string,
+    forecast: Forecast,
+    params?: ProjectSubmitForecastReportParams,
+    options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'response' },
+  ): Observable<AngularHttpResponse<TData>>;
+  projectSubmitForecastReport<TData = ProgressReportResult>(
+    projectId: string,
+    reportId: string,
+    forecastId: string,
+    forecast: Forecast,
+    params?: ProjectSubmitForecastReportParams,
+    options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'events' },
+  ): Observable<HttpEvent<TData>>;
+  projectSubmitForecastReport<TData = ProgressReportResult>(
+    projectId: string,
+    reportId: string,
+    forecastId: string,
+    forecast: Forecast,
+    params?: ProjectSubmitForecastReportParams,
+    options?: HttpClientOptions,
+  ): Observable<TData> {
+    return this.http.patch<TData>(
+      `/api/project/${projectId}/interim-reports/${reportId}/forecasts/${forecastId}/submit`,
+      forecast,
+      {
+        ...options,
+        params: { ...params, ...options?.params },
+      },
+    );
+  }
 }
 
 export type ProjectGetClientResult = NonNullable<ProjectResponse>;
@@ -532,3 +617,7 @@ export type ProjectUpdateProgressReportClientResult =
 export type ProjectSubmitProgressReportClientResult =
   NonNullable<ProgressReportResult>;
 export type ProjectGetForecastReportClientResult = NonNullable<DraftForecast>;
+export type ProjectUpdateForecastReportClientResult =
+  NonNullable<ProgressReportResult>;
+export type ProjectSubmitForecastReportClientResult =
+  NonNullable<ProgressReportResult>;

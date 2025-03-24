@@ -2,9 +2,6 @@
   <div class="app-stepper-header">
     <div style="flex: 1">
       <h5 style="font-size: 1.2rem; margin-bottom: 0.5rem">{{ reportName }}</h5>
-      <!-- <span>
-              {{ t("project") }}: {{ project?.name }} ({{ project?.id }})
-            </span> -->
     </div>
     <div>
       <div class="header-actions">
@@ -16,20 +13,20 @@
           Save
         </button>
       </div>
-      <!-- <div class="save-info">
-              <div style="display: flex; flex-direction: row; gap: 1rem">
-                <i *ngIf="autoSaveCountdown <= 30 && autoSaveCountdown > 0"
-                  >Saving in {{ autoSaveCountdown }}
-                  {{ autoSaveCountdown === 1 ? "second" : "seconds" }}...
-                </i>
-                <i
-                  *ngIf="
-                    lastSavedAt && (autoSaveCountdown === 0 || autoSaveCountdown > 30)
-                  "
-                  >Saved at {{ lastSavedAt | date : "mediumTime" }}</i
-                >
-              </div>
-            </div> -->
+      <div class="save-info">
+        <div style="display: flex; flex-direction: row; gap: 1rem">
+          <i *ngIf="autoSaveCountdown <= 30 && autoSaveCountdown > 0"
+            >Saving in {{ autoSaveCountdown }}
+            {{ autoSaveCountdown === 1 ? "second" : "seconds" }}...
+          </i>
+          <i
+            *ngIf="
+              lastSavedAt && (autoSaveCountdown === 0 || autoSaveCountdown > 30)
+            "
+            >Saved at {{ lastSavedAt | date: "mediumTime" }}</i
+          >
+        </div>
+      </div>
     </div>
   </div>
   <mat-stepper
@@ -85,26 +82,26 @@
           >
             <td>{{ yearForecast.get("fiscalYear")?.value }}</td>
             <td>
-              {{ yearForecast.get("originalForecast")?.value | currency }}
+              {{ yearForecast.get("forecastAmount")?.value | currency }}
             </td>
             <td style="padding-top: 1rem">
               <drr-currency-input
-                [rxFormControl]="yearForecast.get('projectedExpenditure')"
+                [rxFormControl]="yearForecast.get('totalProjectedExpenditure')"
               ></drr-currency-input>
             </td>
             <td>
-              {{ yearForecast.get("paidClaimsAmount")?.value | currency }}
+              {{ yearForecast.get("claimsPaidToDate")?.value | currency }}
             </td>
             <td>
-              {{ yearForecast.get("notPaidClaimsAmount")?.value | currency }}
+              {{ yearForecast.get("claimsSubmittedNotPaid")?.value | currency }}
             </td>
             <td style="padding-top: 1rem">
               <drr-currency-input
-                [rxFormControl]="yearForecast.get('outstandingClaimsAmount')"
+                [rxFormControl]="yearForecast.get('claimsOnThisReport')"
               ></drr-currency-input>
             </td>
             <td>
-              {{ yearForecast.get("remainingClaimsAmount")?.value | currency }}
+              {{ yearForecast.get("remainingClaims")?.value | currency }}
             </td>
           </tr>
         </table>
@@ -123,11 +120,11 @@
 
         <div class="total-conrol">
           <mat-label class="drr-label">
-            {{ t("originalTotalForecast") }}
+            {{ t("originalForecast") }}
           </mat-label>
           <drr-currency-input
-            [label]="t('originalTotalForecast')"
-            [rxFormControl]="budgetForecastForm.get('originalTotalForecast')"
+            [label]="t('originalForecast')"
+            [rxFormControl]="budgetForecastForm.get('originalForecast')"
           ></drr-currency-input>
         </div>
         <div class="total-conrol">
@@ -159,7 +156,7 @@
     <mat-step
       label="Attachments"
       [stepControl]="attachmentsForm"
-      [errorMessage]="t('stepError')"
+      [errorMessage]="'stepError' | transloco"
     >
       <div class="attachments-container">
         <drr-attachment
