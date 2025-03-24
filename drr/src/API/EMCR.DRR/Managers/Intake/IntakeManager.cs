@@ -783,10 +783,10 @@ namespace EMCR.DRR.Managers.Intake
             var forecast = (await reportRepository.Query(new ForecastsQuery { Id = cmd.AttachmentInfo.RecordId })).Items.SingleOrDefault();
             if (forecast == null) throw new NotFoundException("Forecast not found");
             //if (!ApplicationInEditableStatus(progressReport)) throw new BusinessValidationException("Can only edit attachments when application is in Draft");
-            if (cmd.AttachmentInfo.DocumentType != DocumentType.OtherSupportingDocument && forecast.Attachments != null && forecast.Attachments.Any(a => a.DocumentType == cmd.AttachmentInfo.DocumentType))
-            {
-                throw new BusinessValidationException($"A document with type {cmd.AttachmentInfo.DocumentType.ToDescriptionString()} already exists on the forecast {cmd.AttachmentInfo.RecordId}");
-            }
+            //if (cmd.AttachmentInfo.DocumentType != DocumentType.OtherSupportingDocument && forecast.Attachments != null && forecast.Attachments.Any(a => a.DocumentType == cmd.AttachmentInfo.DocumentType))
+            //{
+            //    throw new BusinessValidationException($"A document with type {cmd.AttachmentInfo.DocumentType.ToDescriptionString()} already exists on the forecast {cmd.AttachmentInfo.RecordId}");
+            //}
 
             var newDocId = Guid.NewGuid().ToString();
 
