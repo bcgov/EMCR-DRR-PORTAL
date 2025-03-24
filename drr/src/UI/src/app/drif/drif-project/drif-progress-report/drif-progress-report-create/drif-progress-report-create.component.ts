@@ -360,15 +360,15 @@ export class DrifProgressReportCreateComponent {
             });
 
             if (report.workplan?.fundingSourcesChanged) {
-              this.progressReportForm
-                .get('workplan.fundingSourcesChangedComment')
+              this.workplanForm
+                .get('fundingSourcesChangedComment')
                 ?.setValidators(Validators.required);
             }
-            this.progressReportForm
-              .get('workplan.fundingSourcesChanged')
+            this.workplanForm
+              .get('fundingSourcesChanged')
               ?.valueChanges.subscribe((value) => {
-                const comment = this.progressReportForm.get(
-                  'workplan.fundingSourcesChangedComment',
+                const comment = this.workplanForm.get(
+                  'fundingSourcesChangedComment',
                 );
                 value
                   ? comment?.addValidators(Validators.required)
@@ -380,16 +380,16 @@ export class DrifProgressReportCreateComponent {
               });
 
             if (report.workplan?.outstandingIssues) {
-              this.progressReportForm
-                .get('workplan.outstandingIssuesComments')
+              this.workplanForm
+                .get('outstandingIssuesComments')
                 ?.setValidators(Validators.required);
             }
 
-            this.progressReportForm
-              .get('workplan.outstandingIssues')
+            this.workplanForm
+              .get('outstandingIssues')
               ?.valueChanges.subscribe((value) => {
-                const comment = this.progressReportForm.get(
-                  'workplan.outstandingIssuesComments',
+                const comment = this.workplanForm.get(
+                  'outstandingIssuesComments',
                 );
                 value
                   ? comment?.addValidators(Validators.required)
@@ -401,22 +401,20 @@ export class DrifProgressReportCreateComponent {
               });
 
             if (report.workplan?.mediaAnnouncement) {
-              this.progressReportForm
-                .get('workplan.mediaAnnouncementDate')
+              this.workplanForm
+                .get('mediaAnnouncementDate')
                 ?.setValidators(Validators.required);
-              this.progressReportForm
-                .get('workplan.mediaAnnouncementComment')
+              this.workplanForm
+                .get('mediaAnnouncementComment')
                 ?.setValidators(Validators.required);
             }
 
-            this.progressReportForm
-              .get('workplan.mediaAnnouncement')
+            this.workplanForm
+              .get('mediaAnnouncement')
               ?.valueChanges.subscribe((value) => {
-                const date = this.progressReportForm.get(
-                  'workplan.mediaAnnouncementDate',
-                );
-                const comment = this.progressReportForm.get(
-                  'workplan.mediaAnnouncementComment',
+                const date = this.workplanForm.get('mediaAnnouncementDate');
+                const comment = this.workplanForm.get(
+                  'mediaAnnouncementComment',
                 );
 
                 if (value) {
@@ -456,21 +454,17 @@ export class DrifProgressReportCreateComponent {
                 }
               });
 
-            this.progressReportForm
-              .get('workplan.projectProgress')
+            this.workplanForm
+              .get('projectProgress')
               ?.valueChanges.subscribe((value) => {
-                const delayReason = this.progressReportForm.get(
-                  'workplan.delayReason',
+                const delayReason = this.workplanForm.get('delayReason');
+                const otherDelayReason =
+                  this.workplanForm.get('otherDelayReason');
+                const behindScheduleMitigatingComments = this.workplanForm.get(
+                  'behindScheduleMitigatingComments',
                 );
-                const otherDelayReason = this.progressReportForm.get(
-                  'workplan.otherDelayReason',
-                );
-                const behindScheduleMitigatingComments =
-                  this.progressReportForm.get(
-                    'workplan.behindScheduleMitigatingComments',
-                  );
-                const aheadOfScheduleComments = this.progressReportForm.get(
-                  'workplan.aheadOfScheduleComments',
+                const aheadOfScheduleComments = this.workplanForm.get(
+                  'aheadOfScheduleComments',
                 );
 
                 let delayReasonSub: Subscription | undefined;
@@ -517,26 +511,24 @@ export class DrifProgressReportCreateComponent {
 
             if (!report?.workplan?.signageRequired) {
               this.getSignageFormArray().clear();
-              this.progressReportForm
-                .get('workplan.signageNotRequiredComments')
+              this.workplanForm
+                .get('signageNotRequiredComments')
                 ?.setValidators(Validators.required);
             }
 
-            if (report.projectType === InterimProjectType.Stream2) {
-              this.progressReportForm
+            if (this.isStructuralProject()) {
+              this.workplanForm
                 ?.get('signageRequired')
                 ?.addValidators(Validators.required);
-              this.progressReportForm
+              this.workplanForm
                 ?.get('constructionCompletionPercentage')
                 ?.addValidators(Validators.required);
 
-              this.progressReportForm
-                .get('workplan.signageRequired')
+              this.workplanForm
+                .get('signageRequired')
                 ?.valueChanges.subscribe((value) => {
                   const signageNotRequiredComments =
-                    this.progressReportForm.get(
-                      'workplan.signageNotRequiredComments',
-                    );
+                    this.progressReportForm.get('signageNotRequiredComments');
 
                   if (value) {
                     signageNotRequiredComments?.clearValidators();

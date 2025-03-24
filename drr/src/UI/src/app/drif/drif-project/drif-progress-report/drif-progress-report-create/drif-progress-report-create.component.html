@@ -251,74 +251,77 @@
           </div>
         </div>
 
-        <div>
-          <h5 style="margin-top: 2rem">Milestones</h5>
+        @if (getMilestoneActivitiesArray().length > 0) {
+          <div>
+            <h5 style="margin-top: 2rem">Milestones</h5>
 
-          <div
-            *ngFor="
-              let milestoneActivity of getMilestoneActivitiesArray();
-              let i = index
-            "
-            style="margin-top: 1rem"
-          >
-            <mat-card>
-              <mat-card-header>
-                <mat-card-title>
-                  {{
-                    "activityType." + milestoneActivity.get("activity")?.value
-                      | transloco
-                  }}
-                </mat-card-title>
-              </mat-card-header>
-              <mat-card-content>
-                <div class="progress-group">
-                  <drr-radio-button
-                    class="drr-single-input"
-                    label="Status"
-                    [options]="milestoneStatusOptions"
-                    [rxFormControl]="milestoneActivity.get('status')"
-                  ></drr-radio-button>
+            <div
+              *ngFor="
+                let milestoneActivity of getMilestoneActivitiesArray();
+                let i = index
+              "
+              style="margin-top: 1rem"
+            >
+              <mat-card>
+                <mat-card-header>
+                  <mat-card-title>
+                    {{
+                      "activityType." + milestoneActivity.get("activity")?.value
+                        | transloco
+                    }}
+                  </mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="progress-group">
+                    <drr-radio-button
+                      class="drr-single-input"
+                      label="Status"
+                      [options]="milestoneStatusOptions"
+                      [rxFormControl]="milestoneActivity.get('status')"
+                    ></drr-radio-button>
 
-                  <div
-                    style="
-                      display: flex;
-                      flex-direction: column;
-                      justify-content: space-between;
-                      gap: 1rem;
-                    "
-                  >
-                    @if (showPlannedStartDate(milestoneActivity)) {
-                      <drr-datepicker
-                        class="drr-single-input"
-                        [label]="t('plannedAwardDate')"
-                        [rxFormControl]="
-                          milestoneActivity.get('plannedStartDate')
-                        "
-                        [max]="
-                          milestoneActivity.get('plannedCompletionDate')?.value
-                        "
-                        [maxErrorLabel]="t('minStartDateError')"
-                      ></drr-datepicker>
-                    }
-                    @if (showActualStartDate(milestoneActivity)) {
-                      <drr-datepicker
-                        class="drr-single-input"
-                        [label]="t('actualAwardDate')"
-                        [rxFormControl]="
-                          milestoneActivity.get('actualStartDate')
-                        "
-                        [max]="
-                          milestoneActivity.get('actualCompletionDate')?.value
-                        "
-                        [maxErrorLabel]="t('minStartDateError')"
-                      ></drr-datepicker>
-                    }
+                    <div
+                      style="
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: space-between;
+                        gap: 1rem;
+                      "
+                    >
+                      @if (showPlannedStartDate(milestoneActivity)) {
+                        <drr-datepicker
+                          class="drr-single-input"
+                          [label]="t('plannedAwardDate')"
+                          [rxFormControl]="
+                            milestoneActivity.get('plannedStartDate')
+                          "
+                          [max]="
+                            milestoneActivity.get('plannedCompletionDate')
+                              ?.value
+                          "
+                          [maxErrorLabel]="t('minStartDateError')"
+                        ></drr-datepicker>
+                      }
+                      @if (showActualStartDate(milestoneActivity)) {
+                        <drr-datepicker
+                          class="drr-single-input"
+                          [label]="t('actualAwardDate')"
+                          [rxFormControl]="
+                            milestoneActivity.get('actualStartDate')
+                          "
+                          [max]="
+                            milestoneActivity.get('actualCompletionDate')?.value
+                          "
+                          [maxErrorLabel]="t('minStartDateError')"
+                        ></drr-datepicker>
+                      }
+                    </div>
                   </div>
-                </div>
-              </mat-card-content>
-            </mat-card>
+                </mat-card-content>
+              </mat-card>
+            </div>
           </div>
-        </div>
+        }
 
         <div>
           <h5 style="margin-top: 2rem">Additional Activities</h5>
