@@ -509,20 +509,21 @@ export class DrifProgressReportCreateComponent {
                 aheadOfScheduleComments?.updateValueAndValidity();
               });
 
-            if (!report?.workplan?.signageRequired) {
-              this.getSignageFormArray().clear();
-              this.workplanForm
-                .get('signageNotRequiredComments')
-                ?.setValidators(Validators.required);
-            }
-
             if (this.isStructuralProject()) {
-              this.workplanForm
-                ?.get('signageRequired')
-                ?.addValidators(Validators.required);
               this.workplanForm
                 ?.get('constructionCompletionPercentage')
                 ?.addValidators(Validators.required);
+
+              this.workplanForm
+                ?.get('signageRequired')
+                ?.addValidators(Validators.required);
+
+              if (!report?.workplan?.signageRequired) {
+                this.getSignageFormArray().clear();
+                this.workplanForm
+                  .get('signageNotRequiredComments')
+                  ?.setValidators(Validators.required);
+              }
 
               this.workplanForm
                 .get('signageRequired')
