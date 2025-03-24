@@ -121,6 +121,8 @@ namespace EMCR.DRR.Managers.Intake
                 CreateInterimReportCommand c => await Handle(c),
                 SaveClaimCommand c => await Handle(c),
                 SubmitClaimCommand c => await Handle(c),
+                SaveForecastCommand c => await Handle(c),
+                SubmitForecastCommand c => await Handle(c),
                 CreateInvoiceCommand c => await Handle(c),
                 DeleteInvoiceCommand c => await Handle(c),
                 _ => throw new NotSupportedException($"{cmd.GetType().Name} is not supported")
@@ -259,7 +261,7 @@ namespace EMCR.DRR.Managers.Intake
         {
             if (!string.IsNullOrEmpty(q.Id))
             {
-                var canAccess = await CanAccessClaim(q.Id, q.BusinessId);
+                var canAccess = await CanAccessForecast(q.Id, q.BusinessId);
                 if (!canAccess) throw new ForbiddenException("Not allowed to access this forecast.");
             }
             var res = await reportRepository.Query(new ForecastsQuery { Id = q.Id, BusinessId = q.BusinessId });
@@ -444,6 +446,14 @@ namespace EMCR.DRR.Managers.Intake
             var mandatoryActivityIds = existingProgressReport.Workplan?.WorkplanActivities?.Where(a => a.ActivityType?.PreCreatedActivity == true || a.CopiedFromActivity == true || !string.IsNullOrEmpty(a.OriginalReportId)).Select(a => a.Id).ToList();
             var currentActivityIds = progressReport.Workplan?.WorkplanActivities?.Select(a => a.Id).ToList() ?? new List<string?>();
             if (mandatoryActivityIds != null && mandatoryActivityIds.Any(id => !currentActivityIds.Contains(id))) throw new BusinessValidationException("Not Allowed to remove activity");
+            if (progressReport.AuthorizedRepresentative == null) throw new BusinessValidationException("Authorized Representative is required.");
+            if (string.IsNullOrEmpty(progressReport.AuthorizedRepresentative.FirstName)) throw new BusinessValidationException("Authorized Representative first name is required.");
+            if (string.IsNullOrEmpty(progressReport.AuthorizedRepresentative.LastName)) throw new BusinessValidationException("Authorized Representative last name is required.");
+            if (string.IsNullOrEmpty(progressReport.AuthorizedRepresentative.Department)) throw new BusinessValidationException("Authorized Representative department is required.");
+            if (string.IsNullOrEmpty(progressReport.AuthorizedRepresentative.Email)) throw new BusinessValidationException("Authorized Representative email is required.");
+            if (string.IsNullOrEmpty(progressReport.AuthorizedRepresentative.Phone)) throw new BusinessValidationException("Authorized Representative phone number is required.");
+            if (string.IsNullOrEmpty(progressReport.AuthorizedRepresentative.Title)) throw new BusinessValidationException("Authorized Representative title is required.");
+            progressReport.AuthorizedRepresentative.BCeId = cmd.UserInfo.UserId;
 
             var id = (await reportRepository.Manage(new SaveProgressReport { ProgressReport = progressReport })).Id;
             await reportRepository.Manage(new SubmitProgressReport { Id = id });
@@ -504,6 +514,44 @@ namespace EMCR.DRR.Managers.Intake
             claim.AuthorizedRepresentative.BCeId = cmd.UserInfo.UserId;
             var id = (await reportRepository.Manage(new SaveClaim { Claim = claim })).Id;
             await reportRepository.Manage(new SubmitClaim { Id = id });
+            return id;
+        }
+
+        public async Task<string> Handle(SaveForecastCommand cmd)
+        {
+            var canAccess = await CanAccessForecast(cmd.Forecast.Id, cmd.UserInfo.BusinessId);
+            if (!canAccess) throw new ForbiddenException("Not allowed to access this forecast.");
+
+            var existingForecast = (await reportRepository.Query(new ForecastsQuery { Id = cmd.Forecast.Id, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
+            if (existingForecast == null) throw new NotFoundException("Forecast not found");
+
+            var forecast = mapper.Map<ForecastDetails>(cmd.Forecast);
+
+            var id = (await reportRepository.Manage(new SaveForecast { Forecast = forecast })).Id;
+            return id;
+        }
+
+        public async Task<string> Handle(SubmitForecastCommand cmd)
+        {
+            var canAccess = await CanAccessForecast(cmd.Forecast.Id, cmd.UserInfo.BusinessId);
+            if (!canAccess) throw new ForbiddenException("Not allowed to access this forecast.");
+            var existingForecast = (await reportRepository.Query(new ForecastsQuery { Id = cmd.Forecast.Id, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
+            if (existingForecast == null) throw new NotFoundException("Forecast not found");
+
+            var forecast = mapper.Map<ForecastDetails>(cmd.Forecast);
+
+            //TODO - any other validations
+            if (forecast.AuthorizedRepresentative == null) throw new BusinessValidationException("Authorized Representative is required.");
+            if (string.IsNullOrEmpty(forecast.AuthorizedRepresentative.FirstName)) throw new BusinessValidationException("Authorized Representative first name is required.");
+            if (string.IsNullOrEmpty(forecast.AuthorizedRepresentative.LastName)) throw new BusinessValidationException("Authorized Representative last name is required.");
+            if (string.IsNullOrEmpty(forecast.AuthorizedRepresentative.Department)) throw new BusinessValidationException("Authorized Representative department is required.");
+            if (string.IsNullOrEmpty(forecast.AuthorizedRepresentative.Email)) throw new BusinessValidationException("Authorized Representative email is required.");
+            if (string.IsNullOrEmpty(forecast.AuthorizedRepresentative.Phone)) throw new BusinessValidationException("Authorized Representative phone number is required.");
+            if (string.IsNullOrEmpty(forecast.AuthorizedRepresentative.Title)) throw new BusinessValidationException("Authorized Representative title is required.");
+            forecast.AuthorizedRepresentative.BCeId = cmd.UserInfo.UserId;
+
+            var id = (await reportRepository.Manage(new SaveForecast { Forecast = forecast })).Id;
+            await reportRepository.Manage(new SubmitForecast { Id = id });
             return id;
         }
 

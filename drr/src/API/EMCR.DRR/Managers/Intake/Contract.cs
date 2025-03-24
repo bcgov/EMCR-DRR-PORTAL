@@ -263,6 +263,18 @@ namespace EMCR.DRR.Managers.Intake
         public UserInfo UserInfo { get; set; }
     }
 
+    public class SaveForecastCommand : IntakeCommand
+    {
+        public Controllers.Forecast Forecast { get; set; } = null!;
+        public UserInfo UserInfo { get; set; }
+    }
+
+    public class SubmitForecastCommand : IntakeCommand
+    {
+        public Controllers.Forecast Forecast { get; set; } = null!;
+        public UserInfo UserInfo { get; set; }
+    }
+
     public class CreateInvoiceCommand : IntakeCommand
     {
         public required string ClaimId { get; set; }

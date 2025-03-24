@@ -290,6 +290,40 @@ namespace EMCR.DRR.Controllers
                 return errorParser.Parse(e, logger);
             }
         }
+
+        [HttpPatch("{projectId}/interim-reports/{reportId}/forecasts/{forecastId}")]
+        public async Task<ActionResult<ProgressReportResult>> UpdateForecastReport([FromBody] DraftForecast forecast, string progressId)
+        {
+            try
+            {
+                forecast.Id = progressId;
+                forecast.Status = ForecastStatus.Draft;
+
+                var drr_id = await intakeManager.Handle(new SaveForecastCommand { Forecast = mapper.Map<Forecast>(forecast), UserInfo = GetCurrentUser() });
+                return Ok(new ProgressReportResult { Id = drr_id });
+            }
+            catch (Exception e)
+            {
+                return errorParser.Parse(e, logger);
+            }
+        }
+
+        [HttpPatch("{projectId}/interim-reports/{reportId}/forecasts/{forecastId}/submit")]
+        public async Task<ActionResult<ProgressReportResult>> SubmitForecastReport([FromBody] Forecast forecast, string progressId)
+        {
+            try
+            {
+                forecast.Id = progressId;
+                forecast.Status = ForecastStatus.Draft; //Need to set the status after final update save
+
+                var drr_id = await intakeManager.Handle(new SubmitForecastCommand { Forecast = mapper.Map<Forecast>(forecast), UserInfo = GetCurrentUser() });
+                return Ok(new ProgressReportResult { Id = drr_id });
+            }
+            catch (Exception e)
+            {
+                return errorParser.Parse(e, logger);
+            }
+        }
     }
 
     public static class WorkplanActivityValidators

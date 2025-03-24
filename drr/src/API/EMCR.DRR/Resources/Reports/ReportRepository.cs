@@ -91,6 +91,8 @@ namespace EMCR.DRR.API.Resources.Reports
                 CreateProjectReport c => await HandleCreateProjectReport(c),
                 SaveClaim c => await HandleSaveClaim(c),
                 SubmitClaim c => await HandleSubmitClaim(c),
+                SaveForecast c => await HandleSaveForecast(c),
+                SubmitForecast c => await HandleSubmitForecast(c),
                 CreateInvoice c => await HandleCreateInvoice(c),
                 DeleteInvoice c => await HandleDeleteInvoice(c),
                 _ => throw new NotSupportedException($"{cmd.GetType().Name} is not supported")
@@ -244,13 +246,90 @@ namespace EMCR.DRR.API.Resources.Reports
             }
         }
 
-        private static void SaveClaimAuthrizedRepresentative(DRRContext drrContext, drr_projectclaim progressReport, contact authorizedRep, contact existingRep)
+        private static void SaveClaimAuthrizedRepresentative(DRRContext drrContext, drr_projectclaim claim, contact authorizedRep, contact existingRep)
         {
             if (existingRep == null || existingRep.contactid == null || authorizedRep.contactid != existingRep.contactid)
             {
                 drrContext.AddTocontacts(authorizedRep);
-                drrContext.AddLink(authorizedRep, nameof(authorizedRep.drr_contact_drr_projectclaim_AuthorizedRepresentativeContact), progressReport);
-                drrContext.SetLink(progressReport, nameof(drr_projectclaim.drr_AuthorizedRepresentativeContact), authorizedRep);
+                drrContext.AddLink(authorizedRep, nameof(authorizedRep.drr_contact_drr_projectclaim_AuthorizedRepresentativeContact), claim);
+                drrContext.SetLink(claim, nameof(drr_projectclaim.drr_AuthorizedRepresentativeContact), authorizedRep);
+            }
+            else
+            {
+                drrContext.AttachTo(nameof(drrContext.contacts), authorizedRep);
+                drrContext.UpdateObject(authorizedRep);
+            }
+        }
+
+        public async Task<ManageReportCommandResult> HandleSaveForecast(SaveForecast cmd)
+        {
+            var ctx = dRRContextFactory.Create();
+            var existingForecast = await ctx.drr_projectbudgetforecasts.Where(p => p.drr_name == cmd.Forecast.Id).SingleOrDefaultAsync();
+            if (existingForecast == null) throw new NotFoundException("Forecast not found");
+
+            var loadTasks = new List<Task>
+            {
+                ctx.LoadPropertyAsync(existingForecast, nameof(drr_projectbudgetforecast.drr_drr_projectbudgetforecast_drr_budgetforecastreportitem_ProjectBudgetForecast)),
+                ctx.LoadPropertyAsync(existingForecast, nameof(drr_projectbudgetforecast.drr_AuthorizedRepresentativeContact)),
+            };
+
+            await Task.WhenAll(loadTasks);
+
+            ctx.DetachAll();
+            var drrForecast = mapper.Map<drr_projectbudgetforecast>(cmd.Forecast);
+            drrForecast.drr_projectbudgetforecastid = existingForecast.drr_projectbudgetforecastid;
+
+            //RemoveOldForecastData(ctx, existingForecast, drrForecast); //maybe not needed?
+            ctx.AttachTo(nameof(ctx.drr_projectbudgetforecasts), drrForecast);
+
+            UpdateForecastItems(ctx, drrForecast, existingForecast);
+
+            var authorizedRep = drrForecast.drr_AuthorizedRepresentativeContact;
+            if (authorizedRep != null) SaveForecastAuthrizedRepresentative(ctx, drrForecast, authorizedRep, existingForecast.drr_AuthorizedRepresentativeContact);
+            await SetForecastDeclarations(ctx, drrForecast);
+
+            ctx.UpdateObject(drrForecast);
+            await ctx.SaveChangesAsync();
+            ctx.DetachAll();
+
+            return new ManageReportCommandResult { Id = existingForecast.drr_name };
+        }
+
+        public async Task<ManageReportCommandResult> HandleSubmitForecast(SubmitForecast cmd)
+        {
+            var ctx = dRRContextFactory.Create();
+            var forecast = await ctx.drr_projectbudgetforecasts.Where(a => a.drr_name == cmd.Id).SingleOrDefaultAsync();
+            forecast.statuscode = (int)ForecastStatusOptionSet.Submitted;
+            forecast.drr_submissiondate = DateTime.UtcNow;
+            ctx.UpdateObject(forecast);
+            await ctx.SaveChangesAsync();
+            ctx.DetachAll();
+            return new ManageReportCommandResult { Id = cmd.Id };
+        }
+
+        private static async Task SetForecastDeclarations(DRRContext drrContext, drr_projectbudgetforecast forecast)
+        {
+            var accuracyDeclaration = (await drrContext.drr_legaldeclarations.Where(d => d.statecode == (int)EntityState.Active && d.drr_declarationtype == (int)DeclarationTypeOptionSet.AccuracyOfInformation && d.drr_formtype == (int)FormTypeOptionSet.Report).GetAllPagesAsync()).FirstOrDefault();
+            var representativeDeclaration = (await drrContext.drr_legaldeclarations.Where(d => d.statecode == (int)EntityState.Active && d.drr_declarationtype == (int)DeclarationTypeOptionSet.AuthorizedRepresentative && d.drr_formtype == (int)FormTypeOptionSet.Report).GetAllPagesAsync()).FirstOrDefault();
+
+            if (accuracyDeclaration != null)
+            {
+                //drrContext.SetLink(forecast, nameof(drr_projectbudgetforecast.drr_AccuracyofInformationDeclaration), accuracyDeclaration);
+            }
+
+            if (representativeDeclaration != null)
+            {
+                //drrContext.SetLink(forecast, nameof(drr_projectbudgetforecast.drr_AuthorizedRepresentativeDeclaration), representativeDeclaration);
+            }
+        }
+
+        private static void SaveForecastAuthrizedRepresentative(DRRContext drrContext, drr_projectbudgetforecast forecast, contact authorizedRep, contact existingRep)
+        {
+            if (existingRep == null || existingRep.contactid == null || authorizedRep.contactid != existingRep.contactid)
+            {
+                drrContext.AddTocontacts(authorizedRep);
+                drrContext.AddLink(authorizedRep, nameof(authorizedRep.drr_contact_drr_projectbudgetforecast_AuthorizedRepresentativeContact), forecast);
+                drrContext.SetLink(forecast, nameof(drr_projectbudgetforecast.drr_AuthorizedRepresentativeContact), authorizedRep);
             }
             else
             {
@@ -555,6 +634,23 @@ namespace EMCR.DRR.API.Resources.Reports
             }
         }
 
+        private static void UpdateForecastItems(DRRContext drrContext, drr_projectbudgetforecast forecast, drr_projectbudgetforecast existingForecast)
+        {
+            foreach (var item in forecast.drr_drr_projectbudgetforecast_drr_budgetforecastreportitem_ProjectBudgetForecast)
+            {
+                if (item != null)
+                {
+                    var existingItem = existingForecast.drr_drr_projectbudgetforecast_drr_budgetforecastreportitem_ProjectBudgetForecast.Where(i => i.drr_budgetforecastreportitemid == item.drr_budgetforecastreportitemid).SingleOrDefault();
+                    if (existingItem != null)
+                    {
+                        item.drr_budgetforecastreportitemid = existingItem.drr_budgetforecastreportitemid;
+                        drrContext.AttachTo(nameof(drrContext.drr_budgetforecastreportitems), item);
+                        drrContext.UpdateObject(item);
+                    }
+                }
+            }
+        }
+
         public async Task<ReportQueryResult> Query(ReportQuery query)
         {
             return query switch
@@ -661,6 +757,7 @@ namespace EMCR.DRR.API.Resources.Reports
             var results = (await forecastsQuery.GetAllPagesAsync(ct)).ToList();
             var length = results.Count;
 
+            await Parallel.ForEachAsync(results, ct, async (f, ct) => await ParallelLoadForecast(readCtx, f, ct));
             return new ForecastQueryResult { Items = mapper.Map<IEnumerable<ForecastDetails>>(results), Length = length };
         }
 
@@ -694,6 +791,20 @@ namespace EMCR.DRR.API.Resources.Reports
             if (report.drr_ClaimReport != null) report.drr_ClaimReport.drr_ProjectReport = report;
             if (report.drr_ProgressReport != null) report.drr_ProgressReport.drr_ProjectReport = report;
             if (report.drr_BudgetForecast != null) report.drr_BudgetForecast.drr_ProjectReport = report;
+        }
+
+        private static async Task ParallelLoadForecast(DRRContext ctx, drr_projectbudgetforecast forecast, CancellationToken ct)
+        {
+            ctx.AttachTo(nameof(DRRContext.drr_projectbudgetforecasts), forecast);
+            var loadTasks = new List<Task>
+            {
+                ctx.LoadPropertyAsync(forecast, nameof(drr_projectbudgetforecast.drr_Project), ct),
+                ctx.LoadPropertyAsync(forecast, nameof(drr_projectbudgetforecast.drr_ProjectReport), ct),
+                ctx.LoadPropertyAsync(forecast, nameof(drr_projectbudgetforecast.drr_AuthorizedRepresentativeContact), ct),
+                ctx.LoadPropertyAsync(forecast, nameof(drr_projectbudgetforecast.drr_drr_projectbudgetforecast_drr_budgetforecastreportitem_ProjectBudgetForecast), ct),
+            };
+
+            await Task.WhenAll(loadTasks);
         }
 
         private static async Task ParallelLoadClaim(DRRContext ctx, drr_projectclaim claim, CancellationToken ct)
