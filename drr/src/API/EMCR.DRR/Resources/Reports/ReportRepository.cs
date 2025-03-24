@@ -71,6 +71,17 @@ namespace EMCR.DRR.API.Resources.Reports
             await readCtx.LoadPropertyAsync(existingInvoice.drr_Project, nameof(drr_project.drr_ProponentName));
             return (!string.IsNullOrEmpty(existingInvoice.drr_Project.drr_ProponentName.drr_bceidguid)) && existingInvoice.drr_Project.drr_ProponentName.drr_bceidguid.Equals(businessId);
         }
+        
+        public async Task<bool> CanAccessForecastFromDocumentId(string id, string businessId)
+        {
+            var readCtx = dRRContextFactory.CreateReadOnly();
+            var document = await readCtx.bcgov_documenturls.Expand(d => d.bcgov_projectbudgetforecastid).Where(a => a.bcgov_documenturlid == Guid.Parse(id)).SingleOrDefaultAsync();
+            var existingForecast = await readCtx.drr_projectbudgetforecasts.Expand(a => a.drr_Project).Where(a => a.drr_projectbudgetforecastid == document.bcgov_projectbudgetforecastid.drr_projectbudgetforecastid).SingleOrDefaultAsync();
+            if (existingForecast == null) return true;
+            readCtx.AttachTo(nameof(readCtx.drr_projects), existingForecast.drr_Project);
+            await readCtx.LoadPropertyAsync(existingForecast.drr_Project, nameof(drr_project.drr_ProponentName));
+            return (!string.IsNullOrEmpty(existingForecast.drr_Project.drr_ProponentName.drr_bceidguid)) && existingForecast.drr_Project.drr_ProponentName.drr_bceidguid.Equals(businessId);
+        }
 
         public async Task<bool> CanAccessReport(string id, string businessId)
         {
@@ -802,9 +813,32 @@ namespace EMCR.DRR.API.Resources.Reports
                 ctx.LoadPropertyAsync(forecast, nameof(drr_projectbudgetforecast.drr_ProjectReport), ct),
                 ctx.LoadPropertyAsync(forecast, nameof(drr_projectbudgetforecast.drr_AuthorizedRepresentativeContact), ct),
                 ctx.LoadPropertyAsync(forecast, nameof(drr_projectbudgetforecast.drr_drr_projectbudgetforecast_drr_budgetforecastreportitem_ProjectBudgetForecast), ct),
+                ctx.LoadPropertyAsync(forecast, nameof(drr_projectbudgetforecast.bcgov_drr_projectbudgetforecast_bcgov_documenturl_projectbudgetforecastid), ct),
             };
 
             await Task.WhenAll(loadTasks);
+
+            var secondLoadTasks = new List<Task>{
+                ParallelLoadForecastItems(ctx, forecast, ct),
+                ParallelLoadForecastReportDocumentTypes(ctx, forecast, ct),
+            };
+
+            if (forecast.drr_ProjectReport != null)
+            {
+                ctx.AttachTo(nameof(DRRContext.drr_projectreports), forecast.drr_ProjectReport);
+                secondLoadTasks.Add(ctx.LoadPropertyAsync(forecast.drr_ProjectReport, nameof(drr_projectreport.drr_ReportPeriod), ct));
+            }
+
+            await Task.WhenAll(secondLoadTasks);
+        }
+
+        private static async Task ParallelLoadForecastItems(DRRContext ctx, drr_projectbudgetforecast forecast, CancellationToken ct)
+        {
+            await forecast.drr_drr_projectbudgetforecast_drr_budgetforecastreportitem_ProjectBudgetForecast.ForEachAsync(5, async item =>
+            {
+                ctx.AttachTo(nameof(DRRContext.drr_budgetforecastreportitems), item);
+                await ctx.LoadPropertyAsync(item, nameof(drr_budgetforecastreportitem.drr_FiscalYear), ct);
+            });
         }
 
         private static async Task ParallelLoadClaim(DRRContext ctx, drr_projectclaim claim, CancellationToken ct)
@@ -908,7 +942,7 @@ namespace EMCR.DRR.API.Resources.Reports
             var secondLoadTasks = new List<Task>{
                 ParallelLoadActivityTypes(ctx, pr, ct),
                 ParallelLoadEventContacts(ctx, pr, ct),
-                ParallelLoadDocumentTypes(ctx, pr, ct),
+                ParallelLoadProgressReportDocumentTypes(ctx, pr, ct),
             };
 
             if (pr.drr_ProjectReport != null)
@@ -944,9 +978,18 @@ namespace EMCR.DRR.API.Resources.Reports
             });
         }
 
-        private static async Task ParallelLoadDocumentTypes(DRRContext ctx, drr_projectprogress pr, CancellationToken ct)
+        private static async Task ParallelLoadProgressReportDocumentTypes(DRRContext ctx, drr_projectprogress pr, CancellationToken ct)
         {
             await pr.bcgov_drr_projectprogress_bcgov_documenturl_ProgressReport.ForEachAsync(5, async doc =>
+            {
+                ctx.AttachTo(nameof(DRRContext.bcgov_documenturls), doc);
+                await ctx.LoadPropertyAsync(doc, nameof(bcgov_documenturl.bcgov_DocumentType), ct);
+            });
+        }
+
+        private static async Task ParallelLoadForecastReportDocumentTypes(DRRContext ctx, drr_projectbudgetforecast forecast, CancellationToken ct)
+        {
+            await forecast.bcgov_drr_projectbudgetforecast_bcgov_documenturl_projectbudgetforecastid.ForEachAsync(5, async doc =>
             {
                 ctx.AttachTo(nameof(DRRContext.bcgov_documenturls), doc);
                 await ctx.LoadPropertyAsync(doc, nameof(bcgov_documenturl.bcgov_DocumentType), ct);

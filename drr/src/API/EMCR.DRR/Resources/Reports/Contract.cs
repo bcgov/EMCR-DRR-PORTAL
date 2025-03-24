@@ -16,6 +16,7 @@ namespace EMCR.DRR.API.Resources.Reports
         Task<bool> CanAccessClaim(string id, string businessId);
         Task<bool> CanAccessForecast(string id, string businessId);
         Task<bool> CanAccessInvoiceFromDocumentId(string id, string businessId);
+        Task<bool> CanAccessForecastFromDocumentId(string id, string businessId);
     }
 
     public abstract class ManageReportCommand

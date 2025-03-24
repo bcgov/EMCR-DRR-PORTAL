@@ -28,6 +28,8 @@ namespace EMCR.DRR.API.Resources.Documents
                 DeleteProgressReportDocument c => await Handle(c),
                 CreateInvoiceDocument c => await Handle(c),
                 DeleteInvoiceDocument c => await Handle(c),
+                CreateForecastReportDocument c => await Handle(c),
+                DeleteForecastReportDocument c => await Handle(c),
                 _ => throw new NotSupportedException($"{cmd.GetType().Name} is not supported")
             };
         }
@@ -58,6 +60,9 @@ namespace EMCR.DRR.API.Resources.Documents
                     break;
                 case RecordType.Invoice:
                     recordId = document._bcgov_projectexpenditure_value.ToString();
+                    break;
+                case RecordType.ForecastReport:
+                    recordId = document._bcgov_projectbudgetforecastid_value.ToString();
                     break;
                 default:
                     break;
@@ -180,6 +185,45 @@ namespace EMCR.DRR.API.Resources.Documents
             await ctx.SaveChangesAsync();
 
             return new ManageDocumentCommandResult { Id = cmd.Id, RecordId = document?._bcgov_projectexpenditure_value.ToString() };
+        }
+        
+        public async Task<ManageDocumentCommandResult> Handle(CreateForecastReportDocument cmd)
+        {
+            var ctx = dRRContextFactory.Create();
+            var bcGovDocument = mapper.Map<bcgov_documenturl>(cmd.Document);
+            bcGovDocument.bcgov_documenturlid = Guid.Parse(cmd.NewDocId);
+            var forecast = await ctx.drr_projectbudgetforecasts.Where(a => a.drr_name == cmd.ForecastId).SingleOrDefaultAsync();
+            //if (progressReport.statuscode != (int)ApplicationStatusOptionSet.DraftProponent)
+            //{
+            //    progressReport.statuscode = (int)ApplicationStatusOptionSet.DraftProponent;
+            //    ctx.UpdateObject(progressReport);
+            //}
+            bcGovDocument.bcgov_url = $"drr_projectbudgetforecast/{forecast.drr_projectbudgetforecastid}";
+            bcGovDocument.bcgov_origincode = (int?)OriginOptionSet.Web;
+            bcGovDocument.bcgov_filesize = cmd.Document.Size;
+            bcGovDocument.bcgov_receiveddate = DateTime.UtcNow;
+            //Set Document Type
+            ctx.AddTobcgov_documenturls(bcGovDocument);
+            ctx.AddLink(forecast, nameof(forecast.bcgov_drr_projectbudgetforecast_bcgov_documenturl_projectbudgetforecastid), bcGovDocument);
+            ctx.SetLink(bcGovDocument, nameof(bcGovDocument.bcgov_projectbudgetforecastid), forecast);
+            var documentType = await ctx.bcgov_documenttypes.Where(t => t.bcgov_isportalaccessible == (int)DRRTwoOptions.Yes && t.bcgov_name == cmd.Document.DocumentType.ToDescriptionString()).SingleOrDefaultAsync();
+            if (documentType == null) documentType = await ctx.bcgov_documenttypes.Where(t => t.bcgov_name == DocumentType.OtherSupportingDocument.ToDescriptionString()).SingleOrDefaultAsync();
+            ctx.SetLink(bcGovDocument, nameof(bcGovDocument.bcgov_DocumentType), documentType);
+            await ctx.SaveChangesAsync();
+
+            return new ManageDocumentCommandResult { Id = bcGovDocument.bcgov_documenturlid.ToString(), RecordId = forecast.drr_projectbudgetforecastid.ToString() };
+        }
+
+        public async Task<ManageDocumentCommandResult> Handle(DeleteForecastReportDocument cmd)
+        {
+            var ctx = dRRContextFactory.Create();
+
+            var document = await ctx.bcgov_documenturls.Where(d => d.bcgov_documenturlid == Guid.Parse(cmd.Id)).SingleOrDefaultAsync();
+            if (document != null) ctx.DeleteObject(document);
+
+            await ctx.SaveChangesAsync();
+
+            return new ManageDocumentCommandResult { Id = cmd.Id, RecordId = document?._bcgov_projectbudgetforecastid_value.ToString() };
         }
     }
 #pragma warning restore CS8601 // Possible null reference assignment.
