@@ -6,6 +6,8 @@ using EMCR.DRR.API.Utilities.TestData;
 using EMCR.DRR.Controllers;
 using EMCR.DRR.Dynamics;
 using EMCR.DRR.Managers.Intake;
+using EMCR.DRR.Resources.Applications;
+using Microsoft.Dynamics.CRM;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 
@@ -101,6 +103,12 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             }
         }
 
+        //[Test]
+        //public async Task TEMP_SetWPActivityCopiedActivity()
+        //{
+        //    await SetWorkplanActivityCopiedActivity("DRIF-WA-1959");
+        //}
+
         [Test]
         public async Task QueryClaims_CanFilterById()
         {
@@ -125,7 +133,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var userInfo = GetTestUserInfo();
             //var userInfo = GetCRAFTUserInfo();
 
-            var queryRes = await manager.Handle(new DrrProgressReportsQuery { Id = "DRIF-PR-1218", BusinessId = userInfo.BusinessId });
+            var queryRes = await manager.Handle(new DrrProgressReportsQuery { Id = "DRIF-PR-1239", BusinessId = userInfo.BusinessId });
             var prs = mapper.Map<IEnumerable<DraftProgressReport>>(queryRes.Items);
             prs.Count().ShouldBe(1);
             var progressReport = prs.Single();
@@ -136,7 +144,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
         [Test]
         public async Task QueryForecasts_CanFilterById()
         {
-            var queryRes = await manager.Handle(new DrrForecastsQuery { Id = "DRIF-FORECAST-1001", BusinessId = GetTestUserInfo().BusinessId });
+            var queryRes = await manager.Handle(new DrrForecastsQuery { Id = "FORECAST-1054", BusinessId = GetTestUserInfo().BusinessId });
             var forecasts = mapper.Map<IEnumerable<EMCR.DRR.Controllers.DraftForecast>>(queryRes.Items);
             forecasts.Count().ShouldBe(1);
         }
@@ -341,6 +349,100 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             submittedClaim.AuthorizedRepresentativeStatement.ShouldBe(true);
             submittedClaim.InformationAccuracyStatement.ShouldBe(true);
         }
+
+        [Test]
+        public async Task CanUpdateForecast()
+        {
+            var userInfo = GetTestUserInfo();
+            //var userInfo = GetCRAFTUserInfo();
+
+            var project = (await manager.Handle(new DrrProjectsQuery { Id = TestProjectId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault();
+            if (!project.InterimReports.Any() || project.InterimReports.First().Forecast == null || project.InterimReports.First().Forecast.Status == EMCR.DRR.Managers.Intake.ForecastStatus.Submitted)
+            {
+                await CanCreateReport();
+                project = (await manager.Handle(new DrrProjectsQuery { Id = TestProjectId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault();
+            }
+
+            var interimReport = project.InterimReports.First();
+
+            var forecastId = interimReport.Forecast.Id;
+            Console.WriteLine(forecastId);
+            var uniqueSignature = TestPrefix + "-" + Guid.NewGuid().ToString().Substring(0, 4);
+            var forecast = mapper.Map<EMCR.DRR.Controllers.Forecast>((await manager.Handle(new DrrForecastsQuery { Id = forecastId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+
+            if (forecast.ForecastItems != null)
+            {
+                foreach (var item in forecast.ForecastItems)
+                {
+                    item.TotalProjectedExpenditure = 500;
+                    item.ClaimsOnThisReport = 400;
+                }
+            }
+
+            forecast.Status = EMCR.DRR.Controllers.ForecastStatus.Draft;
+            forecast.OriginalForecast = 33333;
+            forecast.VarianceComment = "variance comment";
+
+            if (forecast.AuthorizedRepresentative == null)
+            {
+                forecast.AuthorizedRepresentative = CreateNewTestContact(uniqueSignature, "submitter");
+            }
+
+            await manager.Handle(new SaveForecastCommand { Forecast = forecast, UserInfo = userInfo });
+
+            var updatedForecast = mapper.Map<DraftForecast>((await manager.Handle(new DrrForecastsQuery { Id = forecast.Id, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+
+            updatedForecast.ForecastItems.Count().ShouldBe(forecast.ForecastItems.Count());
+            updatedForecast.VarianceComment.ShouldBe(forecast.VarianceComment);
+            updatedForecast.Status.ShouldBe(forecast.Status);
+        }
+
+        [Test]
+        public async Task CanSubmitForecast()
+        {
+            var userInfo = GetTestUserInfo();
+            //var userInfo = GetCRAFTUserInfo();
+
+            var project = (await manager.Handle(new DrrProjectsQuery { Id = TestProjectId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault();
+            if (!project.InterimReports.Any() || project.InterimReports.First().Forecast == null || project.InterimReports.First().Forecast.Status == EMCR.DRR.Managers.Intake.ForecastStatus.Submitted)
+            {
+                await CanCreateReport();
+                project = (await manager.Handle(new DrrProjectsQuery { Id = TestProjectId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault();
+            }
+
+            var interimReport = project.InterimReports.First();
+
+            var forecastId = interimReport.Forecast.Id;
+            Console.WriteLine(forecastId);
+            var uniqueSignature = TestPrefix + "-" + Guid.NewGuid().ToString().Substring(0, 4);
+            var forecast = mapper.Map<EMCR.DRR.Controllers.Forecast>((await manager.Handle(new DrrForecastsQuery { Id = forecastId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+
+            if (forecast.ForecastItems != null)
+            {
+                foreach (var item in forecast.ForecastItems)
+                {
+                    item.TotalProjectedExpenditure = 500;
+                    item.ClaimsOnThisReport = 400;
+                }
+            }
+
+            forecast.Status = EMCR.DRR.Controllers.ForecastStatus.Draft;
+            forecast.OriginalForecast = 33333;
+            forecast.VarianceComment = "variance comment";
+
+            if (forecast.AuthorizedRepresentative == null)
+            {
+                forecast.AuthorizedRepresentative = CreateNewTestContact(uniqueSignature, "submitter");
+            }
+
+            await manager.Handle(new SubmitForecastCommand { Forecast = forecast, UserInfo = userInfo });
+
+            var updatedForecast = mapper.Map<DraftForecast>((await manager.Handle(new DrrForecastsQuery { Id = forecast.Id, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+
+            updatedForecast.ForecastItems.Count().ShouldBe(forecast.ForecastItems.Count());
+            updatedForecast.VarianceComment.ShouldBe(forecast.VarianceComment);
+            updatedForecast.Status.ShouldBe(EMCR.DRR.Controllers.ForecastStatus.Submitted);
+        }
 #pragma warning restore CS8629 // Nullable value type may be null.
 
         //[Test]
@@ -461,6 +563,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             project.InterimReports.First().ProgressReport.ShouldNotBeNull();
             project.InterimReports.First().ProjectClaim.ShouldNotBeNull();
             project.InterimReports.First().Forecast.ShouldNotBeNull();
+            Console.WriteLine(project.InterimReports.First().Id);
         }
 
         private async Task AllReportsApprovedForProject(string projectId)
@@ -475,6 +578,17 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
                 report.statuscode = (int)ProjectReportStatusOptionSet.Approved;
                 ctx.UpdateObject(report);
             }
+            await ctx.SaveChangesAsync();
+        }
+
+        private async Task SetWorkplanActivityCopiedActivity(string activityId)
+        {
+            var host = Application.Host;
+            var factory = host.Services.GetRequiredService<IDRRContextFactory>();
+            var ctx = factory.Create();
+            var wp = (await ctx.drr_projectworkplanactivities.Where(p => p.drr_name == activityId).GetAllPagesAsync()).SingleOrDefault();
+            wp.drr_copiedactivity = (int)DRRTwoOptions.Yes;
+            ctx.UpdateObject(wp);
             await ctx.SaveChangesAsync();
         }
 
@@ -566,17 +680,17 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
 
             //if (progressReport.Workplan.WorkplanActivities.Count() > 0)
             //    progressReport.Workplan.WorkplanActivities = progressReport.Workplan.WorkplanActivities = progressReport.Workplan.WorkplanActivities.Take(progressReport.Workplan.WorkplanActivities.Count() - 1).ToArray();
-            //progressReport.Workplan.WorkplanActivities = progressReport.Workplan.WorkplanActivities.Append(new WorkplanActivity
-            //{
-            //    Activity = EMCR.DRR.Controllers.ActivityType.Mapping,
-            //    ActualCompletionDate = DateTime.UtcNow.AddDays(11),
-            //    ActualStartDate = DateTime.UtcNow.AddDays(4),
-            //    Comment = $"{uniqueSignature} - mapping comment",
-            //    Id = Guid.NewGuid().ToString(),
-            //    PlannedCompletionDate = DateTime.UtcNow.AddDays(10),
-            //    PlannedStartDate = DateTime.UtcNow.AddDays(3),
-            //    Status = EMCR.DRR.Controllers.WorkplanStatus.NotStarted,
-            //}).ToArray();
+            // progressReport.Workplan.WorkplanActivities = progressReport.Workplan.WorkplanActivities.Append(new WorkplanActivity
+            // {
+            //     Activity = EMCR.DRR.Controllers.ActivityType.Mapping,
+            //     ActualCompletionDate = DateTime.UtcNow.AddDays(11),
+            //     ActualStartDate = DateTime.UtcNow.AddDays(4),
+            //     Comment = $"{uniqueSignature} - mapping comment",
+            //     Id = Guid.NewGuid().ToString(),
+            //     PlannedCompletionDate = DateTime.UtcNow.AddDays(10),
+            //     PlannedStartDate = DateTime.UtcNow.AddDays(3),
+            //     Status = EMCR.DRR.Controllers.WorkplanStatus.NoLongerNeeded,
+            // }).ToArray();
             if (progressReport.Workplan.FundingSignage.Count() > 0) progressReport.Workplan.FundingSignage = progressReport.Workplan.FundingSignage.Take(progressReport.Workplan.FundingSignage.Count() - 1).ToArray();
             progressReport.Workplan.FundingSignage = progressReport.Workplan.FundingSignage.Append(new EMCR.DRR.Controllers.FundingSignage
             {

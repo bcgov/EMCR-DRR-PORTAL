@@ -53,6 +53,16 @@ namespace EMCR.DRR.API.Resources.Reports
         public required string Id { get; set; }
     }
 
+    public class SaveForecast : ManageReportCommand
+    {
+        public required ForecastDetails Forecast { get; set; }
+    }
+
+    public class SubmitForecast : ManageReportCommand
+    {
+        public required string Id { get; set; }
+    }
+
     public class CreateInvoice : ManageReportCommand
     {
         public required string ClaimId { get; set; }

@@ -186,13 +186,17 @@ namespace EMCR.DRR.API.Resources.Reports
                 .ForMember(dest => dest.InformationAccuracyStatement, opt => opt.Ignore())
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.statuscode.HasValue ? (int?)Enum.Parse<ProgressReportStatus>(((ProjectProgressReportStatusOptionSet)src.statuscode).ToString()) : null))
             ;
-#pragma warning restore CS8604 // Possible null reference argument.
 
             CreateMap<ForecastDetails, drr_projectbudgetforecast>(MemberList.None)
                 .ForMember(dest => dest.drr_name, opt => opt.MapFrom(src => src.Id))
-                //.ForMember(dest => dest.drr_AuthorizedRepresentativeContact, opt => opt.MapFrom(src => src.AuthorizedRepresentative))
+                .ForMember(dest => dest.drr_drr_projectbudgetforecast_drr_budgetforecastreportitem_ProjectBudgetForecast, opt => opt.MapFrom(src => src.ForecastItems))
+                .ForMember(dest => dest.drr_totaloriginalforecast, opt => opt.MapFrom(src => src.OriginalForecast))
+                .ForMember(dest => dest.drr_explainvariance, opt => opt.MapFrom(src => src.VarianceComment))
+                .ForMember(dest => dest.drr_AuthorizedRepresentativeContact, opt => opt.MapFrom(src => src.AuthorizedRepresentative))
+                //.ForMember(dest => dest.bcgov_drr_projectprogress_bcgov_documenturl_ProgressReport, opt => opt.MapFrom(src => src.Attachments))
                 //.ForMember(dest => dest.drr_authorizedrepresentative, opt => opt.MapFrom(src => src.AuthorizedRepresentativeStatement.HasValue ? src.AuthorizedRepresentativeStatement.Value ? (int?)DRRTwoOptions.Yes : (int?)DRRTwoOptions.No : null))
                 //.ForMember(dest => dest.drr_accuracyofinformation, opt => opt.MapFrom(src => src.InformationAccuracyStatement.HasValue ? src.InformationAccuracyStatement.Value ? (int?)DRRTwoOptions.Yes : (int?)DRRTwoOptions.No : null))
+                .ForMember(dest => dest.statuscode, opt => opt.MapFrom(src => (int?)Enum.Parse<ForecastStatusOptionSet>(src.Status.ToString())))
                 .ReverseMap()
                 .ValidateMemberList(MemberList.Destination)
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.drr_name))
@@ -211,18 +215,23 @@ namespace EMCR.DRR.API.Resources.Reports
                 .ForMember(dest => dest.InformationAccuracyStatement, opt => opt.Ignore())
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.statuscode.HasValue ? (int?)Enum.Parse<ForecastStatus>(((ForecastStatusOptionSet)src.statuscode).ToString()) : null))
             ;
+#pragma warning restore CS8604 // Possible null reference argument.
 
             CreateMap<ForecastItem, drr_budgetforecastreportitem>(MemberList.None)
-                .ForMember(dest => dest.drr_name, opt => opt.MapFrom(src => src.Id))
-                .ReverseMap()
-                .ValidateMemberList(MemberList.Destination)
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.drr_name))
+                .ForMember(dest => dest.drr_budgetforecastreportitemid, opt => opt.MapFrom(src => !string.IsNullOrEmpty(src.Id) ? Guid.Parse(src.Id) : (Guid?)null))
+                .ForMember(dest => dest.drr_totalprojectedexpenditureamount, opt => opt.MapFrom(src => src.TotalProjectedExpenditure))
+                //.ForMember(dest => dest.ClaimsOnThisReport, opt => opt.MapFrom(src => src.ClaimsOnThisReport))
+                ;
+
+            CreateMap<drr_budgetforecastreportitem, ForecastItem>(MemberList.None)
+            .ValidateMemberList(MemberList.Destination)
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.drr_budgetforecastreportitemid))
                 .ForMember(dest => dest.FiscalYear, opt => opt.MapFrom(src => src.drr_FiscalYear != null ? src.drr_FiscalYear.drr_name : string.Empty))
                 .ForMember(dest => dest.ForecastAmount, opt => opt.MapFrom(src => src.drr_originalforecast))
-                .ForMember(dest => dest.TotalProjectedExpenditure, opt => opt.Ignore())
+                .ForMember(dest => dest.TotalProjectedExpenditure, opt => opt.MapFrom(src => src.drr_totalprojectedexpenditureamount))
                 .ForMember(dest => dest.ClaimsPaidToDate, opt => opt.MapFrom(src => src.drr_paidclaims))
                 .ForMember(dest => dest.ClaimsSubmittedNotPaid, opt => opt.MapFrom(src => src.drr_claimssubmittednotpaid))
-                .ForMember(dest => dest.ClaimsOnThisReport, opt => opt.MapFrom(src => src.drr_name))
+                .ForMember(dest => dest.ClaimsOnThisReport, opt => opt.Ignore())
                 .ForMember(dest => dest.RemainingClaims, opt => opt.MapFrom(src => src.drr_projectedremainingexpenditure))
 
             ;
