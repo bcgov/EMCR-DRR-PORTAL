@@ -747,6 +747,9 @@
     "totalProjectedExpenditure": "Total",
     "originalForecast": "Original Forecast",
     "variance": "Variance",
-    "varianceComment": "Variance Comments"
+    "varianceComment": "Variance Comments",
+    "attachmentUploadText": "Upload any supporting attachments",
+    "uploadAttachment": "Add Attachment",
+    "attachments": "Attachments"
   }
 }

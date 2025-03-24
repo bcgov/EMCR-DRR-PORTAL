@@ -37,6 +37,7 @@ import {
   DocumentType,
   DraftForecast,
   FormType,
+  RecordType,
 } from '../../../../../model';
 import { DrrCurrencyInputComponent } from '../../../../shared/controls/drr-currency-input/drr-currency-input.component';
 import { DrrFileUploadComponent } from '../../../../shared/controls/drr-file-upload/drr-file-upload.component';
@@ -45,6 +46,7 @@ import { DrrTextareaComponent } from '../../../../shared/controls/drr-textarea/d
 import { FileService } from '../../../../shared/services/file.service';
 import { OptionsStore } from '../../../../store/options.store';
 import { ProfileStore } from '../../../../store/profile.store';
+import { AttachmentForm } from '../../../drif-fp/drif-fp-form';
 import { DrrAttahcmentComponent } from '../../../drif-fp/drif-fp-step-11/drif-fp-attachment.component';
 import {
   BudgetForecastForm,
@@ -447,8 +449,8 @@ export class DrifForecastCreateComponent {
       this.attachmentsService
         .attachmentUploadAttachment({
           recordId: this.forecastId,
-          // TODO: recordType: RecordType.Forecast,
-          // TODO: documentType: DocumentType.Forecast,
+          recordType: RecordType.ForecastReport,
+          documentType: DocumentType.ForecastReport,
           name: file.name,
           contentType:
             file.type === ''
@@ -466,10 +468,7 @@ export class DrifForecastCreateComponent {
             } as ForecastAttachmentsForm;
 
             this.attachmentsArray.push(
-              this.formBuilder.formGroup(
-                ForecastAttachmentsForm,
-                attachmentFormData,
-              ),
+              this.formBuilder.formGroup(AttachmentForm, attachmentFormData),
             );
           },
           error: (error) => {
