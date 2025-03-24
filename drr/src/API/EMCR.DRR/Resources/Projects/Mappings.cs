@@ -22,7 +22,7 @@ namespace EMCR.DRR.API.Resources.Projects
                 .ForMember(dest => dest.ProjectTitle, opt => opt.MapFrom(src => src.drr_projectname))
                 .ForMember(dest => dest.ContractNumber, opt => opt.MapFrom(src => src.drr_contractnumber))
                 .ForMember(dest => dest.ProponentName, opt => opt.MapFrom(src => src.drr_ProponentName.name))
-                .ForMember(dest => dest.FundingStream, opt => opt.MapFrom(src => src.drr_FullProposalApplication.drr_fundingstream.HasValue ? (int?)Enum.Parse<FundingStream>(((FundingStreamOptionSet)src.drr_FullProposalApplication.drr_fundingstream).ToString()) : null))
+                .ForMember(dest => dest.FundingStream, opt => opt.MapFrom(src => (int?)Enum.Parse<FundingStream>(((FundingStreamOptionSet)src.drr_projecttype).ToString())))
                 //.ForMember(dest => dest.ProjectNumber, opt => opt.MapFrom(src => src.drr_name))
                 .ForMember(dest => dest.ProjectNumber, opt => opt.Ignore())
                 .ForMember(dest => dest.ProgramType, opt => opt.MapFrom(src => src.drr_Program.drr_name))
