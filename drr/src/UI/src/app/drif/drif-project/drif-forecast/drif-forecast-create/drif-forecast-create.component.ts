@@ -216,6 +216,7 @@ export class DrifForecastCreateComponent {
             const formValue = new ForecastForm({
               budgetForecast: {
                 yearForecasts: forecast.forecastItems,
+                totalProjectedExpenditure: forecast.total,
                 originalForecast: forecast.originalForecast,
               },
               attachments: {
@@ -329,8 +330,17 @@ export class DrifForecastCreateComponent {
     this.router.navigate(['drif-projects', this.projectId]);
   }
 
-  getFormValue() {
-    return this.forecastForm?.getRawValue();
+  getFormValue(): DraftForecast {
+    const formValue = this.forecastForm?.getRawValue();
+
+    return {
+      forecastItems: formValue.budgetForecast.yearForecasts,
+      total: formValue.budgetForecast.totalProjectedExpenditure,
+      variance: formValue.budgetForecast.variance,
+      varianceComment: formValue.budgetForecast.varianceComment,
+      attachments: formValue.attachments.attachments,
+      authorizedRepresentative: formValue.declaration.authorizedRepresentative,
+    };
   }
 
   save() {
@@ -346,23 +356,29 @@ export class DrifForecastCreateComponent {
 
     // this.lastSavedAt = undefined;
 
-    // update forecast
-    // .subscribe({
-    //   next: () => {
-    //     this.lastSavedAt = new Date();
+    this.projectService
+      .projectUpdateForecastReport(
+        this.projectId!,
+        this.reportId!,
+        this.forecastId!,
+        forecastFormValue,
+      )
+      .subscribe({
+        next: () => {
+          // this.lastSavedAt = new Date();
 
-    //     this.toastService.close();
-    //     this.toastService.success('Claim saved successfully');
+          this.toastService.close();
+          this.toastService.success('Claim saved successfully');
 
-    //     this.formChanged = false;
-    //     this.resetAutoSaveTimer();
-    //   },
-    //   error: (error) => {
-    //     this.toastService.close();
-    //     this.toastService.error('Failed to save claim');
-    //     console.error(error);
-    //   },
-    // });
+          this.formChanged = false;
+          // this.resetAutoSaveTimer();
+        },
+        error: (error) => {
+          this.toastService.close();
+          this.toastService.error('Failed to save claim');
+          console.error(error);
+        },
+      });
   }
 
   async uploadFiles(files: File[]) {
