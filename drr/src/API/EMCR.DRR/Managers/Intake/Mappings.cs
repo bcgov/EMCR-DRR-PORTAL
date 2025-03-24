@@ -296,6 +296,7 @@ namespace EMCR.DRR.Managers.Intake
                 ;
 
             CreateMap<DraftForecast, Forecast>()
+                .ForMember(dest => dest.CrmId, opt => opt.Ignore())
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => IntakeForecastStatusMapper(src.Status)))
                 .AfterMap((src, dest) =>
                 {

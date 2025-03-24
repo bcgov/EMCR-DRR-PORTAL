@@ -60,8 +60,20 @@ namespace EMCR.DRR.API.Resources.Documents
         public required string NewDocId { get; set; }
         public required Document Document { get; set; }
     }
+    
+    public class CreateForecastReportDocument : ManageDocumentCommand
+    {
+        public required string ForecastId { get; set; }
+        public required string NewDocId { get; set; }
+        public required Document Document { get; set; }
+    }
 
     public class DeleteInvoiceDocument : ManageDocumentCommand
+    {
+        public required string Id { get; set; }
+    }
+    
+    public class DeleteForecastReportDocument : ManageDocumentCommand
     {
         public required string Id { get; set; }
     }

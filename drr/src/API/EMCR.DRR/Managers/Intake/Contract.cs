@@ -343,6 +343,8 @@ namespace EMCR.DRR.Managers.Intake
         ProgressReport,
         [Description("drr_projectexpenditure")]
         Invoice,
+        [Description("drr_projectbudgetforecast")]
+        ForecastReport,
         None,
     }
 
@@ -368,6 +370,8 @@ namespace EMCR.DRR.Managers.Intake
         Invoice,
         [Description("Proof of Payment")]
         ProofOfPayment,
+        [Description("Forecast Report")]
+        ForecastReport,
     }
 
     public class Application
@@ -897,6 +901,7 @@ namespace EMCR.DRR.Managers.Intake
     {
         public string? Id { get; set; }
         public string? ReportPeriod { get; set; }
+        public string? CrmId { get; set; }
         public DateTime? ReportDate { get; set; }
         public DateTime? DateSubmitted { get; set; }
         public DateTime? DateApproved { get; set; }
