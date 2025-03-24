@@ -25,22 +25,24 @@
         >
           <td>{{ yearForecast.get("fiscalYear")?.value }}</td>
           <td>
-            {{ yearForecast.get("originalForecast")?.value | currency }}
+            {{ yearForecast.get("forecastAmount")?.value | currency }}
           </td>
           <td>
-            {{ yearForecast.get("projectedExpenditure")?.value | currency }}
+            {{
+              yearForecast.get("totalProjectedExpenditure")?.value | currency
+            }}
           </td>
           <td>
-            {{ yearForecast.get("paidClaimsAmount")?.value | currency }}
+            {{ yearForecast.get("claimsPaidToDate")?.value | currency }}
           </td>
           <td>
-            {{ yearForecast.get("notPaidClaimsAmount")?.value | currency }}
+            {{ yearForecast.get("claimsSubmittedNotPaid")?.value | currency }}
           </td>
           <td>
-            {{ yearForecast.get("outstandingClaimsAmount")?.value | currency }}
+            {{ yearForecast.get("claimsOnThisReport")?.value | currency }}
           </td>
           <td>
-            {{ yearForecast.get("remainingClaimsAmount")?.value | currency }}
+            {{ yearForecast.get("remainingClaims")?.value | currency }}
           </td>
         </tr>
       </table>
@@ -52,8 +54,8 @@
       ></drr-summary-item>
 
       <drr-summary-item
-        [label]="t('originalTotalForecast')"
-        [rxFormControl]="budgetForecastForm.get('originalTotalForecast')"
+        [label]="t('originalForecast')"
+        [rxFormControl]="budgetForecastForm.get('originalForecast')"
         controlType="currency"
       ></drr-summary-item>
 

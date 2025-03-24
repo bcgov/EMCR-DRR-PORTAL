@@ -31,7 +31,12 @@ import {
 } from '@rxweb/reactive-form-validators';
 import { AttachmentService } from '../../../../../api/attachment/attachment.service';
 import { ProjectService } from '../../../../../api/project/project.service';
-import { DeclarationType, DocumentType, FormType } from '../../../../../model';
+import {
+  DeclarationType,
+  DocumentType,
+  DraftForecast,
+  FormType,
+} from '../../../../../model';
 import { DrrCurrencyInputComponent } from '../../../../shared/controls/drr-currency-input/drr-currency-input.component';
 import { DrrDatepickerComponent } from '../../../../shared/controls/drr-datepicker/drr-datepicker.component';
 import { DrrFileUploadComponent } from '../../../../shared/controls/drr-file-upload/drr-file-upload.component';
@@ -48,18 +53,8 @@ import {
   ForecastAttachmentsForm,
   ForecastDeclarationForm,
   ForecastForm,
-  YearForecastForm,
 } from '../drif-forecast-form';
 import { DrifForecastSummaryComponent } from '../drif-forecast-summary/drif-forecast-summary.component';
-
-export class ForecastRow {
-  fiscalYear!: number;
-  forecastAmount!: number;
-  outstandingClaimsAmount!: number;
-  remainingClaimsAmount!: number;
-  originalForecast!: number;
-  projectedExpenditure!: number;
-}
 
 @UntilDestroy({ checkProperties: true })
 @Component({
@@ -165,39 +160,15 @@ export class DrifForecastCreateComponent {
     this.load().then(() => {
       // TODO: after init logic, auto save, etc
 
-      // TODO: temp add init values
-      this.getYearForecastFormArray().controls.push(
-        this.formBuilder.formGroup(YearForecastForm, {
-          fiscalYear: '2021/2022',
-          originalForecast: 1000,
-          projectedExpenditure: 900,
-          paidClaimsAmount: 800,
-          notPaidClaimsAmount: 100,
-          outstandingClaimsAmount: 100,
-          remainingClaimsAmount: 100,
-        }),
-      );
-      this.getYearForecastFormArray().controls.push(
-        this.formBuilder.formGroup(YearForecastForm, {
-          fiscalYear: '2022/2023',
-          originalForecast: 2000,
-          projectedExpenditure: 1900,
-          paidClaimsAmount: 1800,
-          notPaidClaimsAmount: 100,
-          outstandingClaimsAmount: 200,
-          remainingClaimsAmount: 200,
-        }),
-      );
-
       this.getYearForecastFormArray().controls.forEach((control) => {
-        control.get('projectedExpenditure')?.valueChanges.subscribe(() => {
+        control.get('totalProjectedExpenditure')?.valueChanges.subscribe(() => {
           this.calculateTotalProjectedExpenditure();
         });
       });
 
       // disable total controls
       this.budgetForecastForm?.get('totalProjectedExpenditure')?.disable();
-      this.budgetForecastForm?.get('originalTotalForecast')?.disable();
+      this.budgetForecastForm?.get('originalForecast')?.disable();
       this.budgetForecastForm?.get('variance')?.disable();
     });
   }
@@ -205,7 +176,7 @@ export class DrifForecastCreateComponent {
   calculateTotalProjectedExpenditure() {
     const totalProjectedExpenditure =
       this.getYearForecastFormArray().controls.reduce((total, control) => {
-        return total + control.get('projectedExpenditure')?.value;
+        return total + control.get('totalProjectedExpenditure')?.value;
       }, 0);
 
     this.budgetForecastForm
@@ -213,10 +184,9 @@ export class DrifForecastCreateComponent {
       ?.setValue(totalProjectedExpenditure, { emitEvent: false });
 
     // calculate variance
-    const originalTotalForecast = this.budgetForecastForm?.get(
-      'originalTotalForecast',
-    )?.value;
-    const variance = totalProjectedExpenditure - originalTotalForecast;
+    const originalForecast =
+      this.budgetForecastForm?.get('originalForecast')?.value;
+    const variance = totalProjectedExpenditure - originalForecast;
     this.budgetForecastForm?.get('variance')?.setValue(variance, {
       emitEvent: false,
     });
@@ -240,13 +210,13 @@ export class DrifForecastCreateComponent {
           this.forecastId!,
         )
         .subscribe({
-          next: (forecast) => {
+          next: (forecast: DraftForecast) => {
             this.reportName = `${forecast.reportPeriod} Forecast`;
 
             const formValue = new ForecastForm({
               budgetForecast: {
-                yearForecasts: [], // TODO: forecast.forecastItems,
-                originalTotalForecast: 1000, // TODO: forecast.originalTotalForecast,
+                yearForecasts: forecast.forecastItems,
+                originalForecast: forecast.originalForecast,
               },
               attachments: {
                 attachments: forecast.attachments,

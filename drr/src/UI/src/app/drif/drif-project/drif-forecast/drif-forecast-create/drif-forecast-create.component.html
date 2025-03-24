@@ -85,26 +85,26 @@
           >
             <td>{{ yearForecast.get("fiscalYear")?.value }}</td>
             <td>
-              {{ yearForecast.get("originalForecast")?.value | currency }}
+              {{ yearForecast.get("forecastAmount")?.value | currency }}
             </td>
             <td style="padding-top: 1rem">
               <drr-currency-input
-                [rxFormControl]="yearForecast.get('projectedExpenditure')"
+                [rxFormControl]="yearForecast.get('totalProjectedExpenditure')"
               ></drr-currency-input>
             </td>
             <td>
-              {{ yearForecast.get("paidClaimsAmount")?.value | currency }}
+              {{ yearForecast.get("claimsPaidToDate")?.value | currency }}
             </td>
             <td>
-              {{ yearForecast.get("notPaidClaimsAmount")?.value | currency }}
+              {{ yearForecast.get("claimsSubmittedNotPaid")?.value | currency }}
             </td>
             <td style="padding-top: 1rem">
               <drr-currency-input
-                [rxFormControl]="yearForecast.get('outstandingClaimsAmount')"
+                [rxFormControl]="yearForecast.get('claimsOnThisReport')"
               ></drr-currency-input>
             </td>
             <td>
-              {{ yearForecast.get("remainingClaimsAmount")?.value | currency }}
+              {{ yearForecast.get("remainingClaims")?.value | currency }}
             </td>
           </tr>
         </table>
@@ -123,11 +123,11 @@
 
         <div class="total-conrol">
           <mat-label class="drr-label">
-            {{ t("originalTotalForecast") }}
+            {{ t("originalForecast") }}
           </mat-label>
           <drr-currency-input
-            [label]="t('originalTotalForecast')"
-            [rxFormControl]="budgetForecastForm.get('originalTotalForecast')"
+            [label]="t('originalForecast')"
+            [rxFormControl]="budgetForecastForm.get('originalForecast')"
           ></drr-currency-input>
         </div>
         <div class="total-conrol">
@@ -159,7 +159,7 @@
     <mat-step
       label="Attachments"
       [stepControl]="attachmentsForm"
-      [errorMessage]="t('stepError')"
+      [errorMessage]="'stepError' | transloco"
     >
       <div class="attachments-container">
         <drr-attachment
