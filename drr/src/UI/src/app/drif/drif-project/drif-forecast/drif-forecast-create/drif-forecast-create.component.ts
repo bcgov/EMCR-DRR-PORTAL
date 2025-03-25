@@ -425,14 +425,14 @@ export class DrifForecastCreateComponent {
           this.lastSavedAt = new Date();
 
           this.toastService.close();
-          this.toastService.success('Claim saved successfully');
+          this.toastService.success('Forecast saved successfully');
 
           this.formChanged = false;
           this.resetAutoSaveTimer();
         },
         error: (error) => {
           this.toastService.close();
-          this.toastService.error('Failed to save claim');
+          this.toastService.error('Failed to save forecast');
           console.error(error);
         },
       });
