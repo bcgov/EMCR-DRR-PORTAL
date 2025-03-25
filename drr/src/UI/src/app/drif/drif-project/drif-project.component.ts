@@ -33,6 +33,12 @@ import {
 import { DrrInputComponent } from '../../shared/controls/drr-input/drr-input.component';
 import { DrifProjectContactDialogComponent } from './drif-project-contact-dialog.component';
 
+export class CostProjectionItem {
+  fiscalYear?: string;
+  originalForecast?: number;
+  currentForecast?: number;
+}
+
 export enum InterimSubReportSection {
   Progress = 'Progress',
   Claim = 'Claim',
@@ -96,6 +102,8 @@ export class DrifProjectComponent {
     PaymentCondition & { actions?: [] }
   >([]);
 
+  costProjectionsDataSource = new MatTableDataSource<CostProjectionItem>([]);
+
   expandedInterimReport?: InterimReport | null;
 
   projectContactsDataSource = new MatTableDataSource<ContactDetails>([]);
@@ -132,6 +140,25 @@ export class DrifProjectComponent {
         this.project = project;
 
         this.conditionsDataSource.data = [...this.project!.conditions!];
+
+        // TODO: Remove hardcoded data after API provides this information
+        this.costProjectionsDataSource.data = [
+          {
+            fiscalYear: '2021/2022',
+            originalForecast: 100000,
+            currentForecast: 120000,
+          },
+          {
+            fiscalYear: '2022/2023',
+            originalForecast: 150000,
+            currentForecast: 180000,
+          },
+          {
+            fiscalYear: '2023/2024',
+            originalForecast: 200000,
+            currentForecast: 220000,
+          },
+        ];
 
         this.projectContactsDataSource.data = this.project!.contacts!;
 
