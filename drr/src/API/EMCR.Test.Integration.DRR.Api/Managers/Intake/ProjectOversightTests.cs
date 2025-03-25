@@ -649,7 +649,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             //var userInfo = GetCRAFTUserInfo();
 
             var forecastId = "FORECAST-1054";
-            var forecast = mapper.Map<EMCR.DRR.Controllers.DraftForecast>((await manager.Handle(new DrrForecastsQuery { Id = forecastId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+            var forecast = mapper.Map<DraftForecast>((await manager.Handle(new DrrForecastsQuery { Id = forecastId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
             foreach (var doc in forecast.Attachments)
             {
                 await manager.Handle(new DeleteAttachmentCommand { Id = doc.Id, UserInfo = userInfo });
@@ -664,13 +664,13 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
 
             var forecastToUpdate = mapper.Map<EMCR.DRR.Controllers.Forecast>((await manager.Handle(new DrrForecastsQuery { Id = forecastId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
             forecastToUpdate.Attachments.Count().ShouldBe(1);
-            forecastToUpdate.Attachments.First().DocumentType.ShouldBe(EMCR.DRR.API.Model.DocumentType.ForecastReport);
-            forecastToUpdate.Attachments.First().Comments = "forecast report comments";
+            forecastToUpdate.Attachments.Single().DocumentType.ShouldBe(EMCR.DRR.API.Model.DocumentType.ForecastReport);
+            forecastToUpdate.Attachments.Single().Comments = "forecast report comments";
 
             await manager.Handle(new SaveForecastCommand { Forecast = forecastToUpdate, UserInfo = userInfo });
 
-            var updatedForecast = mapper.Map<EMCR.DRR.Controllers.DraftForecast>((await manager.Handle(new DrrForecastsQuery { Id = forecastToUpdate.Id, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
-            updatedForecast.Attachments.First().Comments.ShouldBe(forecastToUpdate.Attachments.First().Comments);
+            var updatedForecast = mapper.Map<DraftForecast>((await manager.Handle(new DrrForecastsQuery { Id = forecastToUpdate.Id, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+            updatedForecast.Attachments.Single().Comments.ShouldBe(forecastToUpdate.Attachments.Single().Comments);
         }
 
         [Test]

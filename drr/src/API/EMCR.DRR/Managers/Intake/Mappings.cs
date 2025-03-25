@@ -313,6 +313,7 @@ namespace EMCR.DRR.Managers.Intake
                 ;
 
             CreateMap<Controllers.Forecast, Forecast>()
+                .ForMember(dest => dest.CrmId, opt => opt.Ignore())
                 .AfterMap((src, dest) =>
                 {
                     foreach (var prop in dest.GetType().GetProperties())
@@ -404,6 +405,7 @@ namespace EMCR.DRR.Managers.Intake
                 ;
 
             CreateMap<Controllers.DraftForecast, ForecastDetails>()
+                .ForMember(dest => dest.CrmId, opt => opt.Ignore())
                 .ForMember(dest => dest.AuthorizedRepresentativeStatement, opt => opt.Ignore())
                 .ForMember(dest => dest.InformationAccuracyStatement, opt => opt.Ignore())
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => IntakeForecastStatusMapper(src.Status)))
@@ -422,6 +424,7 @@ namespace EMCR.DRR.Managers.Intake
                 ;
 
             CreateMap<Controllers.Forecast, ForecastDetails>()
+                .ForMember(dest => dest.CrmId, opt => opt.Ignore())
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => IntakeForecastStatusMapper(src.Status)))
                 .AfterMap((src, dest) =>
                 {

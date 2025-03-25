@@ -282,6 +282,7 @@ namespace EMCR.DRR.API.Resources.Reports
             {
                 ctx.LoadPropertyAsync(existingForecast, nameof(drr_projectbudgetforecast.drr_drr_projectbudgetforecast_drr_budgetforecastreportitem_ProjectBudgetForecast)),
                 ctx.LoadPropertyAsync(existingForecast, nameof(drr_projectbudgetforecast.drr_AuthorizedRepresentativeContact)),
+                ctx.LoadPropertyAsync(existingForecast, nameof(drr_projectbudgetforecast.bcgov_drr_projectbudgetforecast_bcgov_documenturl_projectbudgetforecastid)),
             };
 
             await Task.WhenAll(loadTasks);
@@ -290,10 +291,19 @@ namespace EMCR.DRR.API.Resources.Reports
             var drrForecast = mapper.Map<drr_projectbudgetforecast>(cmd.Forecast);
             drrForecast.drr_projectbudgetforecastid = existingForecast.drr_projectbudgetforecastid;
 
+            foreach (var doc in drrForecast.bcgov_drr_projectbudgetforecast_bcgov_documenturl_projectbudgetforecastid)
+            {
+                var curr = existingForecast.bcgov_drr_projectbudgetforecast_bcgov_documenturl_projectbudgetforecastid.SingleOrDefault(d => d.bcgov_documenturlid == doc.bcgov_documenturlid);
+                if (curr != null) curr.bcgov_documentcomments = doc.bcgov_documentcomments;
+            }
+
+            drrForecast.bcgov_drr_projectbudgetforecast_bcgov_documenturl_projectbudgetforecastid = existingForecast.bcgov_drr_projectbudgetforecast_bcgov_documenturl_projectbudgetforecastid;
+
             //RemoveOldForecastData(ctx, existingForecast, drrForecast); //maybe not needed?
             ctx.AttachTo(nameof(ctx.drr_projectbudgetforecasts), drrForecast);
 
             UpdateForecastItems(ctx, drrForecast, existingForecast);
+            UpdateForecastReportDocuments(ctx, drrForecast);
 
             var authorizedRep = drrForecast.drr_AuthorizedRepresentativeContact;
             if (authorizedRep != null) SaveForecastAuthrizedRepresentative(ctx, drrForecast, authorizedRep, existingForecast.drr_AuthorizedRepresentativeContact);
@@ -601,6 +611,18 @@ namespace EMCR.DRR.API.Resources.Reports
         private static void UpdateProgressReportDocuments(DRRContext drrContext, drr_projectprogress progressReport)
         {
             foreach (var doc in progressReport.bcgov_drr_projectprogress_bcgov_documenturl_ProgressReport)
+            {
+                if (doc != null)
+                {
+                    drrContext.AttachTo(nameof(drrContext.bcgov_documenturls), doc);
+                    drrContext.UpdateObject(doc);
+                }
+            }
+        }
+
+        private static void UpdateForecastReportDocuments(DRRContext drrContext, drr_projectbudgetforecast forecast)
+        {
+            foreach (var doc in forecast.bcgov_drr_projectbudgetforecast_bcgov_documenturl_projectbudgetforecastid)
             {
                 if (doc != null)
                 {

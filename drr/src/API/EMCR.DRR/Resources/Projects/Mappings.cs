@@ -93,6 +93,7 @@ namespace EMCR.DRR.API.Resources.Projects
                 .ReverseMap()
                 .ValidateMemberList(MemberList.Destination)
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.drr_name))
+                .ForMember(dest => dest.CrmId, opt => opt.MapFrom(src => src.drr_projectbudgetforecastid))
                 .ForMember(dest => dest.ReportPeriod, opt => opt.MapFrom(src => src.drr_ProjectReport != null ? src.drr_ProjectReport.drr_ReportPeriod != null ? src.drr_ProjectReport.drr_ReportPeriod.drr_name : string.Empty : string.Empty))
                 .ForMember(dest => dest.ReportDate, opt => opt.MapFrom(src => src.drr_ProjectReport != null ? src.drr_ProjectReport.drr_reportdate.HasValue ? src.drr_ProjectReport.drr_reportdate.Value.UtcDateTime : (DateTime?)null : (DateTime?)null))
                 .ForMember(dest => dest.DateSubmitted, opt => opt.MapFrom(src => src.drr_submissiondate.HasValue ? src.drr_submissiondate.Value.UtcDateTime : (DateTime?)null))
