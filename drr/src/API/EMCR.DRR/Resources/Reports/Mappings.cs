@@ -193,7 +193,7 @@ namespace EMCR.DRR.API.Resources.Reports
                 .ForMember(dest => dest.drr_totaloriginalforecast, opt => opt.MapFrom(src => src.OriginalForecast))
                 .ForMember(dest => dest.drr_explainvariance, opt => opt.MapFrom(src => src.VarianceComment))
                 .ForMember(dest => dest.drr_AuthorizedRepresentativeContact, opt => opt.MapFrom(src => src.AuthorizedRepresentative))
-                //.ForMember(dest => dest.bcgov_drr_projectprogress_bcgov_documenturl_ProgressReport, opt => opt.MapFrom(src => src.Attachments))
+                .ForMember(dest => dest.bcgov_drr_projectbudgetforecast_bcgov_documenturl_projectbudgetforecastid, opt => opt.MapFrom(src => src.Attachments))
                 //.ForMember(dest => dest.drr_authorizedrepresentative, opt => opt.MapFrom(src => src.AuthorizedRepresentativeStatement.HasValue ? src.AuthorizedRepresentativeStatement.Value ? (int?)DRRTwoOptions.Yes : (int?)DRRTwoOptions.No : null))
                 //.ForMember(dest => dest.drr_accuracyofinformation, opt => opt.MapFrom(src => src.InformationAccuracyStatement.HasValue ? src.InformationAccuracyStatement.Value ? (int?)DRRTwoOptions.Yes : (int?)DRRTwoOptions.No : null))
                 .ForMember(dest => dest.statuscode, opt => opt.MapFrom(src => (int?)Enum.Parse<ForecastStatusOptionSet>(src.Status.ToString())))
