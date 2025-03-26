@@ -172,7 +172,7 @@ namespace EMCR.Tests.Integration.DRR.Resources
                 //Proponent Information
                 ProponentType = ProponentType.LocalGovernment,
                 ProponentName = $"{uniqueSignature}_applicant_name",
-                Submitter = CreateTestContact(uniqueSignature, "submitter", "user-bceid"),
+                AuthorizedRepresentative = CreateTestContact(uniqueSignature, "submitter", "user-bceid"),
                 ProjectContact = CreateTestContact(uniqueSignature, "proj"),
                 AdditionalContact1 = CreateTestContact(uniqueSignature, "add1"),
                 //AdditionalContact2 = CreateTestContact(uniqueSignature),

@@ -276,7 +276,7 @@ namespace EMCR.DRR.Managers.Intake
             var application = mapper.Map<Application>(cmd.Application);
             application.BCeIDBusinessId = cmd.UserInfo.BusinessId;
             application.ProponentName = cmd.UserInfo.BusinessName;
-            if (application.Submitter != null) application.Submitter.BCeId = cmd.UserInfo.UserId;
+            if (application.AuthorizedRepresentative != null) application.AuthorizedRepresentative.BCeId = cmd.UserInfo.UserId;
             var id = (await applicationRepository.Manage(new SaveApplication { Application = application })).Id;
             return id;
         }
@@ -289,7 +289,7 @@ namespace EMCR.DRR.Managers.Intake
             application.BCeIDBusinessId = cmd.UserInfo.BusinessId;
             application.ProponentName = cmd.UserInfo.BusinessName;
             application.SubmittedDate = DateTime.UtcNow;
-            if (application.Submitter != null) application.Submitter.BCeId = cmd.UserInfo.UserId;
+            if (application.AuthorizedRepresentative != null) application.AuthorizedRepresentative.BCeId = cmd.UserInfo.UserId;
             //TODO - add field validations
 
             var id = (await applicationRepository.Manage(new SaveApplication { Application = application })).Id;
@@ -318,7 +318,7 @@ namespace EMCR.DRR.Managers.Intake
             var application = mapper.Map<Application>(cmd.Application);
             application.BCeIDBusinessId = cmd.UserInfo.BusinessId;
             application.ProponentName = cmd.UserInfo.BusinessName;
-            if (application.Submitter != null) application.Submitter.BCeId = cmd.UserInfo.UserId;
+            if (application.AuthorizedRepresentative != null) application.AuthorizedRepresentative.BCeId = cmd.UserInfo.UserId;
 
             //TODO - verify allowed to update application - i.e. it is not already submitted
 
@@ -337,7 +337,7 @@ namespace EMCR.DRR.Managers.Intake
             var application = mapper.Map<Application>(cmd.Application);
             application.BCeIDBusinessId = cmd.UserInfo.BusinessId;
             application.ProponentName = cmd.UserInfo.BusinessName;
-            if (application.Submitter != null) application.Submitter.BCeId = cmd.UserInfo.UserId;
+            if (application.AuthorizedRepresentative != null) application.AuthorizedRepresentative.BCeId = cmd.UserInfo.UserId;
             var id = (await applicationRepository.Manage(new SaveApplication { Application = application })).Id;
             await applicationRepository.Manage(new SubmitApplication { Id = id });
             return id;
@@ -497,7 +497,7 @@ namespace EMCR.DRR.Managers.Intake
             if (claim.HaveClaimExpenses == false && claim.Invoices != null && claim.Invoices.Any()) throw new BusinessValidationException("Cannot include any Invoices when skipping Claim");
             if (claim.Invoices != null && claim.Invoices.Any(i => string.IsNullOrEmpty(i.InvoiceNumber))) throw new BusinessValidationException("InvoiceNumber is required");
             if (claim.Invoices != null && claim.Invoices.Any(i => i.Date > now)) throw new BusinessValidationException("Invoice date cannot be in the future");
-            if (claim.Invoices != null && claim.Invoices.Any(i => i.Date > i.PaymentDate)) throw new BusinessValidationException("Payment date cannot be before invoice date");
+            if (claim.Invoices != null && claim.Invoices.Any(i => i.PaymentDate < i.Date)) throw new BusinessValidationException("Payment date cannot be before invoice date");
             if (claim.Invoices != null && claim.Invoices.Any(i => i.TaxRebate > i.GrossAmount)) throw new BusinessValidationException("Tax Rebate cannot be greater than Gross Amount");
             if (claim.Invoices != null && claim.Invoices.Any(i => i.ClaimAmount > i.GrossAmount)) throw new BusinessValidationException("Claim Amount cannot be greater than Gross Amount");
             if (claim.Invoices != null && claim.Invoices.Any(i => i.TotalPST > i.GrossAmount)) throw new BusinessValidationException("PST cannot be greater than Gross Amount");
