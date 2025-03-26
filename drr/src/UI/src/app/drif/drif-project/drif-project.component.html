@@ -295,13 +295,13 @@
           <ng-container matColumnDef="conditionMet">
             <th mat-header-cell *matHeaderCellDef>Condition Met?</th>
             <td mat-cell *matCellDef="let condition">
-              {{ condition.conditionMet }}
+              {{ condition.conditionMet ? "Yes" : "No" }}
             </td>
           </ng-container>
           <ng-container matColumnDef="dateMet">
             <th mat-header-cell *matHeaderCellDef>Date Met</th>
             <td mat-cell *matCellDef="let condition">
-              {{ condition.dateMet }}
+              {{ condition.dateMet | date: "yyyy-MM-dd" }}
             </td>
           </ng-container>
           <ng-container matColumnDef="actions">
