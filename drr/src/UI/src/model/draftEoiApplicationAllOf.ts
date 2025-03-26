@@ -6,13 +6,13 @@
  */
 import type { ContactDetails } from './contactDetails';
 import type { EstimatedNumberOfPeople } from './estimatedNumberOfPeople';
-import type { FundingStream } from './fundingStream';
-import type { InfrastructureImpacted } from './infrastructureImpacted';
 import type { FundingInformation } from './fundingInformation';
-import type { ProponentType } from './proponentType';
+import type { FundingStream } from './fundingStream';
 import type { Hazards } from './hazards';
-import type { SubmissionPortalStatus } from './submissionPortalStatus';
+import type { InfrastructureImpacted } from './infrastructureImpacted';
 import type { ProjectType } from './projectType';
+import type { ProponentType } from './proponentType';
+import type { SubmissionPortalStatus } from './submissionPortalStatus';
 
 export type DraftEoiApplicationAllOf = {
   /** @nullable */
@@ -101,5 +101,5 @@ export type DraftEoiApplicationAllOf = {
   /** @nullable */
   stream?: ProjectType;
   /** @nullable */
-  submitter?: ContactDetails;
+  authorizedRepresentative?: ContactDetails;
 };

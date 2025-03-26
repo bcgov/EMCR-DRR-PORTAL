@@ -34,7 +34,7 @@ export class DrifEoiSummaryComponent {
   private _eoiApplicationForm?: IFormGroup<EOIApplicationForm>;
 
   @Input()
-  showSubmitterInfo = true;
+  showAuthorizedRepresentative = true;
 
   @Input()
   set eoiApplicationForm(eoiApplicationForm: IFormGroup<EOIApplicationForm>) {
@@ -61,7 +61,7 @@ export class DrifEoiSummaryComponent {
     return Math.abs(
       this._eoiApplicationForm
         ?.get('fundingInformation')
-        ?.get('remainingAmount')?.value ?? 0
+        ?.get('remainingAmount')?.value ?? 0,
     );
   }
 
@@ -98,7 +98,7 @@ export class DrifEoiSummaryComponent {
   getRxGroupFormControl(
     groupName: string,
     nestedGroup: string,
-    controlName: string
+    controlName: string,
   ) {
     return this.getGroup(groupName)
       ?.get(nestedGroup)

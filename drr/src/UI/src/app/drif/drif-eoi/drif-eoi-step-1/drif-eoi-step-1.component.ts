@@ -11,7 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { IFormGroup, RxFormBuilder } from '@rxweb/reactive-form-validators';
-import { distinctUntilChanged, Subscription } from 'rxjs';
+import { distinctUntilChanged } from 'rxjs';
 import { ProponentType } from '../../../../model';
 import { DrrInputComponent } from '../../../shared/controls/drr-input/drr-input.component';
 import {
@@ -52,7 +52,6 @@ export class DrifEoiStep1Component {
   profileStore = inject(ProfileStore);
   translocoService = inject(TranslocoService);
 
-  submitterSub: Subscription | undefined;
   isMobile = false;
 
   proponentTypeOptions: DrrRadioOption[] = Object.values(ProponentType).map(

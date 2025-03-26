@@ -49,7 +49,7 @@ export class DrifFpStep12Component {
 
   get authorizedRepresentativeForm() {
     return this.declarationForm?.get(
-      'submitter',
+      'authorizedRepresentative',
     ) as IFormGroup<AuthorizedRepresentativeForm>;
   }
 
@@ -68,38 +68,48 @@ export class DrifFpStep12Component {
 
     const profileData = this.profileStore.getProfile();
 
-    const submitterForm = this.declarationForm.get('submitter');
+    const authorizedRepresentativeForm = this.declarationForm.get(
+      'authorizedRepresentative',
+    );
     if (profileData.firstName?.()) {
-      submitterForm
+      authorizedRepresentativeForm
         ?.get('firstName')
         ?.setValue(profileData.firstName(), { emitEvent: false });
-      submitterForm?.get('firstName')?.disable();
+      authorizedRepresentativeForm?.get('firstName')?.disable();
     }
     if (profileData.lastName?.()) {
-      submitterForm
+      authorizedRepresentativeForm
         ?.get('lastName')
         ?.setValue(profileData.lastName(), { emitEvent: false });
-      submitterForm?.get('lastName')?.disable();
+      authorizedRepresentativeForm?.get('lastName')?.disable();
     }
     if (profileData.title?.()) {
-      submitterForm?.get('title')?.setValue(profileData.title(), {
-        emitEvent: false,
-      });
+      authorizedRepresentativeForm
+        ?.get('title')
+        ?.setValue(profileData.title(), {
+          emitEvent: false,
+        });
     }
     if (profileData.department?.()) {
-      submitterForm?.get('department')?.setValue(profileData.department(), {
-        emitEvent: false,
-      });
+      authorizedRepresentativeForm
+        ?.get('department')
+        ?.setValue(profileData.department(), {
+          emitEvent: false,
+        });
     }
     if (profileData.phone?.()) {
-      submitterForm?.get('phone')?.setValue(profileData.phone(), {
-        emitEvent: false,
-      });
+      authorizedRepresentativeForm
+        ?.get('phone')
+        ?.setValue(profileData.phone(), {
+          emitEvent: false,
+        });
     }
     if (profileData.email?.()) {
-      submitterForm?.get('email')?.setValue(profileData.email(), {
-        emitEvent: false,
-      });
+      authorizedRepresentativeForm
+        ?.get('email')
+        ?.setValue(profileData.email(), {
+          emitEvent: false,
+        });
     }
   }
 }

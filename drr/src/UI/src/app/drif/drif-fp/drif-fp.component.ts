@@ -226,9 +226,11 @@ export class DrifFpComponent {
         next: (response: DraftFpApplication) => {
           const profileData = this.profileStore.getProfile();
 
-          const resetSubmitter =
-            profileData.firstName?.() != response.submitter?.firstName ||
-            profileData.lastName?.() != response.submitter?.lastName;
+          const resetAuthorizedRepresentative =
+            profileData.firstName?.() !=
+              response.authorizedRepresentative?.firstName ||
+            profileData.lastName?.() !=
+              response.authorizedRepresentative?.lastName;
 
           const formData: DrifFpForm = {
             eoiId: response.eoiId,
@@ -366,8 +368,8 @@ export class DrifFpComponent {
               haveResolution: response.haveResolution,
             },
             declaration: {
-              submitter: !resetSubmitter
-                ? response.submitter
+              authorizedRepresentative: !resetAuthorizedRepresentative
+                ? response.authorizedRepresentative
                 : {
                     firstName: profileData.firstName?.(),
                     lastName: profileData.lastName?.(),

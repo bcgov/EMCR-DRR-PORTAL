@@ -305,9 +305,8 @@ export class OtherSupportingInformationForm {
 export class DeclarationForm {
   @required()
   @propObject(ContactDetailsForm)
-  submitter?: AuthorizedRepresentativeForm = new AuthorizedRepresentativeForm(
-    {},
-  );
+  authorizedRepresentative?: AuthorizedRepresentativeForm =
+    new AuthorizedRepresentativeForm({});
 
   @prop()
   @required()

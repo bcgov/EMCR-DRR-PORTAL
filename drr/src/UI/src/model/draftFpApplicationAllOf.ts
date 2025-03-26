@@ -4,22 +4,22 @@
  * DRR API
  * OpenAPI spec version: 1.0.0
  */
-import type { ContactDetails } from './contactDetails';
+import type { AreaUnits } from './areaUnits';
 import type { Attachment } from './attachment';
-import type { CostEstimateClass } from './costEstimateClass';
+import type { ContactDetails } from './contactDetails';
 import type { CostEstimate } from './costEstimate';
+import type { CostEstimateClass } from './costEstimateClass';
 import type { EstimatedNumberOfPeopleFP } from './estimatedNumberOfPeopleFP';
-import type { YesNoOption } from './yesNoOption';
+import type { FundingInformation } from './fundingInformation';
 import type { FundingStream } from './fundingStream';
+import type { Hazards } from './hazards';
 import type { IncreasedOrTransferred } from './increasedOrTransferred';
 import type { InfrastructureImpacted } from './infrastructureImpacted';
-import type { FundingInformation } from './fundingInformation';
 import type { ProposedActivity } from './proposedActivity';
-import type { Hazards } from './hazards';
 import type { StandardInfo } from './standardInfo';
 import type { SubmissionPortalStatus } from './submissionPortalStatus';
-import type { AreaUnits } from './areaUnits';
 import type { YearOverYearFunding } from './yearOverYearFunding';
+import type { YesNoOption } from './yesNoOption';
 
 export type DraftFpApplicationAllOf = {
   additionalContacts?: ContactDetails[];
@@ -250,7 +250,7 @@ export type DraftFpApplicationAllOf = {
   /** @nullable */
   status?: SubmissionPortalStatus;
   /** @nullable */
-  submitter?: ContactDetails;
+  authorizedRepresentative?: ContactDetails;
   /**
    * @minimum -999999999.99
    * @maximum 999999999.99

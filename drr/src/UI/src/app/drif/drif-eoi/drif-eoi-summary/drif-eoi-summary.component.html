@@ -547,7 +547,7 @@
     </mat-card-content>
   </mat-card>
 
-  <mat-card *ngIf="showSubmitterInfo">
+  <mat-card *ngIf="showAuthorizedRepresentative">
     <mat-card-header>
       <mat-card-title>{{ t("steps.eoi.step8") }}</mat-card-title>
       <mat-card-subtitle>Step 8</mat-card-subtitle>
@@ -556,16 +556,21 @@
       <div
         [class.required]="
           !objectHasValues(
-            eoiApplicationForm.get('declaration.submitter')?.value
+            eoiApplicationForm.get('declaration.authorizedRepresentative')
+              ?.value
           )
         "
       >
-        <mat-label class="drr-label">{{ t("submitter") }}</mat-label>
+        <mat-label class="drr-label">{{
+          t("authorizedRepresentative")
+        }}</mat-label>
         <div class="summary-row">
           <drr-summary-item
             [label]="t('firstName')"
             [rxFormControl]="
-              eoiApplicationForm.get('declaration.submitter.firstName')
+              eoiApplicationForm.get(
+                'declaration.authorizedRepresentative.firstName'
+              )
             "
           >
           </drr-summary-item>
@@ -573,7 +578,9 @@
           <drr-summary-item
             [label]="t('lastName')"
             [rxFormControl]="
-              eoiApplicationForm.get('declaration.submitter.lastName')
+              eoiApplicationForm.get(
+                'declaration.authorizedRepresentative.lastName'
+              )
             "
           >
           </drr-summary-item>
@@ -581,7 +588,9 @@
           <drr-summary-item
             [label]="t('title')"
             [rxFormControl]="
-              eoiApplicationForm.get('declaration.submitter.title')
+              eoiApplicationForm.get(
+                'declaration.authorizedRepresentative.title'
+              )
             "
           >
           </drr-summary-item>
@@ -589,7 +598,9 @@
           <drr-summary-item
             [label]="t('department')"
             [rxFormControl]="
-              eoiApplicationForm.get('declaration.submitter.department')
+              eoiApplicationForm.get(
+                'declaration.authorizedRepresentative.department'
+              )
             "
           >
           </drr-summary-item>
@@ -597,7 +608,9 @@
           <drr-summary-item
             [label]="t('phone')"
             [rxFormControl]="
-              eoiApplicationForm.get('declaration.submitter.phone')
+              eoiApplicationForm.get(
+                'declaration.authorizedRepresentative.phone'
+              )
             "
             controlType="phone"
           >
@@ -606,7 +619,9 @@
           <drr-summary-item
             [label]="t('email')"
             [rxFormControl]="
-              eoiApplicationForm.get('declaration.submitter.email')
+              eoiApplicationForm.get(
+                'declaration.authorizedRepresentative.email'
+              )
             "
           >
           </drr-summary-item>
