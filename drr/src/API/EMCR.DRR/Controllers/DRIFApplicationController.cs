@@ -149,7 +149,7 @@ namespace EMCR.DRR.Controllers
 
         //Proponent Information - 1
         public ProponentType? ProponentType { get; set; }
-        public ContactDetails? Submitter { get; set; }
+        public ContactDetails? AuthorizedRepresentative { get; set; }
         [Mandatory(typeof(EoiApplication))]
         public ContactDetails? ProjectContact { get; set; }
         public override IEnumerable<ContactDetails> AdditionalContacts { get; set; }
@@ -232,7 +232,7 @@ namespace EMCR.DRR.Controllers
         public string? EoiId { get; set; }
         public string? Id { get; set; }
         public SubmissionPortalStatus? Status { get; set; }
-        public ContactDetails? Submitter { get; set; }
+        public ContactDetails? AuthorizedRepresentative { get; set; }
 
         //Proponent & Project Information - 1
         [Mandatory(typeof(FpApplication))]

@@ -112,7 +112,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
 
             //var fpToSubmit = mapper.Map<FpApplication>(FillInFullProposal(mapper.Map<DraftFpApplication>(fullProposal)));
             var fpToSubmit = mapper.Map<FpApplication>(TestHelper.FillInTestFpApplication(mapper.Map<DraftFpApplication>(fullProposal)));
-            fpToSubmit.Submitter = eoi.Submitter;
+            fpToSubmit.AuthorizedRepresentative = eoi.AuthorizedRepresentative;
             fpToSubmit.AuthorizedRepresentativeStatement = true;
             fpToSubmit.InformationAccuracyStatement = true;
 
@@ -263,7 +263,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var secondApplication = CreateNewTestEOIApplication();
             secondApplication.Status = SubmissionPortalStatus.UnderReview;
             secondApplication.ProjectTitle = "Second Submission";
-            secondApplication.Submitter = application.Submitter;
+            secondApplication.AuthorizedRepresentative = application.AuthorizedRepresentative;
             var secondId = await manager.Handle(new EoiSubmitApplicationCommand { Application = mapper.Map<EoiApplication>(secondApplication), UserInfo = GetTestUserInfo() });
             secondId.ShouldNotBeEmpty();
 
@@ -811,7 +811,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
 
                 //Proponent Information - 1
                 ProponentType = EMCR.DRR.Controllers.ProponentType.LocalGovernment,
-                Submitter = CreateNewTestContact(uniqueSignature, "submitter"),
+                AuthorizedRepresentative = CreateNewTestContact(uniqueSignature, "submitter"),
                 ProjectContact = CreateNewTestContact(uniqueSignature, "proj"),
                 AdditionalContacts = new[]
                 {
