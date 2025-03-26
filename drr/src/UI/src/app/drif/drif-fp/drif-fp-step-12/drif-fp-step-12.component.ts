@@ -7,7 +7,8 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { IFormGroup } from '@rxweb/reactive-form-validators';
 import { ApplicationType, DeclarationType, FormType } from '../../../../model';
-import { DrrInputComponent } from '../../../shared/controls/drr-input/drr-input.component';
+import { AuthorizedRepresentativeForm } from '../../../shared/drr-auth-rep/auth-rep-form';
+import { DrrAuthRepComponent } from '../../../shared/drr-auth-rep/drr-auth-rep.component';
 import { OptionsStore } from '../../../store/options.store';
 import { ProfileStore } from '../../../store/profile.store';
 import { DeclarationForm, DrifFpForm } from '../drif-fp-form';
@@ -24,7 +25,7 @@ import { DrifFpSummaryComponent } from '../drif-fp-summary/drif-fp-summary.compo
     TranslocoModule,
     MatInputModule,
     MatCheckboxModule,
-    DrrInputComponent,
+    DrrAuthRepComponent,
     DrifFpSummaryComponent,
   ],
   templateUrl: './drif-fp-step-12.component.html',
@@ -45,6 +46,12 @@ export class DrifFpStep12Component {
 
   authorizedRepresentativeText?: string;
   accuracyOfInformationText?: string;
+
+  get authorizedRepresentativeForm() {
+    return this.declarationForm?.get(
+      'submitter',
+    ) as IFormGroup<AuthorizedRepresentativeForm>;
+  }
 
   ngOnInit() {
     this.authorizedRepresentativeText = this.optionsStore.getDeclarations?.(

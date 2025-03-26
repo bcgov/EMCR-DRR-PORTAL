@@ -10,6 +10,8 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { IFormGroup } from '@rxweb/reactive-form-validators';
 import { ApplicationType, DeclarationType, FormType } from '../../../../model';
 import { DrrInputComponent } from '../../../shared/controls/drr-input/drr-input.component';
+import { AuthorizedRepresentativeForm } from '../../../shared/drr-auth-rep/auth-rep-form';
+import { DrrAuthRepComponent } from '../../../shared/drr-auth-rep/drr-auth-rep.component';
 import { OptionsStore } from '../../../store/options.store';
 import { ProfileStore } from '../../../store/profile.store';
 import { DeclarationForm, EOIApplicationForm } from '../drif-eoi-form';
@@ -30,6 +32,7 @@ import { DrifEoiSummaryComponent } from '../drif-eoi-summary/drif-eoi-summary.co
     DrifEoiSummaryComponent,
     TranslocoModule,
     DrrInputComponent,
+    DrrAuthRepComponent,
   ],
   templateUrl: './drif-eoi-step-8.component.html',
   styleUrl: './drif-eoi-step-8.component.scss',
@@ -44,9 +47,6 @@ export class DrifEoiStep8Component {
   @Input()
   set eoiApplicationForm(eoiApplicationForm: IFormGroup<EOIApplicationForm>) {
     this._formGroup = eoiApplicationForm;
-    this.declarationForm = eoiApplicationForm.get(
-      'declaration',
-    ) as IFormGroup<DeclarationForm>;
   }
 
   authorizedRepresentativeText?: string;
@@ -106,5 +106,15 @@ export class DrifEoiStep8Component {
     return this._formGroup;
   }
 
-  declarationForm!: IFormGroup<DeclarationForm>;
+  get declarationForm() {
+    return this.eoiApplicationForm.get(
+      'declaration',
+    ) as IFormGroup<DeclarationForm>;
+  }
+
+  get authorizedRepresentativeForm() {
+    return this.declarationForm?.get(
+      'submitter',
+    ) as IFormGroup<AuthorizedRepresentativeForm>;
+  }
 }

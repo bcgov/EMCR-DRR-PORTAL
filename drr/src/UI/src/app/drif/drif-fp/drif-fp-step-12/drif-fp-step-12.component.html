@@ -5,49 +5,11 @@
   >
   </drif-fp-summary>
 
-  <form [formGroup]="declarationForm">
-    <mat-label class="drr-label">{{ t("submitter") }}</mat-label>
-    <div class="contacts-container">
-      <drr-input
-        [id]="'submitter_firstName'"
-        [label]="t('firstName')"
-        [rxFormControl]="declarationForm.get('submitter.firstName')"
-        [maxlength]="40"
-      ></drr-input>
-      <drr-input
-        [id]="'submitter_lastName'"
-        [label]="t('lastName')"
-        [rxFormControl]="declarationForm.get('submitter.lastName')"
-        [maxlength]="40"
-      ></drr-input>
-      <drr-input
-        [id]="'submitter_title'"
-        [label]="t('title')"
-        [rxFormControl]="declarationForm.get('submitter.title')"
-        [maxlength]="100"
-      ></drr-input>
-      <drr-input
-        [id]="'submitter_department'"
-        [label]="t('department')"
-        [rxFormControl]="declarationForm.get('submitter.department')"
-        [maxlength]="40"
-      ></drr-input>
-      <drr-input
-        [id]="'submitter_phone'"
-        [label]="t('phone')"
-        [rxFormControl]="declarationForm.get('submitter.phone')"
-        [maxlength]="10"
-        [type]="'tel'"
-      ></drr-input>
-      <drr-input
-        [id]="'submitter_email'"
-        [label]="t('email')"
-        [rxFormControl]="declarationForm.get('submitter.email')"
-        [maxlength]="100"
-        [type]="'email'"
-      ></drr-input>
-    </div>
+  <drr-auth-rep
+    [authorizedRepresentativeForm]="authorizedRepresentativeForm"
+  ></drr-auth-rep>
 
+  <form [formGroup]="declarationForm">
     <mat-label class="drr-label">
       {{ t("authorizedRepresentativeStatement") }}
     </mat-label>

@@ -25,6 +25,7 @@ import {
   StandardInfo,
   YesNoOption,
 } from '../../../model';
+import { AuthorizedRepresentativeForm } from '../../shared/drr-auth-rep/auth-rep-form';
 import {
   ContactDetailsForm,
   FundingInformationItemForm,
@@ -681,7 +682,9 @@ export class AttachmentsForm {
 export class DeclarationForm {
   @required()
   @propObject(ContactDetailsForm)
-  submitter?: ContactDetailsForm = new ContactDetailsForm({});
+  submitter?: AuthorizedRepresentativeForm = new AuthorizedRepresentativeForm(
+    {},
+  );
 
   @prop()
   @required()

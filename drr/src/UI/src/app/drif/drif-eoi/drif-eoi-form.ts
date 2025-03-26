@@ -20,6 +20,7 @@ import {
   ProjectType,
   ProponentType,
 } from '../../../model';
+import { AuthorizedRepresentativeForm } from '../../shared/drr-auth-rep/auth-rep-form';
 
 export class FundingInformationItemForm implements FundingInformation {
   @prop()
@@ -304,7 +305,9 @@ export class OtherSupportingInformationForm {
 export class DeclarationForm {
   @required()
   @propObject(ContactDetailsForm)
-  submitter?: ContactDetailsForm = new ContactDetailsForm({});
+  submitter?: AuthorizedRepresentativeForm = new AuthorizedRepresentativeForm(
+    {},
+  );
 
   @prop()
   @required()
@@ -334,7 +337,7 @@ export class EOIApplicationForm {
 
   @propObject(LocationInformationForm)
   locationInformation?: LocationInformationForm = new LocationInformationForm(
-    {}
+    {},
   );
 
   @propObject(ProjectDetailsForm)
