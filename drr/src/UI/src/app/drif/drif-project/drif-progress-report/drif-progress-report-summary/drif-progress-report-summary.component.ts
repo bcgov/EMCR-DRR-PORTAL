@@ -135,12 +135,12 @@ export class DrifProgressReportSummaryComponent {
     ) as FormArray;
   }
 
-  getAttachmentsFormArray(): FormArray {
+  get attachmentsArray() {
     return this.progressReportForm.get('attachments') as FormArray;
   }
 
   hasAttachments(): boolean {
-    return this.getAttachmentsFormArray().length > 0;
+    return this.attachmentsArray.length > 0;
   }
 
   onDownloadFile(fileId: string) {

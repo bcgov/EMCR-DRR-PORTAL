@@ -79,6 +79,10 @@
       <mat-card-title> Attachments </mat-card-title>
     </mat-card-header>
     <mat-card-content>
+      @if (!hasAttachments()) {
+        <p>(Optional)</p>
+      }
+
       <div
         class="summary-row"
         *ngFor="let attachment of attachmentsArray.controls"
