@@ -43,7 +43,7 @@ export class DrifEoiViewComponent {
 
   id!: string;
   eoiApplicationForm = this.formBuilder.formGroup(
-    EOIApplicationForm
+    EOIApplicationForm,
   ) as IFormGroup<EOIApplicationForm>;
   fpId?: string;
   status?: SubmissionPortalStatus;
@@ -113,7 +113,7 @@ export class DrifEoiViewComponent {
             otherInformation: application.otherInformation,
           },
           declaration: {
-            submitter: application.submitter,
+            authorizedRepresentative: application.authorizedRepresentative,
           },
         };
 
@@ -127,48 +127,48 @@ export class DrifEoiViewComponent {
           ?.setValue(this.profileStore.organization(), { emitEvent: false });
 
         const additionalContactsArray = this.eoiApplicationForm.get(
-          'proponentInformation.additionalContacts'
+          'proponentInformation.additionalContacts',
         ) as FormArray;
         additionalContactsArray.clear({ emitEvent: false });
         application.additionalContacts?.forEach((contact) => {
           additionalContactsArray?.push(
             this.formBuilder.formGroup(new ContactDetailsForm(contact)),
-            { emitEvent: false }
+            { emitEvent: false },
           );
         });
 
         const partneringProponentsArray = this.eoiApplicationForm.get(
-          'proponentInformation.partneringProponentsArray'
+          'proponentInformation.partneringProponentsArray',
         ) as FormArray;
         partneringProponentsArray.clear({ emitEvent: false });
         application.partneringProponents?.forEach((proponent) => {
           partneringProponentsArray?.push(
             this.formBuilder.formGroup(new StringItem({ value: proponent })),
-            { emitEvent: false }
+            { emitEvent: false },
           );
         });
 
         const fundingInformationItemFormArray = this.eoiApplicationForm.get(
-          'fundingInformation.otherFunding'
+          'fundingInformation.otherFunding',
         ) as FormArray;
         fundingInformationItemFormArray.clear({ emitEvent: false });
         application.otherFunding?.forEach((funding) => {
           fundingInformationItemFormArray?.push(
             this.formBuilder.formGroup(new FundingInformationItemForm(funding)),
-            { emitEvent: false }
+            { emitEvent: false },
           );
         });
 
         const infrastructureImpacted = this.eoiApplicationForm.get(
-          'projectDetails.infrastructureImpacted'
+          'projectDetails.infrastructureImpacted',
         ) as FormArray;
         infrastructureImpacted.clear({ emitEvent: false });
         application.infrastructureImpacted?.forEach((infrastructure) => {
           infrastructureImpacted?.push(
             this.formBuilder.formGroup(
-              new InfrastructureImpactedForm(infrastructure)
+              new InfrastructureImpactedForm(infrastructure),
             ),
-            { emitEvent: false }
+            { emitEvent: false },
           );
         });
       });

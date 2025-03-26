@@ -170,9 +170,11 @@ export class EOIApplicationComponent {
         .subscribe((response) => {
           const profileData = this.profileStore.getProfile();
 
-          const resetSubmitter =
-            profileData.firstName?.() != response.submitter?.firstName ||
-            profileData.lastName?.() != response.submitter?.lastName;
+          const resetAuthorizedRepresentative =
+            profileData.firstName?.() !=
+              response.authorizedRepresentative?.firstName ||
+            profileData.lastName?.() !=
+              response.authorizedRepresentative?.lastName;
 
           // transform application into step forms
           const eoiApplicationForm: EOIApplicationForm = {
@@ -230,8 +232,8 @@ export class EOIApplicationComponent {
               otherInformation: response.otherInformation,
             },
             declaration: {
-              submitter: !resetSubmitter
-                ? response.submitter
+              authorizedRepresentative: !resetAuthorizedRepresentative
+                ? response.authorizedRepresentative
                 : {
                     firstName: profileData.firstName?.(),
                     lastName: profileData.lastName?.(),
@@ -427,7 +429,8 @@ export class EOIApplicationComponent {
       ...eoiApplicationForm.projectDetails,
       ...eoiApplicationForm.engagementPlan,
       ...eoiApplicationForm.otherSupportingInformation,
-      submitter: eoiApplicationForm.declaration?.submitter,
+      authorizedRepresentative:
+        eoiApplicationForm.declaration?.authorizedRepresentative,
     } as DraftEoiApplication;
 
     this.lastSavedAt = undefined;

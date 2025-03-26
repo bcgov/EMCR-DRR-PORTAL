@@ -3,7 +3,6 @@ import {
   propArray,
   propObject,
   required,
-  requiredTrue,
 } from '@rxweb/reactive-form-validators';
 import {
   Attachment,
@@ -11,7 +10,7 @@ import {
   DocumentType,
   Invoice,
 } from '../../../../model';
-import { ContactDetailsForm } from '../../drif-eoi/drif-eoi-form';
+import { DeclarationForm } from '../../../shared/drr-declaration/drr-declaration-form';
 import { AttachmentForm } from '../../drif-fp/drif-fp-form';
 
 export class InvoiceAttachmentForm implements Attachment {
@@ -111,26 +110,6 @@ export class ExpenditureForm {
   totalProjectAmount?: number;
 
   constructor(values: ExpenditureForm) {
-    Object.assign(this, values);
-  }
-}
-
-export class DeclarationForm {
-  @required()
-  @propObject(ContactDetailsForm)
-  authorizedRepresentative?: ContactDetailsForm = new ContactDetailsForm({});
-
-  @prop()
-  @required()
-  @requiredTrue()
-  authorizedRepresentativeStatement?: boolean;
-
-  @prop()
-  @required()
-  @requiredTrue()
-  informationAccuracyStatement?: boolean;
-
-  constructor(values: DeclarationForm) {
     Object.assign(this, values);
   }
 }

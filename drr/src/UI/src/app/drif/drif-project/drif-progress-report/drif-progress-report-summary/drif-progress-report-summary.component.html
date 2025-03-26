@@ -470,12 +470,16 @@
     </mat-card-header>
     <mat-card-content>
       <div>
-        <mat-label class="drr-label">{{ t("submitter") }}</mat-label>
+        <mat-label class="drr-label">{{
+          t("authorizedRepresentative")
+        }}</mat-label>
         <div class="summary-row">
           <drr-summary-item
             [label]="t('firstName')"
             [rxFormControl]="
-              progressReportForm.get('declaration.submitter.firstName')
+              progressReportForm.get(
+                'declaration.authorizedRepresentative.firstName'
+              )
             "
           >
           </drr-summary-item>
@@ -483,7 +487,9 @@
           <drr-summary-item
             [label]="t('lastName')"
             [rxFormControl]="
-              progressReportForm.get('declaration.submitter.lastName')
+              progressReportForm.get(
+                'declaration.authorizedRepresentative.lastName'
+              )
             "
           >
           </drr-summary-item>
@@ -491,7 +497,9 @@
           <drr-summary-item
             [label]="t('title')"
             [rxFormControl]="
-              progressReportForm.get('declaration.submitter.title')
+              progressReportForm.get(
+                'declaration.authorizedRepresentative.title'
+              )
             "
           >
           </drr-summary-item>
@@ -499,7 +507,9 @@
           <drr-summary-item
             [label]="t('department')"
             [rxFormControl]="
-              progressReportForm.get('declaration.submitter.department')
+              progressReportForm.get(
+                'declaration.authorizedRepresentative.department'
+              )
             "
           >
           </drr-summary-item>
@@ -507,7 +517,9 @@
           <drr-summary-item
             [label]="t('phone')"
             [rxFormControl]="
-              progressReportForm.get('declaration.submitter.phone')
+              progressReportForm.get(
+                'declaration.authorizedRepresentative.phone'
+              )
             "
             controlType="phone"
           >
@@ -516,7 +528,9 @@
           <drr-summary-item
             [label]="t('email')"
             [rxFormControl]="
-              progressReportForm.get('declaration.submitter.email')
+              progressReportForm.get(
+                'declaration.authorizedRepresentative.email'
+              )
             "
           >
           </drr-summary-item>

@@ -36,6 +36,8 @@ export type DraftFpApplicationAllOf = {
   /** @nullable */
   authorizationOrEndorsementComments?: string;
   /** @nullable */
+  authorizedRepresentative?: ContactDetails;
+  /** @nullable */
   capacityRiskComments?: string;
   /** @nullable */
   capacityRiskMitigated?: boolean;
@@ -249,8 +251,6 @@ export type DraftFpApplicationAllOf = {
   startDate?: string;
   /** @nullable */
   status?: SubmissionPortalStatus;
-  /** @nullable */
-  submitter?: ContactDetails;
   /**
    * @minimum -999999999.99
    * @maximum 999999999.99

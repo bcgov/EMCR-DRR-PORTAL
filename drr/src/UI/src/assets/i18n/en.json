@@ -89,8 +89,7 @@
   "partneringProponents": "Partnering Proponents (if applicable)",
   "partneringProponentsSummary": "Partnering Proponents",
   "addProponent": "Add additional partnering proponent",
-  "submitter": "Authorized Representative Contact Information",
-  "authorizedRepresentative": "Authorized Representative Contact Information",
+  "authorizedRepresentativeLabel": "Authorized Representative Contact Information",
   "additionalContact": "Additional Contact",
   "firstName": "First Name",
   "lastName": "Last Name",
@@ -641,7 +640,6 @@
     "attachments": "Attachments",
     "attachmentUploadText": "Upload any supporting attachments",
     "uploadAttachment": "Add Attachment",
-    "submitter": "Submitter",
     "authorizedRepresentativeStatement": "Authorized Representative Statement",
     "informationAccuracyStatement": "Information Accuracy Statement",
     "agree": "Agree",
@@ -737,12 +735,6 @@
     "email": "Email"
   },
   "forecast": {
-    "firstName": "First Name",
-    "lastName": "Last Name",
-    "title": "Title",
-    "department": "Department",
-    "phone": "Phone",
-    "email": "Email",
     "totalProjectedExpenditureLabel": "Total Projected Expenditures",
     "totalProjectedExpenditure": "Total",
     "originalForecast": "Original Forecast",
@@ -751,5 +743,13 @@
     "attachmentUploadText": "Upload any supporting attachments",
     "uploadAttachment": "Add Attachment",
     "attachments": "Attachments"
+  },
+  "authorizedRepresentative": {
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "title": "Title",
+    "department": "Department",
+    "phone": "Phone",
+    "email": "Email"
   }
 }

@@ -5,12 +5,12 @@ import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { IFormGroup, RxFormBuilder } from '@rxweb/reactive-form-validators';
+import { DeclarationForm } from '../../../../shared/drr-declaration/drr-declaration-form';
 import { FileService } from '../../../../shared/services/file.service';
 import { SummaryItemComponent } from '../../../summary-item/summary-item.component';
 import {
   BudgetForecastForm,
   ForecastAttachmentsForm,
-  ForecastDeclarationForm,
   ForecastForm,
 } from '../drif-forecast-form';
 
@@ -56,9 +56,7 @@ export class DrifForecastSummaryComponent {
   }
 
   get declarationForm() {
-    return this.forecastForm?.get(
-      'declaration',
-    ) as IFormGroup<ForecastDeclarationForm>;
+    return this.forecastForm?.get('declaration') as IFormGroup<DeclarationForm>;
   }
 
   onDownloadFile(fileId: string) {

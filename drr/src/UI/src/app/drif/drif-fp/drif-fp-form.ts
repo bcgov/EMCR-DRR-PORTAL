@@ -25,6 +25,7 @@ import {
   StandardInfo,
   YesNoOption,
 } from '../../../model';
+import { DeclarationForm } from '../../shared/drr-declaration/drr-declaration-form';
 import {
   ContactDetailsForm,
   FundingInformationItemForm,
@@ -674,26 +675,6 @@ export class AttachmentsForm {
   haveResolution?: boolean;
 
   constructor(values: AttachmentsForm) {
-    Object.assign(this, values);
-  }
-}
-
-export class DeclarationForm {
-  @required()
-  @propObject(ContactDetailsForm)
-  submitter?: ContactDetailsForm = new ContactDetailsForm({});
-
-  @prop()
-  @required()
-  @requiredTrue()
-  authorizedRepresentativeStatement?: boolean;
-
-  @prop()
-  @required()
-  @requiredTrue()
-  informationAccuracyStatement?: boolean;
-
-  constructor(values: DeclarationForm) {
     Object.assign(this, values);
   }
 }

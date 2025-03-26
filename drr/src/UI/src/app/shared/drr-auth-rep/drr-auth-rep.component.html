@@ -1,0 +1,39 @@
+<ng-container *transloco="let t; read: 'authorizedRepresentative'">
+  <mat-label class="drr-label">{{
+    "authorizedRepresentativeLabel" | transloco
+  }}</mat-label>
+  <div class="auth-rep-container">
+    <drr-input
+      [label]="t('firstName')"
+      [rxFormControl]="authorizedRepresentativeForm?.get('firstName')"
+      [maxlength]="40"
+    ></drr-input>
+    <drr-input
+      [label]="t('lastName')"
+      [rxFormControl]="authorizedRepresentativeForm?.get('lastName')"
+      [maxlength]="40"
+    ></drr-input>
+    <drr-input
+      [label]="t('title')"
+      [rxFormControl]="authorizedRepresentativeForm?.get('title')"
+      [maxlength]="100"
+    ></drr-input>
+    <drr-input
+      [label]="t('department')"
+      [rxFormControl]="authorizedRepresentativeForm?.get('department')"
+      [maxlength]="40"
+    ></drr-input>
+    <drr-input
+      [label]="t('phone')"
+      [rxFormControl]="authorizedRepresentativeForm?.get('phone')"
+      [maxlength]="10"
+      [type]="'tel'"
+    ></drr-input>
+    <drr-input
+      [label]="t('email')"
+      [rxFormControl]="authorizedRepresentativeForm?.get('email')"
+      [maxlength]="100"
+      [type]="'email'"
+    ></drr-input>
+  </div>
+</ng-container>

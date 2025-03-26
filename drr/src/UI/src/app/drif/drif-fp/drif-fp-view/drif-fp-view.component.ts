@@ -197,7 +197,7 @@ export class DrifFpViewComponent {
           haveResolution: response.haveResolution,
         },
         declaration: {
-          submitter: response.submitter,
+          authorizedRepresentative: response.authorizedRepresentative,
         },
       };
 

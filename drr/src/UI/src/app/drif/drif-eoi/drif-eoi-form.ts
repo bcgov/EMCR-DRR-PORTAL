@@ -7,7 +7,6 @@ import {
   propArray,
   propObject,
   required,
-  requiredTrue,
 } from '@rxweb/reactive-form-validators';
 import {
   ContactDetails,
@@ -20,6 +19,7 @@ import {
   ProjectType,
   ProponentType,
 } from '../../../model';
+import { DeclarationForm } from '../../shared/drr-declaration/drr-declaration-form';
 
 export class FundingInformationItemForm implements FundingInformation {
   @prop()
@@ -301,26 +301,6 @@ export class OtherSupportingInformationForm {
   }
 }
 
-export class DeclarationForm {
-  @required()
-  @propObject(ContactDetailsForm)
-  submitter?: ContactDetailsForm = new ContactDetailsForm({});
-
-  @prop()
-  @required()
-  @requiredTrue()
-  authorizedRepresentativeStatement?: boolean;
-
-  @prop()
-  @required()
-  @requiredTrue()
-  informationAccuracyStatement?: boolean;
-
-  constructor(values: DeclarationForm) {
-    Object.assign(this, values);
-  }
-}
-
 export class EOIApplicationForm {
   @propObject(ProponentInformationForm)
   proponentInformation?: ProponentInformationForm =
@@ -334,7 +314,7 @@ export class EOIApplicationForm {
 
   @propObject(LocationInformationForm)
   locationInformation?: LocationInformationForm = new LocationInformationForm(
-    {}
+    {},
   );
 
   @propObject(ProjectDetailsForm)
@@ -349,6 +329,4 @@ export class EOIApplicationForm {
 
   @propObject(DeclarationForm)
   declaration?: DeclarationForm = new DeclarationForm({});
-
-  // TODO: have a factory method to create a new instance of this form
 }

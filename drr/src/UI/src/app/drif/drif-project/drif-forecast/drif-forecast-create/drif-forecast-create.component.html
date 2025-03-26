@@ -206,105 +206,26 @@
         >
         </drif-forecast-summary>
 
-        <form
-          [formGroup]="declarationForm"
-          style="display: flex; flex-direction: column; gap: 1rem"
-        >
-          <mat-label class="drr-label">{{
-            "authorizedRepresentative" | transloco
-          }}</mat-label>
-          <div class="contacts-container">
-            <drr-input
-              [label]="t('firstName')"
-              [rxFormControl]="
-                declarationForm.get('authorizedRepresentative.firstName')
-              "
-              [maxlength]="40"
-            ></drr-input>
-            <drr-input
-              [label]="t('lastName')"
-              [rxFormControl]="
-                declarationForm.get('authorizedRepresentative.lastName')
-              "
-              [maxlength]="40"
-            ></drr-input>
-            <drr-input
-              [label]="t('title')"
-              [rxFormControl]="
-                declarationForm.get('authorizedRepresentative.title')
-              "
-              [maxlength]="100"
-            ></drr-input>
-            <drr-input
-              [label]="t('department')"
-              [rxFormControl]="
-                declarationForm.get('authorizedRepresentative.department')
-              "
-              [maxlength]="40"
-            ></drr-input>
-            <drr-input
-              [label]="t('phone')"
-              [rxFormControl]="
-                declarationForm.get('authorizedRepresentative.phone')
-              "
-              [maxlength]="10"
-              [type]="'tel'"
-            ></drr-input>
-            <drr-input
-              [label]="t('email')"
-              [rxFormControl]="
-                declarationForm.get('authorizedRepresentative.email')
-              "
-              [maxlength]="100"
-              [type]="'email'"
-            ></drr-input>
-          </div>
+        <drr-auth-rep
+          [authorizedRepresentativeForm]="authorizedRepresentativeForm"
+        ></drr-auth-rep>
 
-          <mat-label class="drr-label">
-            {{ "authorizedRepresentativeStatement" | transloco }}
-          </mat-label>
-          <div style="display: flex; flex-direction: column">
-            <mat-label> {{ authorizedRepresentativeText }} *</mat-label>
-            <mat-checkbox formControlName="authorizedRepresentativeStatement">
-              {{ "agree" | transloco }}
-            </mat-checkbox>
-            <mat-error
-              *ngIf="
-                declarationForm.get('authorizedRepresentativeStatement')
-                  ?.touched &&
-                declarationForm
-                  .get('authorizedRepresentativeStatement')
-                  ?.hasError('requiredTrue')
-              "
-              >{{ "required" | transloco }}</mat-error
-            >
-          </div>
-
-          <mat-label class="drr-label">{{
-            "informationAccuracyStatement" | transloco
-          }}</mat-label>
-          <div style="display: flex; flex-direction: column">
-            <mat-label> {{ accuracyOfInformationText }} *</mat-label>
-            <mat-checkbox formControlName="informationAccuracyStatement">
-              {{ "agree" | transloco }}
-            </mat-checkbox>
-            <mat-error
-              *ngIf="
-                declarationForm.get('informationAccuracyStatement')?.touched &&
-                declarationForm
-                  .get('informationAccuracyStatement')
-                  ?.hasError('requiredTrue')
-              "
-              >{{ "required" | transloco }}</mat-error
-            >
-          </div>
-        </form>
+        <drr-declaration
+          [declarationForm]="declarationForm"
+          [authorizedRepresentativeText]="authorizedRepresentativeText"
+          [accuracyOfInformationText]="accuracyOfInformationText"
+        ></drr-declaration>
       </div>
       <div class="drr-stepper-actions">
         <button mat-stroked-button color="primary" matStepperPrevious>
           {{ "back" | transloco }}
         </button>
-        <button mat-flat-button color="primary" matStepperNext type="button">
+        <button
+          mat-flat-button
+          color="primary"
+          (click)="submit()"
+          type="button"
+        >
           {{ "submit" | transloco }}
         </button>
       </div>

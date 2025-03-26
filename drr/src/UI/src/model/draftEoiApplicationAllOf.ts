@@ -25,6 +25,8 @@ export type DraftEoiApplicationAllOf = {
   /** @nullable */
   addressRisksAndHazards?: string;
   /** @nullable */
+  authorizedRepresentative?: ContactDetails;
+  /** @nullable */
   climateAdaptation?: string;
   /** @nullable */
   communityImpact?: string;
@@ -100,6 +102,4 @@ export type DraftEoiApplicationAllOf = {
   status?: SubmissionPortalStatus;
   /** @nullable */
   stream?: ProjectType;
-  /** @nullable */
-  submitter?: ContactDetails;
 };

@@ -3,10 +3,9 @@ import {
   propArray,
   propObject,
   required,
-  requiredTrue,
 } from '@rxweb/reactive-form-validators';
 import { ForecastItem } from '../../../../model';
-import { ContactDetailsForm } from '../../drif-eoi/drif-eoi-form';
+import { DeclarationForm } from '../../../shared/drr-declaration/drr-declaration-form';
 import { AttachmentForm } from '../../drif-fp/drif-fp-form';
 
 export class YearForecastForm implements ForecastItem {
@@ -74,26 +73,6 @@ export class ForecastAttachmentsForm {
   }
 }
 
-export class ForecastDeclarationForm {
-  @required()
-  @propObject(ContactDetailsForm)
-  authorizedRepresentative?: ContactDetailsForm = new ContactDetailsForm({});
-
-  @prop()
-  @required()
-  @requiredTrue()
-  authorizedRepresentativeStatement?: boolean;
-
-  @prop()
-  @required()
-  @requiredTrue()
-  informationAccuracyStatement?: boolean;
-
-  constructor(values: ForecastDeclarationForm) {
-    Object.assign(this, values);
-  }
-}
-
 export class ForecastForm {
   @propObject(BudgetForecastForm)
   budgetForecast = new BudgetForecastForm({});
@@ -101,8 +80,8 @@ export class ForecastForm {
   @propObject(ForecastAttachmentsForm)
   attachments = new ForecastAttachmentsForm({});
 
-  @propObject(ForecastDeclarationForm)
-  declaration = new ForecastDeclarationForm({});
+  @propObject(DeclarationForm)
+  declaration = new DeclarationForm({});
 
   constructor(data: ForecastForm) {
     Object.assign(this, data);

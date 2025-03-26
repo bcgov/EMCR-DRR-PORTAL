@@ -1556,15 +1556,21 @@
     <mat-card-content>
       <div
         [class.required]="
-          !objectHasValues(fullProposalForm.get('declaration.submitter')?.value)
+          !objectHasValues(
+            fullProposalForm.get('declaration.authorizedRepresentative')?.value
+          )
         "
       >
-        <mat-label class="drr-label">{{ t("submitter") }}</mat-label>
+        <mat-label class="drr-label">{{
+          t("authorizedRepresentative")
+        }}</mat-label>
         <div class="summary-row">
           <drr-summary-item
             [label]="t('firstName')"
             [rxFormControl]="
-              fullProposalForm.get('declaration.submitter.firstName')
+              fullProposalForm.get(
+                'declaration.authorizedRepresentative.firstName'
+              )
             "
           >
           </drr-summary-item>
@@ -1572,7 +1578,9 @@
           <drr-summary-item
             [label]="t('lastName')"
             [rxFormControl]="
-              fullProposalForm.get('declaration.submitter.lastName')
+              fullProposalForm.get(
+                'declaration.authorizedRepresentative.lastName'
+              )
             "
           >
           </drr-summary-item>
@@ -1580,7 +1588,7 @@
           <drr-summary-item
             [label]="t('title')"
             [rxFormControl]="
-              fullProposalForm.get('declaration.submitter.title')
+              fullProposalForm.get('declaration.authorizedRepresentative.title')
             "
           >
           </drr-summary-item>
@@ -1588,7 +1596,9 @@
           <drr-summary-item
             [label]="t('department')"
             [rxFormControl]="
-              fullProposalForm.get('declaration.submitter.department')
+              fullProposalForm.get(
+                'declaration.authorizedRepresentative.department'
+              )
             "
           >
           </drr-summary-item>
@@ -1596,7 +1606,7 @@
           <drr-summary-item
             [label]="t('phone')"
             [rxFormControl]="
-              fullProposalForm.get('declaration.submitter.phone')
+              fullProposalForm.get('declaration.authorizedRepresentative.phone')
             "
             controlType="phone"
           >
@@ -1605,7 +1615,7 @@
           <drr-summary-item
             [label]="t('email')"
             [rxFormControl]="
-              fullProposalForm.get('declaration.submitter.email')
+              fullProposalForm.get('declaration.authorizedRepresentative.email')
             "
           >
           </drr-summary-item>
