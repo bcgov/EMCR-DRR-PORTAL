@@ -1,1 +1,42 @@
-<p>drr-declaration works!</p>
+<form
+  [formGroup]="declarationForm!"
+  style="display: flex; flex-direction: column; gap: 1rem"
+>
+  <mat-label class="drr-label">
+    {{ "authorizedRepresentativeStatement" | transloco }}
+  </mat-label>
+  <div style="display: flex; flex-direction: column">
+    <mat-label> {{ authorizedRepresentativeText }} *</mat-label>
+    <mat-checkbox formControlName="authorizedRepresentativeStatement">
+      {{ "agree" | transloco }}
+    </mat-checkbox>
+    <mat-error
+      *ngIf="
+        declarationForm?.get('authorizedRepresentativeStatement')?.touched &&
+        declarationForm
+          ?.get('authorizedRepresentativeStatement')
+          ?.hasError('requiredTrue')
+      "
+      >{{ "required" | transloco }}</mat-error
+    >
+  </div>
+
+  <mat-label class="drr-label">{{
+    "informationAccuracyStatement" | transloco
+  }}</mat-label>
+  <div style="display: flex; flex-direction: column">
+    <mat-label> {{ accuracyOfInformationText }} *</mat-label>
+    <mat-checkbox formControlName="informationAccuracyStatement">
+      {{ "agree" | transloco }}
+    </mat-checkbox>
+    <mat-error
+      *ngIf="
+        declarationForm?.get('informationAccuracyStatement')?.touched &&
+        declarationForm
+          ?.get('informationAccuracyStatement')
+          ?.hasError('requiredTrue')
+      "
+      >{{ "required" | transloco }}</mat-error
+    >
+  </div>
+</form>

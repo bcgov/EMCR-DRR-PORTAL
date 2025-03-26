@@ -57,6 +57,7 @@ import {
   ForecastForm,
 } from '../drif-forecast-form';
 import { DrifForecastSummaryComponent } from '../drif-forecast-summary/drif-forecast-summary.component';
+import { DrrDeclarationComponent } from '../../../../shared/drr-declaration/drr-declaration.component';
 
 @UntilDestroy({ checkProperties: true })
 @Component({
@@ -78,13 +79,13 @@ import { DrifForecastSummaryComponent } from '../drif-forecast-summary/drif-fore
     MatTableModule,
     MatDividerModule,
     RouterModule,
-    DrrInputComponent,
     DrrTextareaComponent,
     DrrCurrencyInputComponent,
     DrrAttahcmentComponent,
     DrrFileUploadComponent,
     DrifForecastSummaryComponent,
     DrrAuthRepComponent,
+    DrrDeclarationComponent
   ],
   templateUrl: './drif-forecast-create.component.html',
   styleUrl: './drif-forecast-create.component.scss',

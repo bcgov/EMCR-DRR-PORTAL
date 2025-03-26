@@ -10,6 +10,7 @@ import { ApplicationType, DeclarationType, FormType } from '../../../../model';
 import { AuthorizedRepresentativeForm } from '../../../shared/drr-auth-rep/auth-rep-form';
 import { DrrAuthRepComponent } from '../../../shared/drr-auth-rep/drr-auth-rep.component';
 import { DeclarationForm } from '../../../shared/drr-declaration/drr-declaration-form';
+import { DrrDeclarationComponent } from '../../../shared/drr-declaration/drr-declaration.component';
 import { OptionsStore } from '../../../store/options.store';
 import { ProfileStore } from '../../../store/profile.store';
 import { DrifFpForm } from '../drif-fp-form';
@@ -28,6 +29,7 @@ import { DrifFpSummaryComponent } from '../drif-fp-summary/drif-fp-summary.compo
     MatCheckboxModule,
     DrrAuthRepComponent,
     DrifFpSummaryComponent,
+    DrrDeclarationComponent,
   ],
   templateUrl: './drif-fp-step-12.component.html',
   styleUrl: './drif-fp-step-12.component.scss',

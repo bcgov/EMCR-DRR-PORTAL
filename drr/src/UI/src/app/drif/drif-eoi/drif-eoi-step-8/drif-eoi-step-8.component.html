@@ -8,45 +8,9 @@
     [authorizedRepresentativeForm]="authorizedRepresentativeForm"
   ></drr-auth-rep>
 
-  <form [formGroup]="declarationForm">
-    <mat-label class="drr-label">
-      {{ t("authorizedRepresentativeStatement") }}
-    </mat-label>
-    <mat-label> {{ authorizedRepresentativeText }} *</mat-label>
-    <mat-checkbox
-      id="authorizedRepresentativeStatement"
-      formControlName="authorizedRepresentativeStatement"
-    >
-      {{ t("agree") }}
-    </mat-checkbox>
-    <mat-error
-      *ngIf="
-        declarationForm.get('authorizedRepresentativeStatement')?.touched &&
-        declarationForm
-          .get('authorizedRepresentativeStatement')
-          ?.hasError('requiredTrue')
-      "
-      >{{ t("required") }}</mat-error
-    >
-
-    <mat-label class="drr-label">{{
-      t("informationAccuracyStatement")
-    }}</mat-label>
-    <mat-label> {{ accuracyOfInformationText }} *</mat-label>
-    <mat-checkbox
-      id="informationAccuracyStatement"
-      formControlName="informationAccuracyStatement"
-    >
-      {{ t("agree") }}
-    </mat-checkbox>
-    <mat-error
-      *ngIf="
-        declarationForm.get('informationAccuracyStatement')?.touched &&
-        declarationForm
-          .get('informationAccuracyStatement')
-          ?.hasError('requiredTrue')
-      "
-      >{{ t("required") }}</mat-error
-    >
-  </form>
+  <drr-declaration
+    [declarationForm]="declarationForm"
+    [authorizedRepresentativeText]="authorizedRepresentativeText"
+    [accuracyOfInformationText]="accuracyOfInformationText"
+  ></drr-declaration>
 </div>

@@ -65,6 +65,7 @@ import { DrrTextareaComponent } from '../../../../shared/controls/drr-textarea/d
 import { AuthorizedRepresentativeForm } from '../../../../shared/drr-auth-rep/auth-rep-form';
 import { DrrAuthRepComponent } from '../../../../shared/drr-auth-rep/drr-auth-rep.component';
 import { DeclarationForm } from '../../../../shared/drr-declaration/drr-declaration-form';
+import { DrrDeclarationComponent } from '../../../../shared/drr-declaration/drr-declaration.component';
 import { FileService } from '../../../../shared/services/file.service';
 import { OptionsStore } from '../../../../store/options.store';
 import { ProfileStore } from '../../../../store/profile.store';
@@ -110,6 +111,7 @@ import { DrifProgressReportSummaryComponent } from '../drif-progress-report-summ
     DrrFileUploadComponent,
     DrifProgressReportSummaryComponent,
     DrrAuthRepComponent,
+    DrrDeclarationComponent,
   ],
   templateUrl: './drif-progress-report-create.component.html',
   styleUrl: './drif-progress-report-create.component.scss',
@@ -1118,14 +1120,14 @@ export class DrifProgressReportCreateComponent {
       });
   }
 
-  get delcarationForm() {
+  get declarationForm() {
     return this.progressReportForm.get(
       'declaration',
     ) as IFormGroup<DeclarationForm>;
   }
 
   get authorizedRepresentativeForm() {
-    return this.delcarationForm.get(
+    return this.declarationForm.get(
       'authorizedRepresentative',
     ) as IFormGroup<AuthorizedRepresentativeForm>;
   }

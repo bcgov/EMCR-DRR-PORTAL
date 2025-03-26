@@ -9,7 +9,6 @@ import {
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -59,6 +58,7 @@ import { DrrAlertComponent } from '../../../../shared/drr-alert/drr-alert.compon
 import { AuthorizedRepresentativeForm } from '../../../../shared/drr-auth-rep/auth-rep-form';
 import { DrrAuthRepComponent } from '../../../../shared/drr-auth-rep/drr-auth-rep.component';
 import { DeclarationForm } from '../../../../shared/drr-declaration/drr-declaration-form';
+import { DrrDeclarationComponent } from '../../../../shared/drr-declaration/drr-declaration.component';
 import { FileService } from '../../../../shared/services/file.service';
 import { OptionsStore } from '../../../../store/options.store';
 import { ProfileStore } from '../../../../store/profile.store';
@@ -90,7 +90,6 @@ export class ClaimSummaryItem implements PreviousClaim {
     MatIconModule,
     MatButtonModule,
     MatInputModule,
-    MatCheckboxModule,
     MatCardModule,
     MatTableModule,
     MatDividerModule,
@@ -106,6 +105,7 @@ export class ClaimSummaryItem implements PreviousClaim {
     DrifClaimSummaryComponent,
     DrrAlertComponent,
     DrrAuthRepComponent,
+    DrrDeclarationComponent,
   ],
   templateUrl: './drif-claim-create.component.html',
   styleUrl: './drif-claim-create.component.scss',
@@ -858,12 +858,12 @@ export class DrifClaimCreateComponent {
       ?.setValue(currentClaimTotal + this.previousClaimTotal);
   }
 
-  get delcarationForm() {
+  get declarationForm() {
     return this.claimForm?.get('declaration') as IFormGroup<DeclarationForm>;
   }
 
   get authorizedRepresentativeForm() {
-    return this.delcarationForm?.get(
+    return this.declarationForm?.get(
       'authorizedRepresentative',
     ) as IFormGroup<AuthorizedRepresentativeForm>;
   }

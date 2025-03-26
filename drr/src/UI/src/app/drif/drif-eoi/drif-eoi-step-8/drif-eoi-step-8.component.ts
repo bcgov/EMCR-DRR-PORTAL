@@ -9,10 +9,10 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { IFormGroup } from '@rxweb/reactive-form-validators';
 import { ApplicationType, DeclarationType, FormType } from '../../../../model';
-import { DrrInputComponent } from '../../../shared/controls/drr-input/drr-input.component';
 import { AuthorizedRepresentativeForm } from '../../../shared/drr-auth-rep/auth-rep-form';
 import { DrrAuthRepComponent } from '../../../shared/drr-auth-rep/drr-auth-rep.component';
 import { DeclarationForm } from '../../../shared/drr-declaration/drr-declaration-form';
+import { DrrDeclarationComponent } from '../../../shared/drr-declaration/drr-declaration.component';
 import { OptionsStore } from '../../../store/options.store';
 import { ProfileStore } from '../../../store/profile.store';
 import { EOIApplicationForm } from '../drif-eoi-form';
@@ -32,8 +32,8 @@ import { DrifEoiSummaryComponent } from '../drif-eoi-summary/drif-eoi-summary.co
     MatCheckboxModule,
     DrifEoiSummaryComponent,
     TranslocoModule,
-    DrrInputComponent,
     DrrAuthRepComponent,
+    DrrDeclarationComponent,
   ],
   templateUrl: './drif-eoi-step-8.component.html',
   styleUrl: './drif-eoi-step-8.component.scss',

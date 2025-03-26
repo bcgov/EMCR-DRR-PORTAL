@@ -569,50 +569,11 @@
           [authorizedRepresentativeForm]="authorizedRepresentativeForm"
         ></drr-auth-rep>
 
-        <form
-          [formGroup]="delcarationForm"
-          style="display: flex; flex-direction: column; gap: 1rem"
-        >
-          <mat-label class="drr-label">
-            {{ "authorizedRepresentativeStatement" | transloco }}
-          </mat-label>
-          <div style="display: flex; flex-direction: column">
-            <mat-label> {{ authorizedRepresentativeText }} *</mat-label>
-            <mat-checkbox formControlName="authorizedRepresentativeStatement">
-              {{ "agree" | transloco }}
-            </mat-checkbox>
-            <mat-error
-              *ngIf="
-                claimForm?.get('declaration.authorizedRepresentativeStatement')
-                  ?.touched &&
-                claimForm
-                  ?.get('declaration.authorizedRepresentativeStatement')
-                  ?.hasError('requiredTrue')
-              "
-              >{{ "required" | transloco }}</mat-error
-            >
-          </div>
-
-          <mat-label class="drr-label">{{
-            "informationAccuracyStatement" | transloco
-          }}</mat-label>
-          <div style="display: flex; flex-direction: column">
-            <mat-label> {{ accuracyOfInformationText }} *</mat-label>
-            <mat-checkbox formControlName="informationAccuracyStatement">
-              {{ "agree" | transloco }}
-            </mat-checkbox>
-            <mat-error
-              *ngIf="
-                claimForm?.get('declaration.informationAccuracyStatement')
-                  ?.touched &&
-                claimForm
-                  ?.get('declaration.informationAccuracyStatement')
-                  ?.hasError('requiredTrue')
-              "
-              >{{ "required" | transloco }}</mat-error
-            >
-          </div>
-        </form>
+        <drr-declaration
+          [declarationForm]="declarationForm"
+          [authorizedRepresentativeText]="authorizedRepresentativeText"
+          [accuracyOfInformationText]="accuracyOfInformationText"
+        ></drr-declaration>
       </div>
       <div class="drr-stepper-actions">
         <button mat-stroked-button color="primary" matStepperPrevious>
