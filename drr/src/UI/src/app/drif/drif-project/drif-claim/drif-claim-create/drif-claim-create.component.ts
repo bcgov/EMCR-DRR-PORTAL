@@ -58,12 +58,12 @@ import { DrrTextareaComponent } from '../../../../shared/controls/drr-textarea/d
 import { DrrAlertComponent } from '../../../../shared/drr-alert/drr-alert.component';
 import { AuthorizedRepresentativeForm } from '../../../../shared/drr-auth-rep/auth-rep-form';
 import { DrrAuthRepComponent } from '../../../../shared/drr-auth-rep/drr-auth-rep.component';
+import { DeclarationForm } from '../../../../shared/drr-declaration/drr-declaration-form';
 import { FileService } from '../../../../shared/services/file.service';
 import { OptionsStore } from '../../../../store/options.store';
 import { ProfileStore } from '../../../../store/profile.store';
 import {
   ClaimForm,
-  DeclarationForm,
   InvoiceAttachmentForm,
   InvoiceForm,
 } from '../drif-claim-form';

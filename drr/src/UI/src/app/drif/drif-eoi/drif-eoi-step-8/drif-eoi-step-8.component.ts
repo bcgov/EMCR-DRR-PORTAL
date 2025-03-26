@@ -12,9 +12,10 @@ import { ApplicationType, DeclarationType, FormType } from '../../../../model';
 import { DrrInputComponent } from '../../../shared/controls/drr-input/drr-input.component';
 import { AuthorizedRepresentativeForm } from '../../../shared/drr-auth-rep/auth-rep-form';
 import { DrrAuthRepComponent } from '../../../shared/drr-auth-rep/drr-auth-rep.component';
+import { DeclarationForm } from '../../../shared/drr-declaration/drr-declaration-form';
 import { OptionsStore } from '../../../store/options.store';
 import { ProfileStore } from '../../../store/profile.store';
-import { DeclarationForm, EOIApplicationForm } from '../drif-eoi-form';
+import { EOIApplicationForm } from '../drif-eoi-form';
 import { DrifEoiSummaryComponent } from '../drif-eoi-summary/drif-eoi-summary.component';
 
 @UntilDestroy({ checkProperties: true })

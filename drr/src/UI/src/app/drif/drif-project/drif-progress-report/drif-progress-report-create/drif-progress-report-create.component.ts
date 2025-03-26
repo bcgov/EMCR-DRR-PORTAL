@@ -64,13 +64,13 @@ import {
 import { DrrTextareaComponent } from '../../../../shared/controls/drr-textarea/drr-textarea.component';
 import { AuthorizedRepresentativeForm } from '../../../../shared/drr-auth-rep/auth-rep-form';
 import { DrrAuthRepComponent } from '../../../../shared/drr-auth-rep/drr-auth-rep.component';
+import { DeclarationForm } from '../../../../shared/drr-declaration/drr-declaration-form';
 import { FileService } from '../../../../shared/services/file.service';
 import { OptionsStore } from '../../../../store/options.store';
 import { ProfileStore } from '../../../../store/profile.store';
 import { AttachmentForm } from '../../../drif-fp/drif-fp-form';
 import { DrrAttahcmentComponent } from '../../../drif-fp/drif-fp-step-11/drif-fp-attachment.component';
 import {
-  DeclarationForm,
   EventInformationForm,
   EventProgressType,
   FundingSignageForm,

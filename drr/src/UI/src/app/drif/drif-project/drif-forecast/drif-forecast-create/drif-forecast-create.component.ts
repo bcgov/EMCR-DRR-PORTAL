@@ -45,6 +45,7 @@ import { DrrInputComponent } from '../../../../shared/controls/drr-input/drr-inp
 import { DrrTextareaComponent } from '../../../../shared/controls/drr-textarea/drr-textarea.component';
 import { AuthorizedRepresentativeForm } from '../../../../shared/drr-auth-rep/auth-rep-form';
 import { DrrAuthRepComponent } from '../../../../shared/drr-auth-rep/drr-auth-rep.component';
+import { DeclarationForm } from '../../../../shared/drr-declaration/drr-declaration-form';
 import { FileService } from '../../../../shared/services/file.service';
 import { OptionsStore } from '../../../../store/options.store';
 import { ProfileStore } from '../../../../store/profile.store';
@@ -53,7 +54,6 @@ import { DrrAttahcmentComponent } from '../../../drif-fp/drif-fp-step-11/drif-fp
 import {
   BudgetForecastForm,
   ForecastAttachmentsForm,
-  ForecastDeclarationForm,
   ForecastForm,
 } from '../drif-forecast-form';
 import { DrifForecastSummaryComponent } from '../drif-forecast-summary/drif-forecast-summary.component';
@@ -164,9 +164,7 @@ export class DrifForecastCreateComponent {
   }
 
   get declarationForm() {
-    return this.forecastForm?.get(
-      'declaration',
-    ) as IFormGroup<ForecastDeclarationForm>;
+    return this.forecastForm?.get('declaration') as IFormGroup<DeclarationForm>;
   }
 
   get authorizedRepresentativeForm() {

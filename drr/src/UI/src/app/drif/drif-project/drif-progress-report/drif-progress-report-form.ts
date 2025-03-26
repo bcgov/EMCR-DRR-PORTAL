@@ -5,7 +5,6 @@ import {
   propArray,
   propObject,
   required,
-  requiredTrue,
 } from '@rxweb/reactive-form-validators';
 import {
   ActivityType,
@@ -22,7 +21,7 @@ import {
   WorkplanActivity,
   WorkplanStatus,
 } from '../../../../model';
-import { AuthorizedRepresentativeForm } from '../../../shared/drr-auth-rep/auth-rep-form';
+import { DeclarationForm } from '../../../shared/drr-declaration/drr-declaration-form';
 import { ContactDetailsForm } from '../../drif-eoi/drif-eoi-form';
 import { AttachmentForm } from '../../drif-fp/drif-fp-form';
 
@@ -250,27 +249,6 @@ export class EventInformationForm implements EventInformation {
   upcomingEvents?: ProjectEventForm[] = [];
 
   constructor(values: EventInformationForm) {
-    Object.assign(this, values);
-  }
-}
-
-export class DeclarationForm {
-  @required()
-  @propObject(ContactDetailsForm)
-  authorizedRepresentative?: AuthorizedRepresentativeForm =
-    new AuthorizedRepresentativeForm({});
-
-  @prop()
-  @required()
-  @requiredTrue()
-  authorizedRepresentativeStatement?: boolean;
-
-  @prop()
-  @required()
-  @requiredTrue()
-  informationAccuracyStatement?: boolean;
-
-  constructor(values: DeclarationForm) {
     Object.assign(this, values);
   }
 }

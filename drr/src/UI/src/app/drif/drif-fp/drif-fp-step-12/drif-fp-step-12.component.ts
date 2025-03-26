@@ -9,9 +9,10 @@ import { IFormGroup } from '@rxweb/reactive-form-validators';
 import { ApplicationType, DeclarationType, FormType } from '../../../../model';
 import { AuthorizedRepresentativeForm } from '../../../shared/drr-auth-rep/auth-rep-form';
 import { DrrAuthRepComponent } from '../../../shared/drr-auth-rep/drr-auth-rep.component';
+import { DeclarationForm } from '../../../shared/drr-declaration/drr-declaration-form';
 import { OptionsStore } from '../../../store/options.store';
 import { ProfileStore } from '../../../store/profile.store';
-import { DeclarationForm, DrifFpForm } from '../drif-fp-form';
+import { DrifFpForm } from '../drif-fp-form';
 import { DrifFpSummaryComponent } from '../drif-fp-summary/drif-fp-summary.component';
 
 @UntilDestroy({ checkProperties: true })

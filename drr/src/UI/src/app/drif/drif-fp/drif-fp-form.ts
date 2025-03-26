@@ -25,7 +25,7 @@ import {
   StandardInfo,
   YesNoOption,
 } from '../../../model';
-import { AuthorizedRepresentativeForm } from '../../shared/drr-auth-rep/auth-rep-form';
+import { DeclarationForm } from '../../shared/drr-declaration/drr-declaration-form';
 import {
   ContactDetailsForm,
   FundingInformationItemForm,
@@ -675,27 +675,6 @@ export class AttachmentsForm {
   haveResolution?: boolean;
 
   constructor(values: AttachmentsForm) {
-    Object.assign(this, values);
-  }
-}
-
-export class DeclarationForm {
-  @required()
-  @propObject(ContactDetailsForm)
-  authorizedRepresentative?: AuthorizedRepresentativeForm =
-    new AuthorizedRepresentativeForm({});
-
-  @prop()
-  @required()
-  @requiredTrue()
-  authorizedRepresentativeStatement?: boolean;
-
-  @prop()
-  @required()
-  @requiredTrue()
-  informationAccuracyStatement?: boolean;
-
-  constructor(values: DeclarationForm) {
     Object.assign(this, values);
   }
 }

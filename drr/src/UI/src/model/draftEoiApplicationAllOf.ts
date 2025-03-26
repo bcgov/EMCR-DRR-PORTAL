@@ -6,13 +6,13 @@
  */
 import type { ContactDetails } from './contactDetails';
 import type { EstimatedNumberOfPeople } from './estimatedNumberOfPeople';
-import type { FundingInformation } from './fundingInformation';
 import type { FundingStream } from './fundingStream';
-import type { Hazards } from './hazards';
 import type { InfrastructureImpacted } from './infrastructureImpacted';
-import type { ProjectType } from './projectType';
+import type { FundingInformation } from './fundingInformation';
 import type { ProponentType } from './proponentType';
+import type { Hazards } from './hazards';
 import type { SubmissionPortalStatus } from './submissionPortalStatus';
+import type { ProjectType } from './projectType';
 
 export type DraftEoiApplicationAllOf = {
   /** @nullable */
@@ -24,6 +24,8 @@ export type DraftEoiApplicationAllOf = {
   additionalSolutionInformation?: string;
   /** @nullable */
   addressRisksAndHazards?: string;
+  /** @nullable */
+  authorizedRepresentative?: ContactDetails;
   /** @nullable */
   climateAdaptation?: string;
   /** @nullable */
@@ -100,6 +102,4 @@ export type DraftEoiApplicationAllOf = {
   status?: SubmissionPortalStatus;
   /** @nullable */
   stream?: ProjectType;
-  /** @nullable */
-  authorizedRepresentative?: ContactDetails;
 };
