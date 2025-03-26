@@ -386,7 +386,7 @@ namespace EMCR.DRR.Managers.Intake
         //Proponent Information - 1
         public ProponentType? ProponentType { get; set; }
         public string? ProponentName { get; set; }
-        public ContactDetails? Submitter { get; set; }
+        public ContactDetails? AuthorizedRepresentative { get; set; }
         public ContactDetails? ProjectContact { get; set; }
         public ContactDetails? AdditionalContact1 { get; set; }
         public ContactDetails? AdditionalContact2 { get; set; }
