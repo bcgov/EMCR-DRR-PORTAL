@@ -43,6 +43,8 @@ import { DrrCurrencyInputComponent } from '../../../../shared/controls/drr-curre
 import { DrrFileUploadComponent } from '../../../../shared/controls/drr-file-upload/drr-file-upload.component';
 import { DrrInputComponent } from '../../../../shared/controls/drr-input/drr-input.component';
 import { DrrTextareaComponent } from '../../../../shared/controls/drr-textarea/drr-textarea.component';
+import { AuthorizedRepresentativeForm } from '../../../../shared/drr-auth-rep/auth-rep-form';
+import { DrrAuthRepComponent } from '../../../../shared/drr-auth-rep/drr-auth-rep.component';
 import { FileService } from '../../../../shared/services/file.service';
 import { OptionsStore } from '../../../../store/options.store';
 import { ProfileStore } from '../../../../store/profile.store';
@@ -82,6 +84,7 @@ import { DrifForecastSummaryComponent } from '../drif-forecast-summary/drif-fore
     DrrAttahcmentComponent,
     DrrFileUploadComponent,
     DrifForecastSummaryComponent,
+    DrrAuthRepComponent,
   ],
   templateUrl: './drif-forecast-create.component.html',
   styleUrl: './drif-forecast-create.component.scss',
@@ -164,6 +167,12 @@ export class DrifForecastCreateComponent {
     return this.forecastForm?.get(
       'declaration',
     ) as IFormGroup<ForecastDeclarationForm>;
+  }
+
+  get authorizedRepresentativeForm() {
+    return this.declarationForm?.get(
+      'authorizedRepresentative',
+    ) as IFormGroup<AuthorizedRepresentativeForm>;
   }
 
   ngOnInit() {
@@ -436,6 +445,10 @@ export class DrifForecastCreateComponent {
           console.error(error);
         },
       });
+  }
+
+  submit() {
+    console.log(this.getFormValue());
   }
 
   async uploadFiles(files: File[]) {

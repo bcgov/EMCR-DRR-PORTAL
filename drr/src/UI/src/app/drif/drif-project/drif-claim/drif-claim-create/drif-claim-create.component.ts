@@ -56,6 +56,8 @@ import {
 } from '../../../../shared/controls/drr-select/drr-select.component';
 import { DrrTextareaComponent } from '../../../../shared/controls/drr-textarea/drr-textarea.component';
 import { DrrAlertComponent } from '../../../../shared/drr-alert/drr-alert.component';
+import { AuthorizedRepresentativeForm } from '../../../../shared/drr-auth-rep/auth-rep-form';
+import { DrrAuthRepComponent } from '../../../../shared/drr-auth-rep/drr-auth-rep.component';
 import { FileService } from '../../../../shared/services/file.service';
 import { OptionsStore } from '../../../../store/options.store';
 import { ProfileStore } from '../../../../store/profile.store';
@@ -103,6 +105,7 @@ export class ClaimSummaryItem implements PreviousClaim {
     DrrFileUploadComponent,
     DrifClaimSummaryComponent,
     DrrAlertComponent,
+    DrrAuthRepComponent,
   ],
   templateUrl: './drif-claim-create.component.html',
   styleUrl: './drif-claim-create.component.scss',
@@ -855,8 +858,14 @@ export class DrifClaimCreateComponent {
       ?.setValue(currentClaimTotal + this.previousClaimTotal);
   }
 
-  getDelcarationForm() {
+  get delcarationForm() {
     return this.claimForm?.get('declaration') as IFormGroup<DeclarationForm>;
+  }
+
+  get authorizedRepresentativeForm() {
+    return this.delcarationForm?.get(
+      'authorizedRepresentative',
+    ) as IFormGroup<AuthorizedRepresentativeForm>;
   }
 
   hasClaimIntentIssue() {

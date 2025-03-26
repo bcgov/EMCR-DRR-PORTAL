@@ -564,62 +564,15 @@
           [claimForm]="claimForm!"
           [isReadOnlyView]="false"
         ></drif-claim-summary>
+
+        <drr-auth-rep
+          [authorizedRepresentativeForm]="authorizedRepresentativeForm"
+        ></drr-auth-rep>
+
         <form
-          [formGroup]="getDelcarationForm()"
+          [formGroup]="delcarationForm"
           style="display: flex; flex-direction: column; gap: 1rem"
         >
-          <mat-label class="drr-label">{{
-            "authorizedRepresentative" | transloco
-          }}</mat-label>
-          <div class="contacts-container">
-            <drr-input
-              [label]="t('firstName')"
-              [rxFormControl]="
-                claimForm?.get('declaration.authorizedRepresentative.firstName')
-              "
-              [maxlength]="40"
-            ></drr-input>
-            <drr-input
-              [label]="t('lastName')"
-              [rxFormControl]="
-                claimForm?.get('declaration.authorizedRepresentative.lastName')
-              "
-              [maxlength]="40"
-            ></drr-input>
-            <drr-input
-              [label]="t('title')"
-              [rxFormControl]="
-                claimForm?.get('declaration.authorizedRepresentative.title')
-              "
-              [maxlength]="100"
-            ></drr-input>
-            <drr-input
-              [label]="t('department')"
-              [rxFormControl]="
-                claimForm?.get(
-                  'declaration.authorizedRepresentative.department'
-                )
-              "
-              [maxlength]="40"
-            ></drr-input>
-            <drr-input
-              [label]="t('phone')"
-              [rxFormControl]="
-                claimForm?.get('declaration.authorizedRepresentative.phone')
-              "
-              [maxlength]="10"
-              [type]="'tel'"
-            ></drr-input>
-            <drr-input
-              [label]="t('email')"
-              [rxFormControl]="
-                claimForm?.get('declaration.authorizedRepresentative.email')
-              "
-              [maxlength]="100"
-              [type]="'email'"
-            ></drr-input>
-          </div>
-
           <mat-label class="drr-label">
             {{ "authorizedRepresentativeStatement" | transloco }}
           </mat-label>

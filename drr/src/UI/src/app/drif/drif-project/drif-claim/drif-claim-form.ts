@@ -11,6 +11,7 @@ import {
   DocumentType,
   Invoice,
 } from '../../../../model';
+import { AuthorizedRepresentativeForm } from '../../../shared/drr-auth-rep/auth-rep-form';
 import { ContactDetailsForm } from '../../drif-eoi/drif-eoi-form';
 import { AttachmentForm } from '../../drif-fp/drif-fp-form';
 
@@ -118,7 +119,8 @@ export class ExpenditureForm {
 export class DeclarationForm {
   @required()
   @propObject(ContactDetailsForm)
-  authorizedRepresentative?: ContactDetailsForm = new ContactDetailsForm({});
+  authorizedRepresentative?: AuthorizedRepresentativeForm =
+    new AuthorizedRepresentativeForm({});
 
   @prop()
   @required()

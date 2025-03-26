@@ -6,6 +6,7 @@ import {
   requiredTrue,
 } from '@rxweb/reactive-form-validators';
 import { ForecastItem } from '../../../../model';
+import { AuthorizedRepresentativeForm } from '../../../shared/drr-auth-rep/auth-rep-form';
 import { ContactDetailsForm } from '../../drif-eoi/drif-eoi-form';
 import { AttachmentForm } from '../../drif-fp/drif-fp-form';
 
@@ -77,7 +78,8 @@ export class ForecastAttachmentsForm {
 export class ForecastDeclarationForm {
   @required()
   @propObject(ContactDetailsForm)
-  authorizedRepresentative?: ContactDetailsForm = new ContactDetailsForm({});
+  authorizedRepresentative?: AuthorizedRepresentativeForm =
+    new AuthorizedRepresentativeForm({});
 
   @prop()
   @required()
