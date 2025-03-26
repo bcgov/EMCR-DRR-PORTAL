@@ -55,6 +55,10 @@ export class DrifForecastSummaryComponent {
     return this.attachmentsForm?.get('attachments') as FormArray;
   }
 
+  hasAttachments(): boolean {
+    return this.attachmentsArray.length > 0;
+  }
+
   get declarationForm() {
     return this.forecastForm?.get('declaration') as IFormGroup<DeclarationForm>;
   }
