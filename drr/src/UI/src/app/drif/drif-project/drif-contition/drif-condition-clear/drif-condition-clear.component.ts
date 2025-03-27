@@ -50,7 +50,7 @@ export class DrifConditionClearComponent {
 
   goBack() {
     this.save();
-    this.router.navigate(['/drif-project', this.projectId]);
+    this.router.navigate(['/drif-projects', this.projectId]);
   }
 
   save() {}
