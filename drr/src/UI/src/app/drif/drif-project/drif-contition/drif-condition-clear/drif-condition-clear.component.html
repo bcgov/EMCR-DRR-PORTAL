@@ -15,7 +15,20 @@
           Save
         </button>
       </div>
-      <drr-auto-save [lastSavedAt]="lastSavedAt"></drr-auto-save>
+      <div class="save-info">
+        <div style="display: flex; flex-direction: row; gap: 1rem">
+          <i *ngIf="autoSaveCountdown <= 30 && autoSaveCountdown > 0"
+            >Saving in {{ autoSaveCountdown }}
+            {{ autoSaveCountdown === 1 ? "second" : "seconds" }}...
+          </i>
+          <i
+            *ngIf="
+              lastSavedAt && (autoSaveCountdown === 0 || autoSaveCountdown > 30)
+            "
+            >Saved at {{ lastSavedAt | date: "mediumTime" }}</i
+          >
+        </div>
+      </div>
     </div>
   </div>
   <div>

@@ -1,6 +1,6 @@
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, HostListener, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import {
@@ -10,7 +10,6 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 import { ProjectService } from '../../../../../api/project/project.service';
-import { DrrAutoSaveComponent } from '../../../../shared/drr-auto-save/drr-auto-save.component';
 
 @Component({
   selector: 'drif-condition-clear',
@@ -21,7 +20,6 @@ import { DrrAutoSaveComponent } from '../../../../shared/drr-auto-save/drr-auto-
     MatButtonModule,
     MatIconModule,
     TranslocoModule,
-    DrrAutoSaveComponent,
   ],
   templateUrl: './drif-condition-clear.component.html',
   styleUrl: './drif-condition-clear.component.scss',
@@ -38,7 +36,36 @@ export class DrifConditionClearComponent {
 
   stepperOrientation: StepperOrientation = 'horizontal';
 
+  formChanged = false;
+
   lastSavedAt?: Date;
+
+  autoSaveCountdown = 0;
+  autoSaveTimer: any;
+  autoSaveInterval = 60;
+
+  @HostListener('window:mousemove')
+  @HostListener('window:mousedown')
+  @HostListener('window:keypress')
+  @HostListener('window:scroll')
+  @HostListener('window:touchmove')
+  resetAutoSaveTimer() {
+    if (!this.formChanged) {
+      this.autoSaveCountdown = 0;
+      clearInterval(this.autoSaveTimer);
+      return;
+    }
+
+    this.autoSaveCountdown = this.autoSaveInterval;
+    clearInterval(this.autoSaveTimer);
+    this.autoSaveTimer = setInterval(() => {
+      this.autoSaveCountdown -= 1;
+      if (this.autoSaveCountdown === 0) {
+        this.save();
+        clearInterval(this.autoSaveTimer);
+      }
+    }, 1000);
+  }
 
   ngOnInit() {
     this.route.params.subscribe((params) => {
@@ -57,5 +84,8 @@ export class DrifConditionClearComponent {
     this.router.navigate(['/drif-projects', this.projectId]);
   }
 
-  save() {}
+  save() {
+    // TODO: temp
+    this.lastSavedAt = new Date();
+  }
 }
