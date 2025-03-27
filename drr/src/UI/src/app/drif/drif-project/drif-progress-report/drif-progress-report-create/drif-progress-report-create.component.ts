@@ -830,14 +830,16 @@ export class DrifProgressReportCreateComponent {
         case WorkplanStatus.NotStarted:
           plannedStartDate?.addValidators(Validators.required);
           plannedCompletionDate?.addValidators(Validators.required);
+
           actualStartDate?.clearValidators();
           actualStartDate?.setValue(null);
           actualCompletionDate?.clearValidators();
           actualCompletionDate?.setValue(null);
           break;
         case WorkplanStatus.InProgress:
-          plannedCompletionDate?.addValidators(Validators.required);
           actualStartDate?.addValidators(Validators.required);
+          plannedCompletionDate?.addValidators(Validators.required);
+
           plannedStartDate?.clearValidators();
           plannedStartDate?.setValue(null);
           actualCompletionDate?.clearValidators();
@@ -846,13 +848,15 @@ export class DrifProgressReportCreateComponent {
         case WorkplanStatus.Completed:
           actualStartDate?.addValidators(Validators.required);
           actualCompletionDate?.addValidators(Validators.required);
-          plannedStartDate?.addValidators(Validators.required);
+
+          plannedStartDate?.clearValidators();
           plannedStartDate?.setValue(null);
-          plannedCompletionDate?.addValidators(Validators.required);
+          plannedCompletionDate?.clearValidators();
           plannedCompletionDate?.setValue(null);
           break;
         case WorkplanStatus.Awarded:
           actualStartDate?.addValidators(Validators.required);
+
           plannedStartDate?.clearValidators();
           plannedStartDate?.setValue(null);
           plannedCompletionDate?.clearValidators();
@@ -862,6 +866,7 @@ export class DrifProgressReportCreateComponent {
           break;
         case WorkplanStatus.NotAwarded:
           plannedStartDate?.addValidators(Validators.required);
+
           plannedCompletionDate?.clearValidators();
           plannedCompletionDate?.setValue(null);
           actualStartDate?.clearValidators();
