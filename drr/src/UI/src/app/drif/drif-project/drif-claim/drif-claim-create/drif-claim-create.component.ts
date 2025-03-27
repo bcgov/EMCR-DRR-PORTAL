@@ -1,3 +1,4 @@
+import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { Component, HostListener, inject, ViewChild } from '@angular/core';
 import {
@@ -438,7 +439,7 @@ export class DrifClaimCreateComponent {
     }
   }
 
-  stepperSelectionChange(event: any) {
+  stepperSelectionChange(event: StepperSelectionEvent) {
     if (event.previouslySelectedIndex === 0) {
       return;
     }

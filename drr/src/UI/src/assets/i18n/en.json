@@ -751,5 +751,9 @@
     "department": "Department",
     "phone": "Phone",
     "email": "Email"
+  },
+  "contition": {
+    "step1": "Condition Request",
+    "step2": "Review & Declaration"
   }
 }

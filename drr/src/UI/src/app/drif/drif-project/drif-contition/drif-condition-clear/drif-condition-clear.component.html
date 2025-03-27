@@ -1,1 +1,66 @@
-<p>drif-condition-create works!</p>
+<div class="app-stepper-container" *transloco="let t; read: 'contition'">
+  <div class="app-stepper-header">
+    <div style="flex: 1">
+      <h5 style="font-size: 1.2rem; margin-bottom: 0.5rem">
+        {{ conditionName }}
+      </h5>
+    </div>
+    <div>
+      <div class="header-actions">
+        <button mat-stroked-button color="primary" (click)="goBack()">
+          Exit Form
+        </button>
+        <button mat-flat-button color="primary" (click)="save()">
+          <mat-icon>save</mat-icon>
+          Save
+        </button>
+      </div>
+      <!-- 
+      <div class="save-info">
+        <div style="display: flex; flex-direction: row; gap: 1rem">
+          <i *ngIf="autoSaveCountdown <= 30 && autoSaveCountdown > 0"
+            >Saving in {{ autoSaveCountdown }}
+            {{ autoSaveCountdown === 1 ? "second" : "seconds" }}...
+          </i>
+          <i
+            *ngIf="
+              lastSavedAt && (autoSaveCountdown === 0 || autoSaveCountdown > 30)
+            "
+            >Saved at {{ lastSavedAt | date: "mediumTime" }}</i
+          >
+        </div>
+      </div>
+    </div> -->
+    </div>
+  </div>
+  <div>
+    <mat-stepper
+      class="app-stepper"
+      [linear]="false"
+      labelPosition="bottom"
+      (selectionChange)="stepperSelectionChange($event)"
+      [orientation]="stepperOrientation"
+      #stepper
+    >
+      <mat-step [label]="t('step1')">
+        <div></div>
+        <div class="drr-stepper-action">
+          <button mat-flat-button color="primary" matStepperNext type="button">
+            Next
+          </button>
+        </div>
+      </mat-step>
+      <mat-step [label]="t('step2')">
+        <div></div>
+        <div class="drr-stepper-actions">
+          <button mat-stroked-button color="primary" matStepperPrevious>
+            Back
+          </button>
+          <button mat-flat-button color="primary" matStepperNext type="button">
+            Submit
+          </button>
+        </div>
+      </mat-step>
+    </mat-stepper>
+  </div>
+</div>
