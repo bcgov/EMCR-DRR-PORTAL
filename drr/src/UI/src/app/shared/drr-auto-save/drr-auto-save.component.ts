@@ -9,7 +9,7 @@ import { Component, Input } from '@angular/core';
   styleUrl: './drr-auto-save.component.scss',
 })
 export class DrrAutoSaveComponent {
-  @Input() lastSavedAt: Date | null = null;
+  @Input() lastSavedAt?: Date;
 
   autoSaveCountdown = 0;
   autoSaveTimer: any;
