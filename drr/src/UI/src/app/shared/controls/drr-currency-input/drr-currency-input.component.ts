@@ -54,6 +54,7 @@ import { NgxMaskDirective } from 'ngx-mask';
         [mask]="'separator.2'"
         [decimalMarker]="'.'"
         [thousandSeparator]="','"
+        [allowNegativeNumbers]="allowNegativeNumbers"
       />
       @if (rxFormControl.disabled && allowEnabling) {
         <button
@@ -158,9 +159,23 @@ export class DrrCurrencyInputComponent {
     }
   }
 
-  @Input() min: number = 0;
+  private _allowNegativeNumbers = false;
+  @Input() set allowNegativeNumbers(value: boolean) {
+    this._allowNegativeNumbers = value;
 
-  private _max: number = 0;
+    // if need to allow negative numbers
+    // unless min value is provided, use the max allowed value as negative min value
+    if (value) {
+      this.min === undefined ? -this.MAX_ALLOWED_VALUE : this.min;
+    }
+  }
+  get allowNegativeNumbers() {
+    return this._allowNegativeNumbers;
+  }
+
+  @Input() min?: number;
+
+  private _max?: number;
   @Input()
   set max(value: number) {
     if (value) {
@@ -175,7 +190,7 @@ export class DrrCurrencyInputComponent {
     this.rxFormControl.updateValueAndValidity();
     this._max = value;
   }
-  get max() {
+  get max(): number | undefined {
     return this._max;
   }
 
