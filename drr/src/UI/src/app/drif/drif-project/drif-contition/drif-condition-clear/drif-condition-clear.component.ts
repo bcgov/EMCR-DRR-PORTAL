@@ -10,6 +10,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 import { ProjectService } from '../../../../../api/project/project.service';
+import { DrrAutoSaveComponent } from '../../../../shared/drr-auto-save/drr-auto-save.component';
 
 @Component({
   selector: 'drif-condition-clear',
@@ -20,6 +21,7 @@ import { ProjectService } from '../../../../../api/project/project.service';
     MatButtonModule,
     MatIconModule,
     TranslocoModule,
+    DrrAutoSaveComponent,
   ],
   templateUrl: './drif-condition-clear.component.html',
   styleUrl: './drif-condition-clear.component.scss',
@@ -35,6 +37,8 @@ export class DrifConditionClearComponent {
   conditionName?: string;
 
   stepperOrientation: StepperOrientation = 'horizontal';
+
+  lastSavedAt?: Date;
 
   ngOnInit() {
     this.route.params.subscribe((params) => {
