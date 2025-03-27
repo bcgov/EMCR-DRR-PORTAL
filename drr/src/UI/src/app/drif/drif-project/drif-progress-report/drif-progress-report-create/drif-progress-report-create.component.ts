@@ -135,6 +135,8 @@ export class DrifProgressReportCreateComponent {
 
   reportName?: string;
 
+  projectType?: InterimProjectType;
+
   @ViewChild(MatStepper) stepper!: MatStepper;
   stepperOrientation: StepperOrientation = 'horizontal';
   private formToStepMap: Record<string, string> = {
@@ -356,6 +358,8 @@ export class DrifProgressReportCreateComponent {
                 projectType: report.projectType,
               }),
             ) as IFormGroup<ProgressReportForm>;
+
+            this.projectType = report.projectType;
 
             this.setAuthorizedRepresentative();
 
@@ -990,10 +994,7 @@ export class DrifProgressReportCreateComponent {
   }
 
   isStructuralProject() {
-    return (
-      this.progressReportForm.get('projectType')?.value ===
-      InterimProjectType.Stream2
-    );
+    return this.projectType === InterimProjectType.Stream2;
   }
 
   getSignageFormArray() {

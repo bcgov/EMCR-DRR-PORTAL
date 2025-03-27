@@ -30,7 +30,6 @@ import {
   PaymentCondition,
   ProgressReportStatus,
 } from '../../../model';
-import { DrrInputComponent } from '../../shared/controls/drr-input/drr-input.component';
 import { DrifProjectContactDialogComponent } from './drif-project-contact-dialog.component';
 
 export class CostProjectionItem {
@@ -71,7 +70,6 @@ export interface InterimSubReport {
     MatTabsModule,
     MatDividerModule,
     MatDialogModule,
-    DrrInputComponent,
     TranslocoModule,
   ],
   templateUrl: './drif-project.component.html',
@@ -95,7 +93,6 @@ export class DrifProjectComponent {
   translocoService = inject(TranslocoService);
 
   projectId?: string;
-
   project?: DraftDrrProject;
 
   conditionsDataSource = new MatTableDataSource<
@@ -294,8 +291,4 @@ export class DrifProjectComponent {
   editForecast() {}
 
   deleteForecast() {}
-
-  viewCondition() {}
-
-  clearCondition() {}
 }

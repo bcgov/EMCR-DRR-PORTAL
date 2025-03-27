@@ -310,16 +310,23 @@
             </th>
             <td mat-cell *matCellDef="let condition">
               <div class="table-actions">
-                <button mat-button color="primary" (click)="viewCondition()">
-                  Check details
-                </button>
-                <button
-                  mat-raised-button
-                  color="primary"
-                  (click)="clearCondition()"
-                >
-                  Clear
-                </button>
+                @if (condition.conditionMet) {
+                  <!-- TODO: details view link -->
+                } @else {
+                  <a
+                    mat-raised-button
+                    color="primary"
+                    [routerLink]="[
+                      '/drif-projects',
+                      projectId,
+                      'conditions',
+                      condition.id,
+                      'clear',
+                    ]"
+                  >
+                    Clear
+                  </a>
+                }
               </div>
             </td>
           </ng-container>
