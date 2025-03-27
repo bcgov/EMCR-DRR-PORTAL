@@ -134,6 +134,7 @@
           <drr-currency-input
             [label]="t('variance')"
             [rxFormControl]="budgetForecastForm.get('variance')"
+            [allowNegativeNumbers]="true"
           ></drr-currency-input>
         </div>
         @if (budgetForecastForm.get("variance")?.value != 0) {
