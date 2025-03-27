@@ -294,8 +294,4 @@ export class DrifProjectComponent {
   editForecast() {}
 
   deleteForecast() {}
-
-  viewCondition() {}
-
-  clearCondition() {}
 }
