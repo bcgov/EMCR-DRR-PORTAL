@@ -752,7 +752,7 @@
     "phone": "Phone",
     "email": "Email"
   },
-  "contition": {
+  "condition": {
     "step1": "Condition Request",
     "step2": "Review & Declaration",
     "name": "Condition Name",

@@ -1,0 +1,124 @@
+<div class="summary-container" *transloco="let t; read: 'condition'">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Condition Request</mat-card-title>
+    </mat-card-header>
+    <mat-card-content style="display: flex; flex-direction: column; gap: 1rem">
+      <drr-summary-item
+        [label]="t('name')"
+        [rxFormControl]="conditionForm?.get('name')"
+        controlType="input"
+      ></drr-summary-item>
+      <drr-summary-item
+        [label]="t('limit')"
+        [rxFormControl]="conditionForm?.get('limit')"
+        [value]="conditionForm?.get('limit')?.value + '%'"
+      >
+      </drr-summary-item>
+      <drr-summary-item
+        [label]="t('date')"
+        [rxFormControl]="conditionForm?.get('date')"
+        controlType="date"
+      ></drr-summary-item>
+      <drr-summary-item
+        [label]="t('description')"
+        [rxFormControl]="conditionForm?.get('description')"
+        controlType="textarea"
+      ></drr-summary-item>
+
+      <div>
+        <mat-label class="drr-label">Attachments</mat-label>
+        @if (!hasAttachments()) {
+          <p>(Optional)</p>
+        }
+
+        <div
+          class="summary-row"
+          *ngFor="let attachment of attachmentsArray.controls"
+        >
+          <drr-summary-item
+            [label]="t('attachments.name')"
+            [rxFormControl]="attachment.get('name')"
+          >
+          </drr-summary-item>
+          <drr-summary-item
+            [label]="t('attachments.comments')"
+            [rxFormControl]="attachment.get('comments')"
+          >
+          </drr-summary-item>
+          <button
+            *ngIf="isReadOnlyView"
+            style="align-self: center"
+            mat-button
+            color="primary"
+            (click)="onDownloadFile(attachment.get('id')?.value)"
+          >
+            Download
+          </button>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  <mat-card *ngIf="isReadOnlyView">
+    <mat-card-header>
+      <mat-card-title> Review & Declaration </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div>
+        <mat-label class="drr-label">{{
+          "authorizedRepresentative" | transloco
+        }}</mat-label>
+        <div class="summary-row">
+          <drr-summary-item
+            [label]="t('firstName')"
+            [rxFormControl]="
+              declarationForm.get('authorizedRepresentative.firstName')
+            "
+          >
+          </drr-summary-item>
+
+          <drr-summary-item
+            [label]="t('lastName')"
+            [rxFormControl]="
+              declarationForm.get('authorizedRepresentative.lastName')
+            "
+          >
+          </drr-summary-item>
+
+          <drr-summary-item
+            [label]="t('title')"
+            [rxFormControl]="
+              declarationForm.get('authorizedRepresentative.title')
+            "
+          >
+          </drr-summary-item>
+
+          <drr-summary-item
+            [label]="t('department')"
+            [rxFormControl]="
+              declarationForm.get('authorizedRepresentative.department')
+            "
+          >
+          </drr-summary-item>
+
+          <drr-summary-item
+            [label]="t('phone')"
+            [rxFormControl]="
+              declarationForm.get('authorizedRepresentative.phone')
+            "
+            controlType="phone"
+          >
+          </drr-summary-item>
+
+          <drr-summary-item
+            [label]="t('email')"
+            [rxFormControl]="
+              declarationForm.get('authorizedRepresentative.email')
+            "
+          >
+          </drr-summary-item>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

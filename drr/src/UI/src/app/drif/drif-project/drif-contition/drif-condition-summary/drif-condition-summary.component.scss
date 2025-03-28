@@ -1,0 +1,28 @@
+.summary-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 20px 0;
+  gap: 1rem;
+
+  mat-card-content {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+.summary-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-left: 1rem;
+  word-break: break-word;
+
+  ::ng-deep .drr-summary-value {
+    margin-left: 0;
+  }
+}

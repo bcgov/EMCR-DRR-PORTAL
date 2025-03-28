@@ -1,5 +1,11 @@
-import { prop, propArray, required } from '@rxweb/reactive-form-validators';
+import {
+  prop,
+  propArray,
+  propObject,
+  required,
+} from '@rxweb/reactive-form-validators';
 import { DocumentType } from '../../../../model';
+import { DeclarationForm } from '../../../shared/drr-declaration/drr-declaration-form';
 import { AttachmentForm } from '../../drif-fp/drif-fp-form';
 
 export class CondtionRequestAttachmentForm {
@@ -39,6 +45,9 @@ export class ConditionForm {
 
   @propArray(CondtionRequestAttachmentForm)
   attachments?: CondtionRequestAttachmentForm[] = [];
+
+  @propObject(DeclarationForm)
+  declaration?: DeclarationForm = new DeclarationForm({});
 
   constructor(data?: Partial<ConditionForm>) {
     Object.assign(this, data);

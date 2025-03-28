@@ -1,4 +1,4 @@
-<div class="app-stepper-container" *transloco="let t; read: 'contition'">
+<div class="app-stepper-container" *transloco="let t; read: 'condition'">
   <div class="app-stepper-header">
     <div style="flex: 1">
       <h5 style="font-size: 1.2rem; margin-bottom: 0.5rem">
@@ -146,8 +146,27 @@
           </button>
         </div>
       </mat-step>
-      <mat-step [label]="t('step2')">
-        <div></div>
+      <mat-step
+        [label]="t('step2')"
+        [stepControl]="authorizedRepresentativeForm!"
+        [errorMessage]="'stepError' | transloco"
+      >
+        <div>
+          <drif-condition-summary
+            [conditionForm]="conditionForm"
+            [isReadOnlyView]="false"
+          ></drif-condition-summary>
+
+          <drr-auth-rep
+            [authorizedRepresentativeForm]="authorizedRepresentativeForm"
+          ></drr-auth-rep>
+
+          <drr-declaration
+            [declarationForm]="declarationForm"
+            [authorizedRepresentativeText]="authorizedRepresentativeText"
+            [accuracyOfInformationText]="accuracyOfInformationText"
+          ></drr-declaration>
+        </div>
         <div class="drr-stepper-actions">
           <button mat-stroked-button color="primary" matStepperPrevious>
             Back

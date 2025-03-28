@@ -19,12 +19,22 @@ import {
 } from '@rxweb/reactive-form-validators';
 import { AttachmentService } from '../../../../../api/attachment/attachment.service';
 import { ProjectService } from '../../../../../api/project/project.service';
-import { DocumentType, RecordType } from '../../../../../model';
+import {
+  DeclarationType,
+  DocumentType,
+  FormType,
+  RecordType,
+} from '../../../../../model';
 import { DrrDatepickerComponent } from '../../../../shared/controls/drr-datepicker/drr-datepicker.component';
 import { DrrFileUploadComponent } from '../../../../shared/controls/drr-file-upload/drr-file-upload.component';
 import { DrrInputComponent } from '../../../../shared/controls/drr-input/drr-input.component';
 import { DrrNumericInputComponent } from '../../../../shared/controls/drr-number-input/drr-number-input.component';
 import { DrrTextareaComponent } from '../../../../shared/controls/drr-textarea/drr-textarea.component';
+import { DrrAlertComponent } from '../../../../shared/drr-alert/drr-alert.component';
+import { AuthorizedRepresentativeForm } from '../../../../shared/drr-auth-rep/auth-rep-form';
+import { DrrAuthRepComponent } from '../../../../shared/drr-auth-rep/drr-auth-rep.component';
+import { DeclarationForm } from '../../../../shared/drr-declaration/drr-declaration-form';
+import { DrrDeclarationComponent } from '../../../../shared/drr-declaration/drr-declaration.component';
 import { FileService } from '../../../../shared/services/file.service';
 import { OptionsStore } from '../../../../store/options.store';
 import { ProfileStore } from '../../../../store/profile.store';
@@ -34,7 +44,7 @@ import {
   ConditionForm,
   CondtionRequestAttachmentForm,
 } from '../drif-condition-form';
-import { DrrAlertComponent } from "../../../../shared/drr-alert/drr-alert.component";
+import { DrifConditionSummaryComponent } from '../drif-condition-summary/drif-condition-summary.component';
 
 @Component({
   selector: 'drif-condition-clear',
@@ -54,8 +64,11 @@ import { DrrAlertComponent } from "../../../../shared/drr-alert/drr-alert.compon
     DrrTextareaComponent,
     DrrAttahcmentComponent,
     DrrFileUploadComponent,
-    DrrAlertComponent
-],
+    DrrAlertComponent,
+    DrifConditionSummaryComponent,
+    DrrAuthRepComponent,
+    DrrDeclarationComponent,
+  ],
   templateUrl: './drif-condition-clear.component.html',
   styleUrl: './drif-condition-clear.component.scss',
   providers: [RxFormBuilder],
@@ -80,6 +93,9 @@ export class DrifConditionClearComponent {
 
   conditionForm?: IFormGroup<ConditionForm>;
   conditionDMAPMessageForm?: IFormGroup<ConditionDMAPMessageForm>;
+
+  authorizedRepresentativeText?: string;
+  accuracyOfInformationText?: string;
 
   formChanged = false;
 
@@ -117,6 +133,15 @@ export class DrifConditionClearComponent {
       this.projectId = params['projectId'];
       this.conditionId = params['conditionId'];
 
+      this.authorizedRepresentativeText = this.optionsStore.getDeclarations?.(
+        DeclarationType.AuthorizedRepresentative,
+        FormType.Request,
+      );
+      this.accuracyOfInformationText = this.optionsStore.getDeclarations?.(
+        DeclarationType.AccuracyOfInformation,
+        FormType.Request,
+      );
+
       // TODO: use contion % or description from API
       this.conditionName = `Request to Clear Condition for ProjectName`;
 
@@ -148,15 +173,90 @@ export class DrifConditionClearComponent {
         ConditionForm,
         conditionFormValue,
       ) as IFormGroup<ConditionForm>;
+
+      this.setAuthorizedRepresentative();
+
       resolve();
     });
+  }
+
+  // TODO: consider moving this to a service or component
+  setAuthorizedRepresentative() {
+    const profileData = this.profileStore.getProfile();
+
+    const authorizedRepresentativeForm = this.declarationForm.get(
+      'authorizedRepresentative',
+    );
+    if (profileData.firstName?.()) {
+      authorizedRepresentativeForm
+        ?.get('firstName')
+        ?.setValue(profileData.firstName(), { emitEvent: false });
+      authorizedRepresentativeForm?.get('firstName')?.disable();
+    }
+    if (profileData.lastName?.()) {
+      authorizedRepresentativeForm
+        ?.get('lastName')
+        ?.setValue(profileData.lastName(), { emitEvent: false });
+      authorizedRepresentativeForm?.get('lastName')?.disable();
+    }
+    if (profileData.title?.() && !authorizedRepresentativeForm?.value?.title) {
+      authorizedRepresentativeForm
+        ?.get('title')
+        ?.setValue(profileData.title(), {
+          emitEvent: false,
+        });
+    }
+    if (
+      profileData.department?.() &&
+      !authorizedRepresentativeForm?.value?.department
+    ) {
+      authorizedRepresentativeForm
+        ?.get('department')
+        ?.setValue(profileData.department(), {
+          emitEvent: false,
+        });
+    }
+    if (profileData.phone?.() && !authorizedRepresentativeForm?.value?.phone) {
+      authorizedRepresentativeForm
+        ?.get('phone')
+        ?.setValue(profileData.phone(), {
+          emitEvent: false,
+        });
+    }
+    if (profileData.email?.() && !authorizedRepresentativeForm?.value?.email) {
+      authorizedRepresentativeForm
+        ?.get('email')
+        ?.setValue(profileData.email(), {
+          emitEvent: false,
+        });
+    }
   }
 
   hasConditionDMAPMessage() {
     return true;
   }
 
-  stepperSelectionChange(event: StepperSelectionEvent) {}
+  stepperSelectionChange(event: StepperSelectionEvent) {
+    this.save();
+
+    event.previouslySelectedStep.stepControl.markAllAsTouched();
+
+    if (this.stepperOrientation === 'horizontal') {
+      return;
+    }
+
+    // const stepId = this.stepper._getStepLabelId(event.selectedIndex);
+    // const stepElement = document.getElementById(stepId);
+    // if (stepElement) {
+    //   setTimeout(() => {
+    //     stepElement.scrollIntoView({
+    //       block: 'start',
+    //       inline: 'nearest',
+    //       behavior: 'smooth',
+    //     });
+    //   }, 250);
+    // }
+  }
 
   goBack() {
     this.save();
@@ -166,6 +266,18 @@ export class DrifConditionClearComponent {
   save() {
     // TODO: temp
     this.lastSavedAt = new Date();
+  }
+
+  get declarationForm() {
+    return this.conditionForm?.get(
+      'declaration',
+    ) as IFormGroup<DeclarationForm>;
+  }
+
+  get authorizedRepresentativeForm() {
+    return this.declarationForm?.get(
+      'authorizedRepresentative',
+    ) as IFormGroup<AuthorizedRepresentativeForm>;
   }
 
   get attachmentsArray() {
