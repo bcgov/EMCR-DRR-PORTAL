@@ -44,3 +44,18 @@ export class ConditionForm {
     Object.assign(this, data);
   }
 }
+
+export class ConditionDMAPMessageForm {
+  @prop()
+  author?: string;
+
+  @prop()
+  date?: string;
+
+  @prop()
+  message?: string;
+
+  constructor(data?: Partial<ConditionDMAPMessageForm>) {
+    Object.assign(this, data);
+  }
+}

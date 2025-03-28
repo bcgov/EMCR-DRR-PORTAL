@@ -30,9 +30,11 @@ import { OptionsStore } from '../../../../store/options.store';
 import { ProfileStore } from '../../../../store/profile.store';
 import { DrrAttahcmentComponent } from '../../../drif-fp/drif-fp-step-11/drif-fp-attachment.component';
 import {
+  ConditionDMAPMessageForm,
   ConditionForm,
   CondtionRequestAttachmentForm,
 } from '../drif-condition-form';
+import { DrrAlertComponent } from "../../../../shared/drr-alert/drr-alert.component";
 
 @Component({
   selector: 'drif-condition-clear',
@@ -52,7 +54,8 @@ import {
     DrrTextareaComponent,
     DrrAttahcmentComponent,
     DrrFileUploadComponent,
-  ],
+    DrrAlertComponent
+],
   templateUrl: './drif-condition-clear.component.html',
   styleUrl: './drif-condition-clear.component.scss',
   providers: [RxFormBuilder],
@@ -76,6 +79,7 @@ export class DrifConditionClearComponent {
   stepperOrientation: StepperOrientation = 'horizontal';
 
   conditionForm?: IFormGroup<ConditionForm>;
+  conditionDMAPMessageForm?: IFormGroup<ConditionDMAPMessageForm>;
 
   formChanged = false;
 
@@ -124,6 +128,17 @@ export class DrifConditionClearComponent {
 
   load(): Promise<void> {
     return new Promise((resolve) => {
+      // TODO: if (hasCondidionMessage in response)
+      const conditionDMAPMessageFormValue = new ConditionDMAPMessageForm({
+        author: 'John Doe',
+        date: new Date().toISOString(),
+        message: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+      });
+      this.conditionDMAPMessageForm = this.formBuilder.formGroup(
+        ConditionDMAPMessageForm,
+        conditionDMAPMessageFormValue,
+      ) as IFormGroup<ConditionDMAPMessageForm>;
+
       const conditionFormValue = new ConditionForm({
         name: 'Condition_Name',
         limit: 23,
@@ -135,6 +150,10 @@ export class DrifConditionClearComponent {
       ) as IFormGroup<ConditionForm>;
       resolve();
     });
+  }
+
+  hasConditionDMAPMessage() {
+    return true;
   }
 
   stepperSelectionChange(event: StepperSelectionEvent) {}

@@ -75,6 +75,11 @@ export class DrrTextareaComponent {
     this._formControl = rxFormControl as RxFormControl;
   }
 
+  @Input()
+  set disabled(disabled: boolean) {
+    disabled ? this.rxFormControl.disable() : this.rxFormControl.enable();
+  }
+
   ngOnInit() {
     this.breakpointObserver
       .observe('(min-width: 768px)')
