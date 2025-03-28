@@ -754,6 +754,10 @@
   },
   "contition": {
     "step1": "Condition Request",
-    "step2": "Review & Declaration"
+    "step2": "Review & Declaration",
+    "name": "Condition Name",
+    "limit": "Limit",
+    "date": "Date Met",
+    "description": "Explanation"
   }
 }

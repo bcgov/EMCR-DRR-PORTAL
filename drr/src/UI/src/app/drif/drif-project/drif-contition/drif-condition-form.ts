@@ -1,4 +1,4 @@
-import { prop, propArray } from '@rxweb/reactive-form-validators';
+import { prop, propArray, required } from '@rxweb/reactive-form-validators';
 import { AttachmentForm } from '../../drif-fp/drif-fp-form';
 
 export class ConditionForm {
@@ -9,9 +9,11 @@ export class ConditionForm {
   limit?: number;
 
   @prop()
+  @required()
   date?: string;
 
   @prop()
+  @required()
   description?: string;
 
   @propArray(AttachmentForm)
