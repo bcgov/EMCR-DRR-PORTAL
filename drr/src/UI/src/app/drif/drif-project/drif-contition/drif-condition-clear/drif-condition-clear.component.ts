@@ -1,7 +1,9 @@
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { CommonModule } from '@angular/common';
 import { Component, HostListener, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import {
   MatStepperModule,
@@ -9,7 +11,17 @@ import {
 } from '@angular/material/stepper';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
+import {
+  IFormGroup,
+  RxFormBuilder,
+  RxReactiveFormsModule,
+} from '@rxweb/reactive-form-validators';
 import { ProjectService } from '../../../../../api/project/project.service';
+import { DrrDatepickerComponent } from '../../../../shared/controls/drr-datepicker/drr-datepicker.component';
+import { DrrInputComponent } from '../../../../shared/controls/drr-input/drr-input.component';
+import { DrrNumericInputComponent } from '../../../../shared/controls/drr-number-input/drr-number-input.component';
+import { DrrTextareaComponent } from '../../../../shared/controls/drr-textarea/drr-textarea.component';
+import { ConditionForm } from '../drif-condition-form';
 
 @Component({
   selector: 'drif-condition-clear',
@@ -20,14 +32,23 @@ import { ProjectService } from '../../../../../api/project/project.service';
     MatButtonModule,
     MatIconModule,
     TranslocoModule,
+    RxReactiveFormsModule,
+    FormsModule,
+    MatFormFieldModule,
+    DrrInputComponent,
+    DrrNumericInputComponent,
+    DrrDatepickerComponent,
+    DrrTextareaComponent,
   ],
   templateUrl: './drif-condition-clear.component.html',
   styleUrl: './drif-condition-clear.component.scss',
+  providers: [RxFormBuilder],
 })
 export class DrifConditionClearComponent {
   route = inject(ActivatedRoute);
   router = inject(Router);
   projectService = inject(ProjectService);
+  formBuilder = inject(RxFormBuilder);
 
   projectId?: string;
   conditionId?: string;
@@ -35,6 +56,8 @@ export class DrifConditionClearComponent {
   conditionName?: string;
 
   stepperOrientation: StepperOrientation = 'horizontal';
+
+  conditionForm?: IFormGroup<ConditionForm>;
 
   formChanged = false;
 
@@ -74,6 +97,25 @@ export class DrifConditionClearComponent {
 
       // TODO: use contion % or description from API
       this.conditionName = `Request to Clear Condition for ProjectName`;
+
+      this.load().then(() => {
+        this.resetAutoSaveTimer();
+      });
+    });
+  }
+
+  load(): Promise<void> {
+    return new Promise((resolve) => {
+      const conditionFormValue = new ConditionForm({
+        name: 'Condition_Name',
+        limit: 23,
+        attachments: [],
+      });
+      this.conditionForm = this.formBuilder.formGroup(
+        ConditionForm,
+        conditionFormValue,
+      ) as IFormGroup<ConditionForm>;
+      resolve();
     });
   }
 

@@ -41,7 +41,44 @@
       #stepper
     >
       <mat-step [label]="t('step1')">
-        <div></div>
+        <div
+          style="
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: flex-start;
+          "
+        >
+          <p style="width: 50rem">
+            A Request to Clear Condition formally verifies that a project
+            milestone has been met. Please include the date of completion,
+            relevant comments, and any supporting documents (e.g., permits).
+          </p>
+          <drr-input
+            style="width: 25rem"
+            [label]="t('name')"
+            [rxFormControl]="conditionForm?.get('name')"
+            [disabled]="true"
+          ></drr-input>
+          <drr-numeric-input
+            style="width: 25rem"
+            [label]="t('limit')"
+            [rxFormControl]="conditionForm?.get('limit')"
+            [disabled]="true"
+            numericType="percentage"
+          ></drr-numeric-input>
+          <drr-datepicker
+            style="width: 25rem"
+            [label]="t('date')"
+            [rxFormControl]="conditionForm?.get('date')"
+          ></drr-datepicker>
+          <drr-textarea
+            style="align-self: stretch"
+            [label]="t('description')"
+            [rxFormControl]="conditionForm?.get('description')"
+            [maxlength]="2000"
+          ></drr-textarea>
+        </div>
         <div class="drr-stepper-action">
           <button mat-flat-button color="primary" matStepperNext type="button">
             Next
