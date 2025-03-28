@@ -45,43 +45,70 @@
         [stepControl]="conditionForm!"
         [errorMessage]="'stepError' | transloco"
       >
-        <div
-          style="
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            align-items: flex-start;
-          "
-        >
-          <p style="width: 50rem">
-            A Request to Clear Condition formally verifies that a project
-            milestone has been met. Please include the date of completion,
-            relevant comments, and any supporting documents (e.g., permits).
-          </p>
-          <drr-input
-            style="width: 25rem"
-            [label]="t('name')"
-            [rxFormControl]="conditionForm?.get('name')"
-            [disabled]="true"
-          ></drr-input>
-          <drr-numeric-input
-            style="width: 25rem"
-            [label]="t('limit')"
-            [rxFormControl]="conditionForm?.get('limit')"
-            [disabled]="true"
-            numericType="percentage"
-          ></drr-numeric-input>
-          <drr-datepicker
-            style="width: 25rem"
-            [label]="t('date')"
-            [rxFormControl]="conditionForm?.get('date')"
-          ></drr-datepicker>
-          <drr-textarea
-            style="align-self: stretch"
-            [label]="t('description')"
-            [rxFormControl]="conditionForm?.get('description')"
-            [maxlength]="2000"
-          ></drr-textarea>
+        <div>
+          <div
+            style="
+              display: flex;
+              flex-direction: column;
+              gap: 1rem;
+              align-items: flex-start;
+            "
+          >
+            <p style="width: 50rem">
+              A Request to Clear Condition formally verifies that a project
+              milestone has been met. Please include the date of completion,
+              relevant comments, and any supporting documents (e.g., permits).
+            </p>
+            <drr-input
+              style="width: 25rem"
+              [label]="t('name')"
+              [rxFormControl]="conditionForm?.get('name')"
+              [disabled]="true"
+            ></drr-input>
+            <drr-numeric-input
+              style="width: 25rem"
+              [label]="t('limit')"
+              [rxFormControl]="conditionForm?.get('limit')"
+              [disabled]="true"
+              numericType="percentage"
+            ></drr-numeric-input>
+            <drr-datepicker
+              style="width: 25rem"
+              [label]="t('date')"
+              [rxFormControl]="conditionForm?.get('date')"
+            ></drr-datepicker>
+            <drr-textarea
+              style="align-self: stretch"
+              [label]="t('description')"
+              [rxFormControl]="conditionForm?.get('description')"
+              [maxlength]="2000"
+            ></drr-textarea>
+          </div>
+          <div class="attachments-container">
+            <drr-attachment
+              *ngFor="
+                let attachmentControl of attachmentsArray.controls;
+                let i = index
+              "
+              [title]="i == 0 ? t('attachments') : ''"
+              [attachmentForm]="attachmentControl"
+              (removeFile)="removeFile($event)"
+              (downloadFile)="downloadFile($event)"
+            ></drr-attachment>
+
+            <div style="display: flex; flex-direction: column; gap: 1rem">
+              <div>
+                <mat-label class="drr-label">
+                  {{ t("attachmentUploadText") }}
+                </mat-label>
+              </div>
+
+              <drr-file-upload
+                (filesSelected)="uploadFiles($event)"
+                [attachButtonLabel]="t('uploadAttachment')"
+              ></drr-file-upload>
+            </div>
+          </div>
         </div>
         <div class="drr-stepper-action">
           <button mat-flat-button color="primary" matStepperNext type="button">

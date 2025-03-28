@@ -758,6 +758,8 @@
     "name": "Condition Name",
     "limit": "Limit",
     "date": "Date Met",
-    "description": "Explanation"
+    "description": "Explanation",
+    "attachmentUploadText": "Upload any supporting attachments",
+    "uploadAttachment": "Add Attachment"
   }
 }
