@@ -40,7 +40,11 @@
       [orientation]="stepperOrientation"
       #stepper
     >
-      <mat-step [label]="t('step1')">
+      <mat-step
+        [label]="t('step1')"
+        [stepControl]="conditionForm!"
+        [errorMessage]="'stepError' | transloco"
+      >
         <div
           style="
             display: flex;
