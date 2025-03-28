@@ -9,7 +9,7 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { IFormGroup, RxFormBuilder } from '@rxweb/reactive-form-validators';
 import { DocumentType } from '../../../../../model';
 import { FileService } from '../../../../shared/services/file.service';
-import { SummaryItemComponent } from '../../../summary-item/summary-item.component';
+import { DrrSummaryItemComponent } from '../../../drr-summary-item/drr-summary-item.component';
 import { ClaimForm } from '../drif-claim-form';
 
 @Component({
@@ -17,7 +17,7 @@ import { ClaimForm } from '../drif-claim-form';
   standalone: true,
   imports: [
     CommonModule,
-    SummaryItemComponent,
+    DrrSummaryItemComponent,
     MatCardModule,
     MatInputModule,
     MatButtonModule,

@@ -12,7 +12,7 @@ import {
   RxFormGroup,
 } from '@rxweb/reactive-form-validators';
 import { NgxMaskPipe } from 'ngx-mask';
-import { SummaryItemComponent } from '../../summary-item/summary-item.component';
+import { DrrSummaryItemComponent } from '../../drr-summary-item/drr-summary-item.component';
 import { EOIApplicationForm } from '../drif-eoi-form';
 
 @UntilDestroy({ checkProperties: true })
@@ -24,7 +24,7 @@ import { EOIApplicationForm } from '../drif-eoi-form';
     MatInputModule,
     TranslocoModule,
     NgxMaskPipe,
-    SummaryItemComponent,
+    DrrSummaryItemComponent,
     MatCardModule,
   ],
   templateUrl: './drif-eoi-summary.component.html',

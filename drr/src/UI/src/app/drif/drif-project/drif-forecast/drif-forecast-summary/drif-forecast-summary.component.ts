@@ -7,7 +7,7 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { IFormGroup, RxFormBuilder } from '@rxweb/reactive-form-validators';
 import { DeclarationForm } from '../../../../shared/drr-declaration/drr-declaration-form';
 import { FileService } from '../../../../shared/services/file.service';
-import { SummaryItemComponent } from '../../../summary-item/summary-item.component';
+import { DrrSummaryItemComponent } from '../../../drr-summary-item/drr-summary-item.component';
 import {
   BudgetForecastForm,
   ForecastAttachmentsForm,
@@ -21,7 +21,7 @@ import {
     CommonModule,
     TranslocoModule,
     MatCardModule,
-    SummaryItemComponent,
+    DrrSummaryItemComponent,
     MatInputModule,
   ],
   templateUrl: './drif-forecast-summary.component.html',
