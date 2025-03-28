@@ -752,12 +752,17 @@
     "phone": "Phone",
     "email": "Email"
   },
-  "contition": {
+  "condition": {
     "step1": "Condition Request",
     "step2": "Review & Declaration",
     "name": "Condition Name",
     "limit": "Limit",
     "date": "Date Met",
-    "description": "Explanation"
+    "description": "Explanation",
+    "message": "DMAP Team Message",
+    "author": "DMAP Team Member",
+    "messageDate": "Message Date",
+    "attachmentUploadText": "Upload any supporting attachments",
+    "uploadAttachment": "Add Attachment"
   }
 }

@@ -13,4 +13,5 @@ export const RecordType = {
   ProgressReport: 'ProgressReport',
   Invoice: 'Invoice',
   ForecastReport: 'ForecastReport',
+  ConditionRequest: 'ConditionRequest',
 } as const;

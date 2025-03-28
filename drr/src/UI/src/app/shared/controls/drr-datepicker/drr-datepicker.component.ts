@@ -45,6 +45,11 @@ export class DrrDatepickerComponent {
     return this._formControl;
   }
 
+  @Input()
+  set disabled(disabled: boolean) {
+    disabled ? this.rxFormControl.disable() : this.rxFormControl.enable();
+  }
+
   isMobile = false;
 
   ngOnInit() {

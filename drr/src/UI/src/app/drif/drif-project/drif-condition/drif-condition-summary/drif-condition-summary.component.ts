@@ -8,51 +8,31 @@ import { IFormGroup, RxFormBuilder } from '@rxweb/reactive-form-validators';
 import { DeclarationForm } from '../../../../shared/drr-declaration/drr-declaration-form';
 import { FileService } from '../../../../shared/services/file.service';
 import { DrrSummaryItemComponent } from '../../../drr-summary-item/drr-summary-item.component';
-import {
-  BudgetForecastForm,
-  ForecastAttachmentsForm,
-  ForecastForm,
-} from '../drif-forecast-form';
+import { ConditionForm } from '../drif-condition-form';
 
 @Component({
-  selector: 'drif-forecast-summary',
+  selector: 'drif-condition-summary',
   standalone: true,
   imports: [
     CommonModule,
-    TranslocoModule,
     MatCardModule,
     DrrSummaryItemComponent,
+    TranslocoModule,
     MatInputModule,
   ],
-  templateUrl: './drif-forecast-summary.component.html',
-  styleUrl: './drif-forecast-summary.component.scss',
+  templateUrl: './drif-condition-summary.component.html',
+  styleUrl: './drif-condition-summary.component.scss',
 })
-export class DrifForecastSummaryComponent {
+export class DrifConditionSummaryComponent {
   translocoService = inject(TranslocoService);
   formBuilder = inject(RxFormBuilder);
   fileService = inject(FileService);
 
-  @Input() forecastForm?: IFormGroup<ForecastForm>;
+  @Input() conditionForm?: IFormGroup<ConditionForm>;
   @Input() isReadOnlyView = true;
 
-  get budgetForecastForm() {
-    return this.forecastForm?.get(
-      'budgetForecast',
-    ) as IFormGroup<BudgetForecastForm>;
-  }
-
-  get yearForecastFormArray() {
-    return this.budgetForecastForm?.get('yearForecasts') as FormArray;
-  }
-
-  get attachmentsForm() {
-    return this.forecastForm?.get(
-      'attachments',
-    ) as IFormGroup<ForecastAttachmentsForm>;
-  }
-
   get attachmentsArray() {
-    return this.attachmentsForm?.get('attachments') as FormArray;
+    return this.conditionForm?.get('attachments') as FormArray;
   }
 
   hasAttachments(): boolean {
@@ -60,7 +40,9 @@ export class DrifForecastSummaryComponent {
   }
 
   get declarationForm() {
-    return this.forecastForm?.get('declaration') as IFormGroup<DeclarationForm>;
+    return this.conditionForm?.get(
+      'declaration',
+    ) as IFormGroup<DeclarationForm>;
   }
 
   onDownloadFile(fileId: string) {

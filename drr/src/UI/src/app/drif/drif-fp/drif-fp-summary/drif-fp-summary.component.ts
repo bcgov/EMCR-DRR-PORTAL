@@ -18,7 +18,7 @@ import { NgxMaskPipe } from 'ngx-mask';
 import { DocumentType, YesNoOption } from '../../../../model';
 import { FileService } from '../../../shared/services/file.service';
 import { DrifEoiSummaryComponent } from '../../drif-eoi/drif-eoi-summary/drif-eoi-summary.component';
-import { SummaryItemComponent } from '../../summary-item/summary-item.component';
+import { DrrSummaryItemComponent } from '../../drr-summary-item/drr-summary-item.component';
 import { DrifFpForm } from '../drif-fp-form';
 
 @UntilDestroy({ checkProperties: true })
@@ -27,7 +27,7 @@ import { DrifFpForm } from '../drif-fp-form';
   standalone: true,
   imports: [
     CommonModule,
-    SummaryItemComponent,
+    DrrSummaryItemComponent,
     MatCardModule,
     MatInputModule,
     MatButtonModule,

@@ -22,11 +22,11 @@ export type ControlType =
   selector: 'drr-summary-item',
   standalone: true,
   imports: [CommonModule, MatInputModule, TranslocoModule],
-  templateUrl: './summary-item.component.html',
-  styleUrl: './summary-item.component.scss',
+  templateUrl: './drr-summary-item.component.html',
+  styleUrl: './drr-summary-item.component.scss',
   providers: [DatePipe, CurrencyPipe, NgxMaskPipe],
 })
-export class SummaryItemComponent {
+export class DrrSummaryItemComponent {
   translocoService = inject(TranslocoService);
   datePipe = inject(DatePipe);
   currencyPipe = inject(CurrencyPipe);
@@ -67,7 +67,7 @@ export class SummaryItemComponent {
         return (
           this.translate
             ? (this.translocoService.translate(
-                this.rxFormControl?.value
+                this.rxFormControl?.value,
               ) as string[])
             : (this.rxFormControl?.value as string[])
         )?.join(', ');
