@@ -1,7 +1,8 @@
-@if (forecastId) {
-<p>Project ID: {{ projectId }}</p>
-<p>Forecast ID: {{ forecastId }}</p>
-} @else {
-<p>Project ID: {{ projectId }}</p>
-<p>Create new forecast</p>
-}
+<div class="forecast-report-details" *transloco="let t; read: 'forecast'">
+  <div class="forecast-report-details__header">
+    <h5>{{ reportName }}</h5>
+
+    <button mat-stroked-button color="primary" (click)="goBack()">Back</button>
+  </div>
+  <drif-forecast-summary [forecastForm]="forecastForm"></drif-forecast-summary>
+</div>

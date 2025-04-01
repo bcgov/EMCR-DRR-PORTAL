@@ -1,0 +1,10 @@
+<div class="condition-report-details" *transloco="let t; read: 'condition'">
+  <div class="condition-report-details__header">
+    <h5>{{ conditionName }}</h5>
+
+    <button mat-stroked-button color="primary" (click)="goBack()">Back</button>
+  </div>
+  <drif-condition-summary
+    [conditionForm]="conditionForm"
+  ></drif-condition-summary>
+</div>
