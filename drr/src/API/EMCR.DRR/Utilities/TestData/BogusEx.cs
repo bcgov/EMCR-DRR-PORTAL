@@ -246,7 +246,7 @@ namespace EMCR.DRR.API.Utilities.TestData
                 .RuleFor(i => i.Date, f => f.Date.Between(startDate, DateTime.UtcNow))
                 .RuleFor(i => i.WorkStartDate, f => f.Date.Between(startDate, startDate.AddDays(midPoint)))
                 .RuleFor(i => i.WorkEndDate, (f, i) => f.Date.Between(i.WorkStartDate.Value, endDate))
-                .RuleFor(i => i.PaymentDate, (f, i) => f.Date.Between(i.Date.Value > i.WorkEndDate.Value ? i.Date.Value : i.WorkEndDate.Value, endDate))
+                .RuleFor(i => i.PaymentDate, (f, i) => f.Date.Between(i.Date.Value, DateTime.UtcNow))
                 .RuleFor(i => i.CostCategory, f => f.PickRandom(categoryOptions))
                 .RuleFor(i => i.SupplierName, f => f.Company.CompanyName())
                 .RuleFor(i => i.Description, f => f.Lorem.Sentence())

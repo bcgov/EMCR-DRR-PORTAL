@@ -552,9 +552,14 @@ namespace EMCR.DRR.Managers.Intake
                 .ForMember(dest => dest.ConstructionContractStatus, opt => opt.Ignore())
                 .ForMember(dest => dest.PermitToConstructStatus, opt => opt.Ignore())
                 .ForMember(dest => dest.ProgressStatus, opt => opt.Ignore())
+                .ForMember(dest => dest.ContractAwardDate, opt => opt.Ignore())
+                .ForMember(dest => dest.PlannedContractAwardDate, opt => opt.Ignore())
+                .ForMember(dest => dest.AwardPermitToConstructDate, opt => opt.Ignore())
+                .ForMember(dest => dest.PlannedAwardPermitToConstructDate, opt => opt.Ignore())
                 .AfterMap((src, dest) =>
                 {
                     WorkplanStatusMapper(dest, src);
+                    WorkplanAwardDateMapper(dest, src);
                     foreach (var prop in dest.GetType().GetProperties())
                     {
                         if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
@@ -571,6 +576,16 @@ namespace EMCR.DRR.Managers.Intake
                 .AfterMap((src, dest) =>
                 {
                     dest.Status = WorkplanFlatStatusMapper(src, dest.Activity);
+                    if (dest.Activity == Controllers.ActivityType.ConstructionContractAward)
+                    {
+                        dest.PlannedStartDate = src.PlannedContractAwardDate;
+                        dest.ActualStartDate = src.ContractAwardDate;
+                    }
+                    else if (dest.Activity == Controllers.ActivityType.PermitToConstruct)
+                    {
+                        dest.PlannedStartDate = src.PlannedAwardPermitToConstructDate;
+                        dest.ActualStartDate = src.AwardPermitToConstructDate;
+                    }
                 })
                     ;
 #pragma warning restore CS8629 // Nullable value type may be null.
@@ -870,6 +885,27 @@ namespace EMCR.DRR.Managers.Intake
                     {
                         return workplanDetails.ProgressStatus != null ? Enum.Parse<Controllers.WorkplanStatus>(workplanDetails.ProgressStatus.ToString()) : null;
                     }
+            }
+        }
+
+        private void WorkplanAwardDateMapper(WorkplanActivityDetails dest, WorkplanActivity src)
+        {
+            switch (src.Activity)
+            {
+                case Controllers.ActivityType.PermitToConstruct:
+                    dest.AwardPermitToConstructDate = src.ActualStartDate;
+                    dest.PlannedAwardPermitToConstructDate = src.PlannedStartDate;
+                    dest.ActualStartDate = null;
+                    dest.PlannedStartDate = null;
+                    break;
+                case Controllers.ActivityType.ConstructionContractAward:
+                    dest.ContractAwardDate = src.ActualStartDate;
+                    dest.PlannedContractAwardDate = src.PlannedStartDate;
+                    dest.ActualStartDate = null;
+                    dest.PlannedStartDate = null;
+                    break;
+                default:
+                    break;
             }
         }
 

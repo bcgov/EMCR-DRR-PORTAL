@@ -586,8 +586,8 @@ namespace EMCR.DRR.Controllers
         public string? Comment { get; set; }
         public WorkplanStatus? Status { get; set; }
         public DateTime? PlannedStartDate { get; set; }
-        public DateTime? ActualStartDate { get; set; }
         public DateTime? PlannedCompletionDate { get; set; }
+        public DateTime? ActualStartDate { get; set; }
         public DateTime? ActualCompletionDate { get; set; }
     }
 
