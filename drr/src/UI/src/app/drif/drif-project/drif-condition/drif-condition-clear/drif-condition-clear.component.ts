@@ -1,11 +1,13 @@
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { CommonModule } from '@angular/common';
-import { Component, HostListener, inject } from '@angular/core';
+import { Component, HostListener, inject, viewChild } from '@angular/core';
 import { FormArray, FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import {
+  MatStepper,
   MatStepperModule,
   StepperOrientation,
 } from '@angular/material/stepper';
@@ -17,6 +19,7 @@ import {
   RxFormBuilder,
   RxReactiveFormsModule,
 } from '@rxweb/reactive-form-validators';
+import { distinctUntilChanged, pairwise, startWith } from 'rxjs';
 import { AttachmentService } from '../../../../../api/attachment/attachment.service';
 import { ProjectService } from '../../../../../api/project/project.service';
 import {
@@ -89,6 +92,8 @@ export class DrifConditionClearComponent {
 
   conditionName?: string;
 
+  stepper = viewChild.required(MatStepper);
+  breakpointObserver = inject(BreakpointObserver);
   stepperOrientation: StepperOrientation = 'horizontal';
 
   conditionForm?: IFormGroup<ConditionForm>;
@@ -129,6 +134,12 @@ export class DrifConditionClearComponent {
   }
 
   ngOnInit() {
+    this.breakpointObserver
+      .observe('(min-width: 768px)')
+      .subscribe(({ matches }) => {
+        this.stepperOrientation = matches ? 'horizontal' : 'vertical';
+      });
+
     this.route.params.subscribe((params) => {
       this.projectId = params['projectId'];
       this.conditionId = params['conditionId'];
@@ -146,7 +157,44 @@ export class DrifConditionClearComponent {
       this.conditionName = `Request to Clear Condition for ProjectName`;
 
       this.load().then(() => {
-        this.resetAutoSaveTimer();
+        this.formChanged = false;
+        setTimeout(() => {
+          this.conditionForm?.valueChanges
+            .pipe(
+              startWith(this.conditionForm.value),
+              pairwise(),
+              distinctUntilChanged((a, b) => {
+                // compare objects but ignore declaration changes
+                delete a[1].declaration.authorizedRepresentativeStatement;
+                delete a[1].declaration.informationAccuracyStatement;
+                delete b[1].declaration.authorizedRepresentativeStatement;
+                delete b[1].declaration.informationAccuracyStatement;
+
+                return JSON.stringify(a[1]) == JSON.stringify(b[1]);
+              }),
+            )
+            .subscribe(([prev, curr]) => {
+              if (
+                prev.declaration.authorizedRepresentativeStatement !==
+                  curr.declaration.authorizedRepresentativeStatement ||
+                prev.declaration.informationAccuracyStatement !==
+                  curr.declaration.informationAccuracyStatement
+              ) {
+                return;
+              }
+
+              this.declarationForm
+                ?.get('authorizedRepresentativeStatement')
+                ?.reset();
+
+              this.declarationForm
+                ?.get('informationAccuracyStatement')
+                ?.reset();
+
+              this.formChanged = true;
+              this.resetAutoSaveTimer();
+            });
+        }, 1000);
       });
     });
   }
@@ -245,17 +293,17 @@ export class DrifConditionClearComponent {
       return;
     }
 
-    // const stepId = this.stepper._getStepLabelId(event.selectedIndex);
-    // const stepElement = document.getElementById(stepId);
-    // if (stepElement) {
-    //   setTimeout(() => {
-    //     stepElement.scrollIntoView({
-    //       block: 'start',
-    //       inline: 'nearest',
-    //       behavior: 'smooth',
-    //     });
-    //   }, 250);
-    // }
+    const stepId = this.stepper()._getStepLabelId(event.selectedIndex);
+    const stepElement = document.getElementById(stepId);
+    if (stepElement) {
+      setTimeout(() => {
+        stepElement.scrollIntoView({
+          block: 'start',
+          inline: 'nearest',
+          behavior: 'smooth',
+        });
+      }, 250);
+    }
   }
 
   goBack() {
@@ -263,9 +311,65 @@ export class DrifConditionClearComponent {
     this.router.navigate(['/drif-projects', this.projectId]);
   }
 
+  private getFormValue() {}
+
   save() {
-    // TODO: temp
-    this.lastSavedAt = new Date();
+    if (!this.formChanged) {
+      return;
+    }
+
+    const conditionFormValue = this.getFormValue();
+
+    this.lastSavedAt = undefined;
+
+    // this.projectService
+    //   .conditionSave(this.projectId!, this.conditionId!, conditionFormValue)
+    //   .subscribe({
+    //     next: () => {
+    //       this.lastSavedAt = new Date();
+
+    //       this.toastService.close();
+    //       this.toastService.success('Condition request saved successfully');
+
+    //       this.formChanged = false;
+    //       this.resetAutoSaveTimer();
+    //     },
+    //     error: (error) => {
+    //       this.toastService.close();
+    //       this.toastService.error('Failed to save condition request');
+    //       console.error(error);
+    //     },
+    //   });
+  }
+
+  submit() {
+    this.conditionForm?.markAllAsTouched();
+    this.stepper().steps.forEach((step) => step._markAsInteracted());
+    this.stepper()._stateChanged();
+
+    if (this.conditionForm?.invalid) {
+      this.toastService.error('Please fill in all required fields');
+      return;
+    }
+
+    const conditionFormValue = this.getFormValue();
+
+    // this.projectService
+    //   .conditionSubmit(this.projectId!, this.conditionId!, {
+    //     ...conditionFormValue,
+    //   })
+    //   .subscribe({
+    //     next: () => {
+    //       this.toastService.close();
+    //       this.toastService.success('Condition clear request submitted');
+
+    //       this.router.navigate(['drif-projects', this.projectId]);
+    //     },
+    //     error: (error) => {
+    //       this.toastService.error('Condition clear request failed');
+    //       console.error(error);
+    //     },
+    //   });
   }
 
   get declarationForm() {
