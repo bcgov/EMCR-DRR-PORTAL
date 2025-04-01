@@ -1,5 +1,5 @@
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject, input, Input } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
@@ -32,7 +32,7 @@ export class DrrSummaryItemComponent {
   currencyPipe = inject(CurrencyPipe);
   maskPipe = inject(NgxMaskPipe);
 
-  @Input() label?: string;
+  label = input({ required: true });
 
   private _value: string | number | null | undefined;
   @Input()

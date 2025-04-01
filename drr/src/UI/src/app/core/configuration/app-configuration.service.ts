@@ -28,6 +28,7 @@ export class AppConfigurationService {
     );
   }
 
+  // TODO: this could be re-implemented in the store
   async loadOptions() {
     return this.configurationService
       .configurationGetEntities()
@@ -38,6 +39,7 @@ export class AppConfigurationService {
       });
   }
 
+  // TODO: this could be re-implemented in the store
   async loadDeclarations() {
     return new Promise((resolve) =>
       this.drifAppService.dRIFApplicationGetDeclarations().subscribe(
