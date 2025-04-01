@@ -66,11 +66,11 @@
     <mat-card-content>
       <div>
         <mat-label class="drr-label">{{
-          "authorizedRepresentative" | transloco
+          "authorizedRepresentativeLabel" | transloco
         }}</mat-label>
         <div class="summary-row">
           <drr-summary-item
-            [label]="t('firstName')"
+            [label]="'firstName' | transloco"
             [rxFormControl]="
               declarationForm.get('authorizedRepresentative.firstName')
             "
@@ -78,7 +78,7 @@
           </drr-summary-item>
 
           <drr-summary-item
-            [label]="t('lastName')"
+            [label]="'lastName' | transloco"
             [rxFormControl]="
               declarationForm.get('authorizedRepresentative.lastName')
             "
@@ -86,7 +86,7 @@
           </drr-summary-item>
 
           <drr-summary-item
-            [label]="t('title')"
+            [label]="'title' | transloco"
             [rxFormControl]="
               declarationForm.get('authorizedRepresentative.title')
             "
@@ -94,7 +94,7 @@
           </drr-summary-item>
 
           <drr-summary-item
-            [label]="t('department')"
+            [label]="'department' | transloco"
             [rxFormControl]="
               declarationForm.get('authorizedRepresentative.department')
             "
@@ -102,7 +102,7 @@
           </drr-summary-item>
 
           <drr-summary-item
-            [label]="t('phone')"
+            [label]="'phone' | transloco"
             [rxFormControl]="
               declarationForm.get('authorizedRepresentative.phone')
             "
@@ -111,7 +111,7 @@
           </drr-summary-item>
 
           <drr-summary-item
-            [label]="t('email')"
+            [label]="'email' | transloco"
             [rxFormControl]="
               declarationForm.get('authorizedRepresentative.email')
             "

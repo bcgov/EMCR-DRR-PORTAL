@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TranslocoModule } from '@ngneat/transloco';
 import { IFormGroup, RxFormBuilder } from '@rxweb/reactive-form-validators';
 import { ProjectService } from '../../../../../api/project/project.service';
 import { ConditionForm } from '../drif-condition-form';
@@ -9,7 +11,12 @@ import { DrifConditionSummaryComponent } from '../drif-condition-summary/drif-co
 @Component({
   selector: 'drif-condition-view',
   standalone: true,
-  imports: [CommonModule, DrifConditionSummaryComponent],
+  imports: [
+    CommonModule,
+    DrifConditionSummaryComponent,
+    TranslocoModule,
+    MatButtonModule,
+  ],
   templateUrl: './drif-condition-view.component.html',
   styleUrl: './drif-condition-view.component.scss',
   providers: [RxFormBuilder],

@@ -19,7 +19,7 @@
         </tr>
         <tr
           *ngFor="
-            let yearForecast of yearForecastFormArray.controls;
+            let yearForecast of yearForecastFormArray?.controls;
             let i = index
           "
         >
@@ -49,26 +49,26 @@
 
       <drr-summary-item
         [label]="t('totalProjectedExpenditure')"
-        [rxFormControl]="budgetForecastForm.get('totalProjectedExpenditure')"
+        [rxFormControl]="budgetForecastForm?.get('totalProjectedExpenditure')"
         controlType="currency"
       ></drr-summary-item>
 
       <drr-summary-item
         [label]="t('originalForecast')"
-        [rxFormControl]="budgetForecastForm.get('originalForecast')"
+        [rxFormControl]="budgetForecastForm?.get('originalForecast')"
         controlType="currency"
       ></drr-summary-item>
 
       <drr-summary-item
         [label]="t('variance')"
-        [rxFormControl]="budgetForecastForm.get('variance')"
+        [rxFormControl]="budgetForecastForm?.get('variance')"
         controlType="currency"
       ></drr-summary-item>
 
-      @if (budgetForecastForm.get("variance")?.value != 0) {
+      @if (budgetForecastForm?.get("variance")?.value != 0) {
         <drr-summary-item
           [label]="t('varianceComment')"
-          [rxFormControl]="budgetForecastForm.get('varianceComment')"
+          [rxFormControl]="budgetForecastForm?.get('varianceComment')"
           controlType="textarea"
         ></drr-summary-item>
       }
@@ -85,7 +85,7 @@
 
       <div
         class="summary-row"
-        *ngFor="let attachment of attachmentsArray.controls"
+        *ngFor="let attachment of attachmentsArray?.controls"
       >
         <drr-summary-item
           [label]="t('attachments.name')"
@@ -116,54 +116,54 @@
     <mat-card-content>
       <div>
         <mat-label class="drr-label">{{
-          "authorizedRepresentative" | transloco
+          "authorizedRepresentativeLabel" | transloco
         }}</mat-label>
         <div class="summary-row">
           <drr-summary-item
-            [label]="t('firstName')"
+            [label]="'firstName' | transloco"
             [rxFormControl]="
-              declarationForm.get('authorizedRepresentative.firstName')
+              declarationForm?.get('authorizedRepresentative.firstName')
             "
           >
           </drr-summary-item>
 
           <drr-summary-item
-            [label]="t('lastName')"
+            [label]="'lastName' | transloco"
             [rxFormControl]="
-              declarationForm.get('authorizedRepresentative.lastName')
+              declarationForm?.get('authorizedRepresentative.lastName')
             "
           >
           </drr-summary-item>
 
           <drr-summary-item
-            [label]="t('title')"
+            [label]="'title' | transloco"
             [rxFormControl]="
-              declarationForm.get('authorizedRepresentative.title')
+              declarationForm?.get('authorizedRepresentative.title')
             "
           >
           </drr-summary-item>
 
           <drr-summary-item
-            [label]="t('department')"
+            [label]="'department' | transloco"
             [rxFormControl]="
-              declarationForm.get('authorizedRepresentative.department')
+              declarationForm?.get('authorizedRepresentative.department')
             "
           >
           </drr-summary-item>
 
           <drr-summary-item
-            [label]="t('phone')"
+            [label]="'phone' | transloco"
             [rxFormControl]="
-              declarationForm.get('authorizedRepresentative.phone')
+              declarationForm?.get('authorizedRepresentative.phone')
             "
             controlType="phone"
           >
           </drr-summary-item>
 
           <drr-summary-item
-            [label]="t('email')"
+            [label]="'email' | transloco"
             [rxFormControl]="
-              declarationForm.get('authorizedRepresentative.email')
+              declarationForm?.get('authorizedRepresentative.email')
             "
           >
           </drr-summary-item>

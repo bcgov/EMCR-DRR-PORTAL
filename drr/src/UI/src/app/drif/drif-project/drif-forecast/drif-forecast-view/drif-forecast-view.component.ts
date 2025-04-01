@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TranslocoModule } from '@ngneat/transloco';
 import { IFormGroup, RxFormBuilder } from '@rxweb/reactive-form-validators';
 import { ProjectService } from '../../../../../api/project/project.service';
 import { DraftForecast } from '../../../../../model';
@@ -10,7 +12,12 @@ import { DrifForecastSummaryComponent } from '../drif-forecast-summary/drif-fore
 @Component({
   selector: 'drr-drif-forecast',
   standalone: true,
-  imports: [CommonModule, DrifForecastSummaryComponent],
+  imports: [
+    CommonModule,
+    DrifForecastSummaryComponent,
+    TranslocoModule,
+    MatButtonModule,
+  ],
   templateUrl: './drif-forecast-view.component.html',
   styleUrl: './drif-forecast-view.component.scss',
   providers: [RxFormBuilder],
@@ -34,6 +41,8 @@ export class DrifForecastViewComponent {
       this.projectId = params['projectId'];
       this.reportId = params['reportId'];
       this.forecastId = params['forecastId'];
+
+      this.load();
     });
   }
 

@@ -12,3 +12,17 @@
     text-align: left;
   }
 }
+
+.summary-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-left: 1rem;
+  word-break: break-word;
+
+  ::ng-deep .drr-summary-value {
+    margin-left: 0;
+  }
+}
