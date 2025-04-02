@@ -157,7 +157,7 @@ namespace EMCR.DRR.API.Resources.Reports
             await AddUpcomingEvents(ctx, drrProgressReport, existingProgressReport);
             AddFundingSignage(ctx, drrProgressReport, existingProgressReport);
             UpdateProgressReportDocuments(ctx, drrProgressReport);
-            await SetProgressReportDeclarations(ctx, drrProgressReport);
+            await SetProgressReportDeclarations(ctx, drrProgressReport, "Progress Report");
 
             ctx.UpdateObject(drrProgressReport);
             await ctx.SaveChangesAsync();
@@ -179,10 +179,10 @@ namespace EMCR.DRR.API.Resources.Reports
             return new ManageReportCommandResult { Id = cmd.Id };
         }
 
-        private static async Task SetProgressReportDeclarations(DRRContext drrContext, drr_projectprogress progressReport)
+        private static async Task SetProgressReportDeclarations(DRRContext drrContext, drr_projectprogress progressReport, string ApplicationTypeName)
         {
-            var accuracyDeclaration = (await drrContext.drr_legaldeclarations.Where(d => d.statecode == (int)EntityState.Active && d.drr_declarationtype == (int)DeclarationTypeOptionSet.AccuracyOfInformation && d.drr_formtype == (int)FormTypeOptionSet.Report).GetAllPagesAsync()).FirstOrDefault();
-            var representativeDeclaration = (await drrContext.drr_legaldeclarations.Where(d => d.statecode == (int)EntityState.Active && d.drr_declarationtype == (int)DeclarationTypeOptionSet.AuthorizedRepresentative && d.drr_formtype == (int)FormTypeOptionSet.Report).GetAllPagesAsync()).FirstOrDefault();
+            var accuracyDeclaration = (await drrContext.drr_legaldeclarations.Where(d => d.statecode == (int)EntityState.Active && d.drr_declarationtype == (int)DeclarationTypeOptionSet.AccuracyOfInformation && d.drr_formtype == (int)FormTypeOptionSet.Report && d.drr_ApplicationType.drr_name == ApplicationTypeName).GetAllPagesAsync()).FirstOrDefault();
+            var representativeDeclaration = (await drrContext.drr_legaldeclarations.Where(d => d.statecode == (int)EntityState.Active && d.drr_declarationtype == (int)DeclarationTypeOptionSet.AuthorizedRepresentative && d.drr_formtype == (int)FormTypeOptionSet.Report && d.drr_ApplicationType.drr_name == ApplicationTypeName).GetAllPagesAsync()).FirstOrDefault();
 
             if (accuracyDeclaration != null)
             {
@@ -220,7 +220,7 @@ namespace EMCR.DRR.API.Resources.Reports
             var authorizedRep = drrClaim.drr_AuthorizedRepresentativeContact;
             if (authorizedRep != null) SaveClaimAuthrizedRepresentative(ctx, drrClaim, authorizedRep, existingClaim.drr_AuthorizedRepresentativeContact);
             UpdateInvoices(ctx, drrClaim, existingClaim);
-            await SetClaimDeclarations(ctx, drrClaim);
+            await SetClaimDeclarations(ctx, drrClaim, "Claims Form");
 
             ctx.UpdateObject(drrClaim);
             await ctx.SaveChangesAsync();
@@ -241,10 +241,10 @@ namespace EMCR.DRR.API.Resources.Reports
             return new ManageReportCommandResult { Id = cmd.Id };
         }
 
-        private static async Task SetClaimDeclarations(DRRContext drrContext, drr_projectclaim claim)
+        private static async Task SetClaimDeclarations(DRRContext drrContext, drr_projectclaim claim, string ApplicationTypeName)
         {
-            var accuracyDeclaration = (await drrContext.drr_legaldeclarations.Where(d => d.statecode == (int)EntityState.Active && d.drr_declarationtype == (int)DeclarationTypeOptionSet.AccuracyOfInformation && d.drr_formtype == (int)FormTypeOptionSet.Report).GetAllPagesAsync()).FirstOrDefault();
-            var representativeDeclaration = (await drrContext.drr_legaldeclarations.Where(d => d.statecode == (int)EntityState.Active && d.drr_declarationtype == (int)DeclarationTypeOptionSet.AuthorizedRepresentative && d.drr_formtype == (int)FormTypeOptionSet.Report).GetAllPagesAsync()).FirstOrDefault();
+            var accuracyDeclaration = (await drrContext.drr_legaldeclarations.Where(d => d.statecode == (int)EntityState.Active && d.drr_declarationtype == (int)DeclarationTypeOptionSet.AccuracyOfInformation && d.drr_formtype == (int)FormTypeOptionSet.Report && d.drr_ApplicationType.drr_name == ApplicationTypeName).GetAllPagesAsync()).FirstOrDefault();
+            var representativeDeclaration = (await drrContext.drr_legaldeclarations.Where(d => d.statecode == (int)EntityState.Active && d.drr_declarationtype == (int)DeclarationTypeOptionSet.AuthorizedRepresentative && d.drr_formtype == (int)FormTypeOptionSet.Report && d.drr_ApplicationType.drr_name == ApplicationTypeName).GetAllPagesAsync()).FirstOrDefault();
 
             if (accuracyDeclaration != null)
             {
@@ -307,7 +307,7 @@ namespace EMCR.DRR.API.Resources.Reports
 
             var authorizedRep = drrForecast.drr_AuthorizedRepresentativeContact;
             if (authorizedRep != null) SaveForecastAuthrizedRepresentative(ctx, drrForecast, authorizedRep, existingForecast.drr_AuthorizedRepresentativeContact);
-            await SetForecastDeclarations(ctx, drrForecast);
+            await SetForecastDeclarations(ctx, drrForecast, "Budget Forecast Report");
 
             ctx.UpdateObject(drrForecast);
             await ctx.SaveChangesAsync();
@@ -328,19 +328,19 @@ namespace EMCR.DRR.API.Resources.Reports
             return new ManageReportCommandResult { Id = cmd.Id };
         }
 
-        private static async Task SetForecastDeclarations(DRRContext drrContext, drr_projectbudgetforecast forecast)
+        private static async Task SetForecastDeclarations(DRRContext drrContext, drr_projectbudgetforecast forecast, string ApplicationTypeName)
         {
-            var accuracyDeclaration = (await drrContext.drr_legaldeclarations.Where(d => d.statecode == (int)EntityState.Active && d.drr_declarationtype == (int)DeclarationTypeOptionSet.AccuracyOfInformation && d.drr_formtype == (int)FormTypeOptionSet.Report).GetAllPagesAsync()).FirstOrDefault();
-            var representativeDeclaration = (await drrContext.drr_legaldeclarations.Where(d => d.statecode == (int)EntityState.Active && d.drr_declarationtype == (int)DeclarationTypeOptionSet.AuthorizedRepresentative && d.drr_formtype == (int)FormTypeOptionSet.Report).GetAllPagesAsync()).FirstOrDefault();
+            var accuracyDeclaration = (await drrContext.drr_legaldeclarations.Where(d => d.statecode == (int)EntityState.Active && d.drr_declarationtype == (int)DeclarationTypeOptionSet.AccuracyOfInformation && d.drr_formtype == (int)FormTypeOptionSet.Report && d.drr_ApplicationType.drr_name == ApplicationTypeName).GetAllPagesAsync()).FirstOrDefault();
+            var representativeDeclaration = (await drrContext.drr_legaldeclarations.Where(d => d.statecode == (int)EntityState.Active && d.drr_declarationtype == (int)DeclarationTypeOptionSet.AuthorizedRepresentative && d.drr_formtype == (int)FormTypeOptionSet.Report && d.drr_ApplicationType.drr_name == ApplicationTypeName).GetAllPagesAsync()).FirstOrDefault();
 
             if (accuracyDeclaration != null)
             {
-                //drrContext.SetLink(forecast, nameof(drr_projectbudgetforecast.drr_AccuracyofInformationDeclaration), accuracyDeclaration);
+                drrContext.SetLink(forecast, nameof(drr_projectbudgetforecast.drr_AccuracyofInformationDeclarationId), accuracyDeclaration);
             }
 
             if (representativeDeclaration != null)
             {
-                //drrContext.SetLink(forecast, nameof(drr_projectbudgetforecast.drr_AuthorizedRepresentativeDeclaration), representativeDeclaration);
+                drrContext.SetLink(forecast, nameof(drr_projectbudgetforecast.drr_AuthorizedRepresentativeDeclarationid), representativeDeclaration);
             }
         }
 

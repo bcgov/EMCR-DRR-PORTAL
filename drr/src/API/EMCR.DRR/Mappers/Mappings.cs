@@ -79,6 +79,12 @@ namespace EMCR.DRR.API.Mappers
                     return ApplicationType.EOI;
                 case "Full Proposal":
                     return ApplicationType.FP;
+                case "Progress Report":
+                    return ApplicationType.Progress;
+                case "Budget Forecast Report":
+                    return ApplicationType.Forecast;
+                case "Claims Form":
+                    return ApplicationType.Claim;
                 default: return null;
             }
         }
