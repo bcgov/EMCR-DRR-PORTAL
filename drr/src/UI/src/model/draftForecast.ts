@@ -34,6 +34,10 @@ export interface DraftForecast {
   total?: number;
   /** @nullable */
   variance?: number;
-  /** @nullable */
+  /**
+   * @minLength 0
+   * @maxLength 2000
+   * @nullable
+   */
   varianceComment?: string;
 }

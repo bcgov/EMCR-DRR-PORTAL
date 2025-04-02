@@ -35,6 +35,7 @@ import { AttachmentService } from '../../../../../api/attachment/attachment.serv
 import { ProjectService } from '../../../../../api/project/project.service';
 import {
   ActiveCondition,
+  ApplicationType,
   CostCategory,
   DeclarationType,
   DocumentType,
@@ -212,11 +213,13 @@ export class DrifClaimCreateComponent {
       this.authorizedRepresentativeText = this.optionsStore.getDeclarations?.(
         DeclarationType.AuthorizedRepresentative,
         FormType.Report,
+        ApplicationType.Claim,
       );
 
       this.accuracyOfInformationText = this.optionsStore.getDeclarations?.(
         DeclarationType.AccuracyOfInformation,
         FormType.Report,
+        ApplicationType.Claim,
       );
 
       this.load().then(() => {

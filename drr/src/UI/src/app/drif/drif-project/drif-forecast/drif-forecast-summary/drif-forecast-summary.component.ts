@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, Input } from '@angular/core';
 import { FormArray } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
@@ -23,6 +24,7 @@ import {
     MatCardModule,
     DrrSummaryItemComponent,
     MatInputModule,
+    MatButtonModule,
   ],
   templateUrl: './drif-forecast-summary.component.html',
   styleUrl: './drif-forecast-summary.component.scss',

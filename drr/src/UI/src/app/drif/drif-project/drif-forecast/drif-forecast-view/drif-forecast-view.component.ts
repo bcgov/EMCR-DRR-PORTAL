@@ -63,6 +63,8 @@ export class DrifForecastViewComponent {
                 yearForecasts: forecast.forecastItems,
                 totalProjectedExpenditure: forecast.total,
                 originalForecast: forecast.originalForecast,
+                variance: forecast.variance,
+                varianceComment: forecast.varianceComment,
               },
               attachments: {
                 attachments: forecast.attachments,
