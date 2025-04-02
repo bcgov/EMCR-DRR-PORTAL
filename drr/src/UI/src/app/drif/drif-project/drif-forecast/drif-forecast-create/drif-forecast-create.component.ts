@@ -247,7 +247,9 @@ export class DrifForecastCreateComponent {
   calculateTotalProjectedExpenditure() {
     const totalProjectedExpenditure =
       this.getYearForecastFormArray().controls.reduce((total, control) => {
-        return total + control.get('totalProjectedExpenditure')?.value;
+        const value = control.get('totalProjectedExpenditure')?.value;
+        const parsedValue = parseFloat(value);
+        return total + (isNaN(parsedValue) ? 0 : parsedValue);
       }, 0);
 
     this.budgetForecastForm
@@ -455,6 +457,7 @@ export class DrifForecastCreateComponent {
     this.stepper._stateChanged();
 
     if (this.forecastForm?.invalid) {
+      this.toastService.close();
       this.toastService.error('Please fill in all required fields');
       return;
     }
@@ -478,6 +481,7 @@ export class DrifForecastCreateComponent {
           this.router.navigate(['drif-projects', this.projectId]);
         },
         error: (error) => {
+          this.toastService.close();
           this.toastService.error('Failed to submit forecast');
           console.error(error);
         },
