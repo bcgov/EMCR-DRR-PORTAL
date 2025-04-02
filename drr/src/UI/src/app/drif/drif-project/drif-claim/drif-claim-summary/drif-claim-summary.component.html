@@ -151,11 +151,11 @@
     <mat-card-content>
       <div>
         <mat-label class="drr-label">{{
-          "authorizedRepresentative" | transloco
+          "authorizedRepresentativeLabel" | transloco
         }}</mat-label>
         <div class="summary-row">
           <drr-summary-item
-            [label]="t('firstName')"
+            [label]="'firstName' | transloco"
             [rxFormControl]="
               claimForm?.get('declaration.authorizedRepresentative.firstName')
             "
@@ -163,7 +163,7 @@
           </drr-summary-item>
 
           <drr-summary-item
-            [label]="t('lastName')"
+            [label]="'lastName' | transloco"
             [rxFormControl]="
               claimForm?.get('declaration.authorizedRepresentative.lastName')
             "
@@ -171,7 +171,7 @@
           </drr-summary-item>
 
           <drr-summary-item
-            [label]="t('title')"
+            [label]="'title' | transloco"
             [rxFormControl]="
               claimForm?.get('declaration.authorizedRepresentative.title')
             "
@@ -179,7 +179,7 @@
           </drr-summary-item>
 
           <drr-summary-item
-            [label]="t('department')"
+            [label]="'department' | transloco"
             [rxFormControl]="
               claimForm?.get('declaration.authorizedRepresentative.department')
             "
@@ -187,7 +187,7 @@
           </drr-summary-item>
 
           <drr-summary-item
-            [label]="t('phone')"
+            [label]="'phone' | transloco"
             [rxFormControl]="
               claimForm?.get('declaration.authorizedRepresentative.phone')
             "
@@ -196,7 +196,7 @@
           </drr-summary-item>
 
           <drr-summary-item
-            [label]="t('email')"
+            [label]="'email' | transloco"
             [rxFormControl]="
               claimForm?.get('declaration.authorizedRepresentative.email')
             "

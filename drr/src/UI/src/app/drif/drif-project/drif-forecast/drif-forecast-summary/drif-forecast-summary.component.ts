@@ -56,7 +56,7 @@ export class DrifForecastSummaryComponent {
   }
 
   hasAttachments(): boolean {
-    return this.attachmentsArray.length > 0;
+    return this.attachmentsArray?.length > 0;
   }
 
   get declarationForm() {

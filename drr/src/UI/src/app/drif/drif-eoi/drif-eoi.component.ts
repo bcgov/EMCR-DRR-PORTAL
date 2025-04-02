@@ -1,7 +1,7 @@
 import { BreakpointObserver, LayoutModule } from '@angular/cdk/layout';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { CommonModule } from '@angular/common';
-import { Component, HostListener, ViewChild, inject } from '@angular/core';
+import { Component, HostListener, inject, viewChild } from '@angular/core';
 import {
   FormArray,
   FormsModule,
@@ -107,7 +107,7 @@ export class EOIApplicationComponent {
     EOIApplicationForm,
   ) as IFormGroup<EOIApplicationForm>;
 
-  @ViewChild(MatStepper) stepper!: MatStepper;
+  stepper = viewChild.required(MatStepper);
 
   private formToStepMap: Record<string, string> = {
     proponentInformation: 'Step 1',
@@ -398,7 +398,7 @@ export class EOIApplicationComponent {
       return;
     }
 
-    const stepId = this.stepper._getStepLabelId(event.selectedIndex);
+    const stepId = this.stepper()._getStepLabelId(event.selectedIndex);
     const stepElement = document.getElementById(stepId);
     if (stepElement) {
       setTimeout(() => {
@@ -484,8 +484,8 @@ export class EOIApplicationComponent {
 
   submit() {
     this.eoiApplicationForm.markAllAsTouched();
-    this.stepper.steps.forEach((step) => step._markAsInteracted());
-    this.stepper._stateChanged();
+    this.stepper().steps.forEach((step) => step._markAsInteracted());
+    this.stepper()._stateChanged();
     if (this.eoiApplicationForm.invalid) {
       // select which forms are invalid
       const invalidSteps = Object.keys(this.eoiApplicationForm.controls)

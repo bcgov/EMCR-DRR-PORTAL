@@ -41,11 +41,11 @@ import {
 } from '../../../../../model';
 import { DrrCurrencyInputComponent } from '../../../../shared/controls/drr-currency-input/drr-currency-input.component';
 import { DrrFileUploadComponent } from '../../../../shared/controls/drr-file-upload/drr-file-upload.component';
-import { DrrInputComponent } from '../../../../shared/controls/drr-input/drr-input.component';
 import { DrrTextareaComponent } from '../../../../shared/controls/drr-textarea/drr-textarea.component';
 import { AuthorizedRepresentativeForm } from '../../../../shared/drr-auth-rep/auth-rep-form';
 import { DrrAuthRepComponent } from '../../../../shared/drr-auth-rep/drr-auth-rep.component';
 import { DeclarationForm } from '../../../../shared/drr-declaration/drr-declaration-form';
+import { DrrDeclarationComponent } from '../../../../shared/drr-declaration/drr-declaration.component';
 import { FileService } from '../../../../shared/services/file.service';
 import { OptionsStore } from '../../../../store/options.store';
 import { ProfileStore } from '../../../../store/profile.store';
@@ -57,7 +57,6 @@ import {
   ForecastForm,
 } from '../drif-forecast-form';
 import { DrifForecastSummaryComponent } from '../drif-forecast-summary/drif-forecast-summary.component';
-import { DrrDeclarationComponent } from '../../../../shared/drr-declaration/drr-declaration.component';
 
 @UntilDestroy({ checkProperties: true })
 @Component({
@@ -85,7 +84,7 @@ import { DrrDeclarationComponent } from '../../../../shared/drr-declaration/drr-
     DrrFileUploadComponent,
     DrifForecastSummaryComponent,
     DrrAuthRepComponent,
-    DrrDeclarationComponent
+    DrrDeclarationComponent,
   ],
   templateUrl: './drif-forecast-create.component.html',
   styleUrl: './drif-forecast-create.component.scss',
@@ -447,7 +446,33 @@ export class DrifForecastCreateComponent {
   }
 
   submit() {
-    console.log(this.getFormValue());
+    this.forecastForm?.markAllAsTouched();
+    this.stepper.steps.forEach((step) => step._markAsInteracted());
+    this.stepper._stateChanged();
+
+    if (this.forecastForm?.invalid) {
+      this.toastService.error('Please fill in all required fields');
+      return;
+    }
+
+    const forecastFormValue = this.getFormValue();
+
+    this.projectService
+      .projectSubmitClaim(this.projectId!, this.reportId!, this.forecastId!, {
+        ...forecastFormValue,
+      })
+      .subscribe({
+        next: () => {
+          this.toastService.close();
+          this.toastService.success('Forecast submitted successfully');
+
+          this.router.navigate(['drif-projects', this.projectId]);
+        },
+        error: (error) => {
+          this.toastService.error('Failed to submit forecast');
+          console.error(error);
+        },
+      });
   }
 
   async uploadFiles(files: File[]) {
