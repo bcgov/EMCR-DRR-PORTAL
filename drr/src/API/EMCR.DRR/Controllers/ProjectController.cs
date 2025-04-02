@@ -433,6 +433,7 @@ namespace EMCR.DRR.Controllers
         public decimal? Total { get; set; }
         public decimal? OriginalForecast { get; set; }
         public decimal? Variance { get; set; }
+        [StringLength(ProgressReportValidators.LONG_COMMENTS_MAX)]
         public string? VarianceComment { get; set; }
         public ForecastStatus? Status { get; set; }
         public IEnumerable<Attachment>? Attachments { get; set; }
@@ -586,8 +587,8 @@ namespace EMCR.DRR.Controllers
         public string? Comment { get; set; }
         public WorkplanStatus? Status { get; set; }
         public DateTime? PlannedStartDate { get; set; }
-        public DateTime? ActualStartDate { get; set; }
         public DateTime? PlannedCompletionDate { get; set; }
+        public DateTime? ActualStartDate { get; set; }
         public DateTime? ActualCompletionDate { get; set; }
     }
 

@@ -550,7 +550,9 @@ namespace EMCR.DRR.Managers.Intake
             if (string.IsNullOrEmpty(forecast.AuthorizedRepresentative.Email)) throw new BusinessValidationException("Authorized Representative email is required.");
             if (string.IsNullOrEmpty(forecast.AuthorizedRepresentative.Phone)) throw new BusinessValidationException("Authorized Representative phone number is required.");
             if (string.IsNullOrEmpty(forecast.AuthorizedRepresentative.Title)) throw new BusinessValidationException("Authorized Representative title is required.");
+            if (forecast.ForecastItems != null && forecast.ForecastItems.Any(i => i.ClaimsOnThisReport == null)) throw new BusinessValidationException("Claims On This Report is required");
             forecast.AuthorizedRepresentative.BCeId = cmd.UserInfo.UserId;
+            if (forecast.Variance != null && forecast.Variance != 0 && string.IsNullOrEmpty(forecast.VarianceComment)) throw new BusinessValidationException("Must explain variance.");
 
             var id = (await reportRepository.Manage(new SaveForecast { Forecast = forecast })).Id;
             await reportRepository.Manage(new SubmitForecast { Id = id });
@@ -775,7 +777,7 @@ namespace EMCR.DRR.Managers.Intake
             var documentRes = (await documentRepository.Manage(new CreateInvoiceDocument { NewDocId = newDocId, InvoiceId = cmd.AttachmentInfo.RecordId, Document = new Document { Name = cmd.AttachmentInfo.File.FileName, DocumentType = cmd.AttachmentInfo.DocumentType, Size = GetFileSize(cmd.AttachmentInfo.File.Content) } }));
             return documentRes.Id;
         }
-        
+
         private async Task<string> UploadForecastReportDocument(UploadAttachmentCommand cmd)
         {
             var canAccess = await CanAccessForecastFromDocumentId(cmd.AttachmentInfo.Id, cmd.UserInfo.BusinessId);
@@ -821,7 +823,7 @@ namespace EMCR.DRR.Managers.Intake
             await s3Provider.HandleCommand(new UpdateTagsCommand { Key = cmd.Id, Folder = $"{RecordType.Invoice.ToDescriptionString()}/{documentRes.RecordId}", FileTag = GetDeletedFileTag() });
             return documentRes.Id;
         }
-        
+
         private async Task<string> DeleteForecastReportDocument(DeleteAttachmentCommand cmd)
         {
             var canAccess = await CanAccessForecastFromDocumentId(cmd.Id, cmd.UserInfo.BusinessId);
@@ -1013,7 +1015,7 @@ namespace EMCR.DRR.Managers.Intake
             if (string.IsNullOrEmpty(id)) return true;
             return await reportRepository.CanAccessInvoiceFromDocumentId(id, businessId);
         }
-        
+
         private async Task<bool> CanAccessForecastFromDocumentId(string? id, string? businessId)
         {
             if (string.IsNullOrEmpty(businessId)) throw new ArgumentNullException("Missing user's BusinessId");

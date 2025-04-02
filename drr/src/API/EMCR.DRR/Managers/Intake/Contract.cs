@@ -960,9 +960,13 @@ namespace EMCR.DRR.Managers.Intake
         public WorkplanProgress? ProgressStatus { get; set; }
         public WorkplanStatus? Status { get; set; }
         public DateTime? PlannedStartDate { get; set; }
-        public DateTime? ActualStartDate { get; set; }
         public DateTime? PlannedCompletionDate { get; set; }
+        public DateTime? ActualStartDate { get; set; }
         public DateTime? ActualCompletionDate { get; set; }
+        public DateTime? ContractAwardDate { get; set; }
+        public DateTime? PlannedContractAwardDate { get; set; }
+        public DateTime? AwardPermitToConstructDate { get; set; }
+        public DateTime? PlannedAwardPermitToConstructDate { get; set; }
     }
 
     public class ForecastItem
