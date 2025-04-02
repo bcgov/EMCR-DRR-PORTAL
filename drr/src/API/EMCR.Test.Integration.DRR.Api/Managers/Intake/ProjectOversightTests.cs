@@ -149,7 +149,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             //var userInfo = GetCRAFTUserInfo();
             var userInfo = GetCRAFT2UserInfo();
 
-            var queryRes = await manager.Handle(new DrrForecastsQuery { Id = "FORECAST-1086", BusinessId = userInfo.BusinessId });
+            var queryRes = await manager.Handle(new DrrForecastsQuery { Id = "FORECAST-1117", BusinessId = userInfo.BusinessId });
             var forecasts = mapper.Map<IEnumerable<EMCR.DRR.Controllers.DraftForecast>>(queryRes.Items);
             forecasts.Count().ShouldBe(1);
         }
@@ -439,6 +439,8 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             {
                 forecast.AuthorizedRepresentative = CreateNewTestContact(uniqueSignature, "submitter");
             }
+            forecast.AuthorizedRepresentativeStatement = true;
+            forecast.InformationAccuracyStatement = true;
 
             await manager.Handle(new SubmitForecastCommand { Forecast = forecast, UserInfo = userInfo });
 

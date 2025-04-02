@@ -34,6 +34,15 @@ namespace EMCR.DRR.API.Model
 
         [Description("Full Proposal")]
         FP,
+
+        [Description("Progress Report")]
+        Progress,
+
+        [Description("Budget Forecast Report")]
+        Forecast,
+
+        [Description("Claims Form")]
+        Claim,
     }
 
     [JsonConverter(typeof(JsonStringEnumConverter))]
