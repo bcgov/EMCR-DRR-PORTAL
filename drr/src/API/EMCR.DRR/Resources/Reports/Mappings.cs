@@ -221,7 +221,7 @@ namespace EMCR.DRR.API.Resources.Reports
             CreateMap<ForecastItem, drr_budgetforecastreportitem>(MemberList.None)
                 .ForMember(dest => dest.drr_budgetforecastreportitemid, opt => opt.MapFrom(src => !string.IsNullOrEmpty(src.Id) ? Guid.Parse(src.Id) : (Guid?)null))
                 .ForMember(dest => dest.drr_claimonthisreport, opt => opt.MapFrom(src => src.ClaimsOnThisReport))
-                //.ForMember(dest => dest.drr_totalprojectedexpenditureamount, opt => opt.MapFrom(src => src.TotalProjectedExpenditure))
+                .ForMember(dest => dest.drr_totalprojectedexpenditureamount, opt => opt.MapFrom(src => src.TotalProjectedExpenditure))
                 ;
 
             CreateMap<drr_budgetforecastreportitem, ForecastItem>(MemberList.None)
