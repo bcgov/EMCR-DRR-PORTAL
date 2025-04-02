@@ -33,6 +33,7 @@ import { distinctUntilChanged, pairwise, startWith } from 'rxjs';
 import { AttachmentService } from '../../../../../api/attachment/attachment.service';
 import { ProjectService } from '../../../../../api/project/project.service';
 import {
+  ApplicationType,
   DeclarationType,
   DocumentType,
   DraftForecast,
@@ -183,11 +184,13 @@ export class DrifForecastCreateComponent {
     this.authorizedRepresentativeText = this.optionsStore.getDeclarations?.(
       DeclarationType.AuthorizedRepresentative,
       FormType.Report,
+      ApplicationType.Forecast,
     );
 
     this.accuracyOfInformationText = this.optionsStore.getDeclarations?.(
       DeclarationType.AccuracyOfInformation,
       FormType.Report,
+      ApplicationType.Forecast,
     );
 
     this.load().then(() => {
@@ -459,9 +462,14 @@ export class DrifForecastCreateComponent {
     const forecastFormValue = this.getFormValue();
 
     this.projectService
-      .projectSubmitClaim(this.projectId!, this.reportId!, this.forecastId!, {
-        ...forecastFormValue,
-      })
+      .projectSubmitForecastReport(
+        this.projectId!,
+        this.reportId!,
+        this.forecastId!,
+        {
+          ...forecastFormValue,
+        },
+      )
       .subscribe({
         next: () => {
           this.toastService.close();

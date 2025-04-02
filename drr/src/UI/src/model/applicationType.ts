@@ -12,4 +12,7 @@ export type ApplicationType =
 export const ApplicationType = {
   EOI: 'EOI',
   FP: 'FP',
+  Progress: 'Progress',
+  Forecast: 'Forecast',
+  Claim: 'Claim',
 } as const;

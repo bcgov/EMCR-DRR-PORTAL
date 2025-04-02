@@ -74,7 +74,7 @@ export class DrrSummaryItemComponent {
       case 'date':
         return this.datePipe.transform(controlValue, 'yyyy-MM-dd');
       case 'currency':
-        return this.currencyPipe.transform(Math.abs(controlValue));
+        return this.currencyPipe.transform(controlValue);
       case 'phone':
         return this.maskPipe.transform(controlValue, '000-000-0000');
 

@@ -36,6 +36,7 @@ import { AttachmentService } from '../../../../../api/attachment/attachment.serv
 import { ProjectService } from '../../../../../api/project/project.service';
 import {
   ActivityType,
+  ApplicationType,
   DeclarationType,
   Delay,
   DocumentType,
@@ -283,11 +284,13 @@ export class DrifProgressReportCreateComponent {
       this.authorizedRepresentativeText = this.optionsStore.getDeclarations?.(
         DeclarationType.AuthorizedRepresentative,
         FormType.Report,
+        ApplicationType.Progress,
       );
 
       this.accuracyOfInformationText = this.optionsStore.getDeclarations?.(
         DeclarationType.AccuracyOfInformation,
         FormType.Report,
+        ApplicationType.Progress,
       );
 
       this.load().then(() => {
