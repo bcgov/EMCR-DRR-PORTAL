@@ -46,7 +46,7 @@
         [errorMessage]="'stepError' | transloco"
       >
         <div>
-          @if (hasConditionDMAPMessage()) {
+          <!-- @if (hasConditionDMAPMessage()) {
             <div style="display: flex; flex-direction: column; gap: 1rem">
               <h5>DMAP Team Message</h5>
               <drr-alert
@@ -75,7 +75,7 @@
                 ></drr-input>
               </div>
             </div>
-          }
+          } -->
           <div
             style="
               display: flex;
@@ -171,7 +171,13 @@
           <button mat-stroked-button color="primary" matStepperPrevious>
             Back
           </button>
-          <button mat-flat-button color="primary" matStepperNext type="button" (click)="submit()">
+          <button
+            mat-flat-button
+            color="primary"
+            matStepperNext
+            type="button"
+            (click)="submit()"
+          >
             Submit
           </button>
         </div>

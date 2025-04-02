@@ -61,18 +61,19 @@
     </mat-step>
     <mat-step label="Budget Forecast Report" [stepControl]="budgetForecastForm">
       <div style="display: flex; flex-direction: column; gap: 1rem">
+        <!-- TODO: hide columns, disable inputs -->
         <table class="forecast-table">
           <tr>
             <th>Fiscal Year</th>
             <th>Forecast</th>
             <th>Total Projected Expenditure <br />for the fiscal year*</th>
-            <th>Claims Paid to date</th>
-            <th>Claims Submitted Not Paid</th>
+            <!-- <th>Claims Paid to date</th>
+            <th>Claims Submitted Not Paid</th> -->
             <th>Claims on this report*</th>
-            <th>
+            <!-- <th>
               Remaining Claims <br />
               for the fiscal year
-            </th>
+            </th> -->
           </tr>
           <tr
             *ngFor="
@@ -89,20 +90,20 @@
                 [rxFormControl]="yearForecast.get('totalProjectedExpenditure')"
               ></drr-currency-input>
             </td>
-            <td>
+            <!-- <td>
               {{ yearForecast.get("claimsPaidToDate")?.value | currency }}
             </td>
             <td>
               {{ yearForecast.get("claimsSubmittedNotPaid")?.value | currency }}
-            </td>
+            </td> -->
             <td style="padding-top: 1rem">
               <drr-currency-input
                 [rxFormControl]="yearForecast.get('claimsOnThisReport')"
               ></drr-currency-input>
             </td>
-            <td>
+            <!-- <td>
               {{ yearForecast.get("remainingClaims")?.value | currency }}
-            </td>
+            </td> -->
           </tr>
         </table>
 
