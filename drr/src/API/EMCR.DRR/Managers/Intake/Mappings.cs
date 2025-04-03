@@ -190,6 +190,20 @@ namespace EMCR.DRR.Managers.Intake
                 .ReverseMap()
                 ;
 
+            CreateMap<Controllers.CostProjectionItem, CostProjectionItem>()
+                .AfterMap((src, dest) =>
+                {
+                    foreach (var prop in dest.GetType().GetProperties())
+                    {
+                        if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
+                        {
+                            prop.SetValue(dest, "");
+                        }
+                    }
+                })
+                .ReverseMap()
+                ;
+
             CreateMap<DraftProjectClaim, ProjectClaim>()
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => IntakeClaimStatusMapper(src.Status)))
                 .AfterMap((src, dest) =>
