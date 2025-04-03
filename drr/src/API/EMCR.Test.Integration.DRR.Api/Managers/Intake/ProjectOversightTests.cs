@@ -130,11 +130,11 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
         [Test]
         public async Task QueryProgressReports_CanFilterById()
         {
-            var userInfo = GetTestUserInfo();
-            //var userInfo = GetCRAFTUserInfo();
-            // var userInfo = GetCRAFT2UserInfo();
+            //var userInfo = GetTestUserInfo();
+            var userInfo = GetCRAFTUserInfo();
+            //var userInfo = GetCRAFT2UserInfo();
 
-            var queryRes = await manager.Handle(new DrrProgressReportsQuery { Id = "DRIF-PR-1239", BusinessId = userInfo.BusinessId });
+            var queryRes = await manager.Handle(new DrrProgressReportsQuery { Id = "DRIF-PR-1058", BusinessId = userInfo.BusinessId });
             var prs = mapper.Map<IEnumerable<DraftProgressReport>>(queryRes.Items);
             prs.Count().ShouldBe(1);
             var progressReport = prs.Single();
@@ -724,7 +724,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
                     ActualStartDate = DateTime.UtcNow.AddDays(4),
                     Comment = $"{uniqueSignature} - permit to construct comment",
                     Id = Guid.NewGuid().ToString(),
-                    Status = EMCR.DRR.Controllers.WorkplanStatus.Awarded,
+                    Status = EMCR.DRR.Controllers.WorkplanStatus.NoLongerNeeded,
                 }).ToArray();
             }
             if (progressReport.Workplan.FundingSignage.Count() > 0) progressReport.Workplan.FundingSignage = progressReport.Workplan.FundingSignage.Take(progressReport.Workplan.FundingSignage.Count() - 1).ToArray();

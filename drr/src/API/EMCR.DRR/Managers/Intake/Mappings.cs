@@ -914,7 +914,9 @@ namespace EMCR.DRR.Managers.Intake
             if (src.Status == Controllers.WorkplanStatus.NoLongerNeeded)
             {
                 dest.Status = WorkplanStatus.NoLongerNeeded;
+                return;
             }
+            dest.Status = WorkplanStatus.Active;
             switch (src.Activity)
             {
                 case Controllers.ActivityType.ConstructionContractAward:

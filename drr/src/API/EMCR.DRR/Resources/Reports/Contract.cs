@@ -12,11 +12,11 @@ namespace EMCR.DRR.API.Resources.Reports
         Task<InvoiceQueryResult> Query(InvoiceQuery query);
         Task<bool> CanAccessReport(string id, string businessId);
         Task<bool> CanAccessProgressReport(string id, string businessId);
-        Task<bool> CanAccessProgressReportFromDocumentId(string id, string businessId);
+        Task<bool> CanAccessProgressReportFromDocumentId(string id, string businessId, bool forUpdate);
         Task<bool> CanAccessClaim(string id, string businessId);
         Task<bool> CanAccessForecast(string id, string businessId);
-        Task<bool> CanAccessInvoiceFromDocumentId(string id, string businessId);
-        Task<bool> CanAccessForecastFromDocumentId(string id, string businessId);
+        Task<bool> CanAccessForecastFromDocumentId(string id, string businessId, bool forUpdate);
+        Task<bool> CanAccessInvoiceFromDocumentId(string id, string businessId, bool forUpdate);
     }
 
     public abstract class ManageReportCommand
@@ -102,6 +102,7 @@ namespace EMCR.DRR.API.Resources.Reports
     public class ClaimsQuery : ClaimQuery
     {
         public string? Id { get; set; }
+        public string? InvoiceId { get; set; }
         public string? BusinessId { get; set; }
     }
 

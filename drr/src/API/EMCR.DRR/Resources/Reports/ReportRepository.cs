@@ -30,12 +30,13 @@ namespace EMCR.DRR.API.Resources.Reports
             return (!string.IsNullOrEmpty(existingProgressReport.drr_Project.drr_ProponentName.drr_bceidguid)) && existingProgressReport.drr_Project.drr_ProponentName.drr_bceidguid.Equals(businessId);
         }
 
-        public async Task<bool> CanAccessProgressReportFromDocumentId(string id, string businessId)
+        public async Task<bool> CanAccessProgressReportFromDocumentId(string id, string businessId, bool forUpdate)
         {
             var readCtx = dRRContextFactory.CreateReadOnly();
             var document = await readCtx.bcgov_documenturls.Expand(d => d.bcgov_ProgressReport).Where(a => a.bcgov_documenturlid == Guid.Parse(id)).SingleOrDefaultAsync();
             var existingProgressReport = await readCtx.drr_projectprogresses.Expand(a => a.drr_Project).Where(a => a.drr_projectprogressid == document.bcgov_ProgressReport.drr_projectprogressid).SingleOrDefaultAsync();
             if (existingProgressReport == null) return true;
+            if (forUpdate && existingProgressReport.statuscode == (int)ProjectProgressReportStatusOptionSet.Submitted) return false;
             readCtx.AttachTo(nameof(readCtx.drr_projects), existingProgressReport.drr_Project);
             await readCtx.LoadPropertyAsync(existingProgressReport.drr_Project, nameof(drr_project.drr_ProponentName));
             return (!string.IsNullOrEmpty(existingProgressReport.drr_Project.drr_ProponentName.drr_bceidguid)) && existingProgressReport.drr_Project.drr_ProponentName.drr_bceidguid.Equals(businessId);
@@ -61,26 +62,28 @@ namespace EMCR.DRR.API.Resources.Reports
             return (!string.IsNullOrEmpty(existingForecast.drr_Project.drr_ProponentName.drr_bceidguid)) && existingForecast.drr_Project.drr_ProponentName.drr_bceidguid.Equals(businessId);
         }
 
-        public async Task<bool> CanAccessInvoiceFromDocumentId(string id, string businessId)
-        {
-            var readCtx = dRRContextFactory.CreateReadOnly();
-            var document = await readCtx.bcgov_documenturls.Expand(d => d.bcgov_ProjectExpenditure).Where(a => a.bcgov_documenturlid == Guid.Parse(id)).SingleOrDefaultAsync();
-            var existingInvoice = await readCtx.drr_projectexpenditures.Expand(a => a.drr_Project).Where(a => a.drr_projectexpenditureid == document.bcgov_ProjectExpenditure.drr_projectexpenditureid).SingleOrDefaultAsync();
-            if (existingInvoice == null) return true;
-            readCtx.AttachTo(nameof(readCtx.drr_projects), existingInvoice.drr_Project);
-            await readCtx.LoadPropertyAsync(existingInvoice.drr_Project, nameof(drr_project.drr_ProponentName));
-            return (!string.IsNullOrEmpty(existingInvoice.drr_Project.drr_ProponentName.drr_bceidguid)) && existingInvoice.drr_Project.drr_ProponentName.drr_bceidguid.Equals(businessId);
-        }
-        
-        public async Task<bool> CanAccessForecastFromDocumentId(string id, string businessId)
+        public async Task<bool> CanAccessForecastFromDocumentId(string id, string businessId, bool forUpdate)
         {
             var readCtx = dRRContextFactory.CreateReadOnly();
             var document = await readCtx.bcgov_documenturls.Expand(d => d.bcgov_projectbudgetforecastid).Where(a => a.bcgov_documenturlid == Guid.Parse(id)).SingleOrDefaultAsync();
             var existingForecast = await readCtx.drr_projectbudgetforecasts.Expand(a => a.drr_Project).Where(a => a.drr_projectbudgetforecastid == document.bcgov_projectbudgetforecastid.drr_projectbudgetforecastid).SingleOrDefaultAsync();
             if (existingForecast == null) return true;
+            if (forUpdate && existingForecast.statuscode == (int)ForecastStatusOptionSet.Submitted) return false;
             readCtx.AttachTo(nameof(readCtx.drr_projects), existingForecast.drr_Project);
             await readCtx.LoadPropertyAsync(existingForecast.drr_Project, nameof(drr_project.drr_ProponentName));
             return (!string.IsNullOrEmpty(existingForecast.drr_Project.drr_ProponentName.drr_bceidguid)) && existingForecast.drr_Project.drr_ProponentName.drr_bceidguid.Equals(businessId);
+        }
+
+        public async Task<bool> CanAccessInvoiceFromDocumentId(string id, string businessId, bool forUpdate)
+        {
+            var readCtx = dRRContextFactory.CreateReadOnly();
+            var document = await readCtx.bcgov_documenturls.Expand(d => d.bcgov_ProjectExpenditure).Where(a => a.bcgov_documenturlid == Guid.Parse(id)).SingleOrDefaultAsync();
+            var existingInvoice = await readCtx.drr_projectexpenditures.Expand(a => a.drr_Project).Expand(a => a.drr_Claim).Where(a => a.drr_projectexpenditureid == document.bcgov_ProjectExpenditure.drr_projectexpenditureid).SingleOrDefaultAsync();
+            if (existingInvoice == null) return true;
+            if (existingInvoice.drr_Claim != null && forUpdate && existingInvoice.drr_Claim.statuscode == (int)ProjectClaimStatusOptionSet.Submitted) return false;
+            readCtx.AttachTo(nameof(readCtx.drr_projects), existingInvoice.drr_Project);
+            await readCtx.LoadPropertyAsync(existingInvoice.drr_Project, nameof(drr_project.drr_ProponentName));
+            return (!string.IsNullOrEmpty(existingInvoice.drr_Project.drr_ProponentName.drr_bceidguid)) && existingInvoice.drr_Project.drr_ProponentName.drr_bceidguid.Equals(businessId);
         }
 
         public async Task<bool> CanAccessReport(string id, string businessId)
@@ -519,6 +522,8 @@ namespace EMCR.DRR.API.Resources.Reports
                         drrContext.UpdateObject(activity);
                         drrContext.SetLink(activity, nameof(activity.drr_ActivityType), masterVal);
                     }
+                    if (activity.statuscode == (int)WorkplanStatusOptionSet.NoLongerNeeded) drrContext.DeactivateObject(activity, activity.statuscode.Value);
+                    else if (activity.statuscode != null) drrContext.ActivateObject(activity, activity.statuscode.Value);
                 }
             }
         }
@@ -751,6 +756,8 @@ namespace EMCR.DRR.API.Resources.Reports
             var ct = new CancellationTokenSource().Token;
             var readCtx = dRRContextFactory.CreateReadOnly();
 
+            if (!string.IsNullOrEmpty(query.InvoiceId)) return await QueryClaimFromInvoice(readCtx, query);
+
             var claimsQuery = readCtx.drr_projectclaims
                 .Where(a => a.statuscode != (int)ProjectClaimStatusOptionSet.Inactive);
             if (!string.IsNullOrEmpty(query.Id)) claimsQuery = claimsQuery.Where(a => a.drr_name == query.Id);
@@ -760,6 +767,22 @@ namespace EMCR.DRR.API.Resources.Reports
 
             await Parallel.ForEachAsync(results, ct, async (claim, ct) => await ParallelLoadClaim(readCtx, claim, ct));
             return new ClaimQueryResult { Items = mapper.Map<IEnumerable<ClaimDetails>>(results), Length = length };
+        }
+
+        private async Task<ClaimQueryResult> QueryClaimFromInvoice(DRRContext readCtx, ClaimsQuery query)
+        {
+            var ct = new CancellationTokenSource().Token;
+            if (string.IsNullOrEmpty(query.InvoiceId)) throw new NotFoundException("Claim not found");
+
+            var invoiceQuery = readCtx.drr_projectexpenditures.Expand(i => i.drr_Claim)
+                .Where(a => a.statuscode != (int)InvoiceStatusOptionSet.Inactive && a.drr_projectexpenditureid == Guid.Parse(query.InvoiceId));
+
+            var results = (await invoiceQuery.GetAllPagesAsync(ct)).ToList();
+            var length = results.Count;
+            var claimResults = results.Select(i => i.drr_Claim).ToList();
+
+            await Parallel.ForEachAsync(claimResults, ct, async (claim, ct) => await ParallelLoadClaim(readCtx, claim, ct));
+            return new ClaimQueryResult { Items = mapper.Map<IEnumerable<ClaimDetails>>(claimResults), Length = length };
         }
 
         private async Task<ProgressReportQueryResult> HandleQueryProgressReport(ProgressReportsQuery query)
