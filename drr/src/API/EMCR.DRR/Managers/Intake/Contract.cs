@@ -577,6 +577,7 @@ namespace EMCR.DRR.Managers.Intake
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public ProjectStatus Status { get; set; }
+        public IEnumerable<CostProjectionItem>? CostProjections { get; set; }
         public IEnumerable<PaymentCondition>? Conditions { get; set; }
         public IEnumerable<ContactDetails>? Contacts { get; set; }
         public IEnumerable<InterimReport>? InterimReports { get; set; }
@@ -769,6 +770,13 @@ namespace EMCR.DRR.Managers.Intake
         public required string Name { get; set; }
         public DocumentType DocumentType { get; set; }
         public string? Comments { get; set; }
+    }
+
+    public class CostProjectionItem
+    {
+        public string? FiscalYear { get; set; }
+        public decimal? OriginalForecast { get; set; }
+        public decimal? CurrentForecast { get; set; }
     }
 
     public class PaymentCondition

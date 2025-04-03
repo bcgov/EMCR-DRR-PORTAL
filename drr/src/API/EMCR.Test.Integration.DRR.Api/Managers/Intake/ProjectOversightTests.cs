@@ -62,6 +62,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             projects.ShouldAllBe(s => s.Status != EMCR.DRR.Controllers.ProjectStatus.NotStarted);
         }
 
+#pragma warning disable CS8604 // Possible null reference argument.
         [Test]
         public async Task QueryProjects_CanFilterById()
         {
@@ -69,10 +70,9 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var queryRes = await manager.Handle(new DrrProjectsQuery { Id = "DRIF-PRJ-1015", BusinessId = GetCRAFTUserInfo().BusinessId, QueryOptions = queryOptions });
             var projects = mapper.Map<IEnumerable<DraftDrrProject>>(queryRes.Items);
             projects.Count().ShouldBe(1);
-#pragma warning disable CS8604 // Possible null reference argument.
             projects.First().Claims.Last().ReportPeriod.ShouldNotBeNullOrEmpty();
-#pragma warning restore CS8604 // Possible null reference argument.
         }
+#pragma warning restore CS8604 // Possible null reference argument.
 
         [Test]
         public async Task QueryReports_CanFilterById()

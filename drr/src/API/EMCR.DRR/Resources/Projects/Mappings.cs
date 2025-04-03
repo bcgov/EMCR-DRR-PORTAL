@@ -28,6 +28,7 @@ namespace EMCR.DRR.API.Resources.Projects
                 .ForMember(dest => dest.ProgramType, opt => opt.MapFrom(src => src.drr_Program.drr_name))
                 .ForMember(dest => dest.ReportingScheduleType, opt => opt.MapFrom(src => src.drr_ReportingSchedule.drr_name))
                 .ForMember(dest => dest.FirstReportPeriod, opt => opt.MapFrom(src => src.drr_firstreportdue != null ? src.drr_firstreportdue.drr_name : string.Empty))
+                .ForMember(dest => dest.CostProjections, opt => opt.MapFrom(src => src.drr_FullProposalApplication.drr_drr_application_drr_driffundingrequest_Application.Where(c => c.statecode == (int)EntityState.Active)))
                 .ForMember(dest => dest.Conditions, opt => opt.MapFrom(src => src.drr_drr_project_drr_projectcondition_Project.Where(c => c.statecode == (int)EntityState.Active)))
                 .ForMember(dest => dest.FundingAmount, opt => opt.MapFrom(src => src.drr_fundingamount))
                 .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.drr_plannedstartdate.HasValue ? src.drr_plannedstartdate.Value.UtcDateTime : (DateTime?)null))
@@ -103,6 +104,14 @@ namespace EMCR.DRR.API.Resources.Projects
                 .ForMember(dest => dest.Variance, opt => opt.MapFrom(src => src.drr_variance))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.statuscode.HasValue ? (int?)Enum.Parse<ForecastStatus>(((ForecastStatusOptionSet)src.statuscode).ToString()) : null))
             ;
+
+            CreateMap<CostProjectionItem, drr_driffundingrequest>(MemberList.None)
+                .ReverseMap()
+                .ValidateMemberList(MemberList.Destination)
+                .ForMember(dest => dest.FiscalYear, opt => opt.MapFrom(src => src.drr_FiscalYear.drr_name))
+                .ForMember(dest => dest.OriginalForecast, opt => opt.MapFrom(src => src.drr_drifprogramfundingrequest))
+                .ForMember(dest => dest.CurrentForecast, opt => opt.MapFrom(src => src.drr_currentforecast))
+                ;
 
             CreateMap<ProjectEvent, drr_projectevent>(MemberList.None)
                 .ForMember(dest => dest.drr_name, opt => opt.Ignore())
