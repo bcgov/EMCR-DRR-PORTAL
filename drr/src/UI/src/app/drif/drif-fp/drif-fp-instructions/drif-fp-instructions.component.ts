@@ -8,6 +8,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { DrifapplicationService } from '../../../../api/drifapplication/drifapplication.service';
 import { ScreenerQuestions } from '../../../../model';
+import { ROUTE_PATH } from '../../../app.routes';
 
 @UntilDestroy({ checkProperties: true })
 @Component({
@@ -33,24 +34,24 @@ export class DrifFpInstructionsComponent {
     this.screenerQuestions = {
       costEstimate: this.convertToBoolean(queryParams['costEstimate']),
       engagedWithFirstNationsOccurred: this.convertToBoolean(
-        queryParams['engagedWithFirstNationsOccurred']
+        queryParams['engagedWithFirstNationsOccurred'],
       ),
       firstNationsAuthorizedByPartners:
         queryParams['firstNationsAuthorizedByPartners'],
       foundationWorkCompleted: queryParams['foundationWorkCompleted'],
       haveAuthorityToDevelop: this.convertToBoolean(
-        queryParams['haveAuthorityToDevelop']
+        queryParams['haveAuthorityToDevelop'],
       ),
       incorporateFutureClimateConditions: this.convertToBoolean(
-        queryParams['incorporateFutureClimateConditions']
+        queryParams['incorporateFutureClimateConditions'],
       ),
       localGovernmentAuthorizedByPartners:
         queryParams['localGovernmentAuthorizedByPartners'],
       meetsEligibilityRequirements: this.convertToBoolean(
-        queryParams['meetsEligibilityRequirements']
+        queryParams['meetsEligibilityRequirements'],
       ),
       meetsRegulatoryRequirements: this.convertToBoolean(
-        queryParams['meetsRegulatoryRequirements']
+        queryParams['meetsRegulatoryRequirements'],
       ),
       projectSchedule: this.convertToBoolean(queryParams['projectSchedule']),
       projectWorkplan: this.convertToBoolean(queryParams['projectWorkplan']),
@@ -63,7 +64,7 @@ export class DrifFpInstructionsComponent {
   }
 
   goBack() {
-    this.router.navigate(['/dashboard']);
+    this.router.navigate([ROUTE_PATH.SUBMISSIONS]);
   }
 
   continue() {

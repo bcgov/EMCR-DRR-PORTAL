@@ -1,6 +1,8 @@
 import { Routes } from '@angular/router';
 import { AuthenticationGuard } from './core/guards/authentication.guard';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { ProjectListComponent } from './dashboard/project-list/project-list.component';
+import { SubmissionListComponent } from './dashboard/submission-list/submission-list.component';
 import { DrifEoiViewComponent } from './drif/drif-eoi/drif-eoi-view/drif-eoi-view.component';
 import { EOIApplicationComponent } from './drif/drif-eoi/drif-eoi.component';
 import { DrifFpInstructionsComponent } from './drif/drif-fp/drif-fp-instructions/drif-fp-instructions.component';
@@ -17,9 +19,23 @@ import { DrifProgressReportCreateComponent } from './drif/drif-project/drif-prog
 import { DrifProgressReportViewComponent } from './drif/drif-project/drif-progress-report/drif-progress-report-view.component';
 import { DrifProjectComponent } from './drif/drif-project/drif-project.component';
 
+export const ROUTE_PATH = {
+  SUBMISSIONS: '/dashboard/submissions',
+  PROJECTS: '/dashboard/projects',
+};
+
 export const routes: Routes = [
-  { path: '', component: DashboardComponent },
-  { path: 'dashboard', component: DashboardComponent },
+  { path: '', redirectTo: 'dashboard/submissions', pathMatch: 'full' },
+  { path: 'dashboard', redirectTo: 'dashboard/submissions', pathMatch: 'full' },
+  {
+    path: 'dashboard',
+    component: DashboardComponent,
+    canActivate: [AuthenticationGuard],
+    children: [
+      { path: 'submissions', component: SubmissionListComponent },
+      { path: 'projects', component: ProjectListComponent },
+    ],
+  },
   {
     path: 'drif-eoi',
     component: EOIApplicationComponent,

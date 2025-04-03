@@ -8,6 +8,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { IFormGroup, RxFormBuilder } from '@rxweb/reactive-form-validators';
 import { DrifapplicationService } from '../../../../api/drifapplication/drifapplication.service';
 import { SubmissionPortalStatus } from '../../../../model';
+import { ROUTE_PATH } from '../../../app.routes';
 import { ProfileStore } from '../../../store/profile.store';
 import {
   ContactDetailsForm,
@@ -183,7 +184,7 @@ export class DrifEoiViewComponent {
   }
 
   goBack() {
-    this.router.navigate(['/dashboard']);
+    this.router.navigate([ROUTE_PATH.SUBMISSIONS]);
   }
 
   canCreateFP() {

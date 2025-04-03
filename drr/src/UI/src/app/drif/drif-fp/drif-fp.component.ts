@@ -44,6 +44,7 @@ import {
 
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { HotToastService } from '@ngxpert/hot-toast';
+import { ROUTE_PATH } from '../../app.routes';
 import { OptionsStore } from '../../store/options.store';
 import { ProfileStore } from '../../store/profile.store';
 import {
@@ -873,7 +874,7 @@ export class DrifFpComponent {
   }
 
   goBack() {
-    this.router.navigate(['/dashboard']);
+    this.router.navigate([ROUTE_PATH.SUBMISSIONS]);
   }
 
   getFormMaxNumberInvalidControlKeysRecursively(
@@ -1064,7 +1065,7 @@ export class DrifFpComponent {
             `Your submission has been received. \nID #: ${response.id}.`,
           );
 
-          this.router.navigate(['/dashboard']);
+          this.router.navigate([ROUTE_PATH.SUBMISSIONS]);
         },
         error: (error) => {
           this.hotToast.close();

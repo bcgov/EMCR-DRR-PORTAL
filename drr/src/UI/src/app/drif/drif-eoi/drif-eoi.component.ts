@@ -42,6 +42,7 @@ import { ProfileStore } from '../../store/profile.store';
 
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { HotToastService } from '@ngxpert/hot-toast';
+import { ROUTE_PATH } from '../../app.routes';
 import {
   ContactDetailsForm,
   EOIApplicationForm,
@@ -554,7 +555,7 @@ export class EOIApplicationComponent {
     this.hotToast.success(
       `Your submission has been received. \nID #: ${response.id}.`,
     );
-    this.router.navigate(['/dashboard']);
+    this.router.navigate([ROUTE_PATH.SUBMISSIONS]);
   };
 
   onSubmitFailure = () => {
@@ -563,6 +564,6 @@ export class EOIApplicationComponent {
   };
 
   goBack() {
-    this.router.navigate(['/dashboard']);
+    this.router.navigate([ROUTE_PATH.SUBMISSIONS]);
   }
 }

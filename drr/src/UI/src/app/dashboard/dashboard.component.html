@@ -1,10 +1,27 @@
 <div *transloco="let t; read: 'dashboard'" class="dashboard-container">
-  <mat-tab-group>
-    <mat-tab [label]="t('submissionsTitle')">
-      <drr-submission-list></drr-submission-list>
-    </mat-tab>
-    <mat-tab [label]="t('projectsTitle')">
-      <drr-project-list></drr-project-list>
-    </mat-tab>
-  </mat-tab-group>
+  <nav mat-tab-nav-bar [tabPanel]="tabPanel">
+    <a
+      mat-tab-link
+      *ngFor="let tab of tabs"
+      (click)="activeTab = tab.type"
+      [routerLink]="tab.link"
+      [active]="activeTab == tab.type"
+    >
+      {{ t(tab.label) }}
+    </a>
+  </nav>
+  <mat-tab-nav-panel #tabPanel>
+    <!-- use this if component need to be reloaded and data refetched -->
+    <!--  <router-outlet></router-outlet> -->
+  </mat-tab-nav-panel>
+
+  <!-- this part imitates tab content -->
+  <div class="tab-content">
+    <drr-submission-list
+      [hidden]="activeTab !== tabType.SUBMISSIONS"
+    ></drr-submission-list>
+    <drr-project-list
+      [hidden]="activeTab !== tabType.PROJECTS"
+    ></drr-project-list>
+  </div>
 </div>

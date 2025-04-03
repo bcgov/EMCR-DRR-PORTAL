@@ -15,6 +15,7 @@ import {
   RxReactiveFormsModule,
 } from '@rxweb/reactive-form-validators';
 import { YesNoOption } from '../../../../model';
+import { ROUTE_PATH } from '../../../app.routes';
 import {
   DrrRadioButtonComponent,
   DrrRadioOption,
@@ -101,7 +102,7 @@ export class DrifFpScreenerComponent {
   }
 
   cancel() {
-    this.router.navigate(['/dashboard']);
+    this.router.navigate([ROUTE_PATH.SUBMISSIONS]);
   }
 
   continue() {
