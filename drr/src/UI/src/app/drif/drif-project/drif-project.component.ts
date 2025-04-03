@@ -30,6 +30,7 @@ import {
   PaymentCondition,
   ProgressReportStatus,
 } from '../../../model';
+import { ROUTE_PATH } from '../../app.routes';
 import { DrifProjectContactDialogComponent } from './drif-project-contact-dialog.component';
 
 export class CostProjectionItem {
@@ -91,6 +92,8 @@ export class DrifProjectComponent {
   projectService = inject(ProjectService);
   matDialog = inject(MatDialog);
   translocoService = inject(TranslocoService);
+
+  projectsRoute = ROUTE_PATH.PROJECTS;
 
   projectId?: string;
   project?: DraftDrrProject;

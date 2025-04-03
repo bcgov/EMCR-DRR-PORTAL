@@ -14,6 +14,7 @@ import { IFormGroup, RxFormBuilder } from '@rxweb/reactive-form-validators';
 import { DrifapplicationService } from '../../../../api/drifapplication/drifapplication.service';
 import { ActivityType, DocumentType } from '../../../../model';
 import { DraftFpApplication } from '../../../../model/draftFpApplication';
+import { ROUTE_PATH } from '../../../app.routes';
 import { OptionsStore } from '../../../store/options.store';
 import {
   ContactDetailsForm,
@@ -388,6 +389,6 @@ export class DrifFpViewComponent {
   }
 
   goBack() {
-    this.router.navigate(['/dashboard']);
+    this.router.navigate([ROUTE_PATH.SUBMISSIONS]);
   }
 }

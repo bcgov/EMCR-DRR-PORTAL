@@ -8,6 +8,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { ROUTE_PATH } from '../../app.routes';
 import { AuthService } from '../../core/auth/auth.service';
 import { ProfileStore } from '../../store/profile.store';
 
@@ -34,7 +35,7 @@ export class HeaderComponent {
   authService = inject(AuthService);
 
   homeClick() {
-    this.router.navigate(['/dashboard']);
+    this.router.navigate([ROUTE_PATH.SUBMISSIONS]);
   }
 
   signOut() {
