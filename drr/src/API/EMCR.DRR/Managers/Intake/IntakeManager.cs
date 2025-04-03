@@ -271,8 +271,8 @@ namespace EMCR.DRR.Managers.Intake
 
         public async Task<string> Handle(EoiSaveApplicationCommand cmd)
         {
-            var canAccess = await CanAccessApplication(cmd.Application.Id, cmd.UserInfo.BusinessId);
-            if (!canAccess) throw new ForbiddenException("Not allowed to access this application.");
+            var canAccess = await CanAccessApplication(cmd.Application.Id, cmd.UserInfo.BusinessId, true);
+            if (!canAccess) throw new ForbiddenException("Not allowed to update this application.");
             var application = mapper.Map<Application>(cmd.Application);
             application.BCeIDBusinessId = cmd.UserInfo.BusinessId;
             application.ProponentName = cmd.UserInfo.BusinessName;
@@ -283,8 +283,8 @@ namespace EMCR.DRR.Managers.Intake
 
         public async Task<string> Handle(EoiSubmitApplicationCommand cmd)
         {
-            var canAccess = await CanAccessApplication(cmd.Application.Id, cmd.UserInfo.BusinessId);
-            if (!canAccess) throw new ForbiddenException("Not allowed to access this application.");
+            var canAccess = await CanAccessApplication(cmd.Application.Id, cmd.UserInfo.BusinessId, true);
+            if (!canAccess) throw new ForbiddenException("Not allowed to update this application.");
             var application = mapper.Map<Application>(cmd.Application);
             application.BCeIDBusinessId = cmd.UserInfo.BusinessId;
             application.ProponentName = cmd.UserInfo.BusinessName;
@@ -313,8 +313,8 @@ namespace EMCR.DRR.Managers.Intake
 
         public async Task<string> Handle(FpSaveApplicationCommand cmd)
         {
-            var canAccess = await CanAccessApplication(cmd.Application.Id, cmd.UserInfo.BusinessId);
-            if (!canAccess) throw new ForbiddenException("Not allowed to access this application.");
+            var canAccess = await CanAccessApplication(cmd.Application.Id, cmd.UserInfo.BusinessId, true);
+            if (!canAccess) throw new ForbiddenException("Not allowed to update this application.");
             var application = mapper.Map<Application>(cmd.Application);
             application.BCeIDBusinessId = cmd.UserInfo.BusinessId;
             application.ProponentName = cmd.UserInfo.BusinessName;
@@ -332,8 +332,8 @@ namespace EMCR.DRR.Managers.Intake
 
         public async Task<string> Handle(FpSubmitApplicationCommand cmd)
         {
-            var canAccess = await CanAccessApplication(cmd.Application.Id, cmd.UserInfo.BusinessId);
-            if (!canAccess) throw new ForbiddenException("Not allowed to access this application.");
+            var canAccess = await CanAccessApplication(cmd.Application.Id, cmd.UserInfo.BusinessId, true);
+            if (!canAccess) throw new ForbiddenException("Not allowed to update this application.");
             var application = mapper.Map<Application>(cmd.Application);
             application.BCeIDBusinessId = cmd.UserInfo.BusinessId;
             application.ProponentName = cmd.UserInfo.BusinessName;
@@ -396,7 +396,7 @@ namespace EMCR.DRR.Managers.Intake
         public async Task<string> Handle(SaveProjectCommand cmd)
         {
             var canAccess = await CanAccessProject(cmd.Project.Id, cmd.UserInfo.BusinessId);
-            if (!canAccess) throw new ForbiddenException("Not allowed to access this project.");
+            if (!canAccess) throw new ForbiddenException("Not allowed to update this project.");
             var project = mapper.Map<Project>(cmd.Project);
             project.ProponentName = cmd.UserInfo.BusinessName;
             //var id = (await projectRepository.Manage(new SaveProject { Project = project })).Id;
@@ -407,7 +407,7 @@ namespace EMCR.DRR.Managers.Intake
         public async Task<string> Handle(SubmitProjectCommand cmd)
         {
             var canAccess = await CanAccessProject(cmd.Project.Id, cmd.UserInfo.BusinessId);
-            if (!canAccess) throw new ForbiddenException("Not allowed to access this project.");
+            if (!canAccess) throw new ForbiddenException("Not allowed to update this project.");
             var project = mapper.Map<Project>(cmd.Project);
             project.ProponentName = cmd.UserInfo.BusinessName;
             //var id = (await projectRepository.Manage(new SaveProject { Project = project })).Id;
@@ -419,11 +419,11 @@ namespace EMCR.DRR.Managers.Intake
         public async Task<string> Handle(SaveProgressReportCommand cmd)
         {
             var canAccess = await CanAccessProgressReport(cmd.ProgressReport.Id, cmd.UserInfo.BusinessId);
-            if (!canAccess) throw new ForbiddenException("Not allowed to access this progress report.");
+            if (!canAccess) throw new ForbiddenException("Not allowed to update this progress report.");
 
             var existingProgressReport = (await reportRepository.Query(new ProgressReportsQuery { Id = cmd.ProgressReport.Id, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
-            if (existingProgressReport == null) throw new NotFoundException("Application not found");
-
+            if (existingProgressReport == null) throw new NotFoundException("Progress Report not found");
+            if (!ProgressReportInEditableStatus(existingProgressReport)) throw new BusinessValidationException("Not allowed to update Progress Report");
             var progressReport = mapper.Map<ProgressReportDetails>(cmd.ProgressReport);
 
             //is PreCreatedActivity or was copied from activity/report
@@ -438,9 +438,10 @@ namespace EMCR.DRR.Managers.Intake
         public async Task<string> Handle(SubmitProgressReportCommand cmd)
         {
             var canAccess = await CanAccessProgressReport(cmd.ProgressReport.Id, cmd.UserInfo.BusinessId);
-            if (!canAccess) throw new ForbiddenException("Not allowed to access this progress report.");
+            if (!canAccess) throw new ForbiddenException("Not allowed to update this progress report.");
             var existingProgressReport = (await reportRepository.Query(new ProgressReportsQuery { Id = cmd.ProgressReport.Id, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
             if (existingProgressReport == null) throw new NotFoundException("Progress Report not found");
+            if (!ProgressReportInEditableStatus(existingProgressReport)) throw new BusinessValidationException("Not allowed to update Progress Report");
 
             var progressReport = mapper.Map<ProgressReportDetails>(cmd.ProgressReport);
 
@@ -469,6 +470,7 @@ namespace EMCR.DRR.Managers.Intake
 
             var existingClaim = (await reportRepository.Query(new ClaimsQuery { Id = cmd.Claim.Id, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
             if (existingClaim == null) throw new NotFoundException("Claim not found");
+            if (!ClaimInEditableStatus(existingClaim)) throw new BusinessValidationException("Not allowed to update Claim");
 
             var claim = mapper.Map<ClaimDetails>(cmd.Claim);
 
@@ -483,6 +485,7 @@ namespace EMCR.DRR.Managers.Intake
 
             var existingClaim = (await reportRepository.Query(new ClaimsQuery { Id = cmd.Claim.Id, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
             if (existingClaim == null) throw new NotFoundException("Claim not found");
+            if (!ClaimInEditableStatus(existingClaim)) throw new BusinessValidationException("Not allowed to update Claim");
 
             var claim = mapper.Map<ClaimDetails>(cmd.Claim);
             var now = DateTime.UtcNow;
@@ -526,6 +529,7 @@ namespace EMCR.DRR.Managers.Intake
 
             var existingForecast = (await reportRepository.Query(new ForecastsQuery { Id = cmd.Forecast.Id, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
             if (existingForecast == null) throw new NotFoundException("Forecast not found");
+            if (!ForecastInEditableStatus(existingForecast)) throw new BusinessValidationException("Not allowed to update Forecast");
 
             var forecast = mapper.Map<ForecastDetails>(cmd.Forecast);
 
@@ -539,6 +543,7 @@ namespace EMCR.DRR.Managers.Intake
             if (!canAccess) throw new ForbiddenException("Not allowed to access this forecast.");
             var existingForecast = (await reportRepository.Query(new ForecastsQuery { Id = cmd.Forecast.Id, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
             if (existingForecast == null) throw new NotFoundException("Forecast not found");
+            if (!ForecastInEditableStatus(existingForecast)) throw new BusinessValidationException("Not allowed to update Forecast");
 
             var forecast = mapper.Map<ForecastDetails>(cmd.Forecast);
 
@@ -551,6 +556,7 @@ namespace EMCR.DRR.Managers.Intake
             if (string.IsNullOrEmpty(forecast.AuthorizedRepresentative.Phone)) throw new BusinessValidationException("Authorized Representative phone number is required.");
             if (string.IsNullOrEmpty(forecast.AuthorizedRepresentative.Title)) throw new BusinessValidationException("Authorized Representative title is required.");
             if (forecast.ForecastItems != null && forecast.ForecastItems.Any(i => i.ClaimsOnThisReport == null)) throw new BusinessValidationException("Claims On This Report is required");
+            if (forecast.ForecastItems != null && forecast.ForecastItems.Any(i => i.TotalProjectedExpenditure == null)) throw new BusinessValidationException("Claims On This Report is required");
             forecast.AuthorizedRepresentative.BCeId = cmd.UserInfo.UserId;
             if (forecast.Variance != null && forecast.Variance != 0 && string.IsNullOrEmpty(forecast.VarianceComment)) throw new BusinessValidationException("Must explain variance.");
 
@@ -566,6 +572,7 @@ namespace EMCR.DRR.Managers.Intake
 
             var existingClaim = (await reportRepository.Query(new ClaimsQuery { Id = cmd.ClaimId, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
             if (existingClaim == null) throw new NotFoundException("Claim not found");
+            if (!ClaimInEditableStatus(existingClaim)) throw new BusinessValidationException("Not allowed to update Claim");
 
             var id = (await reportRepository.Manage(new CreateInvoice { ClaimId = cmd.ClaimId, InvoiceId = cmd.InvoiceId })).Id;
             return id;
@@ -579,6 +586,7 @@ namespace EMCR.DRR.Managers.Intake
             var existingClaim = (await reportRepository.Query(new ClaimsQuery { Id = cmd.ClaimId, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
             if (existingClaim == null) throw new NotFoundException("Claim not found");
             if (existingClaim.Invoices == null) throw new NotFoundException("Invoice not found");
+            if (!ClaimInEditableStatus(existingClaim)) throw new BusinessValidationException("Not allowed to update Claim");
 
             var existingInvoice = existingClaim.Invoices.Where(i => i.Id == cmd.InvoiceId).SingleOrDefault();
             if (existingInvoice == null) throw new NotFoundException("Invoice not found");
@@ -746,7 +754,8 @@ namespace EMCR.DRR.Managers.Intake
             if (!canAccess) throw new ForbiddenException("Not allowed to access this progress report.");
             var progressReport = (await reportRepository.Query(new ProgressReportsQuery { Id = cmd.AttachmentInfo.RecordId })).Items.SingleOrDefault();
             if (progressReport == null) throw new NotFoundException("Progress Report not found");
-            //if (!ApplicationInEditableStatus(progressReport)) throw new BusinessValidationException("Can only edit attachments when application is in Draft");
+            if (!ProgressReportInEditableStatus(progressReport)) throw new BusinessValidationException("Not allowed to update Progress Report");
+            
             if (cmd.AttachmentInfo.DocumentType != DocumentType.OtherSupportingDocument && progressReport.Attachments != null && progressReport.Attachments.Any(a => a.DocumentType == cmd.AttachmentInfo.DocumentType))
             {
                 throw new BusinessValidationException($"A document with type {cmd.AttachmentInfo.DocumentType.ToDescriptionString()} already exists on the application {cmd.AttachmentInfo.RecordId}");
@@ -765,6 +774,11 @@ namespace EMCR.DRR.Managers.Intake
             if (!canAccess) throw new ForbiddenException("Not allowed to access this invoice.");
             var invoice = (await reportRepository.Query(new InvoicesQuery { Id = cmd.AttachmentInfo.RecordId })).Items.SingleOrDefault();
             if (invoice == null) throw new NotFoundException("Invoice not found");
+
+            var existingClaim = (await reportRepository.Query(new ClaimsQuery { InvoiceId = cmd.AttachmentInfo.RecordId, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
+            if (existingClaim == null) throw new NotFoundException("Claim not found");
+            if (!ClaimInEditableStatus(existingClaim)) throw new BusinessValidationException("Not allowed to update Claim");
+
             //if (!ApplicationInEditableStatus(progressReport)) throw new BusinessValidationException("Can only edit attachments when application is in Draft");
             if (cmd.AttachmentInfo.DocumentType != DocumentType.OtherSupportingDocument && invoice.Attachments != null && invoice.Attachments.Any(a => a.DocumentType == cmd.AttachmentInfo.DocumentType))
             {
@@ -784,6 +798,7 @@ namespace EMCR.DRR.Managers.Intake
             if (!canAccess) throw new ForbiddenException("Not allowed to access this forecast.");
             var forecast = (await reportRepository.Query(new ForecastsQuery { Id = cmd.AttachmentInfo.RecordId })).Items.SingleOrDefault();
             if (forecast == null) throw new NotFoundException("Forecast not found");
+            if (!ForecastInEditableStatus(forecast)) throw new BusinessValidationException("Not allowed to update Forecast");
             //if (!ApplicationInEditableStatus(progressReport)) throw new BusinessValidationException("Can only edit attachments when application is in Draft");
             //if (cmd.AttachmentInfo.DocumentType != DocumentType.OtherSupportingDocument && forecast.Attachments != null && forecast.Attachments.Any(a => a.DocumentType == cmd.AttachmentInfo.DocumentType))
             //{
@@ -799,7 +814,7 @@ namespace EMCR.DRR.Managers.Intake
 
         private async Task<string> DeleteApplicationDocument(DeleteAttachmentCommand cmd)
         {
-            var canAccess = await CanAccessApplicationFromDocumentId(cmd.Id, cmd.UserInfo.BusinessId);
+            var canAccess = await CanAccessApplicationFromDocumentId(cmd.Id, cmd.UserInfo.BusinessId, true);
             if (!canAccess) throw new ForbiddenException("Not allowed to access this application.");
             var documentRes = await documentRepository.Manage(new DeleteApplicationDocument { Id = cmd.Id });
             await s3Provider.HandleCommand(new UpdateTagsCommand { Key = cmd.Id, Folder = $"{RecordType.FullProposal.ToDescriptionString()}/{documentRes.RecordId}", FileTag = GetDeletedFileTag() });
@@ -808,7 +823,7 @@ namespace EMCR.DRR.Managers.Intake
 
         private async Task<string> DeleteProgressReportDocument(DeleteAttachmentCommand cmd)
         {
-            var canAccess = await CanAccessProgressReportFromDocumentId(cmd.Id, cmd.UserInfo.BusinessId);
+            var canAccess = await CanAccessProgressReportFromDocumentId(cmd.Id, cmd.UserInfo.BusinessId, true);
             if (!canAccess) throw new ForbiddenException("Not allowed to access this progress report.");
             var documentRes = await documentRepository.Manage(new DeleteProgressReportDocument { Id = cmd.Id });
             await s3Provider.HandleCommand(new UpdateTagsCommand { Key = cmd.Id, Folder = $"{RecordType.ProgressReport.ToDescriptionString()}/{documentRes.RecordId}", FileTag = GetDeletedFileTag() });
@@ -817,7 +832,7 @@ namespace EMCR.DRR.Managers.Intake
 
         private async Task<string> DeleteInvoiceDocument(DeleteAttachmentCommand cmd)
         {
-            var canAccess = await CanAccessInvoiceFromDocumentId(cmd.Id, cmd.UserInfo.BusinessId);
+            var canAccess = await CanAccessInvoiceFromDocumentId(cmd.Id, cmd.UserInfo.BusinessId, true);
             if (!canAccess) throw new ForbiddenException("Not allowed to access this invoice.");
             var documentRes = await documentRepository.Manage(new DeleteInvoiceDocument { Id = cmd.Id });
             await s3Provider.HandleCommand(new UpdateTagsCommand { Key = cmd.Id, Folder = $"{RecordType.Invoice.ToDescriptionString()}/{documentRes.RecordId}", FileTag = GetDeletedFileTag() });
@@ -826,7 +841,7 @@ namespace EMCR.DRR.Managers.Intake
 
         private async Task<string> DeleteForecastReportDocument(DeleteAttachmentCommand cmd)
         {
-            var canAccess = await CanAccessForecastFromDocumentId(cmd.Id, cmd.UserInfo.BusinessId);
+            var canAccess = await CanAccessForecastFromDocumentId(cmd.Id, cmd.UserInfo.BusinessId, true);
             if (!canAccess) throw new ForbiddenException("Not allowed to access this forecast.");
             var documentRes = await documentRepository.Manage(new DeleteForecastReportDocument { Id = cmd.Id });
             await s3Provider.HandleCommand(new UpdateTagsCommand { Key = cmd.Id, Folder = $"{RecordType.ForecastReport.ToDescriptionString()}/{documentRes.RecordId}", FileTag = GetDeletedFileTag() });
@@ -850,6 +865,21 @@ namespace EMCR.DRR.Managers.Intake
         private bool ApplicationInEditableStatus(Application application)
         {
             return application.Status == ApplicationStatus.DraftProponent || application.Status == ApplicationStatus.DraftStaff || application.Status == ApplicationStatus.Withdrawn;
+        }
+
+        private bool ProgressReportInEditableStatus(ProgressReport report)
+        {
+            return report.Status != ProgressReportStatus.Submitted;
+        }
+
+        private bool ClaimInEditableStatus(ProjectClaim claim)
+        {
+            return claim.Status != ClaimStatus.Submitted;
+        }
+        
+        private bool ForecastInEditableStatus(Forecast forecast)
+        {
+            return forecast.Status != ForecastStatus.Submitted;
         }
 
         private string GetNextReportPeriodFromString(ReportingScheduleType? type, string period)
@@ -953,18 +983,18 @@ namespace EMCR.DRR.Managers.Intake
             return $"{year}-Q{quarter}";
         }
 
-        private async Task<bool> CanAccessApplication(string? id, string? businessId)
+        private async Task<bool> CanAccessApplication(string? id, string? businessId, bool forUpdate = false)
         {
             if (string.IsNullOrEmpty(businessId)) throw new ArgumentNullException("Missing user's BusinessId");
             if (string.IsNullOrEmpty(id)) return true;
-            return await applicationRepository.CanAccessApplication(id, businessId);
+            return await applicationRepository.CanAccessApplication(id, businessId, forUpdate);
         }
 
-        private async Task<bool> CanAccessApplicationFromDocumentId(string? id, string? businessId)
+        private async Task<bool> CanAccessApplicationFromDocumentId(string? id, string? businessId, bool forUpdate = false)
         {
             if (string.IsNullOrEmpty(businessId)) throw new ArgumentNullException("Missing user's BusinessId");
             if (string.IsNullOrEmpty(id)) return true;
-            return await applicationRepository.CanAccessApplicationFromDocumentId(id, businessId);
+            return await applicationRepository.CanAccessApplicationFromDocumentId(id, businessId, forUpdate);
         }
 
         private async Task<bool> CanAccessProject(string? id, string? businessId)
@@ -995,11 +1025,11 @@ namespace EMCR.DRR.Managers.Intake
             return await reportRepository.CanAccessProgressReport(id, businessId);
         }
 
-        private async Task<bool> CanAccessProgressReportFromDocumentId(string? id, string? businessId)
+        private async Task<bool> CanAccessProgressReportFromDocumentId(string? id, string? businessId, bool forUpdate = false)
         {
             if (string.IsNullOrEmpty(businessId)) throw new ArgumentNullException("Missing user's BusinessId");
             if (string.IsNullOrEmpty(id)) return true;
-            return await reportRepository.CanAccessProgressReportFromDocumentId(id, businessId);
+            return await reportRepository.CanAccessProgressReportFromDocumentId(id, businessId, forUpdate);
         }
 
         private async Task<bool> CanAccessForecast(string? id, string? businessId)
@@ -1009,18 +1039,18 @@ namespace EMCR.DRR.Managers.Intake
             return await reportRepository.CanAccessForecast(id, businessId);
         }
 
-        private async Task<bool> CanAccessInvoiceFromDocumentId(string? id, string? businessId)
+        private async Task<bool> CanAccessForecastFromDocumentId(string? id, string? businessId, bool forUpdate = false)
         {
             if (string.IsNullOrEmpty(businessId)) throw new ArgumentNullException("Missing user's BusinessId");
             if (string.IsNullOrEmpty(id)) return true;
-            return await reportRepository.CanAccessInvoiceFromDocumentId(id, businessId);
+            return await reportRepository.CanAccessForecastFromDocumentId(id, businessId, forUpdate);
         }
 
-        private async Task<bool> CanAccessForecastFromDocumentId(string? id, string? businessId)
+        private async Task<bool> CanAccessInvoiceFromDocumentId(string? id, string? businessId, bool forUpdate = false)
         {
             if (string.IsNullOrEmpty(businessId)) throw new ArgumentNullException("Missing user's BusinessId");
             if (string.IsNullOrEmpty(id)) return true;
-            return await reportRepository.CanAccessForecastFromDocumentId(id, businessId);
+            return await reportRepository.CanAccessInvoiceFromDocumentId(id, businessId, forUpdate);
         }
 
         private FilterOptions ParseFilter(string? filter)

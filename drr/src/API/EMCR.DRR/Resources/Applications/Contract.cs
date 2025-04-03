@@ -8,8 +8,8 @@ namespace EMCR.DRR.Resources.Applications
         Task<ApplicationQueryResult> Query(ApplicationQuery query);
         Task<DeclarationQueryResult> Query(DeclarationQuery query);
         Task<EntitiesQueryResult> Query(EntitiesQuery query);
-        Task<bool> CanAccessApplication(string id, string businessId);
-        Task<bool> CanAccessApplicationFromDocumentId(string id, string businessId);
+        Task<bool> CanAccessApplication(string id, string businessId, bool forUpdate);
+        Task<bool> CanAccessApplicationFromDocumentId(string id, string businessId, bool forUpdate);
         Task<ApplicationQueryResult> QueryList(ApplicationQuery query);
     }
 

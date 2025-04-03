@@ -118,20 +118,22 @@ namespace EMCR.DRR.Resources.Applications
             };
         }
 
-        public async Task<bool> CanAccessApplication(string id, string businessId)
+        public async Task<bool> CanAccessApplication(string id, string businessId, bool forUpdate)
         {
             var readCtx = dRRContextFactory.CreateReadOnly();
             var existingApplication = await readCtx.drr_applications.Expand(a => a.drr_Primary_Proponent_Name).Where(a => a.drr_name == id).SingleOrDefaultAsync();
             if (existingApplication == null) return true;
+            if (forUpdate && existingApplication.statuscode == (int)ApplicationStatusOptionSet.Submitted) return false;
             return (!string.IsNullOrEmpty(existingApplication.drr_Primary_Proponent_Name.drr_bceidguid)) && existingApplication.drr_Primary_Proponent_Name.drr_bceidguid.Equals(businessId);
         }
 
-        public async Task<bool> CanAccessApplicationFromDocumentId(string id, string businessId)
+        public async Task<bool> CanAccessApplicationFromDocumentId(string id, string businessId, bool forUpdate)
         {
             var readCtx = dRRContextFactory.CreateReadOnly();
             var document = await readCtx.bcgov_documenturls.Expand(d => d.bcgov_Application).Where(a => a.bcgov_documenturlid == Guid.Parse(id)).SingleOrDefaultAsync();
             var existingApplication = await readCtx.drr_applications.Expand(a => a.drr_Primary_Proponent_Name).Where(a => a.drr_applicationid == document.bcgov_Application.drr_applicationid).SingleOrDefaultAsync();
             if (existingApplication == null) return true;
+            if (forUpdate && existingApplication.statuscode == (int)ApplicationStatusOptionSet.Submitted) return false;
             return (!string.IsNullOrEmpty(existingApplication.drr_Primary_Proponent_Name.drr_bceidguid)) && existingApplication.drr_Primary_Proponent_Name.drr_bceidguid.Equals(businessId);
         }
 
@@ -851,7 +853,7 @@ namespace EMCR.DRR.Resources.Applications
                     }
                     activity.drr_Activity = masterVal;
 
-                    if (activity.drr_proposedactivityid == null || 
+                    if (activity.drr_proposedactivityid == null ||
                         (oldApplication != null && !oldApplication.drr_drr_application_drr_proposedactivity_Application.Any(a => a.drr_proposedactivityid == activity.drr_proposedactivityid)))
                     {
                         drrContext.AddTodrr_proposedactivities(activity);

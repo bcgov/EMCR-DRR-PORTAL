@@ -158,7 +158,7 @@ namespace EMCR.DRR.API.Resources.Reports
                 .ForMember(dest => dest.DateSubmitted, opt => opt.MapFrom(src => src.drr_datesubmitted.HasValue ? src.drr_datesubmitted.Value.UtcDateTime : (DateTime?)null))
                 .ForMember(dest => dest.DueDate, opt => opt.MapFrom(src => src.drr_duedate.HasValue ? src.drr_duedate.Value.UtcDateTime : (DateTime?)null))
                 .ForMember(dest => dest.ProjectType, opt => opt.MapFrom(src => src.drr_Project != null && src.drr_Project.drr_projecttype.HasValue ? (int?)Enum.Parse<InterimProjectType>(((FundingStreamOptionSet)src.drr_Project.drr_projecttype).ToString()) : null))
-                .ForPath(dest => dest.Workplan.WorkplanActivities, opt => opt.MapFrom(src => src.drr_drr_projectprogress_drr_projectworkplanactivity_ProjectProgressReport.Where(c => c.statecode == (int)EntityState.Active)))
+                .ForPath(dest => dest.Workplan.WorkplanActivities, opt => opt.MapFrom(src => src.drr_drr_projectprogress_drr_projectworkplanactivity_ProjectProgressReport))
                 .ForPath(dest => dest.Workplan.ProjectProgress, opt => opt.MapFrom(src => src.drr_projectprogress1.HasValue ? (int?)Enum.Parse<ProjectProgress>(((ProjectProgressOptionSet)src.drr_projectprogress1).ToString()) : null))
                 .ForPath(dest => dest.Workplan.AheadOfScheduleComments, opt => opt.MapFrom(src => src.drr_commentsaheadofschedule))
                 .ForPath(dest => dest.Workplan.DelayReason, opt => opt.MapFrom(src => src.drr_reasonfordelay.HasValue ? (int?)Enum.Parse<DelayReason>(((DelayReasonOptionSet)src.drr_reasonfordelay).ToString()) : null))
@@ -216,7 +216,7 @@ namespace EMCR.DRR.API.Resources.Reports
                 .ForMember(dest => dest.InformationAccuracyStatement, opt => opt.Ignore())
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.statuscode.HasValue ? (int?)Enum.Parse<ForecastStatus>(((ForecastStatusOptionSet)src.statuscode).ToString()) : null))
             ;
-#pragma warning restore CS8604 // Possible null reference argument.
+
 
             CreateMap<ForecastItem, drr_budgetforecastreportitem>(MemberList.None)
                 .ForMember(dest => dest.drr_budgetforecastreportitemid, opt => opt.MapFrom(src => !string.IsNullOrEmpty(src.Id) ? Guid.Parse(src.Id) : (Guid?)null))
@@ -253,6 +253,7 @@ namespace EMCR.DRR.API.Resources.Reports
                 .ForMember(dest => dest.drr_progressstatus, opt => opt.MapFrom(src => src.ProgressStatus.HasValue ? (int?)Enum.Parse<WorkplanProgressOptionSet>(src.ProgressStatus.Value.ToString()) : null))
                 .ForMember(dest => dest.drr_ActivityType, opt => opt.MapFrom(src => src.ActivityType))
                 .ForMember(dest => dest.drr_explaindatechange, opt => opt.MapFrom(src => src.Comment))
+                .ForMember(dest => dest.statuscode, opt => opt.MapFrom(src => (int?)Enum.Parse<WorkplanStatusOptionSet>(src.Status.ToString())))
             ;
 
             CreateMap<drr_projectworkplanactivity, WorkplanActivityDetails>(MemberList.None)
@@ -329,6 +330,7 @@ namespace EMCR.DRR.API.Resources.Reports
                 .ForMember(dest => dest.Date, opt => opt.Ignore())
                 .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.drr_dateoccurred.HasValue ? src.drr_dateoccurred.Value.UtcDateTime : (DateTime?)null))
             ;
+#pragma warning restore CS8604 // Possible null reference argument.
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 #pragma warning restore CS8629 // Nullable value type may be null.
         }
