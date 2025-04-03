@@ -522,13 +522,17 @@ export class DrifProgressReportCreateComponent {
               });
 
             if (this.isStructuralProject()) {
-              this.workplanForm
-                ?.get('constructionCompletionPercentage')
-                ?.addValidators(Validators.required);
+              const constructionCompletionPercentageControl =
+                this.workplanForm?.get('constructionCompletionPercentage');
+              constructionCompletionPercentageControl?.addValidators(
+                Validators.required,
+              );
+              constructionCompletionPercentageControl?.updateValueAndValidity();
 
-              this.workplanForm
-                ?.get('signageRequired')
-                ?.addValidators(Validators.required);
+              const signageRequiredControl =
+                this.workplanForm?.get('signageRequired');
+              signageRequiredControl?.addValidators(Validators.required);
+              signageRequiredControl?.updateValueAndValidity();
 
               if (!report?.workplan?.signageRequired) {
                 this.getSignageFormArray().clear();

@@ -313,7 +313,7 @@ export class DrifFpStep10Component {
           }
 
           this.budgetForm.get('contingency')?.setValue(contingency.toFixed(1));
-          this.verifyContingencyPercentageThreashold();
+          this.verifyContingencyPercentageThreshold();
         }
 
         this.budgetForm.get('totalEligibleCosts')?.setValue(totalCost);
@@ -338,18 +338,25 @@ export class DrifFpStep10Component {
   }
 
   setValidatorsForStructuralProject() {
-    this.budgetForm
-      .get('costEstimateClass')
-      ?.addValidators(Validators.required);
-    this.verifyContingencyPercentageThreashold();
-    this.budgetForm.get('costEstimateClass')?.valueChanges.subscribe(() => {
-      this.verifyContingencyPercentageThreashold();
+    const costEstimateClassControl = this.budgetForm.get('costEstimateClass');
+    costEstimateClassControl?.addValidators(Validators.required);
+    this.verifyContingencyPercentageThreshold();
+    costEstimateClassControl?.valueChanges.subscribe(() => {
+      this.verifyContingencyPercentageThreshold();
     });
+    costEstimateClassControl?.updateValueAndValidity();
 
-    this.budgetForm.get('contingency')?.addValidators(Validators.required);
-    this.budgetForm
-      .get('isContingencyPercentageThreasholdMet')
-      ?.addValidators(Validators.requiredTrue);
+    const contingencyControl = this.budgetForm.get('contingency');
+    contingencyControl?.addValidators(Validators.required);
+    contingencyControl?.updateValueAndValidity();
+
+    const isContingencyPercentageThreasholdMetControl = this.budgetForm.get(
+      'isContingencyPercentageThreasholdMet',
+    );
+    isContingencyPercentageThreasholdMetControl?.addValidators(
+      Validators.requiredTrue,
+    );
+    isContingencyPercentageThreasholdMetControl?.updateValueAndValidity();
   }
 
   hasTotalProjectCostChanged() {
@@ -493,7 +500,7 @@ export class DrifFpStep10Component {
     );
   }
 
-  verifyContingencyPercentageThreashold() {
+  verifyContingencyPercentageThreshold() {
     const contingency = Number(this.budgetForm.get('contingency')?.value ?? 0);
     const costEstimateClass = this.budgetForm.get('costEstimateClass')?.value;
 

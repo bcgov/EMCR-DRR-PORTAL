@@ -232,14 +232,11 @@ export class DrifFpViewComponent {
           .get('ownershipAndAuthorization')
           ?.get('ownershipDeclaration')?.value === false
       ) {
-        this.fullProposalForm
-          .get('ownershipAndAuthorization')
-          ?.get('ownershipDescription')
-          ?.addValidators(Validators.required);
-        this.fullProposalForm
-          .get('ownershipAndAuthorization')
-          ?.get('ownershipDescription')
-          ?.updateValueAndValidity();
+        const ownershipDescriptionControl = this.fullProposalForm?.get(
+          'ownershipAndAuthorization.ownershipDescription',
+        );
+        ownershipDescriptionControl?.addValidators(Validators.required);
+        ownershipDescriptionControl?.updateValueAndValidity();
       }
       const infrastructureImpacted = this.fullProposalForm
         .get('projectArea')

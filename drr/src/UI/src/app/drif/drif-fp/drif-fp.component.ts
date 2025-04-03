@@ -394,6 +394,9 @@ export class DrifFpComponent {
           this.initStep10(response);
           this.initStep11(response);
 
+          this.fullProposalForm.updateValueAndValidity({
+            emitEvent: false,
+          });
           this.fullProposalForm.markAsPristine();
           this.formChanged = false;
           resolve();
@@ -435,9 +438,11 @@ export class DrifFpComponent {
     });
 
     if (response.regionalProject === true) {
-      this.fullProposalForm
-        .get('proponentAndProjectInformation.regionalProjectComments')
-        ?.addValidators(Validators.required);
+      const regionalProjectCommentsControl = this.fullProposalForm.get(
+        'proponentAndProjectInformation.regionalProjectComments',
+      );
+      regionalProjectCommentsControl?.addValidators(Validators.required);
+      regionalProjectCommentsControl?.updateValueAndValidity();
     }
   }
 
@@ -447,14 +452,11 @@ export class DrifFpComponent {
         .get('ownershipAndAuthorization')
         ?.get('ownershipDeclaration')?.value === false
     ) {
-      this.fullProposalForm
-        .get('ownershipAndAuthorization')
-        ?.get('ownershipDescription')
-        ?.addValidators(Validators.required);
-      this.fullProposalForm
-        .get('ownershipAndAuthorization')
-        ?.get('ownershipDescription')
-        ?.updateValueAndValidity();
+      const ownershipDescriptionControl = this.fullProposalForm?.get(
+        'ownershipAndAuthorization.ownershipDescription',
+      );
+      ownershipDescriptionControl?.addValidators(Validators.required);
+      ownershipDescriptionControl?.updateValueAndValidity();
     }
   }
 
@@ -501,21 +503,25 @@ export class DrifFpComponent {
 
   initStep6(response: DraftFpApplication) {
     if (response.incorporateFutureClimateConditions === true) {
-      this.fullProposalForm
-        .get('climateAdaptation')
-        ?.get('climateAdaptation')
-        ?.addValidators(Validators.required);
+      const climateAdaptationControl = this.fullProposalForm?.get(
+        'climateAdaptation.climateAdaptation',
+      );
+      climateAdaptationControl?.addValidators(Validators.required);
+      climateAdaptationControl?.updateValueAndValidity();
     }
 
     if (response.climateAssessment === true) {
-      this.fullProposalForm
-        .get('climateAdaptation')
-        ?.get('climateAssessmentTools')
-        ?.addValidators(Validators.required);
-      this.fullProposalForm
-        .get('climateAdaptation')
-        ?.get('climateAssessmentComments')
-        ?.addValidators(Validators.required);
+      const climateAssessmentToolsControl = this.fullProposalForm?.get(
+        'climateAdaptation.climateAssessmentTools',
+      );
+      climateAssessmentToolsControl?.addValidators(Validators.required);
+      climateAssessmentToolsControl?.updateValueAndValidity();
+
+      const climateAssessmentCommentsControl = this.fullProposalForm?.get(
+        'climateAdaptation.climateAssessmentComments',
+      );
+      climateAssessmentCommentsControl?.addValidators(Validators.required);
+      climateAssessmentCommentsControl?.updateValueAndValidity();
     }
   }
 
@@ -570,22 +576,27 @@ export class DrifFpComponent {
     }
 
     if (response.professionalGuidance === true) {
-      this.fullProposalForm
-        .get('permitsRegulationsAndStandards')
-        ?.get('professionals')
-        ?.addValidators(Validators.required);
+      const professionalsControl = this.fullProposalForm?.get(
+        'permitsRegulationsAndStandards.professionals',
+      );
+      professionalsControl?.addValidators(Validators.required);
+      professionalsControl?.updateValueAndValidity();
     }
 
     if (response.meetsRegulatoryRequirements === true) {
-      this.fullProposalForm
-        .get('permitsRegulationsAndStandards.meetsRegulatoryComments')
-        ?.addValidators(Validators.required);
+      const meetsRegulatoryCommentsControl = this.fullProposalForm.get(
+        'permitsRegulationsAndStandards.meetsRegulatoryComments',
+      );
+      meetsRegulatoryCommentsControl?.addValidators(Validators.required);
+      meetsRegulatoryCommentsControl?.updateValueAndValidity();
     }
 
     if (response.meetsEligibilityRequirements === true) {
-      this.fullProposalForm
-        .get('permitsRegulationsAndStandards.meetsEligibilityComments')
-        ?.addValidators(Validators.required);
+      const meetsEligibilityCommentsControl = this.fullProposalForm.get(
+        'permitsRegulationsAndStandards.meetsEligibilityComments',
+      );
+      meetsEligibilityCommentsControl?.addValidators(Validators.required);
+      meetsEligibilityCommentsControl?.updateValueAndValidity();
     }
 
     const permitsArray = this.fullProposalForm.get(
@@ -607,68 +618,103 @@ export class DrifFpComponent {
 
   initStep8(response: DraftFpApplication) {
     if (response.futureCostReduction === true) {
-      this.fullProposalForm
-        .get('projectOutcomes.costReductions')
-        ?.addValidators(Validators.required);
-      this.fullProposalForm
-        .get('projectOutcomes.costReductionComments')
-        ?.addValidators(Validators.required);
+      const costReductionsControl = this.fullProposalForm.get(
+        'projectOutcomes.costReductions',
+      );
+      costReductionsControl?.addValidators(Validators.required);
+      costReductionsControl?.updateValueAndValidity();
+
+      const costReductionCommentsControl = this.fullProposalForm.get(
+        'projectOutcomes.costReductionComments',
+      );
+      costReductionCommentsControl?.addValidators(Validators.required);
+      costReductionCommentsControl?.updateValueAndValidity();
     }
 
     if (response.produceCoBenefits === true) {
-      this.fullProposalForm
-        .get('projectOutcomes.coBenefits')
-        ?.addValidators(Validators.required);
-      this.fullProposalForm
-        .get('projectOutcomes.coBenefitComments')
-        ?.addValidators(Validators.required);
+      const coBenefitsControl = this.fullProposalForm.get(
+        'projectOutcomes.coBenefits',
+      );
+      coBenefitsControl?.addValidators(Validators.required);
+      coBenefitsControl?.updateValueAndValidity();
+
+      const coBenefitCommentsControl = this.fullProposalForm.get(
+        'projectOutcomes.coBenefitComments',
+      );
+      coBenefitCommentsControl?.addValidators(Validators.required);
+      coBenefitCommentsControl?.updateValueAndValidity();
     }
   }
 
   initStep9(response: DraftFpApplication) {
     if (response.complexityRiskMitigated === true) {
-      this.fullProposalForm
-        .get('projectRisks.complexityRisks')
-        ?.addValidators(Validators.required);
-      this.fullProposalForm
-        .get('projectRisks.complexityRiskComments')
-        ?.addValidators(Validators.required);
+      const complexityRisksControl = this.fullProposalForm.get(
+        'projectRisks.complexityRisks',
+      );
+      complexityRisksControl?.addValidators(Validators.required);
+      complexityRisksControl?.updateValueAndValidity();
+
+      const complexityRiskComments = this.fullProposalForm.get(
+        'projectRisks.complexityRiskComments',
+      );
+      complexityRiskComments?.addValidators(Validators.required);
+      complexityRiskComments?.updateValueAndValidity();
     }
 
     if (response.readinessRiskMitigated === true) {
-      this.fullProposalForm
-        .get('projectRisks.readinessRisks')
-        ?.addValidators(Validators.required);
-      this.fullProposalForm
-        .get('projectRisks.readinessRiskComments')
-        ?.addValidators(Validators.required);
+      const readinessRisksControl = this.fullProposalForm.get(
+        'projectRisks.readinessRisks',
+      );
+      readinessRisksControl?.addValidators(Validators.required);
+      readinessRisksControl?.updateValueAndValidity();
+
+      const readinessRiskCommentsControl = this.fullProposalForm.get(
+        'projectRisks.readinessRiskComments',
+      );
+      readinessRiskCommentsControl?.addValidators(Validators.required);
+      readinessRiskCommentsControl?.updateValueAndValidity();
     }
 
     if (response.sensitivityRiskMitigated === true) {
-      this.fullProposalForm
-        .get('projectRisks.sensitivityRisks')
-        ?.addValidators(Validators.required);
-      this.fullProposalForm
-        .get('projectRisks.sensitivityRiskComments')
-        ?.addValidators(Validators.required);
+      const sensitivityRisksControl = this.fullProposalForm.get(
+        'projectRisks.sensitivityRisks',
+      );
+      sensitivityRisksControl?.addValidators(Validators.required);
+      sensitivityRisksControl?.updateValueAndValidity();
+
+      const sensitivityRiskCommentsControl = this.fullProposalForm.get(
+        'projectRisks.sensitivityRiskComments',
+      );
+      sensitivityRiskCommentsControl?.addValidators(Validators.required);
+      sensitivityRiskCommentsControl?.updateValueAndValidity();
     }
 
     if (response.capacityRiskMitigated === true) {
-      this.fullProposalForm
-        .get('projectRisks.capacityRisks')
-        ?.addValidators(Validators.required);
-      this.fullProposalForm
-        .get('projectRisks.capacityRiskComments')
-        ?.addValidators(Validators.required);
+      const capacityRisksControl = this.fullProposalForm.get(
+        'projectRisks.capacityRisks',
+      );
+      capacityRisksControl?.addValidators(Validators.required);
+      capacityRisksControl?.updateValueAndValidity();
+
+      const capacityRiskCommentsControl = this.fullProposalForm.get(
+        'projectRisks.capacityRiskComments',
+      );
+      capacityRiskCommentsControl?.addValidators(Validators.required);
+      capacityRiskCommentsControl?.updateValueAndValidity();
     }
 
     if (response.riskTransferMigigated === true) {
-      this.fullProposalForm
-        .get('projectRisks.increasedOrTransferred')
-        ?.addValidators(Validators.required);
-      this.fullProposalForm
-        .get('projectRisks.increasedOrTransferredComments')
-        ?.addValidators(Validators.required);
+      const increasedOrTransferredControl = this.fullProposalForm.get(
+        'projectRisks.increasedOrTransferred',
+      );
+      increasedOrTransferredControl?.addValidators(Validators.required);
+      increasedOrTransferredControl?.updateValueAndValidity();
+
+      const increasedOrTransferredCommentsControl = this.fullProposalForm.get(
+        'projectRisks.increasedOrTransferredComments',
+      );
+      increasedOrTransferredCommentsControl?.addValidators(Validators.required);
+      increasedOrTransferredCommentsControl?.updateValueAndValidity();
     }
   }
 
