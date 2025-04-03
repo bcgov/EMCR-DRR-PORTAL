@@ -313,7 +313,7 @@ export class DrifFpStep10Component {
           }
 
           this.budgetForm.get('contingency')?.setValue(contingency.toFixed(1));
-          this.verifyContingencyPercentageThreashold();
+          this.verifyContingencyPercentageThreshold();
         }
 
         this.budgetForm.get('totalEligibleCosts')?.setValue(totalCost);
@@ -340,9 +340,9 @@ export class DrifFpStep10Component {
   setValidatorsForStructuralProject() {
     const costEstimateClassControl = this.budgetForm.get('costEstimateClass');
     costEstimateClassControl?.addValidators(Validators.required);
-    this.verifyContingencyPercentageThreashold();
+    this.verifyContingencyPercentageThreshold();
     costEstimateClassControl?.valueChanges.subscribe(() => {
-      this.verifyContingencyPercentageThreashold();
+      this.verifyContingencyPercentageThreshold();
     });
     costEstimateClassControl?.updateValueAndValidity();
 
@@ -500,7 +500,7 @@ export class DrifFpStep10Component {
     );
   }
 
-  verifyContingencyPercentageThreashold() {
+  verifyContingencyPercentageThreshold() {
     const contingency = Number(this.budgetForm.get('contingency')?.value ?? 0);
     const costEstimateClass = this.budgetForm.get('costEstimateClass')?.value;
 
