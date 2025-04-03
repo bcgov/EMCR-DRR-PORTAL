@@ -44,19 +44,15 @@ export class DrifFpStep6Component {
       .get('incorporateFutureClimateConditions')
       ?.valueChanges.pipe(distinctUntilChanged())
       .subscribe((value) => {
+        const climateAdaptationControl =
+          this.climateAdaptationForm.get('climateAdaptation');
         if (value) {
-          this.climateAdaptationForm
-            .get('climateAdaptation')
-            ?.addValidators(Validators.required);
+          climateAdaptationControl?.addValidators(Validators.required);
         } else {
-          this.climateAdaptationForm
-            .get('climateAdaptation')
-            ?.clearValidators();
-          this.climateAdaptationForm.get('climateAdaptation')?.reset();
+          climateAdaptationControl?.clearValidators();
+          climateAdaptationControl?.reset();
         }
-        this.climateAdaptationForm
-          .get('climateAdaptation')
-          ?.updateValueAndValidity();
+        climateAdaptationControl?.updateValueAndValidity();
       });
 
     this.climateAdaptationForm
@@ -64,10 +60,10 @@ export class DrifFpStep6Component {
       ?.valueChanges.pipe(distinctUntilChanged())
       .subscribe((value) => {
         const climateAssessmentToolsControl = this.climateAdaptationForm.get(
-          'climateAssessmentTools'
+          'climateAssessmentTools',
         );
         const climateAssessmentCommentsControl = this.climateAdaptationForm.get(
-          'climateAssessmentComments'
+          'climateAssessmentComments',
         );
         if (value) {
           climateAssessmentToolsControl?.addValidators(Validators.required);

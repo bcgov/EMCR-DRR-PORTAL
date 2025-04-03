@@ -338,18 +338,25 @@ export class DrifFpStep10Component {
   }
 
   setValidatorsForStructuralProject() {
-    this.budgetForm
-      .get('costEstimateClass')
-      ?.addValidators(Validators.required);
+    const costEstimateClassControl = this.budgetForm.get('costEstimateClass');
+    costEstimateClassControl?.addValidators(Validators.required);
     this.verifyContingencyPercentageThreashold();
-    this.budgetForm.get('costEstimateClass')?.valueChanges.subscribe(() => {
+    costEstimateClassControl?.valueChanges.subscribe(() => {
       this.verifyContingencyPercentageThreashold();
     });
+    costEstimateClassControl?.updateValueAndValidity();
 
-    this.budgetForm.get('contingency')?.addValidators(Validators.required);
-    this.budgetForm
-      .get('isContingencyPercentageThreasholdMet')
-      ?.addValidators(Validators.requiredTrue);
+    const contingencyControl = this.budgetForm.get('contingency');
+    contingencyControl?.addValidators(Validators.required);
+    contingencyControl?.updateValueAndValidity();
+
+    const isContingencyPercentageThreasholdMetControl = this.budgetForm.get(
+      'isContingencyPercentageThreasholdMet',
+    );
+    isContingencyPercentageThreasholdMetControl?.addValidators(
+      Validators.requiredTrue,
+    );
+    isContingencyPercentageThreasholdMetControl?.updateValueAndValidity();
   }
 
   hasTotalProjectCostChanged() {
