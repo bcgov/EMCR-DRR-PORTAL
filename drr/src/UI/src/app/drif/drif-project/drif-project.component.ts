@@ -23,6 +23,7 @@ import {
   Attachment,
   ClaimStatus,
   ContactDetails,
+  CostProjectionItem,
   DraftDrrProject,
   ForecastStatus,
   InterimReport,
@@ -32,12 +33,6 @@ import {
 } from '../../../model';
 import { ROUTE_PATH } from '../../app.routes';
 import { DrifProjectContactDialogComponent } from './drif-project-contact-dialog.component';
-
-export class CostProjectionItem {
-  fiscalYear?: string;
-  originalForecast?: number;
-  currentForecast?: number;
-}
 
 export enum InterimSubReportSection {
   Progress = 'Progress',
@@ -141,23 +136,8 @@ export class DrifProjectComponent {
 
         this.conditionsDataSource.data = [...this.project!.conditions!];
 
-        // TODO: Remove hardcoded data after API provides this information
         this.costProjectionsDataSource.data = [
-          {
-            fiscalYear: '2021/2022',
-            originalForecast: 100000,
-            currentForecast: 120000,
-          },
-          {
-            fiscalYear: '2022/2023',
-            originalForecast: 150000,
-            currentForecast: 180000,
-          },
-          {
-            fiscalYear: '2023/2024',
-            originalForecast: 200000,
-            currentForecast: 220000,
-          },
+          ...this.project!.costProjections!,
         ];
 
         this.projectContactsDataSource.data = this.project!.contacts!;
