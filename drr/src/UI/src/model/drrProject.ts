@@ -8,6 +8,7 @@ import type { Attachment } from './attachment';
 import type { DraftProjectClaim } from './draftProjectClaim';
 import type { PaymentCondition } from './paymentCondition';
 import type { ContactDetails } from './contactDetails';
+import type { CostProjectionItem } from './costProjectionItem';
 import type { ProjectEvent } from './projectEvent';
 import type { DraftForecast } from './draftForecast';
 import type { FundingStream } from './fundingStream';
@@ -28,6 +29,8 @@ export interface DrrProject {
   contacts?: ContactDetails[];
   /** @nullable */
   contractNumber?: string;
+  /** @nullable */
+  costProjections?: CostProjectionItem[];
   /** @nullable */
   endDate?: string;
   /** @nullable */

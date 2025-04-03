@@ -20,6 +20,7 @@ export * from './contactDetails';
 export * from './costCategory';
 export * from './costEstimate';
 export * from './costEstimateClass';
+export * from './costProjectionItem';
 export * from './costUnit';
 export * from './createInvoice';
 export * from './createInvoiceResult';
