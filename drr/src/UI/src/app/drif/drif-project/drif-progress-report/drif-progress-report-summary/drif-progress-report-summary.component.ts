@@ -146,4 +146,8 @@ export class DrifProgressReportSummaryComponent {
   onDownloadFile(fileId: string) {
     this.fileService.downloadFile(fileId);
   }
+
+  getPercentageValue(value?: number): string | undefined {
+    return value ? `${value}%` : undefined;
+  }
 }
