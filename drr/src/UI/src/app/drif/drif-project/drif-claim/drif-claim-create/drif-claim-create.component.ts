@@ -774,8 +774,9 @@ export class DrifClaimCreateComponent {
   showInvoiceDocumentRequiredError(invoiceControl: AbstractControl) {
     const invoiceDocumentControl = this.getInvoiceDocument(invoiceControl);
     return (
-      invoiceDocumentControl?.get('id')?.invalid &&
-      invoiceDocumentControl?.touched
+      !invoiceDocumentControl ||
+      (invoiceDocumentControl?.get('id')?.invalid &&
+        invoiceDocumentControl?.touched)
     );
   }
 
