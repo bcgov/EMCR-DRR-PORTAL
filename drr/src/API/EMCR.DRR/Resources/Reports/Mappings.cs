@@ -182,8 +182,8 @@ namespace EMCR.DRR.API.Resources.Reports
                 .ForPath(dest => dest.EventInformation.UpcomingEvents, opt => opt.MapFrom(src => src.drr_drr_projectprogress_drr_projectevent_ProjectProgress.Where(c => c.statecode == (int)EntityState.Active)))
                 .ForMember(dest => dest.Attachments, opt => opt.MapFrom(src => src.bcgov_drr_projectprogress_bcgov_documenturl_ProgressReport.Where(c => c.statecode == (int)EntityState.Active)))
                 .ForMember(dest => dest.AuthorizedRepresentative, opt => opt.MapFrom(src => src.drr_AuthorizedRepresentativeContact))
-                .ForMember(dest => dest.AuthorizedRepresentativeStatement, opt => opt.Ignore())
-                .ForMember(dest => dest.InformationAccuracyStatement, opt => opt.Ignore())
+                .ForMember(dest => dest.AuthorizedRepresentativeStatement, opt => opt.MapFrom(src => src.drr_authorizedrepresentative == (int)DRRTwoOptions.Yes))
+                .ForMember(dest => dest.InformationAccuracyStatement, opt => opt.MapFrom(src => src.drr_accuracyofinformation == (int)DRRTwoOptions.Yes))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.statuscode.HasValue ? (int?)Enum.Parse<ProgressReportStatus>(((ProjectProgressReportStatusOptionSet)src.statuscode).ToString()) : null))
             ;
 
@@ -212,8 +212,8 @@ namespace EMCR.DRR.API.Resources.Reports
                 .ForMember(dest => dest.ForecastItems, opt => opt.MapFrom(src => src.drr_drr_projectbudgetforecast_drr_budgetforecastreportitem_ProjectBudgetForecast.Where(c => c.statecode == (int)EntityState.Active)))
                 .ForMember(dest => dest.Attachments, opt => opt.MapFrom(src => src.bcgov_drr_projectbudgetforecast_bcgov_documenturl_projectbudgetforecastid.Where(c => c.statecode == (int)EntityState.Active)))
                 .ForMember(dest => dest.AuthorizedRepresentative, opt => opt.MapFrom(src => src.drr_AuthorizedRepresentativeContact))
-                .ForMember(dest => dest.AuthorizedRepresentativeStatement, opt => opt.Ignore())
-                .ForMember(dest => dest.InformationAccuracyStatement, opt => opt.Ignore())
+                .ForMember(dest => dest.AuthorizedRepresentativeStatement, opt => opt.MapFrom(src => src.drr_authorizedrepresentative == (int)DRRTwoOptions.Yes))
+                .ForMember(dest => dest.InformationAccuracyStatement, opt => opt.MapFrom(src => src.drr_accuracyofinformation == (int)DRRTwoOptions.Yes))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.statuscode.HasValue ? (int?)Enum.Parse<ForecastStatus>(((ForecastStatusOptionSet)src.statuscode).ToString()) : null))
             ;
 

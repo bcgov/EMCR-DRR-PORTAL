@@ -170,7 +170,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             progressReport = FillInProgressReport(progressReport, uniqueSignature);
             progressReport.Status = EMCR.DRR.Controllers.ProgressReportStatus.Draft;
 
-            //Console.WriteLine(progressReport.Id);
+            Console.WriteLine(progressReport.Id);
             await manager.Handle(new SaveProgressReportCommand { ProgressReport = progressReport, UserInfo = userInfo });
 
 
@@ -217,6 +217,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
 
             await manager.Handle(new SubmitProgressReportCommand { ProgressReport = progressReport, UserInfo = userInfo });
 
+            Console.WriteLine(progressReport.Id);
             var updatedProgressReport = mapper.Map<DraftProgressReport>((await manager.Handle(new DrrProgressReportsQuery { Id = progressReport.Id, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
             updatedProgressReport.Status.ShouldBe(EMCR.DRR.Controllers.ProgressReportStatus.Submitted);
         }

@@ -267,7 +267,7 @@ namespace EMCR.DRR.Controllers
                 progressReport.Id = progressId;
                 progressReport.Status = ProgressReportStatus.Draft; //Need to set the status after final update save
 
-                var drr_id = await intakeManager.Handle(new SubmitProgressReportCommand { ProgressReport = mapper.Map<ProgressReport>(progressReport), UserInfo = GetCurrentUser() });
+                var drr_id = await intakeManager.Handle(new SubmitProgressReportCommand { ProgressReport = progressReport, UserInfo = GetCurrentUser() });
                 return Ok(new ProgressReportResult { Id = drr_id });
             }
             catch (Exception e)
@@ -316,7 +316,7 @@ namespace EMCR.DRR.Controllers
                 forecast.Id = forecastId;
                 forecast.Status = ForecastStatus.Draft; //Need to set the status after final update save
 
-                var drr_id = await intakeManager.Handle(new SubmitForecastCommand { Forecast = mapper.Map<Forecast>(forecast), UserInfo = GetCurrentUser() });
+                var drr_id = await intakeManager.Handle(new SubmitForecastCommand { Forecast = forecast, UserInfo = GetCurrentUser() });
                 return Ok(new ProgressReportResult { Id = drr_id });
             }
             catch (Exception e)
