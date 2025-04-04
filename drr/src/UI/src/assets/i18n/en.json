@@ -718,6 +718,7 @@
     "totalPSTError": "Total PST Paid must be less than Gross Invoice Amount",
     "totalGST": "Total GST Paid",
     "totalGSTError": "Total GST Paid must be less than Gross Invoice Amount",
+    "claimCommentLabel": "Please provide any relevant details about the invoices you've attached, including portions that may be paid by other sources. If you are not claiming any expenses for this reporting period, please explain why.",
     "claimComment": "Claim Comment",
     "invoice": "Invoice",
     "uploadInvoice": "Upload Invoice",
