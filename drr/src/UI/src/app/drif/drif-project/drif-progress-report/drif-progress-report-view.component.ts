@@ -7,13 +7,7 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { IFormGroup, RxFormBuilder } from '@rxweb/reactive-form-validators';
 import { ProjectService } from '../../../../api/project/project.service';
 import { DraftProgressReport } from '../../../../model';
-import { AttachmentForm } from '../../drif-fp/drif-fp-form';
-import {
-  FundingSignageForm,
-  ProgressReportForm,
-  ProjectEventForm,
-  WorkplanActivityForm,
-} from './drif-progress-report-form';
+import { ProgressReportForm } from './drif-progress-report-form';
 import { DrifProgressReportSummaryComponent } from './drif-progress-report-summary/drif-progress-report-summary.component';
 
 @Component({
@@ -89,50 +83,19 @@ export class DrifProgressReportViewComponent {
         .subscribe((report: DraftProgressReport) => {
           this.reportName = `${report.reportPeriod} Progress`;
 
-          report.workplan?.workplanActivities?.map((activity) => {
-            const activityForm = this.formBuilder.formGroup(
-              new WorkplanActivityForm(activity),
-            );
-
-            this.workplanArray?.push(activityForm);
-          });
-
-          if (
-            report?.workplan?.fundingSignage
-              ? report?.workplan?.fundingSignage.length > 0
-              : false
-          ) {
-            this.signageArray?.clear();
-          }
-          report.workplan?.fundingSignage?.map((signage) => {
-            const signageForm = this.formBuilder.formGroup(
-              new FundingSignageForm(signage),
-            );
-
-            this.signageArray?.push(signageForm);
-          });
-
-          report.eventInformation?.pastEvents?.map((event) => {
-            this.pastEventsArray?.push(
-              this.formBuilder.formGroup(new ProjectEventForm(event)),
-            );
-          });
-
-          report.eventInformation?.upcomingEvents?.map((event) => {
-            this.upcomingEventsArray?.push(
-              this.formBuilder.formGroup(new ProjectEventForm(event)),
-            );
-          });
-
-          report.attachments?.map((attachment) => {
-            const attachmentForm = this.formBuilder.formGroup(
-              new AttachmentForm(attachment),
-            );
-
-            this.attachmentArray.push(attachmentForm);
-          });
-
-          this.progressReportForm.patchValue(report);
+          this.progressReportForm = this.formBuilder.formGroup(
+            new ProgressReportForm({
+              workplan: report.workplan,
+              eventInformation: report.eventInformation,
+              attachments: report.attachments,
+              declaration: {
+                authorizedRepresentativeStatement: false,
+                informationAccuracyStatement: false,
+                authorizedRepresentative: report.authorizedRepresentative,
+              },
+              projectType: report.projectType,
+            }),
+          ) as IFormGroup<ProgressReportForm>;
         });
     });
   }

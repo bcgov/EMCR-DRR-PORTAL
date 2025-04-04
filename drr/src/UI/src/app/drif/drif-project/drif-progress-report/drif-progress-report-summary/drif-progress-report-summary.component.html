@@ -136,38 +136,40 @@
         ></drr-summary-item>
       </div>
 
-      <mat-label class="drr-label">Milestones</mat-label>
-      <div
-        class="summary-row"
-        *ngFor="let activity of getMilestoneActivitiesArray(); let i = index"
-      >
-        <drr-summary-item
-          [label]="t('progressReport.activity')"
-          [rxFormControl]="activity.get('activity')"
-          controlType="select"
-          translatePrefix="activityType"
-        ></drr-summary-item>
-        <drr-summary-item
-          [label]="t('progressReport.status')"
-          [rxFormControl]="activity.get('status')"
-          controlType="select"
-          translatePrefix="workplanStatus"
-        ></drr-summary-item>
-        @if (showPlannedStartDate(activity)) {
+      @if (hasMilestoneActivities()) {
+        <mat-label class="drr-label">Milestones</mat-label>
+        <div
+          class="summary-row"
+          *ngFor="let activity of getMilestoneActivitiesArray(); let i = index"
+        >
           <drr-summary-item
-            [label]="t('progressReport.plannedAwardDate')"
-            [rxFormControl]="activity.get('plannedStartDate')"
-            controlType="date"
+            [label]="t('progressReport.activity')"
+            [rxFormControl]="activity.get('activity')"
+            controlType="select"
+            translatePrefix="activityType"
           ></drr-summary-item>
-        }
-        @if (showActualStartDate(activity)) {
           <drr-summary-item
-            [label]="t('progressReport.actualAwardDate')"
-            [rxFormControl]="activity.get('actualStartDate')"
-            controlType="date"
+            [label]="t('progressReport.status')"
+            [rxFormControl]="activity.get('status')"
+            controlType="select"
+            translatePrefix="workplanStatus"
           ></drr-summary-item>
-        }
-      </div>
+          @if (showPlannedStartDate(activity)) {
+            <drr-summary-item
+              [label]="t('progressReport.plannedAwardDate')"
+              [rxFormControl]="activity.get('plannedStartDate')"
+              controlType="date"
+            ></drr-summary-item>
+          }
+          @if (showActualStartDate(activity)) {
+            <drr-summary-item
+              [label]="t('progressReport.actualAwardDate')"
+              [rxFormControl]="activity.get('actualStartDate')"
+              controlType="date"
+            ></drr-summary-item>
+          }
+        </div>
+      }
 
       <mat-label class="drr-label">Additional Activities</mat-label>
       <div
@@ -394,7 +396,7 @@
               [rxFormControl]="event.get('details')"
             ></drr-summary-item>
             <drr-summary-item
-              [label]="t('progressReport.eventDate')"
+              [label]="t('progressReport.futureEventDate')"
               [rxFormControl]="event.get('date')"
               controlType="date"
             ></drr-summary-item>
@@ -404,27 +406,27 @@
           }}</mat-label>
           <div class="summary-row">
             <drr-summary-item
-              [label]="t('progressReport.firstName')"
+              [label]="'firstName' | transloco"
               [rxFormControl]="event.get('contact.firstName')"
             ></drr-summary-item>
             <drr-summary-item
-              [label]="t('progressReport.lastName')"
+              [label]="'lastName' | transloco"
               [rxFormControl]="event.get('contact.lastName')"
             ></drr-summary-item>
             <drr-summary-item
-              [label]="t('progressReport.title')"
+              [label]="'title' | transloco"
               [rxFormControl]="event.get('contact.title')"
             ></drr-summary-item>
             <drr-summary-item
-              [label]="t('progressReport.department')"
+              [label]="'department' | transloco"
               [rxFormControl]="event.get('contact.department')"
             ></drr-summary-item>
             <drr-summary-item
-              [label]="t('progressReport.phone')"
+              [label]="'phone' | transloco"
               [rxFormControl]="event.get('contact.phone')"
             ></drr-summary-item>
             <drr-summary-item
-              [label]="t('progressReport.email')"
+              [label]="'email' | transloco"
               [rxFormControl]="event.get('contact.email')"
             ></drr-summary-item>
           </div>

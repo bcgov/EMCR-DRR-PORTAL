@@ -746,40 +746,40 @@
                   ></drr-input>
                   <drr-datepicker
                     class="drr-single-input"
-                    [label]="t('eventDate')"
+                    [label]="t('futureEventDate')"
                     [rxFormControl]="upcomingEvent.get('date')"
                   ></drr-datepicker>
                 </div>
                 <mat-label class="drr-label">{{ t("contact") }}</mat-label>
                 <div style="display: flex; gap: 1rem">
                   <drr-input
-                    [label]="t('firstName')"
+                    [label]="'firstName' | transloco"
                     [rxFormControl]="upcomingEvent.get('contact.firstName')"
                     [maxlength]="40"
                   ></drr-input>
                   <drr-input
-                    [label]="t('lastName')"
+                    [label]="'lastName' | transloco"
                     [rxFormControl]="upcomingEvent.get('contact.lastName')"
                     [maxlength]="40"
                   ></drr-input>
                   <drr-input
-                    [label]="t('title')"
+                    [label]="'title' | transloco"
                     [rxFormControl]="upcomingEvent.get('contact.title')"
                     [maxlength]="100"
                   ></drr-input>
                   <drr-input
-                    [label]="t('department')"
+                    [label]="'department' | transloco"
                     [rxFormControl]="upcomingEvent.get('contact.department')"
                     [maxlength]="40"
                   ></drr-input>
                   <drr-input
-                    [label]="t('phone')"
+                    [label]="'phone' | transloco"
                     [rxFormControl]="upcomingEvent.get('contact.phone')"
                     [maxlength]="10"
                     type="tel"
                   ></drr-input>
                   <drr-input
-                    [label]="t('email')"
+                    [label]="'email' | transloco"
                     [rxFormControl]="upcomingEvent.get('contact.email')"
                     [maxlength]="100"
                     type="email"
