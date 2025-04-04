@@ -166,9 +166,7 @@
   "otherInformation": "Other Relevant Information",
   "otherInformationText": "Provide any other relevant information that would support this project’s EOI.",
   "authorizedRepresentativeStatement": "Authorized Representative",
-  "authorizedRepresentativeStatementText": "I am duly authorized to submit this Expression of Interest on behalf of the Primary Proponent.",
   "informationAccuracyStatement": "Accuracy of Information",
-  "informationAccuracyStatementText": "I confirm, on behalf of the Primary Proponent, that the information contained in this Expression of Interest is accurate.",
   "agree": "Agree",
   "required": "Required",
   "fundingStream": "Funding Stream",
@@ -630,18 +628,10 @@
     "eventName": "Event Name/Description",
     "eventDate": "Date Occurred",
     "contact": "Contact",
-    "firstName": "First Name",
-    "lastName": "Last Name",
-    "title": "Title",
-    "department": "Department",
-    "phone": "Phone",
-    "email": "Email",
     "provincialRepresentativeRequest": "Was a provincial representative invited to the event?",
     "attachments": "Attachments",
     "attachmentUploadText": "Upload any supporting attachments",
     "uploadAttachment": "Add Attachment",
-    "authorizedRepresentativeStatement": "Authorized Representative Statement",
-    "informationAccuracyStatement": "Information Accuracy Statement",
     "agree": "Agree",
     "required": "Required",
     "stepError": "Missing fields"
@@ -727,13 +717,7 @@
     "totalClaimed": "Total Claimed Amount",
     "totalProjectAmount": "Total DRIF Funding Amount",
     "fileName": "File Name",
-    "fileSize": "File Size",
-    "firstName": "First Name",
-    "lastName": "Last Name",
-    "title": "Title",
-    "department": "Department",
-    "phone": "Phone",
-    "email": "Email"
+    "fileSize": "File Size"
   },
   "forecast": {
     "totalProjectedExpenditureLabel": "Total Projected Expenditures",
@@ -746,9 +730,10 @@
     "attachments": "Attachments"
   },
   "authorizedRepresentative": {
+    "authorizedRepresentativeLabel": "Authorized Representative Contact Information",
     "firstName": "First Name",
     "lastName": "Last Name",
-    "title": "Title",
+    "title": "Position/Title",
     "department": "Department",
     "phone": "Phone",
     "email": "Email"
