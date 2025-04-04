@@ -441,7 +441,7 @@ namespace EMCR.DRR.Managers.Intake
             if (!canAccess) throw new ForbiddenException("Not allowed to update this progress report.");
             var existingProgressReport = (await reportRepository.Query(new ProgressReportsQuery { Id = cmd.ProgressReport.Id, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
             if (existingProgressReport == null) throw new NotFoundException("Progress Report not found");
-            if (!ProgressReportInEditableStatus(existingProgressReport)) throw new BusinessValidationException("Not allowed to update Progress Report");
+            if (!ProgressReportInEditableStatus(existingProgressReport)) throw new BusinessValidationException("Progress Report status not valid for submission");
 
             var progressReport = mapper.Map<ProgressReportDetails>(cmd.ProgressReport);
 
