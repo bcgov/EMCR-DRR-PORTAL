@@ -20,15 +20,13 @@ import { DrifProgressReportViewComponent } from './drif/drif-project/drif-progre
 import { DrifProjectComponent } from './drif/drif-project/drif-project.component';
 
 export const ROUTE_PATH = {
-  SUBMISSIONS: '/dashboard/submissions',
-  PROJECTS: '/dashboard/projects',
+  SUBMISSIONS: '/submissions',
+  PROJECTS: '/projects',
 };
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'dashboard/submissions', pathMatch: 'full' },
-  { path: 'dashboard', redirectTo: 'dashboard/submissions', pathMatch: 'full' },
   {
-    path: 'dashboard',
+    path: '',
     component: DashboardComponent,
     canActivate: [AuthenticationGuard],
     children: [
