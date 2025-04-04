@@ -59,8 +59,10 @@
           progressReportForm.get('workplan.projectCompletionPercentage')
         "
         [value]="
-          progressReportForm.get('workplan.projectCompletionPercentage')
-            ?.value + '%'
+          getPercentageValue(
+            progressReportForm.get('workplan.projectCompletionPercentage')
+              ?.value
+          )
         "
       ></drr-summary-item>
       @if (progressReportForm.get("projectType")?.value === "Stream2") {
@@ -70,8 +72,11 @@
             progressReportForm.get('workplan.constructionCompletionPercentage')
           "
           [value]="
-            progressReportForm.get('workplan.constructionCompletionPercentage')
-              ?.value + '%'
+            getPercentageValue(
+              progressReportForm.get(
+                'workplan.constructionCompletionPercentage'
+              )?.value
+            )
           "
         ></drr-summary-item>
       }
