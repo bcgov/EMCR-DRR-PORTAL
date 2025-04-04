@@ -199,6 +199,10 @@ export class DrifConditionClearComponent {
     });
   }
 
+  ngOnDestroy() {
+    clearInterval(this.autoSaveTimer);
+  }
+
   load(): Promise<void> {
     return new Promise((resolve) => {
       // TODO: if (hasCondidionMessage in response)

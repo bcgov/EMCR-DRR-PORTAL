@@ -274,6 +274,10 @@ export class DrifForecastCreateComponent {
     varianceComments?.updateValueAndValidity();
   }
 
+  ngOnDestroy() {
+    clearInterval(this.autoSaveTimer);
+  }
+
   load(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.projectService

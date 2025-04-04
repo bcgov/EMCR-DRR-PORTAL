@@ -267,6 +267,10 @@ export class DrifClaimCreateComponent {
     });
   }
 
+  ngOnDestroy() {
+    clearInterval(this.autoSaveTimer);
+  }
+
   // TODO: this could be moved to the store, except for the form part
   load(): Promise<void> {
     return new Promise((resolve, reject) => {
