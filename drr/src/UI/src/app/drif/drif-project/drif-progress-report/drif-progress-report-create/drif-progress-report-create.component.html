@@ -521,11 +521,15 @@
                       class="drr-single-input"
                       [label]="t('dateInstalled')"
                       [rxFormControl]="signage.get('dateInstalled')"
+                      [max]="signage.get('dateRemoved')?.value"
+                      [maxErrorLabel]="t('maxDateInstalledError')"
                     ></drr-datepicker>
                     <drr-datepicker
                       class="drr-single-input"
                       [label]="t('dateRemoved')"
                       [rxFormControl]="signage.get('dateRemoved')"
+                      [min]="signage.get('dateInstalled')?.value"
+                      [minErrorLabel]="t('minDateRemovedError')"
                     ></drr-datepicker>
                   </div>
                 </mat-card-content>
@@ -552,11 +556,12 @@
             </button>
           }
           @if (workplanForm.get("signageRequired")?.value === false) {
-            <drr-textarea
+            <drr-input
+              style="width: 50rem"
               [label]="t('signageNotRequiredComments')"
               [rxFormControl]="workplanForm.get('signageNotRequiredComments')"
-              [maxlength]="2000"
-            ></drr-textarea>
+              [maxlength]="50"
+            ></drr-input>
           }
         }
         <div

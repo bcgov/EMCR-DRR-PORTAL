@@ -617,7 +617,9 @@
     "beenApproved": "Is approved by Province?",
     "signageType": "Signage Type",
     "dateInstalled": "Date Installed",
+    "maxDateInstalledError": "Date Installed must be before Removal Date",
     "dateRemoved": "Date Removed",
+    "minDateRemovedError": "Date Removed must be after Date Installed",
     "mediaAnnouncement": "Media Announcements",
     "mediaAnnouncementDate": "Date of Announcement",
     "mediaAnnouncementComment": "Comments",
@@ -662,9 +664,9 @@
     "Other": "Other"
   },
   "signageType": {
-    "Temporary": "Temporary",
-    "Digital": "Digital",
-    "Plaque": "Plaque"
+    "Temporary": "Temporary physical signage",
+    "Digital": "Digital signage",
+    "Plaque": "Permanent plaque"
   },
   "costEstimateClass": "What Cost Estimate Class does the project have?",
   "costEstimateClassType": {
