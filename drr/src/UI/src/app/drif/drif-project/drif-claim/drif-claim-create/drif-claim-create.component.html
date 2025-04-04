@@ -379,8 +379,11 @@
               Add Invoice
             </button>
           }
+          <mat-label class="drr-label" style="margin-top: 2rem">{{
+            t("claimComment")
+          }}</mat-label>
+          <mat-label>{{ t("claimCommentLabel") }}</mat-label>
           <drr-textarea
-            style="margin-top: 2rem"
             [label]="t('claimComment')"
             [rxFormControl]="claimForm.get('expenditure')?.get('claimComment')"
             [maxlength]="500"
