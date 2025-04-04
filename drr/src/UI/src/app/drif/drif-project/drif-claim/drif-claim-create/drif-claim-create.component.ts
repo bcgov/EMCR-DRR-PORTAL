@@ -782,8 +782,9 @@ export class DrifClaimCreateComponent {
   showProofOfPaymentRequiredError(invoiceControl: AbstractControl) {
     const proofOfPaymentControl = this.getInvoiceProofOfPayment(invoiceControl);
     return (
-      proofOfPaymentControl?.get('id')?.invalid &&
-      proofOfPaymentControl?.touched
+      !proofOfPaymentControl ||
+      (proofOfPaymentControl?.get('id')?.invalid &&
+        proofOfPaymentControl?.touched)
     );
   }
 
