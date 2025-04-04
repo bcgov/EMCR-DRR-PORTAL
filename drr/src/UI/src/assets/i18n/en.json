@@ -627,6 +627,7 @@
     "anyUpcomingEvents": "Are there any upcoming project events in the next quarter?",
     "eventName": "Event Name/Description",
     "eventDate": "Date Occurred",
+    "futureEventDate": "Event Date",
     "contact": "Contact",
     "provincialRepresentativeRequest": "Was a provincial representative invited to the event?",
     "attachments": "Attachments",

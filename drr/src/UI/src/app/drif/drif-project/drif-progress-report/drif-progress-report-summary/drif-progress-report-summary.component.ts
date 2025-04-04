@@ -64,6 +64,10 @@ export class DrifProgressReportSummaryComponent {
     );
   }
 
+  hasMilestoneActivities() {
+    return (this.getMilestoneActivitiesArray()?.length ?? 0) > 0;
+  }
+
   getAdditionalActivitiesArray() {
     return this.getWorkplanActivities()
       ?.controls.filter((control) => !control.get('preCreatedActivity')?.value)
