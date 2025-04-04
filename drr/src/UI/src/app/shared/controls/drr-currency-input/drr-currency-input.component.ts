@@ -178,7 +178,7 @@ export class DrrCurrencyInputComponent {
   private _max?: number;
   @Input()
   set max(value: number) {
-    if (value) {
+    if (value !== undefined && value !== null) {
       const validators = this.isRequired()
         ? [RxwebValidators.required(), Validators.max(value)]
         : [Validators.max(value)];
