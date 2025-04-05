@@ -121,6 +121,11 @@
               </p>
             </drr-alert>
           }
+          @if (noClaimsIssue()) {
+            <i>
+              {{ t("noClaimsIssueWarningMessage") }}
+            </i>
+          }
         </div>
         <div
           style="
