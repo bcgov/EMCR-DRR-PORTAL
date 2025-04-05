@@ -536,13 +536,23 @@ export class DrifClaimCreateComponent {
     this.stepper._stateChanged();
 
     if (this.claimForm?.invalid) {
+      this.toastService.close();
       this.toastService.error('Please fill in all required fields');
       return;
     }
 
     if (this.hasClaimIntentIssue()) {
+      this.toastService.close();
       this.toastService.error(
         this.translocoService.translate('claim.claimIntentIssueErrorMessage'),
+      );
+      return;
+    }
+
+    if (this.noClaimsIssue()) {
+      this.toastService.close();
+      this.toastService.error(
+        this.translocoService.translate('claim.noClaimsIssueErrorMessage'),
       );
       return;
     }
@@ -883,6 +893,13 @@ export class DrifClaimCreateComponent {
     return (
       this.claimForm?.get('expenditure.haveClaimExpenses')?.value === false &&
       this.getInvoiceFormArray()?.length! > 0
+    );
+  }
+
+  noClaimsIssue() {
+    return (
+      this.claimForm?.get('expenditure.haveClaimExpenses')?.value === true &&
+      this.getInvoiceFormArray()?.length! === 0
     );
   }
 }

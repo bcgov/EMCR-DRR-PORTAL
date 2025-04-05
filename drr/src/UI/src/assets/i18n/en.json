@@ -694,6 +694,8 @@
     "haveClaimExpenses": "Do you have expenses for this reporting period that you want to claim?",
     "claimIntentIssueWarningMessage": "You have decided not to submit any expenses. Before you can submit, you must delete each invoice entry below.",
     "claimIntentIssueErrorMessage": "You must delete each invoice entry before you can submit the claim.",
+    "noClaimsIssueWarningMessage": "In order to submit your claim, you must add an invoice entry.",
+    "noClaimsIssueErrorMessage": "You must add an invoice entry before you can submit the claim.",
     "invoiceNumber": "Invoice Number",
     "invoiceDate": "Date of Invoice",
     "workStartDate": "Start Date",
