@@ -28,7 +28,7 @@ namespace EMCR.DRR.API.Resources.Projects
                 .ForMember(dest => dest.ProgramType, opt => opt.MapFrom(src => src.drr_Program.drr_name))
                 .ForMember(dest => dest.ReportingScheduleType, opt => opt.MapFrom(src => src.drr_ReportingSchedule.drr_name))
                 .ForMember(dest => dest.FirstReportPeriod, opt => opt.MapFrom(src => src.drr_firstreportdue != null ? src.drr_firstreportdue.drr_name : string.Empty))
-                .ForMember(dest => dest.CostProjections, opt => opt.MapFrom(src => src.drr_FullProposalApplication.drr_drr_application_drr_driffundingrequest_Application.Where(c => c.statecode == (int)EntityState.Active)))
+                .ForMember(dest => dest.CostProjections, opt => opt.MapFrom(src => src.drr_drr_project_drr_driffundingrequest_Project.Where(c => c.statecode == (int)EntityState.Active)))
                 .ForMember(dest => dest.Conditions, opt => opt.MapFrom(src => src.drr_drr_project_drr_projectcondition_Project.Where(c => c.statecode == (int)EntityState.Active)))
                 .ForMember(dest => dest.FundingAmount, opt => opt.MapFrom(src => src.drr_fundingamount))
                 .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.drr_plannedstartdate.HasValue ? src.drr_plannedstartdate.Value.UtcDateTime : (DateTime?)null))
