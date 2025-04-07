@@ -47,6 +47,7 @@ import {
   ProjectProgressStatus,
   RecordType,
   SignageType,
+  WorkplanActivity,
   WorkplanStatus,
   YesNoOption,
 } from '../../../../../model';
@@ -156,12 +157,52 @@ export class DrifProgressReportCreateComponent {
   authorizedRepresentativeText?: string;
   accuracyOfInformationText?: string;
 
-  private allActivityTypeOptions: DrrSelectOption[] = Object.values(
-    ActivityType,
-  ).map((activity) => ({
-    value: activity,
-    label: this.translocoService.translate(`activityType.${activity}`),
-  }));
+  private commonActivityOptions: DrrSelectOption[] = Object.values(ActivityType)
+    .filter(
+      (activity) =>
+        activity === ActivityType.Administration ||
+        activity === ActivityType.ProjectPlanning ||
+        activity === ActivityType.Assessment ||
+        activity === ActivityType.Mapping ||
+        activity === ActivityType.LandAcquisition ||
+        activity === ActivityType.ApprovalsPermitting ||
+        activity === ActivityType.Communications ||
+        activity === ActivityType.AffectedPartiesEngagement ||
+        activity === ActivityType.CommunityEngagement,
+    )
+    .map((activity) => ({
+      value: activity,
+      label: this.translocoService.translate(`activityType.${activity}`),
+    }));
+
+  private nonStructuralActivities: ActivityType[] = [
+    ActivityType.Project,
+    ActivityType.FirstNationsEngagement,
+  ];
+  private nonStructuralActivityOptions: DrrSelectOption[] = [
+    ...this.commonActivityOptions,
+    ...this.nonStructuralActivities.map((activity) => ({
+      value: activity,
+      label: this.translocoService.translate(`activityType.${activity}`),
+    })),
+  ];
+
+  private structuralActivities: ActivityType[] = [
+    ActivityType.Project,
+    ActivityType.FirstNationsEngagement,
+    ActivityType.Design,
+    ActivityType.ConstructionTender,
+    ActivityType.Construction,
+    ActivityType.ConstructionContractAward,
+    ActivityType.PermitToConstruct,
+  ];
+  private structuralActivityOptions: DrrSelectOption[] = [
+    ...this.commonActivityOptions,
+    ...this.structuralActivities.map((activity) => ({
+      value: activity,
+      label: this.translocoService.translate(`activityType.${activity}`),
+    })),
+  ];
 
   optionalActivityStatusOptions: DrrSelectOption[] = Object.values(
     WorkplanStatus,
@@ -751,6 +792,13 @@ export class DrifProgressReportCreateComponent {
 
   getFormValue(): ProgressReport {
     const rawValue = this.progressReportForm.getRawValue();
+    rawValue.workplan.workplanActivities =
+      rawValue.workplan.workplanActivities.filter(
+        (activity: WorkplanActivity) => {
+          return activity.activity !== null && activity.activity !== undefined;
+        },
+      );
+
     return {
       workplan: rawValue.workplan,
       eventInformation: rawValue.eventInformation,
@@ -967,14 +1015,15 @@ export class DrifProgressReportCreateComponent {
       (control) => control.get('activity')?.value,
     );
 
-    const availableOptions = this.allActivityTypeOptions.filter(
+    const availableOptions = this.getAvailableOptionsFundingStream().filter(
       (option) => !selectedActivities.includes(option.value),
     );
 
     if (selectedActivity) {
-      const selectedActivityOption = this.allActivityTypeOptions.find(
-        (option) => option.value === selectedActivity,
-      );
+      const selectedActivityOption =
+        this.getAvailableOptionsFundingStream().find(
+          (option) => option.value === selectedActivity,
+        );
 
       availableOptions.push(selectedActivityOption!);
       availableOptions.sort((a, b) => a.label.localeCompare(b.label));
@@ -983,12 +1032,21 @@ export class DrifProgressReportCreateComponent {
     return availableOptions;
   }
 
+  private getAvailableOptionsFundingStream() {
+    return this.isStructuralProject()
+      ? this.structuralActivityOptions
+      : this.nonStructuralActivityOptions;
+  }
+
   hasAvailableOptionsForActivity() {
     const selectedActivities = this.getActivitiesFormArray()?.controls.map(
       (control) => control.get('activity')?.value,
     );
 
-    return this.allActivityTypeOptions.length !== selectedActivities.length;
+    return (
+      this.getAvailableOptionsFundingStream().length !==
+      selectedActivities.length
+    );
   }
 
   isProjectDelayed() {
