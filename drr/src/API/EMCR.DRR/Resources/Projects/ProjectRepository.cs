@@ -90,13 +90,8 @@ namespace EMCR.DRR.API.Resources.Projects
                 ctx.LoadPropertyAsync(project, nameof(drr_project.drr_drr_project_drr_projectclaim_Project), ct),
                 ctx.LoadPropertyAsync(project, nameof(drr_project.drr_drr_project_drr_projectcondition_Project), ct),
                 ctx.LoadPropertyAsync(project, nameof(drr_project.drr_drr_project_drr_projectevent_Project), ct),
+                ctx.LoadPropertyAsync(project, nameof(drr_project.drr_drr_project_drr_driffundingrequest_Project), ct),
             };
-
-            if (project.drr_FullProposalApplication != null)
-            {
-                ctx.AttachTo(nameof(ctx.drr_applications), project.drr_FullProposalApplication);
-                loadTasks2.Add(ctx.LoadPropertyAsync(project.drr_FullProposalApplication, nameof(drr_application.drr_drr_application_drr_driffundingrequest_Application), ct));
-            }
 
             await Task.WhenAll(loadTasks2);
 
@@ -157,7 +152,7 @@ namespace EMCR.DRR.API.Resources.Projects
         
         private static async Task ParallelLoadFundingRequests(DRRContext ctx, drr_project project, CancellationToken ct)
         {
-            await project.drr_FullProposalApplication.drr_drr_application_drr_driffundingrequest_Application.ForEachAsync(5, async fund =>
+            await project.drr_drr_project_drr_driffundingrequest_Project.ForEachAsync(5, async fund =>
             {
                 ctx.AttachTo(nameof(DRRContext.drr_driffundingrequests), fund);
                 await ctx.LoadPropertyAsync(fund, nameof(drr_driffundingrequest.drr_FiscalYear), ct);

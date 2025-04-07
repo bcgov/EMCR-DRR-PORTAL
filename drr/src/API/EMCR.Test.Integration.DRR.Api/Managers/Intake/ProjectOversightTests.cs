@@ -66,8 +66,12 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
         [Test]
         public async Task QueryProjects_CanFilterById()
         {
+            //var userInfo = GetTestUserInfo();
+            //var userInfo = GetCRAFTUserInfo();
+            var userInfo = GetCRAFT2UserInfo();
+
             var queryOptions = new QueryOptions { Filter = "programType=DRIF,applicationType=FP,status=*UnderReview\\|EligiblePending" };
-            var queryRes = await manager.Handle(new DrrProjectsQuery { Id = "DRIF-PRJ-1015", BusinessId = GetCRAFTUserInfo().BusinessId, QueryOptions = queryOptions });
+            var queryRes = await manager.Handle(new DrrProjectsQuery { Id = "DRIF-PRJ-1129", BusinessId = userInfo.BusinessId, QueryOptions = queryOptions });
             var projects = mapper.Map<IEnumerable<DraftDrrProject>>(queryRes.Items);
             projects.Count().ShouldBe(1);
             projects.First().Claims.Last().ReportPeriod.ShouldNotBeNullOrEmpty();
