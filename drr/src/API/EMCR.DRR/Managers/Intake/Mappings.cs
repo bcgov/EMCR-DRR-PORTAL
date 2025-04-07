@@ -885,6 +885,8 @@ namespace EMCR.DRR.Managers.Intake
                 return Controllers.WorkplanStatus.NoLongerNeeded;
             }
 
+            if (activityType == null) return null;
+
             switch (activityType)
             {
                 case Controllers.ActivityType.ConstructionContractAward:
@@ -931,6 +933,7 @@ namespace EMCR.DRR.Managers.Intake
                 return;
             }
             dest.Status = WorkplanStatus.Active;
+            if (src.Activity == null) return;
             switch (src.Activity)
             {
                 case Controllers.ActivityType.ConstructionContractAward:
