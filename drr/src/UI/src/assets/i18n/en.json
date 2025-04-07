@@ -320,7 +320,7 @@
   "fiscalYear": "Fiscal Year",
   "forecastedSpend": "Forecasted Spend",
   "addYear": "Add Year",
-  "totalDrifFundingRequest": "Your total forecasted spend",
+  "totalDrifFundingRequest": "Your Total Forecasted Spend",
   "updatedDrifProgramFundingRequest": "Updated DRIF Program Funding Request",
   "totalDrifFundingRequestInvalid": "Total DRIF Program Funding Request exceeds the maximum allowable amount.",
   "discrepancyComment": "Your updated DRIF program funding request is different from the eligible amount in your EOI. Explain what has changed.",
