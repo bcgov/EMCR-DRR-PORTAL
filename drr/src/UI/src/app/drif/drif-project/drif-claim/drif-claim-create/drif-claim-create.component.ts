@@ -309,6 +309,7 @@ export class DrifClaimCreateComponent {
             } as ClaimForm);
 
             // iterate over invoices and add attachments if they are missing
+            // TODO: this needs to be done in constructor?
             formData.expenditure.invoices?.forEach((invoice) => {
               if (!invoice.attachments || invoice.attachments.length === 0) {
                 invoice.attachments = [];
@@ -584,8 +585,19 @@ export class DrifClaimCreateComponent {
       })
       .subscribe({
         next: (invoice) => {
+          const invoiceFormData = {
+            id: invoice.id,
+            attachments: [
+              {
+                documentType: DocumentType.Invoice,
+              },
+              {
+                documentType: DocumentType.ProofOfPayment,
+              },
+            ],
+          } as InvoiceForm;
           this.getInvoiceFormArray()?.push(
-            this.formBuilder.formGroup(InvoiceForm, invoice),
+            this.formBuilder.formGroup(InvoiceForm, invoiceFormData),
           );
         },
         error: (error) => {
