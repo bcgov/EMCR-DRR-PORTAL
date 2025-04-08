@@ -75,6 +75,7 @@ export class ClaimSummaryItem implements PreviousClaim {
   costCategory?: CostCategory;
   currentClaim?: number;
   totalForProject?: number;
+  totalForProjectWithCurrentClaim?: number;
   originalEstimate?: number;
 }
 
@@ -151,7 +152,7 @@ export class DrifClaimCreateComponent {
   displayedColumns: string[] = [
     'costCategory',
     'currentClaim',
-    'totalForProject',
+    'totalForProjectWithCurrentClaim',
     'originalEstimate',
   ];
 
@@ -363,6 +364,7 @@ export class DrifClaimCreateComponent {
                   costCategory: claim.costCategory,
                   currentClaim: 0,
                   totalForProject: claim.totalForProject,
+                  totalForProjectWithCurrentClaim: claim.totalForProject,
                   originalEstimate: claim.originalEstimate,
                 } as ClaimSummaryItem;
               }) || [];
@@ -861,6 +863,8 @@ export class DrifClaimCreateComponent {
           currentClaimSummary[claimSummary.costCategory!];
         if (currentClaimAmount) {
           claimSummary.currentClaim = currentClaimAmount;
+          claimSummary.totalForProjectWithCurrentClaim =
+            claimSummary.totalForProject! + currentClaimAmount;
         }
         return claimSummary;
       },
@@ -877,6 +881,8 @@ export class DrifClaimCreateComponent {
           costCategory: currentCostCategory as CostCategory,
           currentClaim: currentClaimSummary[currentCostCategory],
           totalForProject: 0,
+          totalForProjectWithCurrentClaim:
+            currentClaimSummary[currentCostCategory],
           originalEstimate: 0,
         });
       }
