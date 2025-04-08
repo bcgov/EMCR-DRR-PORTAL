@@ -461,12 +461,12 @@
                 </mat-cell>
               </ng-container>
 
-              <ng-container matColumnDef="totalForProject">
+              <ng-container matColumnDef="totalForProjectWithCurrentClaim">
                 <mat-header-cell *matHeaderCellDef>
                   Total Claimed for Project
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                  {{ element.totalForProject | currency }}
+                  {{ element.totalForProjectWithCurrentClaim | currency }}
                 </mat-cell>
               </ng-container>
 
