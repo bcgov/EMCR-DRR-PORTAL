@@ -39,7 +39,7 @@
     [orientation]="stepperOrientation"
     #stepper
   >
-    <mat-step label="Instructions">
+    <mat-step [label]="t('step1')">
       <div>
         <p>
           This form captures your year-over-year budget forecast for the
@@ -61,7 +61,7 @@
         </button>
       </div>
     </mat-step>
-    <mat-step label="Budget Forecast Report" [stepControl]="budgetForecastForm">
+    <mat-step [label]="t('step2')" [stepControl]="budgetForecastForm">
       <div style="display: flex; flex-direction: column; gap: 1rem">
         <!-- TODO: hide columns, disable inputs -->
         <table class="forecast-table">
@@ -158,7 +158,7 @@
       </div>
     </mat-step>
     <mat-step
-      label="Attachments"
+      [label]="t('step3')"
       [stepControl]="attachmentsForm"
       [errorMessage]="'stepError' | transloco"
     >
@@ -202,7 +202,7 @@
         </button>
       </div></mat-step
     >
-    <mat-step label="Review & Declaration" [stepControl]="declarationForm">
+    <mat-step [label]="t('step4')" [stepControl]="declarationForm">
       <div style="display: flex; flex-direction: column; gap: 1rem">
         <drif-forecast-summary
           [forecastForm]="forecastForm"
