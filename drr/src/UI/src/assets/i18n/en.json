@@ -725,6 +725,10 @@
     "fileSize": "File Size"
   },
   "forecast": {
+    "step1": "Instructions",
+    "step2": "Budget Forecast Report",
+    "step3": "Attachments",
+    "step4": "Review & Declaration",
     "totalProjectedExpenditureLabel": "Total Projected Expenditures",
     "totalProjectedExpenditure": "Total",
     "originalForecast": "Original Forecast",
