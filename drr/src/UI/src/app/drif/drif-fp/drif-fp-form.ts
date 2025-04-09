@@ -663,11 +663,7 @@ export class ProjectOutcomesForm {
 
 export class AttachmentsForm {
   @propArray(AttachmentForm)
-  attachments?: AttachmentForm[] = [
-    {
-      documentType: DocumentType.DetailedCostEstimate,
-    },
-  ];
+  attachments?: AttachmentForm[] = [];
 
   @prop()
   @required()

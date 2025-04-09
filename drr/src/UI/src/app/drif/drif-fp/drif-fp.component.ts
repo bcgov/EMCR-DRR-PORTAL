@@ -824,16 +824,6 @@ export class DrifFpComponent {
     }
 
     response.attachments?.forEach((attachment) => {
-      if (attachment.documentType === DocumentType.DetailedCostEstimate) {
-        attachmentsArray.controls
-          .find(
-            (control) =>
-              control.value.documentType === DocumentType.DetailedCostEstimate,
-          )
-          ?.patchValue(attachment, { emitEvent: false });
-        return;
-      }
-
       if (attachment.documentType === DocumentType.Resolution) {
         attachmentsArray.controls
           .find(
