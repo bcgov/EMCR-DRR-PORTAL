@@ -824,10 +824,12 @@ export class DrifClaimCreateComponent {
       .subscribe({
         next: () => {
           const attachments = invoiceControl.get('attachments') as FormArray;
-          const index = attachments.controls.findIndex(
+          const attachmentControl = attachments.controls.find(
             (control) => control.get('id')?.value === fileId,
           );
-          attachments.removeAt(index);
+          // TODO: temp fix to restore attachment mandatory validation
+          attachmentControl?.get('id')?.setValue(null);
+          attachmentControl?.get('name')?.setValue(null);
 
           this.toastService.close();
           this.toastService.success('File removed successfully');

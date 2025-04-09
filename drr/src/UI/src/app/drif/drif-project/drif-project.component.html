@@ -337,20 +337,13 @@
               'limit',
               'conditionMet',
               'dateMet',
-              'actions',
             ]"
           ></tr>
           <tr
             mat-row
             *matRowDef="
               let row;
-              columns: [
-                'conditionName',
-                'limit',
-                'conditionMet',
-                'dateMet',
-                'actions',
-              ]
+              columns: ['conditionName', 'limit', 'conditionMet', 'dateMet']
             "
           ></tr>
         </table>
