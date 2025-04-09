@@ -131,24 +131,41 @@ export class DrifFpStep10Component {
   costConsiderationsOptions =
     this.optionsStore.options.costConsiderations?.() ?? [];
 
-  costCategoriesOptions: DrrSelectOption[] = Object.values(CostCategory)
+  costCategoriesOptions: DrrSelectOption[] = Object.keys(CostCategory)
+    .filter((key) => key !== CostCategory.Other)
     .map((value) => ({
       value,
       label: this.translocoService.translate(value),
     }))
-    .sort((a, b) => a.label.localeCompare(b.label));
-  resourcesOptions: DrrSelectOption[] = Object.values(ResourceCategory)
+    .sort((a, b) => a.label.localeCompare(b.label))
+    .concat({
+      value: CostCategory.Other,
+      label: this.translocoService.translate(CostCategory.Other),
+    });
+
+  resourcesOptions: DrrSelectOption[] = Object.keys(ResourceCategory)
+    .filter((key) => key !== ResourceCategory.Other)
     .map((value) => ({
       value,
       label: this.translocoService.translate(value),
     }))
-    .sort((a, b) => a.label.localeCompare(b.label));
-  unitsOptions: DrrSelectOption[] = Object.values(CostUnit)
+    .sort((a, b) => a.label.localeCompare(b.label))
+    .concat({
+      value: ResourceCategory.Other,
+      label: this.translocoService.translate(ResourceCategory.Other),
+    });
+
+  unitsOptions: DrrSelectOption[] = Object.keys(CostUnit)
+    .filter((key) => key !== CostUnit.Other)
     .map((value) => ({
       value,
       label: this.translocoService.translate(value),
     }))
-    .sort((a, b) => a.label.localeCompare(b.label));
+    .sort((a, b) => a.label.localeCompare(b.label))
+    .concat({
+      value: CostUnit.Other,
+      label: this.translocoService.translate(CostUnit.Other),
+    });
 
   // TODO: temp solution to overcome the issue of the total project cost not being updated
   totalProjectCostCopy = new FormControl();
