@@ -1,9 +1,17 @@
 <div class="summary-container" *transloco="let t; read: 'claim'">
   <mat-card>
     <mat-card-header>
-      <mat-card-title>{{ t("step2") }}</mat-card-title>
+      <mat-card-title>{{ t("step1") }}</mat-card-title>
+      <mat-card-subtitle>Step 1</mat-card-subtitle>
     </mat-card-header>
-    <mat-card-content style="gap: 1rem">
+    <mat-card-content> </mat-card-content>
+  </mat-card>
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>{{ t("step2") }}</mat-card-title>
+      <mat-card-subtitle>Step 2</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content class="summary-card-content">
       <drr-summary-item
         [label]="t('haveClaimExpenses')"
         [rxFormControl]="claimForm?.get('expenditure.haveClaimExpenses')"
@@ -147,8 +155,9 @@
   <mat-card *ngIf="isReadOnlyView">
     <mat-card-header>
       <mat-card-title>{{ t("step3") }}</mat-card-title>
+      <mat-card-subtitle>Step 3</mat-card-subtitle>
     </mat-card-header>
-    <mat-card-content>
+    <mat-card-content class="summary-card-content">
       <div>
         <mat-label class="drr-label">{{
           "authorizedRepresentativeLabel" | transloco

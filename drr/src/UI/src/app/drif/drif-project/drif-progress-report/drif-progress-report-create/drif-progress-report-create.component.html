@@ -9,10 +9,12 @@
         <button mat-stroked-button color="primary" (click)="goBack()">
           Exit Form
         </button>
-        <button mat-flat-button color="primary" (click)="save()">
-          <mat-icon>save</mat-icon>
-          Save
-        </button>
+        @if (stepper.selectedIndex !== 0) {
+          <button mat-flat-button color="primary" (click)="save()">
+            <mat-icon>save</mat-icon>
+            Save
+          </button>
+        }
       </div>
       <div class="save-info">
         <div style="display: flex; flex-direction: row; gap: 1rem">
@@ -898,7 +900,7 @@
       [stepControl]="progressReportForm.get('declaration')!"
       [errorMessage]="t('stepError')"
     >
-      <div class="drr-step-container">
+      <div>
         <drif-progress-report-summary
           [progressReportForm]="progressReportForm"
           [isReadOnlyView]="false"

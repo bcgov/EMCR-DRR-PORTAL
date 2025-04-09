@@ -4,13 +4,13 @@
   justify-content: center;
   margin: 20px 0;
   gap: 1rem;
+}
 
-  mat-card-content {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
+.summary-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
 }
 
 .summary-row {
