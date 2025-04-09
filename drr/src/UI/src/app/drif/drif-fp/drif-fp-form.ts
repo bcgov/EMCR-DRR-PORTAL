@@ -10,6 +10,7 @@ import {
 } from '@rxweb/reactive-form-validators';
 import {
   ActivityType,
+  AreaUnits,
   Attachment,
   CostCategory,
   CostEstimate,
@@ -476,12 +477,10 @@ export class ProjectAreaForm {
   locationDescription?: string;
 
   @prop()
-  @required()
   area?: number;
 
   @prop()
-  @required()
-  units?: string; // TODO: use enum
+  units?: AreaUnits;
 
   @prop()
   @required()
