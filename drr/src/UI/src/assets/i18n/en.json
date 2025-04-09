@@ -41,7 +41,7 @@
   "attachments": {
     "disclaimer": "Note: You cannot attach files that are larger than 50 MB. If you need to provde files that are larger than 50 MB, contact us at",
     "requiredAttachments": "Required Attachments",
-    "requiredAttachmentsText": "The following types of documents must be provided with your full proposal. Use the comments field for each attachment to add any relevant comments.",
+    "requiredAttachmentsText": "The following types of documents must be provided with your full proposal, if applicable to your project.",
     "DetailedCostEstimate": "Detailed cost estimate",
     "SitePlan": "Site plan, if applicable to the type of project being proposed",
     "PreliminaryDesign": "Preliminary design, if applicable to the type of project being proposed",
