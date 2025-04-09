@@ -43,6 +43,7 @@ export class DrifClaimSummaryComponent {
     return invoiceControl.get('attachments') as FormArray;
   }
 
+  // TODO: not ideal to determine if attachment is mandatory
   getProofOfPaymentAttachment(invoiceControl: AbstractControl) {
     return this.getInvoiceAttachments(invoiceControl).controls.find(
       (control) =>
@@ -50,6 +51,7 @@ export class DrifClaimSummaryComponent {
     );
   }
 
+  // TODO: not ideal to determine if attachment is mandatory
   getInvoceAttachment(invoiceControl: AbstractControl) {
     return this.getInvoiceAttachments(invoiceControl).controls.find(
       (control) => control.get('documentType')?.value === DocumentType.Invoice,
