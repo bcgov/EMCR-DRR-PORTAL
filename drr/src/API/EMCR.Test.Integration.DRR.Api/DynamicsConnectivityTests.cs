@@ -24,7 +24,7 @@ namespace EMCR.Tests.Integration.DRR
             var factory = host.Services.GetRequiredService<IDRRContextFactory>();
             var ctx = factory.Create();
 
-            var results = (await ctx.contacts.GetAllPagesAsync()).ToList();
+            var results = (await ctx.drr_projectreports.GetAllPagesAsync()).ToList();
             results.ShouldNotBeNull();
         }
     }

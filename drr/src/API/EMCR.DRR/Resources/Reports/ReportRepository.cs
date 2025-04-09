@@ -933,6 +933,9 @@ namespace EMCR.DRR.API.Resources.Reports
             }
 
             await Task.WhenAll(thirdLoadTasks);
+
+            //sort lists
+            claim.drr_drr_projectclaim_drr_projectexpenditure_Claim = new System.Collections.ObjectModel.Collection<drr_projectexpenditure>(claim.drr_drr_projectclaim_drr_projectexpenditure_Claim.OrderBy(inv => inv.createdon).ToList());
         }
 
         private static async Task ParallelLoadAllClaimInvoices(DRRContext ctx, drr_projectclaim claim, CancellationToken ct)
