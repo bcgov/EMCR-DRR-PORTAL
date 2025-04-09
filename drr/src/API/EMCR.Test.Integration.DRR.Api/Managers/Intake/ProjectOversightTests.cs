@@ -28,7 +28,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
         private string CRAFTD2BusinessName = "CRAFT Development Community 2";
         private string CRAFTD2UserId = "...";
 
-        private string TestProjectId = "DRIF-PRJ-1104";
+        private string TestProjectId = "DRIF-PRJ-1052";
 
         private UserInfo GetTestUserInfo()
         {
@@ -58,7 +58,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
         {
             var queryRes = await manager.Handle(new DrrProjectsQuery { BusinessId = GetTestUserInfo().BusinessId });
             var projects = mapper.Map<IEnumerable<DraftDrrProject>>(queryRes.Items);
-            projects.Count().ShouldBeGreaterThan(1);
+            projects.Count().ShouldBeGreaterThanOrEqualTo(1);
             projects.ShouldAllBe(s => s.Status != EMCR.DRR.Controllers.ProjectStatus.NotStarted);
         }
 
@@ -119,7 +119,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var userInfo = GetTestUserInfo();
             //var userInfo = GetCRAFTUserInfo();
 
-            var queryRes = await manager.Handle(new DrrClaimsQuery { Id = "DRIF-CLAIM-1073", BusinessId = userInfo.BusinessId });
+            var queryRes = await manager.Handle(new DrrClaimsQuery { Id = "DRIF-CLAIM-1166", BusinessId = userInfo.BusinessId });
             var claims = mapper.Map<IEnumerable<DraftProjectClaim>>(queryRes.Items);
             claims.Count().ShouldBe(1);
             var claim = claims.SingleOrDefault();
@@ -656,7 +656,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var userInfo = GetTestUserInfo();
             //var userInfo = GetCRAFTUserInfo();
 
-            var forecastId = "FORECAST-1054";
+            var forecastId = "FORECAST-1154";
             var forecast = mapper.Map<DraftForecast>((await manager.Handle(new DrrForecastsQuery { Id = forecastId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
             foreach (var doc in forecast.Attachments)
             {

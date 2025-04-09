@@ -726,6 +726,8 @@ namespace EMCR.DRR.Resources.Applications
             submitter.contactid = null;
             drrContext.AddTocontacts(submitter);
             drrContext.AddLink(submitter, nameof(submitter.drr_contact_drr_application_SubmitterContact), application);
+            //drrContext.SetLink(application, nameof(application.drr_SubmitterContact), submitter);
+            //drrContext.SetLink(submitter, nameof(submitter.drr_Application), application);
         }
 
         private static void AddPrimaryProjectContact(DRRContext drrContext, drr_application application, contact primaryProjectContact)
@@ -733,6 +735,8 @@ namespace EMCR.DRR.Resources.Applications
             primaryProjectContact.contactid = null;
             drrContext.AddTocontacts(primaryProjectContact);
             drrContext.AddLink(primaryProjectContact, nameof(primaryProjectContact.drr_contact_drr_application_PrimaryProjectContact), application);
+            //drrContext.SetLink(application, nameof(application.drr_PrimaryProjectContact), primaryProjectContact);
+            //drrContext.SetLink(primaryProjectContact, nameof(primaryProjectContact.drr_Application), application);
         }
 
         private static void AddAdditionalContact1(DRRContext drrContext, drr_application application, contact additionalContact1)
@@ -741,6 +745,8 @@ namespace EMCR.DRR.Resources.Applications
             additionalContact1.contactid = null;
             drrContext.AddTocontacts(additionalContact1);
             drrContext.AddLink(additionalContact1, nameof(additionalContact1.drr_contact_drr_application_AdditionalContact1), application);
+            //drrContext.SetLink(application, nameof(application.drr_AdditionalContact1), additionalContact1);
+            //drrContext.SetLink(additionalContact1, nameof(additionalContact1.drr_Application), application);
         }
 
         private static void AddAdditionalContact2(DRRContext drrContext, drr_application application, contact additionalContact2)
@@ -749,6 +755,8 @@ namespace EMCR.DRR.Resources.Applications
             additionalContact2.contactid = null;
             drrContext.AddTocontacts(additionalContact2);
             drrContext.AddLink(additionalContact2, nameof(additionalContact2.drr_contact_drr_application_AdditionalContact2), application);
+            //drrContext.SetLink(application, nameof(application.drr_AdditionalContact2), additionalContact2);
+            //drrContext.SetLink(additionalContact2, nameof(additionalContact2.drr_Application), application);
         }
 
         private static void CreatePartnerConnections(DRRContext drrContext, drr_application application, IEnumerable<account> partnerAccounts)
