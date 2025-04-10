@@ -56,7 +56,11 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
         [Test]
         public async Task QueryProjects()
         {
-            var queryRes = await manager.Handle(new DrrProjectsQuery { BusinessId = GetTestUserInfo().BusinessId });
+            //var userInfo = GetTestUserInfo();
+            var userInfo = GetCRAFTUserInfo();
+            //var userInfo = GetCRAFT2UserInfo();
+
+            var queryRes = await manager.Handle(new DrrProjectsQuery { BusinessId = userInfo.BusinessId });
             var projects = mapper.Map<IEnumerable<DraftDrrProject>>(queryRes.Items);
             projects.Count().ShouldBeGreaterThanOrEqualTo(1);
             projects.ShouldAllBe(s => s.Status != EMCR.DRR.Controllers.ProjectStatus.NotStarted);

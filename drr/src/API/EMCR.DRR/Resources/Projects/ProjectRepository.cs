@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Text.RegularExpressions;
+using AutoMapper;
 using EMCR.DRR.Dynamics;
 using EMCR.DRR.Managers.Intake;
 using EMCR.Utilities.Extensions;
@@ -41,7 +42,7 @@ namespace EMCR.DRR.API.Resources.Projects
             var results = (await projectsQuery.GetAllPagesAsync(ct)).ToList();
             var length = results.Count;
 
-            //results = SortAndPageResults(results, query);
+            results = SortAndPageResults(results, query);
 
             if (length == 1)
             {
@@ -188,6 +189,81 @@ namespace EMCR.DRR.API.Resources.Projects
             if (existingProject == null) return true;
             if (existingProject.drr_ProponentName == null) return false;
             return (!string.IsNullOrEmpty(existingProject.drr_ProponentName.drr_bceidguid)) && existingProject.drr_ProponentName.drr_bceidguid.Equals(businessId);
+        }
+
+        private List<drr_project> SortAndPageResults(List<drr_project> projects, ProjectsQuery query)
+        {
+            var descending = false;
+            if (!string.IsNullOrEmpty(query.OrderBy))
+            {
+                if (query.OrderBy.Contains(" desc"))
+                {
+                    descending = true;
+                    query.OrderBy = Regex.Replace(query.OrderBy, @" desc", "");
+                }
+                if (descending) projects = projects.OrderByDescending(a => GetPropertyValueForSort(a, query.OrderBy)).ToList();
+                else projects = projects.OrderBy(a => GetPropertyValueForSort(a, query.OrderBy)).ToList();
+            }
+
+            if (query.Page > 0)
+            {
+                var skip = query.Count * (query.Page - 1);
+                projects = projects.Skip(skip).ToList();
+            }
+
+            if (query.Count > 0)
+            {
+                projects = projects.Take(query.Count).ToList();
+            }
+
+            return projects;
+        }
+
+#pragma warning disable CS8603 // Possible null reference return.
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+#pragma warning disable CS8604 // Possible null reference argument.
+        private static object GetPropertyValueForSort(object src, string propName)
+        {
+
+
+            if (src == null) throw new ArgumentException("Value cannot be null.", "src");
+            if (propName == null) throw new ArgumentException("Value cannot be null.", "propName");
+
+            if (propName.Contains("."))//complex type nested
+            {
+                var temp = propName.Split(new char[] { '.' }, 2);
+                return GetPropertyValueForSort(GetPropertyValueForSort(src, temp[0]), temp[1]);
+            }
+            else
+            {
+                var prop = src.GetType().GetProperty(propName);
+                if (propName == "statuscode") return GetSortedStatuses(prop.GetValue(src, null).ToString());
+                return prop != null ? prop.GetValue(src, null) : null;
+            }
+        }
+#pragma warning restore CS8604 // Possible null reference argument.
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+#pragma warning restore CS8603 // Possible null reference return.
+
+        private static int GetSortedStatuses(string status)
+        {
+            var statusOption = Enum.Parse<ProjectStatusOptionSet>(status);
+            switch (statusOption)
+            {
+                case ProjectStatusOptionSet.Complete:
+                    return 0; //Complete
+
+                case ProjectStatusOptionSet.InProgress:
+                    return 1; //InProgress
+
+                case ProjectStatusOptionSet.Inactive:
+                    return 2; //Inactive
+
+                case ProjectStatusOptionSet.NotStarted:
+                    return 3; //NotStarted
+
+                default: return 0;
+            }
         }
     }
 }
