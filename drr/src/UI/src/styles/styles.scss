@@ -306,6 +306,10 @@ h6 {
   }
 }
 
+.mdc-button {
+  border: 2px solid #003366 !important;
+}
+
 .mdc-button:focus {
   outline: 3px solid #003366;
   outline-offset: 0.125rem;

@@ -14,62 +14,71 @@
       </mat-card-title-group>
     </mat-card-header>
     <mat-card-content class="drif-project-details">
-      <div>
-        <h5 style="margin-left: 1rem">Project Details</h5>
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Project Details</mat-card-title>
+        </mat-card-header>
 
-        <div class="project-details-table">
-          <div>
-            <strong>ID: </strong>
-            {{ projectId }}
-          </div>
-          <div>
-            <strong>Funding Program: </strong
-            >{{ project.programType | transloco }}
-          </div>
+        <mat-card-content class="project-details-table">
+          <span>
+            <div>
+              <strong>ID: </strong>
+              {{ projectId }}
+            </div>
+            <div>
+              <strong>Contract ID: </strong>{{ project.contractNumber }}
+            </div>
+            <div><strong>Project Status: </strong>{{ t(project.status!) }}</div>
+          </span>
+          <span>
+            <div>
+              <strong>Funding Program: </strong
+              >{{ project.programType | transloco }}
+            </div>
+            <div>
+              <strong>Project Type: </strong>{{ t(project.fundingStream!) }}
+            </div>
+          </span>
 
-          <div>
-            <strong>Reporting Schedule: </strong
-            >{{ t(project.reportingScheduleType!) }}
-          </div>
+          <span>
+            <div>
+              <strong>Reporting Schedule: </strong
+              >{{ t(project.reportingScheduleType!) }}
+            </div>
+            <div>
+              <strong>Funding Amount: </strong
+              >{{ project.fundingAmount | currency: "" : "symbol" : "1.0-0" }}
+            </div>
+          </span>
 
-          <div>
-            <strong>Planned Start Date: </strong
-            >{{ project.startDate | date: "yyyy-MM-dd" }}
-          </div>
+          <span>
+            <div>
+              <strong>Planned Start Date: </strong
+              >{{ project.startDate | date: "yyyy-MM-dd" }}
+            </div>
+            <div>
+              <strong>Planned End Date: </strong
+              >{{ project.endDate | date: "yyyy-MM-dd" }}
+            </div>
+          </span>
 
-          <div>
-            <strong>EOI: </strong>
-            <a [routerLink]="['/eoi-submission-details', project.eoiId]">{{
-              project.eoiId
-            }}</a>
-          </div>
-
-          <div><strong>Contract ID: </strong>{{ project.contractNumber }}</div>
-          <div>
-            <strong>Project Type: </strong>{{ t(project.fundingStream!) }}
-          </div>
-
-          <div>
-            <strong>Funding Amount: </strong
-            >{{ project.fundingAmount | currency: "" : "symbol" : "1.0-0" }}
-          </div>
-
-          <div>
-            <strong>Planned End Date: </strong
-            >{{ project.endDate | date: "yyyy-MM-dd" }}
-          </div>
-
-          <div>
-            <strong>Full Proposal: </strong
-            ><a [routerLink]="['/fp-submission-details', project.fpId]">{{
-              project.fpId
-            }}</a>
-          </div>
-
-          <div><strong>Project Status: </strong>{{ t(project.status!) }}</div>
-        </div>
-      </div>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem">
+          <span>
+            <div>
+              <strong>EOI: </strong>
+              <a [routerLink]="['/eoi-submission-details', project.eoiId]">{{
+                project.eoiId
+              }}</a>
+            </div>
+            <div>
+              <strong>Full Proposal: </strong
+              ><a [routerLink]="['/fp-submission-details', project.fpId]">{{
+                project.fpId
+              }}</a>
+            </div>
+          </span>
+        </mat-card-content>
+      </mat-card>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem">
         <div>
           <h5 style="margin-left: 1rem">Conditions</h5>
           <table
