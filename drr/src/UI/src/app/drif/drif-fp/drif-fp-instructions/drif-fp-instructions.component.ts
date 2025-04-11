@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 
+import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { DrifapplicationService } from '../../../../api/drifapplication/drifapplication.service';
@@ -14,7 +15,13 @@ import { ROUTE_PATH } from '../../../app.routes';
 @Component({
   selector: 'drr-drif-fp-instructions',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, TranslocoModule, MatDividerModule],
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    MatCardModule,
+    TranslocoModule,
+    MatDividerModule,
+  ],
   templateUrl: './drif-fp-instructions.component.html',
   styleUrl: './drif-fp-instructions.component.scss',
 })

@@ -4,59 +4,26 @@
   gap: 1rem;
   padding: 1rem;
 
-  .project-details-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1rem;
-
-    th,
-    td {
-      border-top: 1px solid #ccc;
-      border-left: none;
-      padding: 0.5rem;
-      text-align: left;
-    }
-
-    th {
-      background: #e8f3ff;
-      font-weight: bold;
-    }
-
-    td {
-      background: #fff;
-    }
-
-    th:first-child,
-    td:first-child {
-      border-left: none;
-    }
-
-    th:last-child,
-    td:last-child {
-      border-right: none;
-    }
-
-    tr {
-      height: 3.5rem;
-    }
-
-    tr:first-child td {
-      border-top: none;
-    }
-
-    tr:last-child td {
-      border-bottom: none;
-    }
-  }
-
   .drif-project-details {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
+    display: flex;
+    flex-direction: column;
     gap: 1rem;
     padding: 1rem;
   }
 
-  mat-card table {
+  .project-details-table {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 1rem;
+    margin: 0 1rem;
+  }
+
+  .tab-mat-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
     padding: 1rem;
   }
 

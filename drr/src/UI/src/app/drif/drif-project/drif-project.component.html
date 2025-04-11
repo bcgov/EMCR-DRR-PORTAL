@@ -1,79 +1,75 @@
 <div class="drif-project-container" *transloco="let t; read: 'project'">
-  <button
-    mat-stroked-button
-    style="align-self: flex-end"
-    color="primary"
-    [routerLink]="[projectsRoute]"
-  >
-    Back
-  </button>
   <mat-card *ngIf="!!project">
     <mat-card-header>
       <mat-card-title-group>
         <mat-card-title>{{ project.projectTitle }}</mat-card-title>
-        <div>
-          <div><b>ID:</b> {{ projectId }}</div>
-          <div><b>Contract ID:</b> {{ project.contractNumber }}</div>
-          <div>
-            <b>Status:</b>
-            <mat-chip style="margin-left: 0.5rem">
-              {{ t(project.status!) }}
-            </mat-chip>
-          </div>
-        </div>
+        <button
+          mat-stroked-button
+          color="primary"
+          [routerLink]="[projectsRoute]"
+        >
+          Back
+        </button>
         <mat-card-subtitle>for {{ project.proponentName }}</mat-card-subtitle>
       </mat-card-title-group>
     </mat-card-header>
     <mat-card-content class="drif-project-details">
-      <div style="display: flex; flex-direction: column; align-self: start">
-        <h5 style="margin-left: 0.5rem">Project Details</h5>
-
-        <table class="project-details-table">
-          <tr>
-            <td><strong>Funding Program</strong></td>
-            <td>{{ project.programType | transloco }}</td>
-          </tr>
-          <tr>
-            <td><strong>Project Type</strong></td>
-            <td>{{ t(project.fundingStream!) }}</td>
-          </tr>
-          <tr>
-            <td><strong>Reporting Schedule</strong></td>
-            <td>{{ t(project.reportingScheduleType!) }}</td>
-          </tr>
-          <tr>
-            <td><strong>Funding Amount</strong></td>
-            <td>
-              {{ project.fundingAmount | currency: "" : "symbol" : "1.0-0" }}
-            </td>
-          </tr>
-          <tr>
-            <td><strong>Planned Start Date</strong></td>
-            <td>{{ project.startDate | date: "yyyy-MM-dd" }}</td>
-          </tr>
-          <tr>
-            <td><strong>Planned End Date</strong></td>
-            <td>{{ project.endDate | date: "yyyy-MM-dd" }}</td>
-          </tr>
-          <tr>
-            <td><strong>EOI</strong></td>
-            <td>
-              <a [routerLink]="['/eoi-submission-details', project.eoiId]">{{
-                project.eoiId
-              }}</a>
-            </td>
-          </tr>
-          <tr>
-            <td><strong>Full Proposal</strong></td>
-            <td>
-              <a [routerLink]="['/fp-submission-details', project.fpId]">{{
-                project.fpId
-              }}</a>
-            </td>
-          </tr>
-        </table>
-      </div>
       <div>
+        <h5 style="margin-left: 1rem">Project Details</h5>
+
+        <div class="project-details-table">
+          <div>
+            <strong>ID: </strong>
+            {{ projectId }}
+          </div>
+          <div>
+            <strong>Funding Program: </strong
+            >{{ project.programType | transloco }}
+          </div>
+
+          <div>
+            <strong>Reporting Schedule: </strong
+            >{{ t(project.reportingScheduleType!) }}
+          </div>
+
+          <div>
+            <strong>Planned Start Date: </strong
+            >{{ project.startDate | date: "yyyy-MM-dd" }}
+          </div>
+
+          <div>
+            <strong>EOI: </strong>
+            <a [routerLink]="['/eoi-submission-details', project.eoiId]">{{
+              project.eoiId
+            }}</a>
+          </div>
+
+          <div><strong>Contract ID: </strong>{{ project.contractNumber }}</div>
+          <div>
+            <strong>Project Type: </strong>{{ t(project.fundingStream!) }}
+          </div>
+
+          <div>
+            <strong>Funding Amount: </strong
+            >{{ project.fundingAmount | currency: "" : "symbol" : "1.0-0" }}
+          </div>
+
+          <div>
+            <strong>Planned End Date: </strong
+            >{{ project.endDate | date: "yyyy-MM-dd" }}
+          </div>
+
+          <div>
+            <strong>Full Proposal: </strong
+            ><a [routerLink]="['/fp-submission-details', project.fpId]">{{
+              project.fpId
+            }}</a>
+          </div>
+
+          <div><strong>Project Status: </strong>{{ t(project.status!) }}</div>
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem">
         <div>
           <h5 style="margin-left: 1rem">Conditions</h5>
           <table
@@ -171,116 +167,104 @@
 
   <mat-tab-group>
     <mat-tab label="Reports Due">
-      <div>
-        <div
-          style="
-            display: grid;
-            grid-template-columns: 3fr 1fr;
-            gap: 1rem;
-            padding: 1rem;
-          "
+      <mat-card class="tab-mat-card">
+        <button
+          style="align-self: start"
+          mat-raised-button
+          color="primary"
+          (click)="addInterimReport()"
         >
-          <table
-            mat-table
-            [dataSource]="interimReportsDataSource"
-            multiTemplateDataRows
-          >
-            <ng-container matColumnDef="report">
-              <th mat-header-cell *matHeaderCellDef>Report</th>
-              <td mat-cell *matCellDef="let element">
-                @if (!element.parentId) {
-                  {{ element.name }}
-                }
-              </td>
-            </ng-container>
-            <ng-container matColumnDef="section">
-              <th mat-header-cell *matHeaderCellDef>Section</th>
-              <td mat-cell *matCellDef="let element">
-                {{ element.section }}
-              </td>
-            </ng-container>
-            <ng-container matColumnDef="status">
-              <th mat-header-cell *matHeaderCellDef>Status</th>
-              <td mat-cell *matCellDef="let element">
-                {{ element.status | transloco }}
-              </td>
-            </ng-container>
-            <ng-container matColumnDef="dueDate">
-              <th mat-header-cell *matHeaderCellDef>Due Date</th>
-              <td mat-cell *matCellDef="let element">
-                {{ element.dueDate | date: "yyyy-MM-dd" }}
-              </td>
-            </ng-container>
+          {{ t("startNextReport") }}
+        </button>
 
-            <ng-container matColumnDef="submittedDate">
-              <th mat-header-cell *matHeaderCellDef>Submitted Date</th>
-              <td mat-cell *matCellDef="let element">
-                {{ element.submittedDate | date: "yyyy-MM-dd" }}
-              </td>
-            </ng-container>
+        <table
+          mat-table
+          [dataSource]="interimReportsDataSource"
+          multiTemplateDataRows
+        >
+          <ng-container matColumnDef="report">
+            <th mat-header-cell *matHeaderCellDef>Report</th>
+            <td mat-cell *matCellDef="let element">
+              @if (!element.parentId) {
+                {{ element.name }}
+              }
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="section">
+            <th mat-header-cell *matHeaderCellDef>Section</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.section }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.status | transloco }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="dueDate">
+            <th mat-header-cell *matHeaderCellDef>Due Date</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.dueDate | date: "yyyy-MM-dd" }}
+            </td>
+          </ng-container>
 
-            <ng-container matColumnDef="actions">
-              <th mat-header-cell *matHeaderCellDef>Actions</th>
-              <td mat-cell *matCellDef="let element">
-                @if (element.parentId) {
-                  <div class="table-actions">
-                    <a
-                      *ngFor="let action of element.actions"
-                      mat-raised-button
-                      color="primary"
-                      [routerLink]="getSubReportRoute(element, action)"
-                    >
-                      {{ t(action) }}
-                    </a>
-                  </div>
-                }
-              </td>
-            </ng-container>
+          <ng-container matColumnDef="submittedDate">
+            <th mat-header-cell *matHeaderCellDef>Submitted Date</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.submittedDate | date: "yyyy-MM-dd" }}
+            </td>
+          </ng-container>
 
-            <tr
-              mat-header-row
-              *matHeaderRowDef="[
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let element">
+              @if (element.parentId) {
+                <div class="table-actions">
+                  <a
+                    *ngFor="let action of element.actions"
+                    mat-raised-button
+                    color="primary"
+                    [routerLink]="getSubReportRoute(element, action)"
+                  >
+                    {{ t(action) }}
+                  </a>
+                </div>
+              }
+            </td>
+          </ng-container>
+
+          <tr
+            mat-header-row
+            *matHeaderRowDef="[
+              'report',
+              'section',
+              'status',
+              'dueDate',
+              'submittedDate',
+              'actions',
+            ]"
+          ></tr>
+          <tr
+            mat-row
+            *matRowDef="
+              let element;
+              columns: [
                 'report',
                 'section',
                 'status',
                 'dueDate',
                 'submittedDate',
                 'actions',
-              ]"
-            ></tr>
-            <tr
-              mat-row
-              *matRowDef="
-                let element;
-                columns: [
-                  'report',
-                  'section',
-                  'status',
-                  'dueDate',
-                  'submittedDate',
-                  'actions',
-                ]
-              "
-            ></tr>
-          </table>
-          <div style="display: flex; flex-direction: column; gap: 1rem">
-            <button
-              mat-raised-button
-              color="primary"
-              (click)="addInterimReport()"
-            >
-              {{ t("startNextReport") }}
-            </button>
-          </div>
-        </div>
-      </div>
+              ]
+            "
+          ></tr>
+        </table>
+      </mat-card>
     </mat-tab>
 
     <mat-tab label="Conditions">
-      <mat-card>
-        <!-- <mat-card-header>
-          <mat-card-title>Claims</mat-card-title>
-        </mat-card-header> -->
+      <mat-card class="tab-mat-card">
         <table class="drr-table" mat-table [dataSource]="conditionsDataSource">
           <ng-container matColumnDef="conditionName">
             <th mat-header-cell *matHeaderCellDef>Condition</th>
@@ -349,11 +333,9 @@
         </table>
       </mat-card>
     </mat-tab>
+
     <mat-tab label="Key Documents">
-      <mat-card>
-        <mat-card-header>
-          <mat-card-title>Key Documents</mat-card-title>
-        </mat-card-header>
+      <mat-card class="tab-mat-card">
         <table mat-table [dataSource]="attachmentsDataSource">
           <ng-container matColumnDef="id">
             <th mat-header-cell *matHeaderCellDef>ID</th>
@@ -403,20 +385,18 @@
         </table>
       </mat-card>
     </mat-tab>
+
     <mat-tab label="Contacts">
-      <mat-card>
-        <mat-card-header>
-          <mat-card-title-group>
-            <mat-card-title>Project Contacts</mat-card-title>
-            <button
-              mat-raised-button
-              color="primary"
-              (click)="addProjectContact()"
-            >
-              {{ t("addProjectContact") }}
-            </button>
-          </mat-card-title-group>
-        </mat-card-header>
+      <mat-card class="tab-mat-card">
+        <button
+          style="align-self: start"
+          mat-raised-button
+          color="primary"
+          (click)="addProjectContact()"
+        >
+          {{ t("addProjectContact") }}
+        </button>
+
         <table mat-table [dataSource]="projectContactsDataSource">
           <ng-container matColumnDef="firstName">
             <th mat-header-cell *matHeaderCellDef>First Name</th>
@@ -470,22 +450,13 @@
         </table>
       </mat-card>
     </mat-tab>
+
     <mat-tab label="Completed Reports">
-      <mat-card>
+      <mat-card class="tab-mat-card">
         <table mat-table [dataSource]="pastReportsDataSource">
           <ng-container matColumnDef="id">
             <th mat-header-cell *matHeaderCellDef>ID</th>
-            <td mat-cell *matCellDef="let report">
-              <a
-                [routerLink]="[
-                  '/drif-projects',
-                  projectId,
-                  'interim-reports',
-                  report.id,
-                ]"
-                >{{ report.id }}</a
-              >
-            </td>
+            <td mat-cell *matCellDef="let report">{{ report.id }}</td>
           </ng-container>
           <ng-container matColumnDef="dueDate">
             <th mat-header-cell *matHeaderCellDef>Due Date</th>
