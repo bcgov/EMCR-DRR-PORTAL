@@ -1330,54 +1330,6 @@
     </mat-card-header>
     <mat-card-content>
       <div>
-        <mat-label class="drr-label">{{
-          t("attachments.DetailedCostEstimate")
-        }}</mat-label>
-        @if (getAttachmentByDocumentType("DetailedCostEstimate")) {
-          <div class="summary-row attachment">
-            <drr-summary-item
-              [label]="t('attachments.name')"
-              [rxFormControl]="
-                getAttachmentByDocumentType('DetailedCostEstimate').get('name')
-              "
-            >
-            </drr-summary-item>
-            <drr-summary-item
-              [label]="t('attachments.comments')"
-              [rxFormControl]="
-                getAttachmentByDocumentType('DetailedCostEstimate').get(
-                  'comments'
-                )
-              "
-              controlType="textarea"
-            >
-            </drr-summary-item>
-            <button
-              *ngIf="isReadOnlyView"
-              style="align-self: center"
-              mat-button
-              color="primary"
-              (click)="
-                onDownloadFile(
-                  getAttachmentByDocumentType('DetailedCostEstimate').get('id')
-                    ?.value
-                )
-              "
-            >
-              Download
-            </button>
-          </div>
-        } @else {
-          <div [class.required]="isAttachmentRequired('DetailedCostEstimate')">
-            ({{
-              isAttachmentRequired("DetailedCostEstimate")
-                ? "Required"
-                : "Optional"
-            }})
-          </div>
-        }
-      </div>
-      <div>
         <mat-label class="drr-label">{{ t("attachments.SitePlan") }}</mat-label>
         @if (getAttachmentByDocumentType("SitePlan")) {
           <div class="summary-row attachment">
@@ -1411,9 +1363,7 @@
             </button>
           </div>
         } @else {
-          <div [class.required]="isAttachmentRequired('SitePlan')">
-            ({{ isAttachmentRequired("SitePlan") ? "Required" : "Optional" }})
-          </div>
+          <div>(Optional)</div>
         }
       </div>
       <div>
@@ -1453,13 +1403,7 @@
             </button>
           </div>
         } @else {
-          <div [class.required]="isAttachmentRequired('PreliminaryDesign')">
-            ({{
-              isAttachmentRequired("PreliminaryDesign")
-                ? "Required"
-                : "Optional"
-            }})
-          </div>
+          <div>(Optional)</div>
         }
       </div>
       <drr-summary-item
@@ -1504,11 +1448,7 @@
               </button>
             </div>
           } @else {
-            <div [class.required]="isAttachmentRequired('Resolution')">
-              ({{
-                isAttachmentRequired("Resolution") ? "Required" : "Optional"
-              }})
-            </div>
+            <div>(Required)</div>
           }
         </div>
       }

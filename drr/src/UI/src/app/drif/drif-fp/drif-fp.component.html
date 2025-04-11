@@ -1,21 +1,16 @@
-<ng-container *transloco="let t">
-  <div class="app-stepper-container">
-    <div class="app-stepper-header">
-      <div style="flex: 1">
-        <h5 style="font-size: 1.2rem; margin-bottom: 0.5rem">
-          {{
-            getProjectTitle()
-              ? t("fpFormHeaderFor", { projectTitle: getProjectTitle() })
-              : t("fpFormHeader")
-          }}
-        </h5>
-        <span>
-          {{ t("relatedEoi") }}
-          <a href="{{ getRelatedEOILink() }}" target="_blank">
-            {{ getRelatedEOI() }}
-          </a>
-        </span>
-      </div>
+<mat-card class="app-stepper-container" *transloco="let t">
+  <mat-card-header>
+    <mat-card-title-group class="app-stepper-header">
+      <mat-card-title>
+        {{ t("fpFormHeader") }}
+      </mat-card-title>
+      <mat-card-subtitle> for {{ getProjectTitle() }} </mat-card-subtitle>
+      <mat-card-subtitle style="margin-top: 0.5rem">
+        <span style="color: black">{{ t("relatedEoi") }}</span>
+        <a href="{{ getRelatedEOILink() }}" target="_blank">
+          {{ getRelatedEOI() }}
+        </a></mat-card-subtitle
+      >
       <div>
         <div class="header-actions">
           <button mat-stroked-button color="primary" (click)="goBack()">
@@ -42,7 +37,10 @@
           </div>
         </div>
       </div>
-    </div>
+    </mat-card-title-group>
+  </mat-card-header>
+  <mat-card-content>
+    <span> </span>
     <mat-stepper
       class="app-stepper"
       [linear]="false"
@@ -345,5 +343,5 @@
         </div>
       </mat-step>
     </mat-stepper>
-  </div>
-</ng-container>
+  </mat-card-content>
+</mat-card>

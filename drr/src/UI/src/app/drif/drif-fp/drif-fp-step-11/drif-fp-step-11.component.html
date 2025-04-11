@@ -17,17 +17,6 @@
     style="margin-top: 1rem; display: flex; flex-direction: column; gap: 1rem"
   >
     <drr-attachment
-      [title]="t('DetailedCostEstimate') + '*'"
-      [attachmentForm]="getFormByDocumentType('DetailedCostEstimate')"
-      (uploadFiles)="uploadFiles($event)"
-      (removeFile)="removeFile($event)"
-      (downloadFile)="downloadFile($event)"
-      [documentType]="'DetailedCostEstimate'"
-    ></drr-attachment>
-
-    <mat-divider class="extra-space"></mat-divider>
-
-    <drr-attachment
       [title]="t('SitePlan')"
       [attachmentForm]="getFormByDocumentType('SitePlan')"
       (uploadFiles)="uploadFiles($event)"
@@ -89,17 +78,17 @@
 
     <div class="other-attachments-upload">
       @if (getOtherFormArrayCount() == 0) {
-      <div>
-        <mat-label class="drr-label">
-          {{ t("otherSupportingDocumentation") }}
-        </mat-label>
-        <br />
-        <mat-label style="display: block; margin-top: 1rem">{{
-          t("supportingDocumentationOptionalText")
-        }}</mat-label>
-      </div>
+        <div>
+          <mat-label class="drr-label">
+            {{ t("otherSupportingDocumentation") }}
+          </mat-label>
+          <br />
+          <mat-label style="display: block; margin-top: 1rem">{{
+            t("supportingDocumentationOptionalText")
+          }}</mat-label>
+        </div>
       } @else {
-      <mat-label>{{ t("attachAdditionalAttachment") }}</mat-label>
+        <mat-label>{{ t("attachAdditionalAttachment") }}</mat-label>
       }
       <drr-file-upload
         (filesSelected)="uploadOtherFiles($event)"

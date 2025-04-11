@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
+import { MatCardModule } from '@angular/material/card';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { RouterModule } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
@@ -9,7 +10,13 @@ import { DraftDrrProject } from '../../../model';
 @Component({
   selector: 'drr-project-list',
   standalone: true,
-  imports: [CommonModule, MatTableModule, RouterModule, TranslocoModule],
+  imports: [
+    CommonModule,
+    MatTableModule,
+    MatCardModule,
+    RouterModule,
+    TranslocoModule,
+  ],
   templateUrl: './project-list.component.html',
   styleUrl: './project-list.component.scss',
 })

@@ -41,8 +41,7 @@
   "attachments": {
     "disclaimer": "Note: You cannot attach files that are larger than 50 MB. If you need to provde files that are larger than 50 MB, contact us at",
     "requiredAttachments": "Required Attachments",
-    "requiredAttachmentsText": "The following types of documents must be provided with your full proposal. Use the comments field for each attachment to add any relevant comments.",
-    "DetailedCostEstimate": "Detailed cost estimate",
+    "requiredAttachmentsText": "The following types of documents must be provided with your full proposal, if applicable to your project.",
     "SitePlan": "Site plan, if applicable to the type of project being proposed",
     "PreliminaryDesign": "Preliminary design, if applicable to the type of project being proposed",
     "resolution": "Resolution/Authorization/Endorsement",
@@ -160,7 +159,7 @@
   "climateAdaptationText": "Describe how the project will incorporate future climate conditions and consider climate change in the project methodology, including considering future impacts of the project on the environment.",
   "incorporateFutureClimateConditions": "Does the project incorporate future climate conditions and consider climate change in the project methodology, including considering future impacts of the project on the environment?",
   "climateAssessmentTools": "Climate Assessment Tools",
-  "climateAssessment": "Has your project used/consulted any Climate Change assessment tools?",
+  "climateAssessment": "Has or will your project use or consult any Climate Change assessment tools?",
   "climateAssessmentToolsText": "Select the Climate Change assessment tools used by your project",
   "climateAssessmentComments": "Describe how you used these tools to benefit your project",
   "otherInformation": "Other Relevant Information",

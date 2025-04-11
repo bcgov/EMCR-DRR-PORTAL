@@ -42,6 +42,7 @@ import {
   StringItem,
 } from '../drif-eoi/drif-eoi-form';
 
+import { MatCardModule } from '@angular/material/card';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { ROUTE_PATH } from '../../app.routes';
@@ -80,6 +81,7 @@ import { DrifFpStep9Component } from './drif-fp-step-9/drif-fp-step-9.component'
     ReactiveFormsModule,
     MatFormFieldModule,
     MatIconModule,
+    MatCardModule,
     TranslocoModule,
     LayoutModule,
     DrifFpStep1Component,
@@ -824,16 +826,6 @@ export class DrifFpComponent {
     }
 
     response.attachments?.forEach((attachment) => {
-      if (attachment.documentType === DocumentType.DetailedCostEstimate) {
-        attachmentsArray.controls
-          .find(
-            (control) =>
-              control.value.documentType === DocumentType.DetailedCostEstimate,
-          )
-          ?.patchValue(attachment, { emitEvent: false });
-        return;
-      }
-
       if (attachment.documentType === DocumentType.Resolution) {
         attachmentsArray.controls
           .find(

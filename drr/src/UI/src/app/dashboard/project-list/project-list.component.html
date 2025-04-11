@@ -1,4 +1,4 @@
-<div *transloco="let t; read: 'project-list'">
+<mat-card *transloco="let t; read: 'project-list'" style="padding: 0 1rem">
   <div class="projects-filter"></div>
   <div class="project-table">
     <table
@@ -34,7 +34,7 @@
           {{ t("startDate") }}
         </th>
         <td mat-cell *matCellDef="let element">
-          {{ element.startDate | date : "yyyy-MM-dd" }}
+          {{ element.startDate | date: "yyyy-MM-dd" }}
         </td>
       </ng-container>
 
@@ -43,7 +43,7 @@
           {{ t("endDate") }}
         </th>
         <td mat-cell *matCellDef="let element">
-          {{ element.endDate | date : "yyyy-MM-dd" }}
+          {{ element.endDate | date: "yyyy-MM-dd" }}
         </td>
       </ng-container>
 
@@ -60,4 +60,4 @@
       </div> -->
     </ng-template>
   </div>
-</div>
+</mat-card>

@@ -1,66 +1,70 @@
-<div class="instructions-container" *transloco="let t">
-  <div style="flex: 1; margin-bottom: 1rem">
-    <h5 style="font-size: 1.2rem; margin-bottom: 0.5rem">
-      {{ t("fpFormHeaderFor", { projectTitle: projectTitle }) }}
-    </h5>
-    <span>
-      {{ t("relatedEoi") }}
-      <a href="{{ getRelatedEOILink() }}" target="_blank">
-        {{ eoiId }}
-      </a>
-    </span>
-  </div>
-  <mat-divider></mat-divider>
-  <h5 style="margin-top: 4rem">Proponent Instructions</h5>
-  <h6>Mandatory Fields</h6>
-  <p>
-    Fields marked with an asterisk (*) are mandatory. Ensure that you complete
-    all of the mandatory sections before submitting your full proposal.
-  </p>
-
-  <h6>Required Documents</h6>
-
-  <p>
-    The following documents must be submitted as part of this full proposal:
-  </p>
-  <ol>
-    <li>Detailed project workplan</li>
-    <li>Project schedule (unless included in workplan)</li>
-    <li>Detailed cost estimate</li>
-    <li>
-      Site plan (not required for Stream 1: Foundational and Non-Structural
-      Projects)
-    </li>
-    <li>A preliminary design, if applicable.</li>
-    <li>
-      A Council Resolution and/or a Band Council Resolution from all proponents,
-      or the appropriate authorization/endorsement as determined by the eligible
-      First Nations proponent’s governance structure must be submitted as part
-      of this full proposal, if available, or via email to
-      <a href="mailto:EMCR.DisasterMitigation@gov.bc.ca"
-        >EMCR.DisasterMitigation&#64;gov.bc.ca</a
+<mat-card class="instructions-container" *transloco="let t">
+  <mat-card-header>
+    <mat-card-title-group>
+      <mat-card-title>{{
+        t("fpFormHeaderFor", { projectTitle: projectTitle })
+      }}</mat-card-title>
+      <mat-card-subtitle
+        ><span>
+          {{ t("relatedEoi") }}
+          <a href="{{ getRelatedEOILink() }}" target="_blank">
+            {{ eoiId }}
+          </a>
+        </span></mat-card-subtitle
       >
-      when available.
-    </li>
-  </ol>
+    </mat-card-title-group>
+  </mat-card-header>
+  <mat-card-content>
+    <h5 style="margin-top: 2rem">Proponent Instructions</h5>
+    <h6>Mandatory Fields</h6>
+    <p>
+      Fields marked with an asterisk (*) are mandatory. Ensure that you complete
+      all of the mandatory sections before submitting your full proposal.
+    </p>
 
-  <h6>Additional Information</h6>
-  <p>
-    The EMCR DMAP team may request additional information, including engagement
-    with local First Nations before the project begins (see Section 5.5 of DRIF
-    Program Guide). Projects may require permits or approvals from local,
-    regional, or provincial government agencies. It is the proponent’s
-    responsibility to ensure that any approvals and permits are identified
-    and/or obtained. The Province may request documentation of permits or
-    approvals.
-  </p>
+    <h6>Required Documents</h6>
 
-  <div style="display: flex; justify-content: space-between; margin-top: 2rem">
-    <button mat-stroked-button color="primary" (click)="goBack()">
-      {{ t("cancel") }}
-    </button>
-    <button mat-flat-button color="primary" (click)="continue()">
-      {{ t("continue") }}
-    </button>
-  </div>
-</div>
+    <p>
+      The following documents must be submitted as part of this full proposal:
+    </p>
+    <ol>
+      <li>
+        Site plan (not required for Stream 1: Foundational and Non-Structural
+        Projects)
+      </li>
+      <li>A preliminary design, if applicable.</li>
+      <li>
+        A Council Resolution and/or a Band Council Resolution from all
+        proponents, or the appropriate authorization/endorsement as determined
+        by the eligible First Nations proponent’s governance structure must be
+        submitted as part of this full proposal, if available, or via email to
+        <a href="mailto:EMCR.DisasterMitigation@gov.bc.ca"
+          >EMCR.DisasterMitigation&#64;gov.bc.ca</a
+        >
+        when available.
+      </li>
+    </ol>
+
+    <h6>Additional Information</h6>
+    <p>
+      The EMCR DMAP team may request additional information, including
+      engagement with local First Nations before the project begins (see Section
+      5.5 of DRIF Program Guide). Projects may require permits or approvals from
+      local, regional, or provincial government agencies. It is the proponent’s
+      responsibility to ensure that any approvals and permits are identified
+      and/or obtained. The Province may request documentation of permits or
+      approvals.
+    </p>
+
+    <div
+      style="display: flex; justify-content: space-between; margin-top: 2rem"
+    >
+      <button mat-stroked-button color="primary" (click)="goBack()">
+        {{ t("cancel") }}
+      </button>
+      <button mat-flat-button color="primary" (click)="continue()">
+        {{ t("continue") }}
+      </button>
+    </div>
+  </mat-card-content>
+</mat-card>

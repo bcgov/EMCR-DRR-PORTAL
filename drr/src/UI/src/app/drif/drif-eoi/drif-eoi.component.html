@@ -1,230 +1,232 @@
-<div class="app-stepper-container" *transloco="let t">
-  <div class="app-stepper-header">
-    <h5>
-      {{
-        getProjectTitle()
-          ? t("eoiFormHeaderFor", { projectTitle: getProjectTitle() })
-          : t("eoiFormHeader")
-      }}
-    </h5>
-    <div>
-      <div class="header-actions">
-        <button mat-stroked-button color="primary" (click)="goBack()">
-          {{ t("exitForm") }}
-        </button>
-        <button mat-flat-button color="primary" (click)="save()">
-          <mat-icon>save</mat-icon>
-          Save
-        </button>
-      </div>
-      <div class="save-info">
-        <div style="display: flex; flex-direction: row; gap: 1rem">
-          <i *ngIf="autoSaveCountdown <= 30 && autoSaveCountdown > 0"
-            >Saving in {{ autoSaveCountdown }}
-            {{ autoSaveCountdown === 1 ? "second" : "seconds" }}...
-          </i>
-          <i
-            *ngIf="
-              lastSavedAt && (autoSaveCountdown === 0 || autoSaveCountdown > 30)
-            "
-            >Saved at {{ lastSavedAt | date : "mediumTime" }}</i
-          >
+<mat-card class="app-stepper-container" *transloco="let t">
+  <mat-card-header>
+    <mat-card-title-group class="app-stepper-header">
+      <mat-card-title>
+        {{ t("eoiFormHeader") }}
+      </mat-card-title>
+      <mat-card-subtitle> for {{ getProjectTitle() }} </mat-card-subtitle>
+      <div>
+        <div class="header-actions">
+          <button mat-stroked-button color="primary" (click)="goBack()">
+            {{ t("exitForm") }}
+          </button>
+          <button mat-flat-button color="primary" (click)="save()">
+            <mat-icon>save</mat-icon>
+            Save
+          </button>
+        </div>
+        <div class="save-info">
+          <div style="display: flex; flex-direction: row; gap: 1rem">
+            <i *ngIf="autoSaveCountdown <= 30 && autoSaveCountdown > 0"
+              >Saving in {{ autoSaveCountdown }}
+              {{ autoSaveCountdown === 1 ? "second" : "seconds" }}...
+            </i>
+            <i
+              *ngIf="
+                lastSavedAt &&
+                (autoSaveCountdown === 0 || autoSaveCountdown > 30)
+              "
+              >Saved at {{ lastSavedAt | date: "mediumTime" }}</i
+            >
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-  <mat-stepper
-    class="app-stepper"
-    [linear]="false"
-    labelPosition="bottom"
-    (selectionChange)="stepperSelectionChange($event)"
-    [orientation]="stepperOrientation"
-    #stepper
-  >
-    <mat-step
-      [label]="t('steps.eoi.step1')"
-      [stepControl]="getFormGroup('proponentInformation')"
-      [errorMessage]="t('stepError')"
+    </mat-card-title-group>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-stepper
+      class="app-stepper"
+      [linear]="false"
+      labelPosition="bottom"
+      (selectionChange)="stepperSelectionChange($event)"
+      [orientation]="stepperOrientation"
+      #stepper
     >
-      <drif-eoi-step-1
-        [proponentInformationForm]="getFormGroup('proponentInformation')"
-      ></drif-eoi-step-1>
-      <div class="drr-stepper-action">
-        <button
-          id="next1"
-          mat-flat-button
-          color="primary"
-          matStepperNext
-          type="button"
-        >
-          {{ t("next") }}
-        </button>
-      </div>
-    </mat-step>
-    <mat-step
-      [label]="t('steps.eoi.step2')"
-      [stepControl]="getFormGroup('projectInformation')"
-      [errorMessage]="t('stepError')"
-    >
-      <drif-eoi-step-2
-        [projectInformationForm]="getFormGroup('projectInformation')"
-      ></drif-eoi-step-2>
-      <div class="drr-stepper-actions">
-        <button mat-stroked-button color="primary" matStepperPrevious>
-          {{ t("back") }}
-        </button>
-        <button
-          id="next2"
-          mat-flat-button
-          color="primary"
-          matStepperNext
-          type="button"
-        >
-          {{ t("next") }}
-        </button>
-      </div>
-    </mat-step>
-    <mat-step
-      [label]="t('steps.eoi.step3')"
-      [stepControl]="getFormGroup('fundingInformation')"
-      [errorMessage]="
-        t(onlyExceessFundingInvalid() ? 'excessFundingError' : 'stepError')
-      "
-    >
-      <drif-eoi-step-3
-        [fundingInformationForm]="getFormGroup('fundingInformation')"
-      ></drif-eoi-step-3>
-      <div class="drr-stepper-actions">
-        <button mat-stroked-button color="primary" matStepperPrevious>
-          {{ t("back") }}
-        </button>
-        <button
-          id="next3"
-          mat-flat-button
-          color="primary"
-          matStepperNext
-          type="button"
-        >
-          {{ t("next") }}
-        </button>
-      </div>
-    </mat-step>
-    <mat-step
-      [label]="t('steps.eoi.step4')"
-      [stepControl]="getFormGroup('locationInformation')"
-      [errorMessage]="t('stepError')"
-    >
-      <drif-eoi-step-4
-        [locationInformationForm]="getFormGroup('locationInformation')"
-      ></drif-eoi-step-4>
-      <div class="drr-stepper-actions">
-        <button mat-stroked-button color="primary" matStepperPrevious>
-          {{ t("back") }}
-        </button>
-        <button
-          id="next4"
-          mat-flat-button
-          color="primary"
-          matStepperNext
-          type="button"
-        >
-          {{ t("next") }}
-        </button>
-      </div>
-    </mat-step>
-    <mat-step
-      [label]="t('steps.eoi.step5')"
-      [stepControl]="getFormGroup('projectDetails')"
-      [errorMessage]="t('stepError')"
-    >
-      <drif-eoi-step-5
-        [projectDetailsForm]="getFormGroup('projectDetails')"
-      ></drif-eoi-step-5>
-      <div class="drr-stepper-actions">
-        <button mat-stroked-button color="primary" matStepperPrevious>
-          {{ t("back") }}
-        </button>
-        <button
-          id="next5"
-          mat-flat-button
-          color="primary"
-          matStepperNext
-          type="button"
-        >
-          {{ t("next") }}
-        </button>
-      </div>
-    </mat-step>
-    <mat-step
-      [label]="t('steps.eoi.step6')"
-      [stepControl]="getFormGroup('engagementPlan')"
-      [errorMessage]="t('stepError')"
-    >
-      <drif-eoi-step-6
-        [engagementPlanForm]="getFormGroup('engagementPlan')"
-      ></drif-eoi-step-6>
-      <div class="drr-stepper-actions">
-        <button mat-stroked-button color="primary" matStepperPrevious>
-          {{ t("back") }}
-        </button>
-        <button
-          id="next6"
-          mat-flat-button
-          color="primary"
-          matStepperNext
-          type="button"
-        >
-          {{ t("next") }}
-        </button>
-      </div>
-    </mat-step>
-    <mat-step
-      [label]="t('steps.eoi.step7')"
-      [stepControl]="getFormGroup('otherSupportingInformation')"
-      [errorMessage]="t('stepError')"
-    >
-      <drif-eoi-step-7
-        [otherSupportingInformationForm]="
-          getFormGroup('otherSupportingInformation')
+      <mat-step
+        [label]="t('steps.eoi.step1')"
+        [stepControl]="getFormGroup('proponentInformation')"
+        [errorMessage]="t('stepError')"
+      >
+        <drif-eoi-step-1
+          [proponentInformationForm]="getFormGroup('proponentInformation')"
+        ></drif-eoi-step-1>
+        <div class="drr-stepper-action">
+          <button
+            id="next1"
+            mat-flat-button
+            color="primary"
+            matStepperNext
+            type="button"
+          >
+            {{ t("next") }}
+          </button>
+        </div>
+      </mat-step>
+      <mat-step
+        [label]="t('steps.eoi.step2')"
+        [stepControl]="getFormGroup('projectInformation')"
+        [errorMessage]="t('stepError')"
+      >
+        <drif-eoi-step-2
+          [projectInformationForm]="getFormGroup('projectInformation')"
+        ></drif-eoi-step-2>
+        <div class="drr-stepper-actions">
+          <button mat-stroked-button color="primary" matStepperPrevious>
+            {{ t("back") }}
+          </button>
+          <button
+            id="next2"
+            mat-flat-button
+            color="primary"
+            matStepperNext
+            type="button"
+          >
+            {{ t("next") }}
+          </button>
+        </div>
+      </mat-step>
+      <mat-step
+        [label]="t('steps.eoi.step3')"
+        [stepControl]="getFormGroup('fundingInformation')"
+        [errorMessage]="
+          t(onlyExceessFundingInvalid() ? 'excessFundingError' : 'stepError')
         "
-      ></drif-eoi-step-7>
-      <div class="drr-stepper-actions">
-        <button mat-stroked-button color="primary" matStepperPrevious>
-          {{ t("back") }}
-        </button>
-        <button
-          id="next7"
-          mat-flat-button
-          color="primary"
-          matStepperNext
-          type="button"
-        >
-          {{ t("next") }}
-        </button>
-      </div>
-    </mat-step>
-    <mat-step
-      [label]="t('steps.eoi.step8')"
-      [stepControl]="getFormGroup('declaration')"
-      [errorMessage]="t('stepError')"
-    >
-      <drif-eoi-step-8
-        [eoiApplicationForm]="eoiApplicationForm"
-      ></drif-eoi-step-8>
-      <div class="drr-stepper-actions">
-        <button mat-stroked-button color="primary" matStepperPrevious>
-          {{ t("back") }}
-        </button>
-        <button
-          id="submit"
-          mat-flat-button
-          color="primary"
-          type="button"
-          (click)="submit()"
-        >
-          {{ t("submit") }}
-        </button>
-      </div>
-    </mat-step>
-  </mat-stepper>
-</div>
+      >
+        <drif-eoi-step-3
+          [fundingInformationForm]="getFormGroup('fundingInformation')"
+        ></drif-eoi-step-3>
+        <div class="drr-stepper-actions">
+          <button mat-stroked-button color="primary" matStepperPrevious>
+            {{ t("back") }}
+          </button>
+          <button
+            id="next3"
+            mat-flat-button
+            color="primary"
+            matStepperNext
+            type="button"
+          >
+            {{ t("next") }}
+          </button>
+        </div>
+      </mat-step>
+      <mat-step
+        [label]="t('steps.eoi.step4')"
+        [stepControl]="getFormGroup('locationInformation')"
+        [errorMessage]="t('stepError')"
+      >
+        <drif-eoi-step-4
+          [locationInformationForm]="getFormGroup('locationInformation')"
+        ></drif-eoi-step-4>
+        <div class="drr-stepper-actions">
+          <button mat-stroked-button color="primary" matStepperPrevious>
+            {{ t("back") }}
+          </button>
+          <button
+            id="next4"
+            mat-flat-button
+            color="primary"
+            matStepperNext
+            type="button"
+          >
+            {{ t("next") }}
+          </button>
+        </div>
+      </mat-step>
+      <mat-step
+        [label]="t('steps.eoi.step5')"
+        [stepControl]="getFormGroup('projectDetails')"
+        [errorMessage]="t('stepError')"
+      >
+        <drif-eoi-step-5
+          [projectDetailsForm]="getFormGroup('projectDetails')"
+        ></drif-eoi-step-5>
+        <div class="drr-stepper-actions">
+          <button mat-stroked-button color="primary" matStepperPrevious>
+            {{ t("back") }}
+          </button>
+          <button
+            id="next5"
+            mat-flat-button
+            color="primary"
+            matStepperNext
+            type="button"
+          >
+            {{ t("next") }}
+          </button>
+        </div>
+      </mat-step>
+      <mat-step
+        [label]="t('steps.eoi.step6')"
+        [stepControl]="getFormGroup('engagementPlan')"
+        [errorMessage]="t('stepError')"
+      >
+        <drif-eoi-step-6
+          [engagementPlanForm]="getFormGroup('engagementPlan')"
+        ></drif-eoi-step-6>
+        <div class="drr-stepper-actions">
+          <button mat-stroked-button color="primary" matStepperPrevious>
+            {{ t("back") }}
+          </button>
+          <button
+            id="next6"
+            mat-flat-button
+            color="primary"
+            matStepperNext
+            type="button"
+          >
+            {{ t("next") }}
+          </button>
+        </div>
+      </mat-step>
+      <mat-step
+        [label]="t('steps.eoi.step7')"
+        [stepControl]="getFormGroup('otherSupportingInformation')"
+        [errorMessage]="t('stepError')"
+      >
+        <drif-eoi-step-7
+          [otherSupportingInformationForm]="
+            getFormGroup('otherSupportingInformation')
+          "
+        ></drif-eoi-step-7>
+        <div class="drr-stepper-actions">
+          <button mat-stroked-button color="primary" matStepperPrevious>
+            {{ t("back") }}
+          </button>
+          <button
+            id="next7"
+            mat-flat-button
+            color="primary"
+            matStepperNext
+            type="button"
+          >
+            {{ t("next") }}
+          </button>
+        </div>
+      </mat-step>
+      <mat-step
+        [label]="t('steps.eoi.step8')"
+        [stepControl]="getFormGroup('declaration')"
+        [errorMessage]="t('stepError')"
+      >
+        <drif-eoi-step-8
+          [eoiApplicationForm]="eoiApplicationForm"
+        ></drif-eoi-step-8>
+        <div class="drr-stepper-actions">
+          <button mat-stroked-button color="primary" matStepperPrevious>
+            {{ t("back") }}
+          </button>
+          <button
+            id="submit"
+            mat-flat-button
+            color="primary"
+            type="button"
+            (click)="submit()"
+          >
+            {{ t("submit") }}
+          </button>
+        </div>
+      </mat-step>
+    </mat-stepper>
+  </mat-card-content>
+</mat-card>

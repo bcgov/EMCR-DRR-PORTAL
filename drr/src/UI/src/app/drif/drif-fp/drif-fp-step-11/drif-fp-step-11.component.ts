@@ -188,9 +188,8 @@ export class DrifFpStep11Component {
 
           // if it's a mandatory document add empty form again to enforce validation
           if (
-            (documentType === DocumentType.Resolution &&
-              this.attachmentsForm.get('haveResolution')?.value === true) ||
-            documentType === DocumentType.DetailedCostEstimate
+            documentType === DocumentType.Resolution &&
+            this.attachmentsForm.get('haveResolution')?.value === true
           ) {
             const attachmentForm = this.formBuilder.formGroup(AttachmentForm, {
               documentType,

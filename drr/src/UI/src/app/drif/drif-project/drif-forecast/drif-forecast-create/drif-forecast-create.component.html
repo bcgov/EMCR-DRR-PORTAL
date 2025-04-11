@@ -1,238 +1,246 @@
-<div class="app-stepper-container" *transloco="let t; read: 'forecast'">
-  <div class="app-stepper-header">
-    <div style="flex: 1">
-      <h5 style="font-size: 1.2rem; margin-bottom: 0.5rem">{{ reportName }}</h5>
-    </div>
-    <div>
-      <div class="header-actions">
-        <button mat-stroked-button color="primary" (click)="goBack()">
-          {{ "exitForm" | transloco }}
-        </button>
-        @if (stepper.selectedIndex !== 0) {
-          <button mat-flat-button color="primary" (click)="save()">
-            <mat-icon>save</mat-icon>
-            Save
+<mat-card class="app-stepper-container" *transloco="let t; read: 'forecast'">
+  <mat-card-header>
+    <mat-card-title-group class="app-stepper-header">
+      <mat-card-title>
+        {{ reportName }}
+      </mat-card-title>
+      <div>
+        <div class="header-actions">
+          <button mat-stroked-button color="primary" (click)="goBack()">
+            {{ "exitForm" | transloco }}
           </button>
-        }
-      </div>
-      <div class="save-info">
-        <div style="display: flex; flex-direction: row; gap: 1rem">
-          <i *ngIf="autoSaveCountdown <= 30 && autoSaveCountdown > 0"
-            >Saving in {{ autoSaveCountdown }}
-            {{ autoSaveCountdown === 1 ? "second" : "seconds" }}...
-          </i>
-          <i
-            *ngIf="
-              lastSavedAt && (autoSaveCountdown === 0 || autoSaveCountdown > 30)
-            "
-            >Saved at {{ lastSavedAt | date: "mediumTime" }}</i
-          >
+          @if (stepper.selectedIndex !== 0) {
+            <button mat-flat-button color="primary" (click)="save()">
+              <mat-icon>save</mat-icon>
+              Save
+            </button>
+          }
+        </div>
+        <div class="save-info">
+          <div style="display: flex; flex-direction: row; gap: 1rem">
+            <i *ngIf="autoSaveCountdown <= 30 && autoSaveCountdown > 0"
+              >Saving in {{ autoSaveCountdown }}
+              {{ autoSaveCountdown === 1 ? "second" : "seconds" }}...
+            </i>
+            <i
+              *ngIf="
+                lastSavedAt &&
+                (autoSaveCountdown === 0 || autoSaveCountdown > 30)
+              "
+              >Saved at {{ lastSavedAt | date: "mediumTime" }}</i
+            >
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-  <mat-stepper
-    class="app-stepper"
-    [linear]="false"
-    labelPosition="bottom"
-    (selectionChange)="stepperSelectionChange($event)"
-    [orientation]="stepperOrientation"
-    #stepper
-  >
-    <mat-step [label]="t('step1')">
-      <div>
-        <p>
-          This form captures your year-over-year budget forecast for the
-          project.
-        </p>
-        <p>
-          If this is your first time completing the forecast, you will be able
-          to update the original forecast from your full proposal. Otherwise,
-          you will update the forecast from your last forecast report.
-        </p>
-        <p>
-          You will also need to enter your total claim amount for this reporting
-          period. Because of this, you may want to complete your claim first.
-        </p>
-      </div>
-      <div class="drr-stepper-action">
-        <button mat-flat-button color="primary" matStepperNext type="button">
-          {{ "next" | transloco }}
-        </button>
-      </div>
-    </mat-step>
-    <mat-step [label]="t('step2')" [stepControl]="budgetForecastForm">
-      <div style="display: flex; flex-direction: column; gap: 1rem">
-        <!-- TODO: hide columns, disable inputs -->
-        <table class="forecast-table">
-          <tr>
-            <th>Fiscal Year</th>
-            <th>Forecast</th>
-            <th>Total Projected Expenditure <br />for the fiscal year*</th>
-            <!-- <th>Claims Paid to date</th>
+    </mat-card-title-group>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-stepper
+      class="app-stepper"
+      [linear]="false"
+      labelPosition="bottom"
+      (selectionChange)="stepperSelectionChange($event)"
+      [orientation]="stepperOrientation"
+      #stepper
+    >
+      <mat-step [label]="t('step1')">
+        <div>
+          <p>
+            This form captures your year-over-year budget forecast for the
+            project.
+          </p>
+          <p>
+            If this is your first time completing the forecast, you will be able
+            to update the original forecast from your full proposal. Otherwise,
+            you will update the forecast from your last forecast report.
+          </p>
+          <p>
+            You will also need to enter your total claim amount for this
+            reporting period. Because of this, you may want to complete your
+            claim first.
+          </p>
+        </div>
+        <div class="drr-stepper-action">
+          <button mat-flat-button color="primary" matStepperNext type="button">
+            {{ "next" | transloco }}
+          </button>
+        </div>
+      </mat-step>
+      <mat-step [label]="t('step2')" [stepControl]="budgetForecastForm">
+        <div style="display: flex; flex-direction: column; gap: 1rem">
+          <!-- TODO: hide columns, disable inputs -->
+          <table class="forecast-table">
+            <tr>
+              <th>Fiscal Year</th>
+              <th>Forecast</th>
+              <th>Total Projected Expenditure <br />for the fiscal year*</th>
+              <!-- <th>Claims Paid to date</th>
             <th>Claims Submitted Not Paid</th> -->
-            <th>Claims on this report*</th>
-            <!-- <th>
+              <th>Claims on this report*</th>
+              <!-- <th>
               Remaining Claims <br />
               for the fiscal year
             </th> -->
-          </tr>
-          <tr
-            *ngFor="
-              let yearForecast of getYearForecastFormArray().controls;
-              let i = index
-            "
-          >
-            <td>{{ yearForecast.get("fiscalYear")?.value }}</td>
-            <td>
-              {{ yearForecast.get("forecastAmount")?.value | currency }}
-            </td>
-            <td style="padding-top: 1rem">
-              <drr-currency-input
-                [rxFormControl]="yearForecast.get('totalProjectedExpenditure')"
-              ></drr-currency-input>
-            </td>
-            <!-- <td>
+            </tr>
+            <tr
+              *ngFor="
+                let yearForecast of getYearForecastFormArray().controls;
+                let i = index
+              "
+            >
+              <td>{{ yearForecast.get("fiscalYear")?.value }}</td>
+              <td>
+                {{ yearForecast.get("forecastAmount")?.value | currency }}
+              </td>
+              <td style="padding-top: 1rem">
+                <drr-currency-input
+                  [rxFormControl]="
+                    yearForecast.get('totalProjectedExpenditure')
+                  "
+                ></drr-currency-input>
+              </td>
+              <!-- <td>
               {{ yearForecast.get("claimsPaidToDate")?.value | currency }}
             </td>
             <td>
               {{ yearForecast.get("claimsSubmittedNotPaid")?.value | currency }}
             </td> -->
-            <td style="padding-top: 1rem">
-              <drr-currency-input
-                [rxFormControl]="yearForecast.get('claimsOnThisReport')"
-              ></drr-currency-input>
-            </td>
-            <!-- <td>
+              <td style="padding-top: 1rem">
+                <drr-currency-input
+                  [rxFormControl]="yearForecast.get('claimsOnThisReport')"
+                ></drr-currency-input>
+              </td>
+              <!-- <td>
               {{ yearForecast.get("remainingClaims")?.value | currency }}
             </td> -->
-          </tr>
-        </table>
+            </tr>
+          </table>
 
-        <div class="total-conrol">
-          <mat-label class="drr-label">
-            {{ t("totalProjectedExpenditureLabel") }}
-          </mat-label>
-          <drr-currency-input
-            [label]="t('totalProjectedExpenditure')"
-            [rxFormControl]="
-              budgetForecastForm.get('totalProjectedExpenditure')
-            "
-          ></drr-currency-input>
-        </div>
-
-        <div class="total-conrol">
-          <mat-label class="drr-label">
-            {{ t("originalForecast") }}
-          </mat-label>
-          <drr-currency-input
-            [label]="t('originalForecast')"
-            [rxFormControl]="budgetForecastForm.get('originalForecast')"
-          ></drr-currency-input>
-        </div>
-        <div class="total-conrol">
-          <mat-label class="drr-label">
-            {{ t("variance") }}
-          </mat-label>
-          <drr-currency-input
-            [label]="t('variance')"
-            [rxFormControl]="budgetForecastForm.get('variance')"
-            [allowNegativeNumbers]="true"
-          ></drr-currency-input>
-        </div>
-        @if (budgetForecastForm.get("variance")?.value != 0) {
-          <drr-textarea
-            [label]="t('varianceComment')"
-            [rxFormControl]="budgetForecastForm.get('varianceComment')"
-            [maxlength]="2000"
-          ></drr-textarea>
-        }
-      </div>
-      <div class="drr-stepper-actions">
-        <button mat-stroked-button color="primary" matStepperPrevious>
-          {{ "back" | transloco }}
-        </button>
-        <button mat-flat-button color="primary" matStepperNext type="button">
-          {{ "next" | transloco }}
-        </button>
-      </div>
-    </mat-step>
-    <mat-step
-      [label]="t('step3')"
-      [stepControl]="attachmentsForm"
-      [errorMessage]="'stepError' | transloco"
-    >
-      <div class="attachments-container">
-        <drr-attachment
-          *ngFor="
-            let attachmentControl of attachmentsArray.controls;
-            let i = index
-          "
-          [title]="i == 0 ? t('attachments') : ''"
-          [attachmentForm]="attachmentControl"
-          (removeFile)="removeFile($event)"
-          (downloadFile)="downloadFile($event)"
-        ></drr-attachment>
-
-        <div style="display: flex; flex-direction: column; gap: 1rem">
-          <div>
+          <div class="total-conrol">
             <mat-label class="drr-label">
-              {{ t("attachmentUploadText") }}
+              {{ t("totalProjectedExpenditureLabel") }}
             </mat-label>
+            <drr-currency-input
+              [label]="t('totalProjectedExpenditure')"
+              [rxFormControl]="
+                budgetForecastForm.get('totalProjectedExpenditure')
+              "
+            ></drr-currency-input>
           </div>
 
-          <drr-file-upload
-            (filesSelected)="uploadFiles($event)"
-            [attachButtonLabel]="t('uploadAttachment')"
-          ></drr-file-upload>
+          <div class="total-conrol">
+            <mat-label class="drr-label">
+              {{ t("originalForecast") }}
+            </mat-label>
+            <drr-currency-input
+              [label]="t('originalForecast')"
+              [rxFormControl]="budgetForecastForm.get('originalForecast')"
+            ></drr-currency-input>
+          </div>
+          <div class="total-conrol">
+            <mat-label class="drr-label">
+              {{ t("variance") }}
+            </mat-label>
+            <drr-currency-input
+              [label]="t('variance')"
+              [rxFormControl]="budgetForecastForm.get('variance')"
+              [allowNegativeNumbers]="true"
+            ></drr-currency-input>
+          </div>
+          @if (budgetForecastForm.get("variance")?.value != 0) {
+            <drr-textarea
+              [label]="t('varianceComment')"
+              [rxFormControl]="budgetForecastForm.get('varianceComment')"
+              [maxlength]="2000"
+            ></drr-textarea>
+          }
         </div>
-      </div>
-      <div class="drr-stepper-actions">
-        <button mat-stroked-button color="primary" matStepperPrevious>
-          Back
-        </button>
-        <button
-          id="next3"
-          mat-flat-button
-          color="primary"
-          matStepperNext
-          type="button"
-        >
-          Next
-        </button>
-      </div></mat-step
-    >
-    <mat-step [label]="t('step4')" [stepControl]="declarationForm">
-      <div style="display: flex; flex-direction: column; gap: 1rem">
-        <drif-forecast-summary
-          [forecastForm]="forecastForm"
-          [isReadOnlyView]="false"
-        >
-        </drif-forecast-summary>
+        <div class="drr-stepper-actions">
+          <button mat-stroked-button color="primary" matStepperPrevious>
+            {{ "back" | transloco }}
+          </button>
+          <button mat-flat-button color="primary" matStepperNext type="button">
+            {{ "next" | transloco }}
+          </button>
+        </div>
+      </mat-step>
+      <mat-step
+        [label]="t('step3')"
+        [stepControl]="attachmentsForm"
+        [errorMessage]="'stepError' | transloco"
+      >
+        <div class="attachments-container">
+          <drr-attachment
+            *ngFor="
+              let attachmentControl of attachmentsArray.controls;
+              let i = index
+            "
+            [title]="i == 0 ? t('attachments') : ''"
+            [attachmentForm]="attachmentControl"
+            (removeFile)="removeFile($event)"
+            (downloadFile)="downloadFile($event)"
+          ></drr-attachment>
 
-        <drr-auth-rep
-          [authorizedRepresentativeForm]="authorizedRepresentativeForm"
-        ></drr-auth-rep>
+          <div style="display: flex; flex-direction: column; gap: 1rem">
+            <div>
+              <mat-label class="drr-label">
+                {{ t("attachmentUploadText") }}
+              </mat-label>
+            </div>
 
-        <drr-declaration
-          [declarationForm]="declarationForm"
-          [authorizedRepresentativeText]="authorizedRepresentativeText"
-          [accuracyOfInformationText]="accuracyOfInformationText"
-        ></drr-declaration>
-      </div>
-      <div class="drr-stepper-actions">
-        <button mat-stroked-button color="primary" matStepperPrevious>
-          {{ "back" | transloco }}
-        </button>
-        <button
-          mat-flat-button
-          color="primary"
-          (click)="submit()"
-          type="button"
-        >
-          {{ "submit" | transloco }}
-        </button>
-      </div>
-    </mat-step>
-  </mat-stepper>
-</div>
+            <drr-file-upload
+              (filesSelected)="uploadFiles($event)"
+              [attachButtonLabel]="t('uploadAttachment')"
+            ></drr-file-upload>
+          </div>
+        </div>
+        <div class="drr-stepper-actions">
+          <button mat-stroked-button color="primary" matStepperPrevious>
+            Back
+          </button>
+          <button
+            id="next3"
+            mat-flat-button
+            color="primary"
+            matStepperNext
+            type="button"
+          >
+            Next
+          </button>
+        </div></mat-step
+      >
+      <mat-step [label]="t('step4')" [stepControl]="declarationForm">
+        <div style="display: flex; flex-direction: column; gap: 1rem">
+          <drif-forecast-summary
+            [forecastForm]="forecastForm"
+            [isReadOnlyView]="false"
+          >
+          </drif-forecast-summary>
+
+          <drr-auth-rep
+            [authorizedRepresentativeForm]="authorizedRepresentativeForm"
+          ></drr-auth-rep>
+
+          <drr-declaration
+            [declarationForm]="declarationForm"
+            [authorizedRepresentativeText]="authorizedRepresentativeText"
+            [accuracyOfInformationText]="accuracyOfInformationText"
+          ></drr-declaration>
+        </div>
+        <div class="drr-stepper-actions">
+          <button mat-stroked-button color="primary" matStepperPrevious>
+            {{ "back" | transloco }}
+          </button>
+          <button
+            mat-flat-button
+            color="primary"
+            (click)="submit()"
+            type="button"
+          >
+            {{ "submit" | transloco }}
+          </button>
+        </div>
+      </mat-step>
+    </mat-stepper>
+  </mat-card-content>
+</mat-card>

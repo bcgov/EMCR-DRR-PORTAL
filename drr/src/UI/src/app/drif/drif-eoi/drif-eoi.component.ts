@@ -40,6 +40,7 @@ import {
 } from '../../../model';
 import { ProfileStore } from '../../store/profile.store';
 
+import { MatCardModule } from '@angular/material/card';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { ROUTE_PATH } from '../../app.routes';
@@ -77,6 +78,7 @@ import { DrifEoiStep8Component } from './drif-eoi-step-8/drif-eoi-step-8.compone
     MatSelectModule,
     MatDatepickerModule,
     MatCheckboxModule,
+    MatCardModule,
     DrifEoiStep1Component,
     DrifEoiStep2Component,
     DrifEoiStep3Component,

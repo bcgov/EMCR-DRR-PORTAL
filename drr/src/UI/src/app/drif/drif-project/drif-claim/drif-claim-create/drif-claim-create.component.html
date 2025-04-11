@@ -1,524 +1,569 @@
-<div class="app-stepper-container" *transloco="let t; read: 'claim'">
-  <div class="app-stepper-header">
-    <div style="flex: 1">
-      <h5 style="font-size: 1.2rem; margin-bottom: 0.5rem">{{ reportName }}</h5>
-    </div>
-    <div>
-      <div class="header-actions">
-        <button mat-stroked-button color="primary" (click)="goBack()">
-          Exit Form
-        </button>
-        @if (stepper.selectedIndex !== 0) {
-          <button mat-flat-button color="primary" (click)="save()">
-            <mat-icon>save</mat-icon>
-            Save
-          </button>
-        }
-      </div>
-      <div class="save-info">
-        <div style="display: flex; flex-direction: row; gap: 1rem">
-          <i *ngIf="autoSaveCountdown <= 30 && autoSaveCountdown > 0"
-            >Saving in {{ autoSaveCountdown }}
-            {{ autoSaveCountdown === 1 ? "second" : "seconds" }}...
-          </i>
-          <i
-            *ngIf="
-              lastSavedAt && (autoSaveCountdown === 0 || autoSaveCountdown > 30)
-            "
-            >Saved at {{ lastSavedAt | date: "mediumTime" }}</i
-          >
-        </div>
-      </div>
-    </div>
-  </div>
-  <mat-stepper
-    class="app-stepper"
-    [linear]="false"
-    labelPosition="bottom"
-    (selectionChange)="stepperSelectionChange($event)"
-    [orientation]="stepperOrientation"
-    #stepper
-  >
-    <mat-step [label]="t('step1')">
+<mat-card class="app-stepper-container" *transloco="let t; read: 'claim'">
+  <mat-card-header>
+    <mat-card-title-group class="app-stepper-header">
+      <mat-card-title> {{ reportName }} </mat-card-title>
       <div>
-        <h5>General Instructions</h5>
-        <p>
-          This form captures the expenses you are claiming for the current
-          reporting period. You will need to attach all invoices and your proofs
-          of payment.
-        </p>
-        <p>
-          You will be notified if your total expenses put you over any unmet
-          payment conditions. In those cases, you will be able to choose between
-          updating your claim to ensure it remains under the maximum payment, or
-          submitting the claim so that it can be paid once the condition is met.
-        </p>
-        <h5>Understanding the Dollar Values</h5>
-        <p>
-          You will be asked to enter the following dollar values for each
-          invoice:
-        </p>
-        <ol>
-          <li>
-            Gross Invoice Amount - enter the total amount for the invoice,
-            including taxes, but deduct any unpaid holdbacks.
-          </li>
-          <li>
-            Proponent claim amount - enter the total amount you are claiming
-            under the DRIF program. This may be less than the gross amount if
-            you are only claiming a portion of this expense under the DRIF
-            program. For example, you might pay for 50% of this invoice under
-            DRIF, and the other 50% from some other source. Regardless, this
-            amount can never exceed the gross invoice amount minus the GST.
-          </li>
-          <li>
-            Total PST Paid - enter the total PST paid on the invoice. If you are
-            only claiming a portion of the gross amount, then reduce the PST
-            accordingly. For example, if you claim 50% of the gross, then enter
-            50% of the PST paid.
-          </li>
-          <li>
-            Total GSP Paid - enter the total GST paid on the invoice. If you are
-            only claiming a portion of the gross amount, then reduce the PST
-            accordingly. For example, if you claim 50% of the gross, then enter
-            50% of the GST paid.
-          </li>
-          <li>
-            Tax Rebate - enter the total taxes you can recover from the Federal
-            government.
-          </li>
-        </ol>
-      </div>
-      <div class="drr-stepper-action">
-        <button mat-flat-button color="primary" matStepperNext type="button">
-          Next
-        </button>
-      </div>
-    </mat-step>
-    <mat-step
-      [label]="t('step2')"
-      [stepControl]="claimForm?.get('expenditure')!"
-      [errorMessage]="'stepError' | transloco"
-    >
-      @if (claimForm) {
-        <div
-          style="
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            padding: 1rem;
-          "
-        >
-          <mat-label class="drr-label">{{
-            t("haveClaimExpensesTitle")
-          }}</mat-label>
-          <drr-radio-button
-            [label]="t('haveClaimExpenses')"
-            [rxFormControl]="claimForm.get('expenditure.haveClaimExpenses')"
-          ></drr-radio-button>
-          @if (hasClaimIntentIssue()) {
-            <drr-alert [type]="'warning'">
-              <p>
-                {{ t("claimIntentIssueWarningMessage") }}
-              </p>
-            </drr-alert>
-          }
-          @if (noClaimsIssue()) {
-            <i>
-              {{ t("noClaimsIssueWarningMessage") }}
-            </i>
-          }
-        </div>
-        <div
-          style="
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            justify-content: flex-start;
-          "
-        >
-          <div
-            *ngFor="
-              let invoice of getInvoiceFormArray()?.controls;
-              let i = index
-            "
-          >
-            <mat-card>
-              <mat-card-header>
-                <mat-card-subtitle> Invoice {{ i + 1 }} </mat-card-subtitle>
-              </mat-card-header>
-              <mat-card-content>
-                <div class="invoice-container">
-                  <div style="display: flex; gap: 1rem; align-items: flex-end">
-                    <drr-input
-                      style="width: 30rem"
-                      [label]="t('invoiceNumber')"
-                      [rxFormControl]="invoice.get('invoiceNumber')"
-                      [maxlength]="200"
-                    ></drr-input>
-                    <drr-datepicker
-                      [label]="t('invoiceDate')"
-                      [rxFormControl]="invoice.get('date')"
-                      [max]="today"
-                    ></drr-datepicker>
-                    <drr-datepicker
-                      [label]="t('workStartDate')"
-                      [rxFormControl]="invoice.get('workStartDate')"
-                      [min]="plannedStartDate"
-                      [max]="invoice.get('workEndDate')?.value"
-                    ></drr-datepicker>
-                    <drr-datepicker
-                      [label]="t('workEndDate')"
-                      [rxFormControl]="invoice.get('workEndDate')"
-                      [min]="invoice.get('workStartDate')?.value"
-                      [max]="plannedEndDate"
-                    ></drr-datepicker>
-                    <drr-datepicker
-                      [label]="t('paymentDate')"
-                      [rxFormControl]="invoice.get('paymentDate')"
-                      [min]="invoice.get('date')?.value"
-                    ></drr-datepicker>
-                  </div>
-                  <div style="display: flex; gap: 1rem">
-                    <drr-input
-                      class="drr-single-input"
-                      [label]="t('supplierName')"
-                      [rxFormControl]="invoice.get('supplierName')"
-                      [maxlength]="100"
-                    ></drr-input>
-                    <drr-select
-                      class="drr-single-input"
-                      [label]="t('costCategory')"
-                      [rxFormControl]="invoice.get('costCategory')"
-                      [options]="costCategoryOptions"
-                    ></drr-select>
-                  </div>
-                  <drr-textarea
-                    [label]="t('description')"
-                    [rxFormControl]="invoice.get('description')"
-                    [maxlength]="250"
-                  ></drr-textarea>
-                  <div
-                    style="
-                      display: flex;
-                      gap: 1rem;
-                      margin-top: 1rem;
-                      align-items: flex-end;
-                    "
-                  >
-                    <drr-currency-input
-                      [label]="t('grossAmount')"
-                      [rxFormControl]="invoice.get('grossAmount')"
-                    ></drr-currency-input>
-                    <drr-currency-input
-                      [label]="t('taxRebate')"
-                      [rxFormControl]="invoice.get('taxRebate')"
-                      [max]="invoice.get('grossAmount')?.value"
-                      [maxValueCustomErrorMessage]="t('taxRebateError')"
-                    ></drr-currency-input>
-                    <drr-currency-input
-                      [label]="t('totalPST')"
-                      [rxFormControl]="invoice.get('totalPST')"
-                      [max]="invoice.get('grossAmount')?.value"
-                      [maxValueCustomErrorMessage]="t('totalPSTError')"
-                    ></drr-currency-input>
-                    <drr-currency-input
-                      [label]="t('totalGST')"
-                      [rxFormControl]="invoice.get('totalGST')"
-                      [max]="invoice.get('grossAmount')?.value"
-                      [maxValueCustomErrorMessage]="t('totalGSTError')"
-                    ></drr-currency-input>
-                    <drr-currency-input
-                      class="drr-single-input"
-                      [label]="t('claimAmount')"
-                      [rxFormControl]="invoice.get('claimAmount')"
-                      [max]="invoice.get('grossAmount')?.value"
-                      [maxValueCustomErrorMessage]="t('claimAmountError')"
-                      [value]="invoice.get('grossAmount')?.value"
-                    ></drr-currency-input>
-                  </div>
-                  <div
-                    style="
-                      display: flex;
-                      justify-content: space-between;
-                      gap: 1rem;
-                    "
-                  >
-                    <div class="invoice-file-upload">
-                      <mat-label>{{ t("invoice") }} *</mat-label>
-                      @if (getInvoiceDocument(invoice)?.get("id")?.value) {
-                        <drr-input
-                          [label]="t('fileName')"
-                          [rxFormControl]="
-                            getInvoiceDocument(invoice)?.get('name')
-                          "
-                          [disabled]="true"
-                        >
-                        </drr-input>
-                        <div style="display: flex; gap: 1rem">
-                          <button
-                            mat-stroked-button
-                            color="primary"
-                            (click)="
-                              downloadFile(
-                                getInvoiceDocument(invoice)?.get('id')?.value
-                              )
-                            "
-                            type="button"
-                          >
-                            Download
-                          </button>
-                          <button
-                            mat-stroked-button
-                            color="warn"
-                            (click)="
-                              removeFile(
-                                getInvoiceDocument(invoice)?.get('id')?.value,
-                                invoice
-                              )
-                            "
-                            type="button"
-                          >
-                            Remove
-                          </button>
-                        </div>
-                      } @else {
-                        <mat-hint
-                          style="color: red"
-                          *ngIf="showInvoiceDocumentRequiredError(invoice)"
-                          >Required</mat-hint
-                        >
-                        <drr-file-upload
-                          (filesSelected)="
-                            uploadFiles($event, invoice, invoiceDocumentType)
-                          "
-                          [attachButtonLabel]="t('uploadInvoice')"
-                          [multiple]="false"
-                        ></drr-file-upload>
-                      }
-                    </div>
-                    <div class="invoice-file-upload">
-                      <mat-label>{{ t("proofOfPayment") }} *</mat-label>
-                      @if (
-                        getInvoiceProofOfPayment(invoice)?.get("id")?.value
-                      ) {
-                        <drr-input
-                          [label]="t('fileName')"
-                          [rxFormControl]="
-                            getInvoiceProofOfPayment(invoice)?.get('name')
-                          "
-                          [disabled]="true"
-                        >
-                        </drr-input>
-                        <div style="display: flex; gap: 1rem">
-                          <button
-                            mat-stroked-button
-                            color="primary"
-                            (click)="
-                              downloadFile(
-                                getInvoiceProofOfPayment(invoice)?.get('id')
-                                  ?.value
-                              )
-                            "
-                            type="button"
-                          >
-                            Download
-                          </button>
-                          <button
-                            mat-stroked-button
-                            color="warn"
-                            (click)="
-                              removeFile(
-                                getInvoiceProofOfPayment(invoice)?.get('id')
-                                  ?.value,
-                                invoice
-                              )
-                            "
-                            type="button"
-                          >
-                            Remove
-                          </button>
-                        </div>
-                      } @else {
-                        <mat-hint
-                          style="color: red"
-                          *ngIf="showProofOfPaymentRequiredError(invoice)"
-                          >Required</mat-hint
-                        >
-
-                        <drr-file-upload
-                          (filesSelected)="
-                            uploadFiles(
-                              $event,
-                              invoice,
-                              proofOfPaymentDocumentType
-                            )
-                          "
-                          [attachButtonLabel]="t('uploadProofOfPayment')"
-                          [multiple]="false"
-                        ></drr-file-upload>
-                      }
-                    </div>
-                  </div>
-                </div>
-              </mat-card-content>
-              <mat-card-actions [align]="'end'">
-                <button
-                  mat-stroked-button
-                  color="warn"
-                  (click)="removeInvoice(invoice.get('id')?.value)"
-                  type="button"
-                >
-                  Delete
-                </button>
-              </mat-card-actions>
-            </mat-card>
-          </div>
-          @if (claimForm.get("expenditure.haveClaimExpenses")?.value === true) {
-            <button
-              style="align-self: flex-start"
-              (click)="addInvoice()"
-              mat-stroked-button
-              type="button"
-              color="primary"
-            >
-              <mat-icon>add</mat-icon>
-              Add Invoice
+        <div class="header-actions">
+          <button mat-stroked-button color="primary" (click)="goBack()">
+            Exit Form
+          </button>
+          @if (stepper.selectedIndex !== 0) {
+            <button mat-flat-button color="primary" (click)="save()">
+              <mat-icon>save</mat-icon>
+              Save
             </button>
           }
-          <mat-label class="drr-label" style="margin-top: 2rem">{{
-            t("claimComment")
-          }}</mat-label>
-          <mat-label>{{ t("claimCommentLabel") }}</mat-label>
-          <drr-textarea
-            [label]="t('claimComment')"
-            [rxFormControl]="claimForm.get('expenditure')?.get('claimComment')"
-            [maxlength]="500"
-          >
-          </drr-textarea>
-
-          <mat-divider style="margin: 2rem 0"></mat-divider>
-
-          <div>
-            <h5>Summary of Current Claim</h5>
-            <table class="claim-summary-table">
-              <tr>
-                <td>Earliest Invoice</td>
-                <td>{{ getEarliestInvoiceDate() | date: "yyyy-MM-dd" }}</td>
-              </tr>
-              <tr>
-                <td>Latest Invoice</td>
-                <td>{{ getLatestInvoiceDate() | date: "yyyy-MM-dd" }}</td>
-              </tr>
-              <tr>
-                <td>Earliest Goods and Services Work Start Date</td>
-                <td>
-                  {{
-                    getEarliestGoodsAndServicesWorkStartDate()
-                      | date: "yyyy-MM-dd"
-                  }}
-                </td>
-              </tr>
-              <tr>
-                <td>Latest Goods and Services Work End Date</td>
-                <td>
-                  {{
-                    getLatestGoodsAndServicesWorkEndDate() | date: "yyyy-MM-dd"
-                  }}
-                </td>
-              </tr>
-              <tr>
-                <td>Number of Invoices</td>
-                <td>{{ getNumberOfInvoices() }}</td>
-              </tr>
-              <tr>
-                <td>Total Amount of this Claim</td>
-                <td>{{ getTotalClaimAmount() | currency }}</td>
-              </tr>
-            </table>
-          </div>
-
-          <div>
-            <h5>Summary of Costs for All Claims</h5>
-            <mat-table
-              style="margin-top: 1rem"
-              [dataSource]="claimSummaryItemsDataSource"
-              class="mat-elevation-z8"
+        </div>
+        <div class="save-info">
+          <div style="display: flex; flex-direction: row; gap: 1rem">
+            <i *ngIf="autoSaveCountdown <= 30 && autoSaveCountdown > 0"
+              >Saving in {{ autoSaveCountdown }}
+              {{ autoSaveCountdown === 1 ? "second" : "seconds" }}...
+            </i>
+            <i
+              *ngIf="
+                lastSavedAt &&
+                (autoSaveCountdown === 0 || autoSaveCountdown > 30)
+              "
+              >Saved at {{ lastSavedAt | date: "mediumTime" }}</i
             >
-              <ng-container matColumnDef="costCategory">
-                <mat-header-cell *matHeaderCellDef>
-                  Cost Category
-                </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                  {{ element.costCategory | transloco }}
-                </mat-cell>
-              </ng-container>
-
-              <ng-container matColumnDef="currentClaim">
-                <mat-header-cell *matHeaderCellDef>
-                  Total for this Claim
-                </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                  {{ element.currentClaim | currency }}
-                </mat-cell>
-              </ng-container>
-
-              <ng-container matColumnDef="totalForProjectWithCurrentClaim">
-                <mat-header-cell *matHeaderCellDef>
-                  Total Claimed for Project <br />
-                  (includes value of this Claim)
-                </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                  {{ element.totalForProjectWithCurrentClaim | currency }}
-                </mat-cell>
-              </ng-container>
-
-              <ng-container matColumnDef="originalEstimate">
-                <mat-header-cell *matHeaderCellDef>
-                  Original Estimate
-                </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                  {{ element.originalEstimate | currency }}
-                </mat-cell>
-              </ng-container>
-
-              <mat-header-row
-                *matHeaderRowDef="displayedColumns"
-              ></mat-header-row>
-              <mat-row
-                *matRowDef="let row; columns: displayedColumns"
-              ></mat-row>
-            </mat-table>
           </div>
-
+        </div>
+      </div>
+    </mat-card-title-group>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-stepper
+      class="app-stepper"
+      [linear]="false"
+      labelPosition="bottom"
+      (selectionChange)="stepperSelectionChange($event)"
+      [orientation]="stepperOrientation"
+      #stepper
+    >
+      <mat-step [label]="t('step1')">
+        <div>
+          <h5>General Instructions</h5>
+          <p>
+            This form captures the expenses you are claiming for the current
+            reporting period. You will need to attach all invoices and your
+            proofs of payment.
+          </p>
+          <p>
+            You will be notified if your total expenses put you over any unmet
+            payment conditions. In those cases, you will be able to choose
+            between updating your claim to ensure it remains under the maximum
+            payment, or submitting the claim so that it can be paid once the
+            condition is met.
+          </p>
+          <h5>Understanding the Dollar Values</h5>
+          <p>
+            You will be asked to enter the following dollar values for each
+            invoice:
+          </p>
+          <ol>
+            <li>
+              Gross Invoice Amount - enter the total amount for the invoice,
+              including taxes, but deduct any unpaid holdbacks.
+            </li>
+            <li>
+              Proponent claim amount - enter the total amount you are claiming
+              under the DRIF program. This may be less than the gross amount if
+              you are only claiming a portion of this expense under the DRIF
+              program. For example, you might pay for 50% of this invoice under
+              DRIF, and the other 50% from some other source. Regardless, this
+              amount can never exceed the gross invoice amount minus the GST.
+            </li>
+            <li>
+              Total PST Paid - enter the total PST paid on the invoice. If you
+              are only claiming a portion of the gross amount, then reduce the
+              PST accordingly. For example, if you claim 50% of the gross, then
+              enter 50% of the PST paid.
+            </li>
+            <li>
+              Total GSP Paid - enter the total GST paid on the invoice. If you
+              are only claiming a portion of the gross amount, then reduce the
+              PST accordingly. For example, if you claim 50% of the gross, then
+              enter 50% of the GST paid.
+            </li>
+            <li>
+              Tax Rebate - enter the total taxes you can recover from the
+              Federal government.
+            </li>
+          </ol>
+        </div>
+        <div class="drr-stepper-action">
+          <button mat-flat-button color="primary" matStepperNext type="button">
+            Next
+          </button>
+        </div>
+      </mat-step>
+      <mat-step
+        [label]="t('step2')"
+        [stepControl]="claimForm?.get('expenditure')!"
+        [errorMessage]="'stepError' | transloco"
+      >
+        @if (claimForm) {
           <div
             style="
               display: flex;
-              justify-content: space-between;
+              flex-direction: column;
               gap: 1rem;
-              margin-top: 2rem;
+              padding: 1rem;
             "
           >
-            <drr-currency-input
-              style="width: 30rem"
-              [label]="t('totalClaimed')"
-              [rxFormControl]="
-                claimForm.get('expenditure')?.get('totalClaimed')
-              "
-              [disabled]="true"
-            ></drr-currency-input>
-
-            <drr-currency-input
-              style="width: 30rem"
-              [label]="t('totalProjectAmount')"
-              [rxFormControl]="
-                claimForm.get('expenditure')?.get('totalProjectAmount')
-              "
-              [disabled]="true"
-            ></drr-currency-input>
+            <mat-label class="drr-label">{{
+              t("haveClaimExpensesTitle")
+            }}</mat-label>
+            <drr-radio-button
+              [label]="t('haveClaimExpenses')"
+              [rxFormControl]="claimForm.get('expenditure.haveClaimExpenses')"
+            ></drr-radio-button>
+            @if (hasClaimIntentIssue()) {
+              <drr-alert [type]="'warning'">
+                <p>
+                  {{ t("claimIntentIssueWarningMessage") }}
+                </p>
+              </drr-alert>
+            }
+            @if (noClaimsIssue()) {
+              <i>
+                {{ t("noClaimsIssueWarningMessage") }}
+              </i>
+            }
           </div>
+          <div
+            style="
+              display: flex;
+              flex-direction: column;
+              gap: 1rem;
+              justify-content: flex-start;
+            "
+          >
+            <div
+              *ngFor="
+                let invoice of getInvoiceFormArray()?.controls;
+                let i = index
+              "
+            >
+              <mat-card>
+                <mat-card-header>
+                  <mat-card-subtitle> Invoice {{ i + 1 }} </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="invoice-container">
+                    <div
+                      style="display: flex; gap: 1rem; align-items: flex-end"
+                    >
+                      <drr-input
+                        style="width: 30rem"
+                        [label]="t('invoiceNumber')"
+                        [rxFormControl]="invoice.get('invoiceNumber')"
+                        [maxlength]="200"
+                      ></drr-input>
+                      <drr-datepicker
+                        [label]="t('invoiceDate')"
+                        [rxFormControl]="invoice.get('date')"
+                        [max]="today"
+                      ></drr-datepicker>
+                      <drr-datepicker
+                        [label]="t('workStartDate')"
+                        [rxFormControl]="invoice.get('workStartDate')"
+                        [min]="plannedStartDate"
+                        [max]="invoice.get('workEndDate')?.value"
+                      ></drr-datepicker>
+                      <drr-datepicker
+                        [label]="t('workEndDate')"
+                        [rxFormControl]="invoice.get('workEndDate')"
+                        [min]="invoice.get('workStartDate')?.value"
+                        [max]="plannedEndDate"
+                      ></drr-datepicker>
+                      <drr-datepicker
+                        [label]="t('paymentDate')"
+                        [rxFormControl]="invoice.get('paymentDate')"
+                        [min]="invoice.get('date')?.value"
+                      ></drr-datepicker>
+                    </div>
+                    <div style="display: flex; gap: 1rem">
+                      <drr-input
+                        class="drr-single-input"
+                        [label]="t('supplierName')"
+                        [rxFormControl]="invoice.get('supplierName')"
+                        [maxlength]="100"
+                      ></drr-input>
+                      <drr-select
+                        class="drr-single-input"
+                        [label]="t('costCategory')"
+                        [rxFormControl]="invoice.get('costCategory')"
+                        [options]="costCategoryOptions"
+                      ></drr-select>
+                    </div>
+                    <drr-textarea
+                      [label]="t('description')"
+                      [rxFormControl]="invoice.get('description')"
+                      [maxlength]="250"
+                    ></drr-textarea>
+                    <div
+                      style="
+                        display: flex;
+                        gap: 1rem;
+                        margin-top: 1rem;
+                        align-items: flex-end;
+                      "
+                    >
+                      <drr-currency-input
+                        [label]="t('grossAmount')"
+                        [rxFormControl]="invoice.get('grossAmount')"
+                      ></drr-currency-input>
+                      <drr-currency-input
+                        [label]="t('taxRebate')"
+                        [rxFormControl]="invoice.get('taxRebate')"
+                        [max]="invoice.get('grossAmount')?.value"
+                        [maxValueCustomErrorMessage]="t('taxRebateError')"
+                      ></drr-currency-input>
+                      <drr-currency-input
+                        [label]="t('totalPST')"
+                        [rxFormControl]="invoice.get('totalPST')"
+                        [max]="invoice.get('grossAmount')?.value"
+                        [maxValueCustomErrorMessage]="t('totalPSTError')"
+                      ></drr-currency-input>
+                      <drr-currency-input
+                        [label]="t('totalGST')"
+                        [rxFormControl]="invoice.get('totalGST')"
+                        [max]="invoice.get('grossAmount')?.value"
+                        [maxValueCustomErrorMessage]="t('totalGSTError')"
+                      ></drr-currency-input>
+                      <drr-currency-input
+                        class="drr-single-input"
+                        [label]="t('claimAmount')"
+                        [rxFormControl]="invoice.get('claimAmount')"
+                        [max]="invoice.get('grossAmount')?.value"
+                        [maxValueCustomErrorMessage]="t('claimAmountError')"
+                        [value]="invoice.get('grossAmount')?.value"
+                      ></drr-currency-input>
+                    </div>
+                    <div
+                      style="
+                        display: flex;
+                        justify-content: space-between;
+                        gap: 1rem;
+                      "
+                    >
+                      <div class="invoice-file-upload">
+                        <mat-label>{{ t("invoice") }} *</mat-label>
+                        @if (getInvoiceDocument(invoice)?.get("id")?.value) {
+                          <drr-input
+                            [label]="t('fileName')"
+                            [rxFormControl]="
+                              getInvoiceDocument(invoice)?.get('name')
+                            "
+                            [disabled]="true"
+                          >
+                          </drr-input>
+                          <div style="display: flex; gap: 1rem">
+                            <button
+                              mat-stroked-button
+                              color="primary"
+                              (click)="
+                                downloadFile(
+                                  getInvoiceDocument(invoice)?.get('id')?.value
+                                )
+                              "
+                              type="button"
+                            >
+                              Download
+                            </button>
+                            <button
+                              mat-stroked-button
+                              color="warn"
+                              (click)="
+                                removeFile(
+                                  getInvoiceDocument(invoice)?.get('id')?.value,
+                                  invoice
+                                )
+                              "
+                              type="button"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        } @else {
+                          <mat-hint
+                            style="color: red"
+                            *ngIf="showInvoiceDocumentRequiredError(invoice)"
+                            >Required</mat-hint
+                          >
+                          <drr-file-upload
+                            (filesSelected)="
+                              uploadFiles($event, invoice, invoiceDocumentType)
+                            "
+                            [attachButtonLabel]="t('uploadInvoice')"
+                            [multiple]="false"
+                          ></drr-file-upload>
+                        }
+                      </div>
+                      <div class="invoice-file-upload">
+                        <mat-label>{{ t("proofOfPayment") }} *</mat-label>
+                        @if (
+                          getInvoiceProofOfPayment(invoice)?.get("id")?.value
+                        ) {
+                          <drr-input
+                            [label]="t('fileName')"
+                            [rxFormControl]="
+                              getInvoiceProofOfPayment(invoice)?.get('name')
+                            "
+                            [disabled]="true"
+                          >
+                          </drr-input>
+                          <div style="display: flex; gap: 1rem">
+                            <button
+                              mat-stroked-button
+                              color="primary"
+                              (click)="
+                                downloadFile(
+                                  getInvoiceProofOfPayment(invoice)?.get('id')
+                                    ?.value
+                                )
+                              "
+                              type="button"
+                            >
+                              Download
+                            </button>
+                            <button
+                              mat-stroked-button
+                              color="warn"
+                              (click)="
+                                removeFile(
+                                  getInvoiceProofOfPayment(invoice)?.get('id')
+                                    ?.value,
+                                  invoice
+                                )
+                              "
+                              type="button"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        } @else {
+                          <mat-hint
+                            style="color: red"
+                            *ngIf="showProofOfPaymentRequiredError(invoice)"
+                            >Required</mat-hint
+                          >
+
+                          <drr-file-upload
+                            (filesSelected)="
+                              uploadFiles(
+                                $event,
+                                invoice,
+                                proofOfPaymentDocumentType
+                              )
+                            "
+                            [attachButtonLabel]="t('uploadProofOfPayment')"
+                            [multiple]="false"
+                          ></drr-file-upload>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                </mat-card-content>
+                <mat-card-actions [align]="'end'">
+                  <button
+                    mat-stroked-button
+                    color="warn"
+                    (click)="removeInvoice(invoice.get('id')?.value)"
+                    type="button"
+                  >
+                    Delete
+                  </button>
+                </mat-card-actions>
+              </mat-card>
+            </div>
+            @if (
+              claimForm.get("expenditure.haveClaimExpenses")?.value === true
+            ) {
+              <button
+                style="align-self: flex-start"
+                (click)="addInvoice()"
+                mat-stroked-button
+                type="button"
+                color="primary"
+              >
+                <mat-icon>add</mat-icon>
+                Add Invoice
+              </button>
+            }
+            <mat-label class="drr-label" style="margin-top: 2rem">{{
+              t("claimComment")
+            }}</mat-label>
+            <mat-label>{{ t("claimCommentLabel") }}</mat-label>
+            <drr-textarea
+              [label]="t('claimComment')"
+              [rxFormControl]="
+                claimForm.get('expenditure')?.get('claimComment')
+              "
+              [maxlength]="500"
+            >
+            </drr-textarea>
+
+            <mat-divider style="margin: 2rem 0"></mat-divider>
+
+            <div>
+              <h5>Summary of Current Claim</h5>
+              <table class="claim-summary-table">
+                <tr>
+                  <td>Earliest Invoice</td>
+                  <td>{{ getEarliestInvoiceDate() | date: "yyyy-MM-dd" }}</td>
+                </tr>
+                <tr>
+                  <td>Latest Invoice</td>
+                  <td>{{ getLatestInvoiceDate() | date: "yyyy-MM-dd" }}</td>
+                </tr>
+                <tr>
+                  <td>Earliest Goods and Services Work Start Date</td>
+                  <td>
+                    {{
+                      getEarliestGoodsAndServicesWorkStartDate()
+                        | date: "yyyy-MM-dd"
+                    }}
+                  </td>
+                </tr>
+                <tr>
+                  <td>Latest Goods and Services Work End Date</td>
+                  <td>
+                    {{
+                      getLatestGoodsAndServicesWorkEndDate()
+                        | date: "yyyy-MM-dd"
+                    }}
+                  </td>
+                </tr>
+                <tr>
+                  <td>Number of Invoices</td>
+                  <td>{{ getNumberOfInvoices() }}</td>
+                </tr>
+                <tr>
+                  <td>Total Amount of this Claim</td>
+                  <td>{{ getTotalClaimAmount() | currency }}</td>
+                </tr>
+              </table>
+            </div>
+
+            <div>
+              <h5>Summary of Costs for All Claims</h5>
+              <mat-table
+                style="margin-top: 1rem"
+                [dataSource]="claimSummaryItemsDataSource"
+                class="mat-elevation-z8"
+              >
+                <ng-container matColumnDef="costCategory">
+                  <mat-header-cell *matHeaderCellDef>
+                    Cost Category
+                  </mat-header-cell>
+                  <mat-cell *matCellDef="let element">
+                    {{ element.costCategory | transloco }}
+                  </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="currentClaim">
+                  <mat-header-cell *matHeaderCellDef>
+                    Total for this Claim
+                  </mat-header-cell>
+                  <mat-cell *matCellDef="let element">
+                    {{ element.currentClaim | currency }}
+                  </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="totalForProjectWithCurrentClaim">
+                  <mat-header-cell *matHeaderCellDef>
+                    Total Claimed for Project <br />
+                    (includes value of this Claim)
+                  </mat-header-cell>
+                  <mat-cell *matCellDef="let element">
+                    {{ element.totalForProjectWithCurrentClaim | currency }}
+                  </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="originalEstimate">
+                  <mat-header-cell *matHeaderCellDef>
+                    Original Estimate
+                  </mat-header-cell>
+                  <mat-cell *matCellDef="let element">
+                    {{ element.originalEstimate | currency }}
+                  </mat-cell>
+                </ng-container>
+
+                <mat-header-row
+                  *matHeaderRowDef="displayedColumns"
+                ></mat-header-row>
+                <mat-row
+                  *matRowDef="let row; columns: displayedColumns"
+                ></mat-row>
+              </mat-table>
+            </div>
+
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                gap: 1rem;
+                margin-top: 2rem;
+              "
+            >
+              <drr-currency-input
+                style="width: 30rem"
+                [label]="t('totalClaimed')"
+                [rxFormControl]="
+                  claimForm.get('expenditure')?.get('totalClaimed')
+                "
+                [disabled]="true"
+              ></drr-currency-input>
+
+              <drr-currency-input
+                style="width: 30rem"
+                [label]="t('totalProjectAmount')"
+                [rxFormControl]="
+                  claimForm.get('expenditure')?.get('totalProjectAmount')
+                "
+                [disabled]="true"
+              ></drr-currency-input>
+            </div>
+            @if (
+              this.claimForm.get("expenditure.totalClaimed")?.value >
+              activeConditionLimit?.conditionAmount!
+            ) {
+              <drr-alert [type]="'warning'">
+                <p>
+                  The condition "{{ activeConditionLimit?.conditionName }} ({{
+                    activeConditionLimit?.conditionPercentage
+                  }}%)" limits your total payments to
+                  {{ activeConditionLimit?.conditionAmount | currency }}. This
+                  claim would put you over that limit. If you submit the claim,
+                  it will not be processed until you clear that condition.
+                  Optionally, you can remove some invoices to reduce your
+                  current claim below the payment limit. You can then include
+                  those invoices on your next claim.
+                </p>
+              </drr-alert>
+            }
+          </div>
+        }
+        <div class="drr-stepper-actions">
+          <button mat-stroked-button color="primary" matStepperPrevious>
+            Back
+          </button>
+          <button mat-flat-button color="primary" matStepperNext type="button">
+            Next
+          </button>
+        </div>
+      </mat-step>
+      <mat-step
+        [label]="t('step3')"
+        [stepControl]="claimForm?.get('declaration')!"
+        [errorMessage]="'stepError' | transloco"
+      >
+        <div style="margin-top: 2rem">
           @if (
-            this.claimForm.get("expenditure.totalClaimed")?.value >
+            this.claimForm?.get("expenditure.totalClaimed")?.value >
             activeConditionLimit?.conditionAmount!
           ) {
             <drr-alert [type]="'warning'">
@@ -535,71 +580,37 @@
               </p>
             </drr-alert>
           }
+
+          <drif-claim-summary
+            [claimForm]="claimForm!"
+            [isReadOnlyView]="false"
+          ></drif-claim-summary>
+
+          <drr-auth-rep
+            [authorizedRepresentativeForm]="authorizedRepresentativeForm"
+          ></drr-auth-rep>
+
+          <drr-declaration
+            [declarationForm]="declarationForm"
+            [authorizedRepresentativeText]="authorizedRepresentativeText"
+            [accuracyOfInformationText]="accuracyOfInformationText"
+          ></drr-declaration>
         </div>
-      }
-      <div class="drr-stepper-actions">
-        <button mat-stroked-button color="primary" matStepperPrevious>
-          Back
-        </button>
-        <button mat-flat-button color="primary" matStepperNext type="button">
-          Next
-        </button>
-      </div>
-    </mat-step>
-    <mat-step
-      [label]="t('step3')"
-      [stepControl]="claimForm?.get('declaration')!"
-      [errorMessage]="'stepError' | transloco"
-    >
-      <div style="margin-top: 2rem">
-        @if (
-          this.claimForm?.get("expenditure.totalClaimed")?.value >
-          activeConditionLimit?.conditionAmount!
-        ) {
-          <drr-alert [type]="'warning'">
-            <p>
-              The condition "{{ activeConditionLimit?.conditionName }} ({{
-                activeConditionLimit?.conditionPercentage
-              }}%)" limits your total payments to
-              {{ activeConditionLimit?.conditionAmount | currency }}. This claim
-              would put you over that limit. If you submit the claim, it will
-              not be processed until you clear that condition. Optionally, you
-              can remove some invoices to reduce your current claim below the
-              payment limit. You can then include those invoices on your next
-              claim.
-            </p>
-          </drr-alert>
-        }
-
-        <drif-claim-summary
-          [claimForm]="claimForm!"
-          [isReadOnlyView]="false"
-        ></drif-claim-summary>
-
-        <drr-auth-rep
-          [authorizedRepresentativeForm]="authorizedRepresentativeForm"
-        ></drr-auth-rep>
-
-        <drr-declaration
-          [declarationForm]="declarationForm"
-          [authorizedRepresentativeText]="authorizedRepresentativeText"
-          [accuracyOfInformationText]="accuracyOfInformationText"
-        ></drr-declaration>
-      </div>
-      <div class="drr-stepper-actions">
-        <button mat-stroked-button color="primary" matStepperPrevious>
-          Back
-        </button>
-        <button
-          id="submit"
-          mat-flat-button
-          color="primary"
-          type="button"
-          (click)="submit()"
-        >
-          Submit
-        </button>
-      </div>
-    </mat-step>
-  </mat-stepper>
-</div>
+        <div class="drr-stepper-actions">
+          <button mat-stroked-button color="primary" matStepperPrevious>
+            Back
+          </button>
+          <button
+            id="submit"
+            mat-flat-button
+            color="primary"
+            type="button"
+            (click)="submit()"
+          >
+            Submit
+          </button>
+        </div>
+      </mat-step>
+    </mat-stepper>
+  </mat-card-content>
+</mat-card>

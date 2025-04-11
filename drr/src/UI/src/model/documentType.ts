@@ -11,7 +11,6 @@ export type DocumentType = (typeof DocumentType)[keyof typeof DocumentType];
 export const DocumentType = {
   OtherSupportingDocument: 'OtherSupportingDocument',
   Resolution: 'Resolution',
-  DetailedCostEstimate: 'DetailedCostEstimate',
   PreliminaryDesign: 'PreliminaryDesign',
   SitePlan: 'SitePlan',
   ProgressReport: 'ProgressReport',

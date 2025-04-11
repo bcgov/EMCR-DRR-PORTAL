@@ -1,265 +1,167 @@
-<div class="app-stepper-container" *transloco="let t; read: 'progressReport'">
-  <div class="app-stepper-header">
-    <div style="flex: 1">
-      <h5 style="font-size: 1.2rem; margin-bottom: 0.5rem">{{ reportName }}</h5>
-      <!-- <span> {{ t("project") }}: {{ project?.name }} ({{ project?.id }}) </span> -->
-    </div>
-    <div>
-      <div class="header-actions">
-        <button mat-stroked-button color="primary" (click)="goBack()">
-          Exit Form
-        </button>
-        @if (stepper.selectedIndex !== 0) {
-          <button mat-flat-button color="primary" (click)="save()">
-            <mat-icon>save</mat-icon>
-            Save
-          </button>
-        }
-      </div>
-      <div class="save-info">
-        <div style="display: flex; flex-direction: row; gap: 1rem">
-          <i *ngIf="autoSaveCountdown <= 30 && autoSaveCountdown > 0"
-            >Saving in {{ autoSaveCountdown }}
-            {{ autoSaveCountdown === 1 ? "second" : "seconds" }}...
-          </i>
-          <i
-            *ngIf="
-              lastSavedAt && (autoSaveCountdown === 0 || autoSaveCountdown > 30)
-            "
-            >Saved at {{ lastSavedAt | date: "mediumTime" }}</i
-          >
-        </div>
-      </div>
-    </div>
-  </div>
-  <mat-stepper
-    class="app-stepper"
-    [linear]="false"
-    labelPosition="bottom"
-    (selectionChange)="stepperSelectionChange($event)"
-    [orientation]="stepperOrientation"
-    #stepper
-  >
-    <mat-step label="Instructions">
+<mat-card
+  class="app-stepper-container"
+  *transloco="let t; read: 'progressReport'"
+>
+  <mat-card-header class="app-stepper-header">
+    <mat-card-title-group>
+      <mat-card-title> {{ reportName }} </mat-card-title>
       <div>
-        <p>
-          This form captures the overall progress on your project, as well as
-          information about any events you may have planned.
-        </p>
-        <p>
-          You will report your status against the specific activities you listed
-          in the Project Plan on your full proposal. You will also be able to
-          add new activities if needed.
-        </p>
-        <p>
-          If this is your first time completing a progress report for this
-          project, most of the values will be blank. Otherwise, many of the
-          values will be copied over from your previous report to help you
-          complete it more quickly.
-        </p>
-        <p>
-          Please be sure to review all information thoroughly and to update it
-          where needed.
-        </p>
-      </div>
-      <div class="drr-stepper-action">
-        <button
-          id="next1"
-          mat-flat-button
-          color="primary"
-          matStepperNext
-          type="button"
-        >
-          Next
-        </button>
-      </div>
-    </mat-step>
-    <mat-step
-      [label]="t('projectWorkplan')"
-      [stepControl]="workplanForm"
-      [errorMessage]="t('stepError')"
-    >
-      <div style="display: flex; flex-direction: column; gap: 1rem">
-        <h5>Project Progress</h5>
-
-        <drr-select
-          class="drr-single-input"
-          [label]="t('projectProgress')"
-          [rxFormControl]="workplanForm.get('projectProgress')"
-          [options]="projectProgressOptions"
-        >
-        </drr-select>
-
-        @if (isProjectDelayed()) {
-          <div style="display: flex; gap: 1rem">
-            <drr-select
-              class="drr-single-input"
-              [label]="t('delayReason')"
-              [rxFormControl]="workplanForm.get('delayReason')"
-              [options]="delayReasonOptions"
-            >
-            </drr-select>
-            @if (isOtherDelayReasonSelected()) {
-              <drr-input
-                class="drr-single-input"
-                [label]="t('otherDelayReason')"
-                [rxFormControl]="workplanForm.get('otherDelayReason')"
-                [maxlength]="50"
-              ></drr-input>
-            }
-          </div>
-
-          <drr-textarea
-            [label]="t('behindScheduleMitigatingComments')"
-            [rxFormControl]="
-              workplanForm.get('behindScheduleMitigatingComments')
-            "
-            [maxlength]="2000"
-          ></drr-textarea>
-        }
-        @if (isProjectAhead()) {
-          <drr-textarea
-            [label]="t('aheadOfScheduleComments')"
-            [rxFormControl]="workplanForm.get('aheadOfScheduleComments')"
-            [maxlength]="2000"
-          ></drr-textarea>
-        }
-
-        <div class="workplan-item">
-          <mat-label class="drr-label">
-            {{ t("projectCompletionPercentage") }}
-          </mat-label>
-          <drr-numeric-input
-            style="align-self: flex-start"
-            label="Percentage"
-            [rxFormControl]="workplanForm.get('projectCompletionPercentage')"
-            numericType="percentage"
-          ></drr-numeric-input>
+        <div class="header-actions">
+          <button mat-stroked-button color="primary" (click)="goBack()">
+            Exit Form
+          </button>
+          @if (stepper.selectedIndex !== 0) {
+            <button mat-flat-button color="primary" (click)="save()">
+              <mat-icon>save</mat-icon>
+              Save
+            </button>
+          }
         </div>
+        <div class="save-info">
+          <div style="display: flex; flex-direction: row; gap: 1rem">
+            <i *ngIf="autoSaveCountdown <= 30 && autoSaveCountdown > 0"
+              >Saving in {{ autoSaveCountdown }}
+              {{ autoSaveCountdown === 1 ? "second" : "seconds" }}...
+            </i>
+            <i
+              *ngIf="
+                lastSavedAt &&
+                (autoSaveCountdown === 0 || autoSaveCountdown > 30)
+              "
+              >Saved at {{ lastSavedAt | date: "mediumTime" }}</i
+            >
+          </div>
+        </div>
+      </div>
+    </mat-card-title-group>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-stepper
+      class="app-stepper"
+      [linear]="false"
+      labelPosition="bottom"
+      (selectionChange)="stepperSelectionChange($event)"
+      [orientation]="stepperOrientation"
+      #stepper
+    >
+      <mat-step label="Instructions">
+        <div>
+          <p>
+            This form captures the overall progress on your project, as well as
+            information about any events you may have planned.
+          </p>
+          <p>
+            You will report your status against the specific activities you
+            listed in the Project Plan on your full proposal. You will also be
+            able to add new activities if needed.
+          </p>
+          <p>
+            If this is your first time completing a progress report for this
+            project, most of the values will be blank. Otherwise, many of the
+            values will be copied over from your previous report to help you
+            complete it more quickly.
+          </p>
+          <p>
+            Please be sure to review all information thoroughly and to update it
+            where needed.
+          </p>
+        </div>
+        <div class="drr-stepper-action">
+          <button
+            id="next1"
+            mat-flat-button
+            color="primary"
+            matStepperNext
+            type="button"
+          >
+            Next
+          </button>
+        </div>
+      </mat-step>
+      <mat-step
+        [label]="t('projectWorkplan')"
+        [stepControl]="workplanForm"
+        [errorMessage]="t('stepError')"
+      >
+        <div style="display: flex; flex-direction: column; gap: 1rem">
+          <h5>Project Progress</h5>
 
-        @if (isStructuralProject()) {
+          <drr-select
+            class="drr-single-input"
+            [label]="t('projectProgress')"
+            [rxFormControl]="workplanForm.get('projectProgress')"
+            [options]="projectProgressOptions"
+          >
+          </drr-select>
+
+          @if (isProjectDelayed()) {
+            <div style="display: flex; gap: 1rem">
+              <drr-select
+                class="drr-single-input"
+                [label]="t('delayReason')"
+                [rxFormControl]="workplanForm.get('delayReason')"
+                [options]="delayReasonOptions"
+              >
+              </drr-select>
+              @if (isOtherDelayReasonSelected()) {
+                <drr-input
+                  class="drr-single-input"
+                  [label]="t('otherDelayReason')"
+                  [rxFormControl]="workplanForm.get('otherDelayReason')"
+                  [maxlength]="50"
+                ></drr-input>
+              }
+            </div>
+
+            <drr-textarea
+              [label]="t('behindScheduleMitigatingComments')"
+              [rxFormControl]="
+                workplanForm.get('behindScheduleMitigatingComments')
+              "
+              [maxlength]="2000"
+            ></drr-textarea>
+          }
+          @if (isProjectAhead()) {
+            <drr-textarea
+              [label]="t('aheadOfScheduleComments')"
+              [rxFormControl]="workplanForm.get('aheadOfScheduleComments')"
+              [maxlength]="2000"
+            ></drr-textarea>
+          }
+
           <div class="workplan-item">
             <mat-label class="drr-label">
-              {{ t("constructionCompletionPercentage") }}
+              {{ t("projectCompletionPercentage") }}
             </mat-label>
             <drr-numeric-input
               style="align-self: flex-start"
               label="Percentage"
-              [rxFormControl]="
-                workplanForm.get('constructionCompletionPercentage')
-              "
+              [rxFormControl]="workplanForm.get('projectCompletionPercentage')"
               numericType="percentage"
             ></drr-numeric-input>
           </div>
-        }
 
-        <div>
-          <h5>Key Activities</h5>
-          <div
-            *ngFor="
-              let preDefinedActivity of getPreDefinedActivitiesArray();
-              let i = index
-            "
-            style="margin-top: 1rem"
-          >
-            <mat-card>
-              <mat-card-header>
-                <mat-card-title>
-                  {{
-                    "activityType." + preDefinedActivity.get("activity")?.value
-                      | transloco
-                  }}
-                </mat-card-title>
-              </mat-card-header>
-              <mat-card-content>
-                <div class="progress-group">
-                  <drr-radio-button
-                    class="drr-single-input"
-                    label="Status"
-                    [options]="necessaryActivityStatusOptions"
-                    [rxFormControl]="preDefinedActivity.get('status')"
-                  ></drr-radio-button>
+          @if (isStructuralProject()) {
+            <div class="workplan-item">
+              <mat-label class="drr-label">
+                {{ t("constructionCompletionPercentage") }}
+              </mat-label>
+              <drr-numeric-input
+                style="align-self: flex-start"
+                label="Percentage"
+                [rxFormControl]="
+                  workplanForm.get('constructionCompletionPercentage')
+                "
+                numericType="percentage"
+              ></drr-numeric-input>
+            </div>
+          }
 
-                  <div
-                    style="
-                      display: flex;
-                      flex-direction: column;
-                      justify-content: space-between;
-                      gap: 1rem;
-                    "
-                  >
-                    @if (showPlannedStartDate(preDefinedActivity)) {
-                      <drr-datepicker
-                        class="drr-single-input"
-                        [label]="t('plannedStartDate')"
-                        [rxFormControl]="
-                          preDefinedActivity.get('plannedStartDate')
-                        "
-                        [max]="
-                          preDefinedActivity.get('plannedCompletionDate')?.value
-                        "
-                        [maxErrorLabel]="t('minStartDateError')"
-                      ></drr-datepicker>
-                    }
-
-                    @if (showActualStartDate(preDefinedActivity)) {
-                      <drr-datepicker
-                        class="drr-single-input"
-                        [label]="t('actualStartDate')"
-                        [rxFormControl]="
-                          preDefinedActivity.get('actualStartDate')
-                        "
-                        [max]="
-                          preDefinedActivity.get('actualCompletionDate')?.value
-                        "
-                        [maxErrorLabel]="t('minStartDateError')"
-                      ></drr-datepicker>
-                    }
-
-                    @if (showPlannedCompletionDate(preDefinedActivity)) {
-                      <drr-datepicker
-                        class="drr-single-input"
-                        [label]="t('plannedCompletionDate')"
-                        [rxFormControl]="
-                          preDefinedActivity.get('plannedCompletionDate')
-                        "
-                        [min]="
-                          preDefinedActivity.get('plannedStartDate')?.value
-                        "
-                        [minErrorLabel]="t('minEndDateError')"
-                      ></drr-datepicker>
-                    }
-
-                    @if (showActualCompletionDate(preDefinedActivity)) {
-                      <drr-datepicker
-                        class="drr-single-input"
-                        [label]="t('actualCompletionDate')"
-                        [rxFormControl]="
-                          preDefinedActivity.get('actualCompletionDate')
-                        "
-                        [min]="preDefinedActivity.get('actualStartDate')?.value"
-                        [minErrorLabel]="t('minEndDateError')"
-                      ></drr-datepicker>
-                    }
-                  </div>
-                </div>
-                <drr-textarea
-                  [label]="t('keyActivityComment')"
-                  [rxFormControl]="preDefinedActivity.get('comment')"
-                  [maxlength]="250"
-                ></drr-textarea>
-              </mat-card-content>
-            </mat-card>
-          </div>
-        </div>
-
-        @if (getMilestoneActivitiesArray().length > 0) {
           <div>
-            <h5 style="margin-top: 2rem">Milestones</h5>
-
+            <h5>Key Activities</h5>
             <div
               *ngFor="
-                let milestoneActivity of getMilestoneActivitiesArray();
+                let preDefinedActivity of getPreDefinedActivitiesArray();
                 let i = index
               "
               style="margin-top: 1rem"
@@ -268,8 +170,8 @@
                 <mat-card-header>
                   <mat-card-title>
                     {{
-                      "activityType." + milestoneActivity.get("activity")?.value
-                        | transloco
+                      "activityType." +
+                        preDefinedActivity.get("activity")?.value | transloco
                     }}
                   </mat-card-title>
                 </mat-card-header>
@@ -278,8 +180,8 @@
                     <drr-radio-button
                       class="drr-single-input"
                       label="Status"
-                      [options]="milestoneStatusOptions"
-                      [rxFormControl]="milestoneActivity.get('status')"
+                      [options]="necessaryActivityStatusOptions"
+                      [rxFormControl]="preDefinedActivity.get('status')"
                     ></drr-radio-button>
 
                     <div
@@ -290,257 +192,539 @@
                         gap: 1rem;
                       "
                     >
-                      @if (showPlannedStartDate(milestoneActivity)) {
+                      @if (showPlannedStartDate(preDefinedActivity)) {
                         <drr-datepicker
                           class="drr-single-input"
-                          [label]="t('plannedAwardDate')"
+                          [label]="t('plannedStartDate')"
                           [rxFormControl]="
-                            milestoneActivity.get('plannedStartDate')
+                            preDefinedActivity.get('plannedStartDate')
                           "
                           [max]="
-                            milestoneActivity.get('plannedCompletionDate')
+                            preDefinedActivity.get('plannedCompletionDate')
                               ?.value
                           "
                           [maxErrorLabel]="t('minStartDateError')"
                         ></drr-datepicker>
                       }
-                      @if (showActualStartDate(milestoneActivity)) {
+
+                      @if (showActualStartDate(preDefinedActivity)) {
                         <drr-datepicker
                           class="drr-single-input"
-                          [label]="t('actualAwardDate')"
+                          [label]="t('actualStartDate')"
                           [rxFormControl]="
-                            milestoneActivity.get('actualStartDate')
+                            preDefinedActivity.get('actualStartDate')
                           "
                           [max]="
-                            milestoneActivity.get('actualCompletionDate')?.value
+                            preDefinedActivity.get('actualCompletionDate')
+                              ?.value
                           "
                           [maxErrorLabel]="t('minStartDateError')"
                         ></drr-datepicker>
                       }
+
+                      @if (showPlannedCompletionDate(preDefinedActivity)) {
+                        <drr-datepicker
+                          class="drr-single-input"
+                          [label]="t('plannedCompletionDate')"
+                          [rxFormControl]="
+                            preDefinedActivity.get('plannedCompletionDate')
+                          "
+                          [min]="
+                            preDefinedActivity.get('plannedStartDate')?.value
+                          "
+                          [minErrorLabel]="t('minEndDateError')"
+                        ></drr-datepicker>
+                      }
+
+                      @if (showActualCompletionDate(preDefinedActivity)) {
+                        <drr-datepicker
+                          class="drr-single-input"
+                          [label]="t('actualCompletionDate')"
+                          [rxFormControl]="
+                            preDefinedActivity.get('actualCompletionDate')
+                          "
+                          [min]="
+                            preDefinedActivity.get('actualStartDate')?.value
+                          "
+                          [minErrorLabel]="t('minEndDateError')"
+                        ></drr-datepicker>
+                      }
                     </div>
                   </div>
+                  <drr-textarea
+                    [label]="t('keyActivityComment')"
+                    [rxFormControl]="preDefinedActivity.get('comment')"
+                    [maxlength]="250"
+                  ></drr-textarea>
                 </mat-card-content>
               </mat-card>
             </div>
           </div>
-        }
 
-        <div>
-          <h5 style="margin-top: 2rem">Additional Activities</h5>
+          @if (getMilestoneActivitiesArray().length > 0) {
+            <div>
+              <h5 style="margin-top: 2rem">Milestones</h5>
 
-          <div
-            *ngFor="
-              let additionalActivity of getAdditionalActivitiesArray();
-              let i = index
-            "
-            style="margin-top: 1rem"
-          >
-            <mat-card>
-              <mat-card-header>
-                <mat-card-title>
-                  <mat-card-title-group>
+              <div
+                *ngFor="
+                  let milestoneActivity of getMilestoneActivitiesArray();
+                  let i = index
+                "
+                style="margin-top: 1rem"
+              >
+                <mat-card>
+                  <mat-card-header>
                     <mat-card-title>
-                      Additional Activity {{ i + 1 }}
+                      {{
+                        "activityType." +
+                          milestoneActivity.get("activity")?.value | transloco
+                      }}
                     </mat-card-title>
-                    @if (isAdditionalActivityMandatory(additionalActivity)) {
-                      <mat-card-subtitle>
-                        {{
-                          "activityType." +
-                            additionalActivity.get("activity")?.value
-                            | transloco
-                        }}
-                      </mat-card-subtitle>
-                    }
-                  </mat-card-title-group>
-                </mat-card-title>
-              </mat-card-header>
-              <mat-card-content style="display: flex; flex-direction: column">
-                @if (!isAdditionalActivityMandatory(additionalActivity)) {
-                  <drr-select
-                    style="margin-top: 0.5rem"
-                    class="drr-single-input"
-                    label="Activity"
-                    [rxFormControl]="additionalActivity.get('activity')"
-                    [options]="
-                      getAvailableOptionsForActivity(
-                        additionalActivity.get('activity')?.value
-                      )
-                    "
-                  >
-                  </drr-select>
-                }
-                <div class="progress-group">
-                  <drr-radio-button
-                    class="drr-single-input"
-                    label="Status"
-                    [options]="getAdditionalActivityOptions(additionalActivity)"
-                    [rxFormControl]="additionalActivity.get('status')"
-                  ></drr-radio-button>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <div class="progress-group">
+                      <drr-radio-button
+                        class="drr-single-input"
+                        label="Status"
+                        [options]="milestoneStatusOptions"
+                        [rxFormControl]="milestoneActivity.get('status')"
+                      ></drr-radio-button>
 
-                  <div
-                    style="
-                      display: flex;
-                      flex-direction: column;
-                      justify-content: space-between;
-                      gap: 1rem;
-                    "
-                  >
-                    @if (showPlannedStartDate(additionalActivity)) {
-                      <drr-datepicker
-                        class="drr-single-input"
-                        [label]="t('plannedStartDate')"
-                        [rxFormControl]="
-                          additionalActivity.get('plannedStartDate')
+                      <div
+                        style="
+                          display: flex;
+                          flex-direction: column;
+                          justify-content: space-between;
+                          gap: 1rem;
                         "
-                        [max]="
-                          additionalActivity.get('plannedCompletionDate')?.value
-                        "
-                        [maxErrorLabel]="t('minStartDateError')"
-                      ></drr-datepicker>
-                    }
-                    @if (showActualStartDate(additionalActivity)) {
-                      <drr-datepicker
-                        class="drr-single-input"
-                        [label]="t('actualStartDate')"
-                        [rxFormControl]="
-                          additionalActivity.get('actualStartDate')
-                        "
-                        [max]="
-                          additionalActivity.get('actualCompletionDate')?.value
-                        "
-                        [maxErrorLabel]="t('minStartDateError')"
-                      ></drr-datepicker>
-                    }
-                    @if (showPlannedCompletionDate(additionalActivity)) {
-                      <drr-datepicker
-                        class="drr-single-input"
-                        [label]="t('plannedCompletionDate')"
-                        [rxFormControl]="
-                          additionalActivity.get('plannedCompletionDate')
-                        "
-                        [min]="
-                          additionalActivity.get('plannedStartDate')?.value
-                        "
-                        [minErrorLabel]="t('minEndDateError')"
-                      ></drr-datepicker>
-                    }
-                    @if (showActualCompletionDate(additionalActivity)) {
-                      <drr-datepicker
-                        class="drr-single-input"
-                        [label]="t('actualCompletionDate')"
-                        [rxFormControl]="
-                          additionalActivity.get('actualCompletionDate')
-                        "
-                        [min]="additionalActivity.get('actualStartDate')?.value"
-                        [minErrorLabel]="t('minEndDateError')"
-                      ></drr-datepicker>
-                    }
-                  </div>
-                </div>
-                <drr-textarea
-                  [label]="
-                    t(
-                      isAdditionalActivityMandatory(additionalActivity)
-                        ? 'keyActivityComment'
-                        : 'additionalActivityComment'
-                    )
-                  "
-                  [rxFormControl]="additionalActivity.get('comment')"
-                  [maxlength]="250"
-                ></drr-textarea>
-              </mat-card-content>
-              @if (!isAdditionalActivityMandatory(additionalActivity)) {
-                <mat-card-actions align="end">
-                  <button
-                    mat-raised-button
-                    color="warn"
-                    (click)="
-                      removeAdditionalActivity(
-                        additionalActivity.get('id')?.value
-                      )
-                    "
-                  >
-                    Remove
-                  </button>
-                </mat-card-actions>
-              }
-            </mat-card>
-          </div>
-          @if (hasAvailableOptionsForActivity()) {
-            <button
-              mat-raised-button
-              color="primary"
-              style="margin-top: 1rem"
-              (click)="addAdditionalActivity()"
-            >
-              Add Additional Activity
-            </button>
+                      >
+                        @if (showPlannedStartDate(milestoneActivity)) {
+                          <drr-datepicker
+                            class="drr-single-input"
+                            [label]="t('plannedAwardDate')"
+                            [rxFormControl]="
+                              milestoneActivity.get('plannedStartDate')
+                            "
+                            [max]="
+                              milestoneActivity.get('plannedCompletionDate')
+                                ?.value
+                            "
+                            [maxErrorLabel]="t('minStartDateError')"
+                          ></drr-datepicker>
+                        }
+                        @if (showActualStartDate(milestoneActivity)) {
+                          <drr-datepicker
+                            class="drr-single-input"
+                            [label]="t('actualAwardDate')"
+                            [rxFormControl]="
+                              milestoneActivity.get('actualStartDate')
+                            "
+                            [max]="
+                              milestoneActivity.get('actualCompletionDate')
+                                ?.value
+                            "
+                            [maxErrorLabel]="t('minStartDateError')"
+                          ></drr-datepicker>
+                        }
+                      </div>
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+            </div>
           }
-        </div>
 
-        <mat-divider style="margin-top: 2rem"></mat-divider>
+          <div>
+            <h5 style="margin-top: 2rem">Additional Activities</h5>
 
-        @if (isStructuralProject()) {
-          <h5 style="margin-top: 2rem">Temporary Provincial Funding Signage</h5>
-
-          <drr-radio-button
-            class="drr-single-input"
-            [label]="t('signageRequired')"
-            [options]="yesNoRadioOptions"
-            [rxFormControl]="workplanForm.get('signageRequired')"
-          ></drr-radio-button>
-
-          @if (workplanForm.get("signageRequired")?.value === true) {
             <div
               *ngFor="
-                let signage of getSignageFormArray().controls;
+                let additionalActivity of getAdditionalActivitiesArray();
                 let i = index
               "
               style="margin-top: 1rem"
             >
               <mat-card>
                 <mat-card-header>
-                  <mat-card-title-group>
-                    <mat-card-subtitle> Signage {{ i + 1 }} </mat-card-subtitle>
-                  </mat-card-title-group>
+                  <mat-card-title>
+                    <mat-card-title-group>
+                      <mat-card-title>
+                        Additional Activity {{ i + 1 }}
+                      </mat-card-title>
+                      @if (isAdditionalActivityMandatory(additionalActivity)) {
+                        <mat-card-subtitle>
+                          {{
+                            "activityType." +
+                              additionalActivity.get("activity")?.value
+                              | transloco
+                          }}
+                        </mat-card-subtitle>
+                      }
+                    </mat-card-title-group>
+                  </mat-card-title>
                 </mat-card-header>
-                <mat-card-content>
-                  <div style="display: flex; gap: 1rem; align-items: flex-end">
-                    <drr-radio-button
-                      class="drr-single-input"
-                      [label]="t('beenApproved')"
-                      [options]="yesNoRadioOptions"
-                      [rxFormControl]="signage.get('beenApproved')"
-                    ></drr-radio-button>
+                <mat-card-content style="display: flex; flex-direction: column">
+                  @if (!isAdditionalActivityMandatory(additionalActivity)) {
                     <drr-select
+                      style="margin-top: 0.5rem"
                       class="drr-single-input"
-                      [label]="t('signageType')"
-                      [rxFormControl]="signage.get('type')"
-                      [options]="signageTypeOptions"
+                      label="Activity"
+                      [rxFormControl]="additionalActivity.get('activity')"
+                      [options]="
+                        getAvailableOptionsForActivity(
+                          additionalActivity.get('activity')?.value
+                        )
+                      "
                     >
                     </drr-select>
-                    <drr-datepicker
+                  }
+                  <div class="progress-group">
+                    <drr-radio-button
                       class="drr-single-input"
-                      [label]="t('dateInstalled')"
-                      [rxFormControl]="signage.get('dateInstalled')"
-                      [max]="signage.get('dateRemoved')?.value"
-                      [maxErrorLabel]="t('maxDateInstalledError')"
-                    ></drr-datepicker>
-                    <drr-datepicker
-                      class="drr-single-input"
-                      [label]="t('dateRemoved')"
-                      [rxFormControl]="signage.get('dateRemoved')"
-                      [min]="signage.get('dateInstalled')?.value"
-                      [minErrorLabel]="t('minDateRemovedError')"
-                    ></drr-datepicker>
+                      label="Status"
+                      [options]="
+                        getAdditionalActivityOptions(additionalActivity)
+                      "
+                      [rxFormControl]="additionalActivity.get('status')"
+                    ></drr-radio-button>
+
+                    <div
+                      style="
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: space-between;
+                        gap: 1rem;
+                      "
+                    >
+                      @if (showPlannedStartDate(additionalActivity)) {
+                        <drr-datepicker
+                          class="drr-single-input"
+                          [label]="t('plannedStartDate')"
+                          [rxFormControl]="
+                            additionalActivity.get('plannedStartDate')
+                          "
+                          [max]="
+                            additionalActivity.get('plannedCompletionDate')
+                              ?.value
+                          "
+                          [maxErrorLabel]="t('minStartDateError')"
+                        ></drr-datepicker>
+                      }
+                      @if (showActualStartDate(additionalActivity)) {
+                        <drr-datepicker
+                          class="drr-single-input"
+                          [label]="t('actualStartDate')"
+                          [rxFormControl]="
+                            additionalActivity.get('actualStartDate')
+                          "
+                          [max]="
+                            additionalActivity.get('actualCompletionDate')
+                              ?.value
+                          "
+                          [maxErrorLabel]="t('minStartDateError')"
+                        ></drr-datepicker>
+                      }
+                      @if (showPlannedCompletionDate(additionalActivity)) {
+                        <drr-datepicker
+                          class="drr-single-input"
+                          [label]="t('plannedCompletionDate')"
+                          [rxFormControl]="
+                            additionalActivity.get('plannedCompletionDate')
+                          "
+                          [min]="
+                            additionalActivity.get('plannedStartDate')?.value
+                          "
+                          [minErrorLabel]="t('minEndDateError')"
+                        ></drr-datepicker>
+                      }
+                      @if (showActualCompletionDate(additionalActivity)) {
+                        <drr-datepicker
+                          class="drr-single-input"
+                          [label]="t('actualCompletionDate')"
+                          [rxFormControl]="
+                            additionalActivity.get('actualCompletionDate')
+                          "
+                          [min]="
+                            additionalActivity.get('actualStartDate')?.value
+                          "
+                          [minErrorLabel]="t('minEndDateError')"
+                        ></drr-datepicker>
+                      }
+                    </div>
                   </div>
+                  <drr-textarea
+                    [label]="
+                      t(
+                        isAdditionalActivityMandatory(additionalActivity)
+                          ? 'keyActivityComment'
+                          : 'additionalActivityComment'
+                      )
+                    "
+                    [rxFormControl]="additionalActivity.get('comment')"
+                    [maxlength]="250"
+                  ></drr-textarea>
                 </mat-card-content>
-                @if (getSignageFormArray().controls.length > 1) {
+                @if (!isAdditionalActivityMandatory(additionalActivity)) {
                   <mat-card-actions align="end">
                     <button
                       mat-raised-button
                       color="warn"
-                      (click)="removeSignage(signage.get('id')?.value)"
+                      (click)="
+                        removeAdditionalActivity(
+                          additionalActivity.get('id')?.value
+                        )
+                      "
+                    >
+                      Remove
+                    </button>
+                  </mat-card-actions>
+                }
+              </mat-card>
+            </div>
+            @if (hasAvailableOptionsForActivity()) {
+              <button
+                mat-raised-button
+                color="primary"
+                style="margin-top: 1rem"
+                (click)="addAdditionalActivity()"
+              >
+                Add Additional Activity
+              </button>
+            }
+          </div>
+
+          <mat-divider style="margin-top: 2rem"></mat-divider>
+
+          @if (isStructuralProject()) {
+            <h5 style="margin-top: 2rem">
+              Temporary Provincial Funding Signage
+            </h5>
+
+            <drr-radio-button
+              class="drr-single-input"
+              [label]="t('signageRequired')"
+              [options]="yesNoRadioOptions"
+              [rxFormControl]="workplanForm.get('signageRequired')"
+            ></drr-radio-button>
+
+            @if (workplanForm.get("signageRequired")?.value === true) {
+              <div
+                *ngFor="
+                  let signage of getSignageFormArray().controls;
+                  let i = index
+                "
+                style="margin-top: 1rem"
+              >
+                <mat-card>
+                  <mat-card-header>
+                    <mat-card-title-group>
+                      <mat-card-subtitle>
+                        Signage {{ i + 1 }}
+                      </mat-card-subtitle>
+                    </mat-card-title-group>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <div
+                      style="display: flex; gap: 1rem; align-items: flex-end"
+                    >
+                      <drr-radio-button
+                        class="drr-single-input"
+                        [label]="t('beenApproved')"
+                        [options]="yesNoRadioOptions"
+                        [rxFormControl]="signage.get('beenApproved')"
+                      ></drr-radio-button>
+                      <drr-select
+                        class="drr-single-input"
+                        [label]="t('signageType')"
+                        [rxFormControl]="signage.get('type')"
+                        [options]="signageTypeOptions"
+                      >
+                      </drr-select>
+                      <drr-datepicker
+                        class="drr-single-input"
+                        [label]="t('dateInstalled')"
+                        [rxFormControl]="signage.get('dateInstalled')"
+                        [max]="signage.get('dateRemoved')?.value"
+                        [maxErrorLabel]="t('maxDateInstalledError')"
+                      ></drr-datepicker>
+                      <drr-datepicker
+                        class="drr-single-input"
+                        [label]="t('dateRemoved')"
+                        [rxFormControl]="signage.get('dateRemoved')"
+                        [min]="signage.get('dateInstalled')?.value"
+                        [minErrorLabel]="t('minDateRemovedError')"
+                      ></drr-datepicker>
+                    </div>
+                  </mat-card-content>
+                  @if (getSignageFormArray().controls.length > 1) {
+                    <mat-card-actions align="end">
+                      <button
+                        mat-raised-button
+                        color="warn"
+                        (click)="removeSignage(signage.get('id')?.value)"
+                      >
+                        Remove
+                      </button>
+                    </mat-card-actions>
+                  }
+                </mat-card>
+              </div>
+              <button
+                style="margin-top: 1rem; align-self: flex-start"
+                mat-raised-button
+                color="primary"
+                (click)="addSignage()"
+              >
+                Add Signage
+              </button>
+            }
+            @if (workplanForm.get("signageRequired")?.value === false) {
+              <drr-input
+                style="width: 50rem"
+                [label]="t('signageNotRequiredComments')"
+                [rxFormControl]="workplanForm.get('signageNotRequiredComments')"
+                [maxlength]="50"
+              ></drr-input>
+            }
+          }
+          <div
+            style="
+              display: flex;
+              flex-direction: column;
+              gap: 1rem;
+              margin-top: 2rem;
+            "
+          >
+            <div class="workplan-item">
+              <mat-label class="drr-label">
+                {{ t("mediaAnnouncement") }}</mat-label
+              >
+              <drr-radio-button
+                class="drr-single-input"
+                label="Please select below"
+                [options]="yesNoRadioOptions"
+                [rxFormControl]="workplanForm.get('mediaAnnouncement')"
+              ></drr-radio-button>
+              @if (workplanForm.get("mediaAnnouncement")?.value === true) {
+                <drr-datepicker
+                  class="drr-single-input"
+                  label="Date of Announcement"
+                  [rxFormControl]="workplanForm.get('mediaAnnouncementDate')"
+                ></drr-datepicker>
+                <drr-textarea
+                  label="Comments"
+                  [rxFormControl]="workplanForm.get('mediaAnnouncementComment')"
+                  [maxlength]="2000"
+                ></drr-textarea>
+              }
+            </div>
+            <div class="workplan-item">
+              <mat-label class="drr-label"> Outstanding Issues </mat-label>
+              <drr-radio-button
+                class="drr-single-input"
+                [label]="t('outstandingIssues')"
+                [rxFormControl]="workplanForm.get('outstandingIssues')"
+                [options]="yesNoRadioOptions"
+              ></drr-radio-button>
+              @if (workplanForm.get("outstandingIssues")?.value === true) {
+                <drr-textarea
+                  [label]="t('outstandingIssuesComments')"
+                  [rxFormControl]="
+                    workplanForm.get('outstandingIssuesComments')
+                  "
+                  [maxlength]="2000"
+                ></drr-textarea>
+              }
+            </div>
+            <div class="workplan-item">
+              <mat-label class="drr-label">
+                Changes to Funding Sources
+              </mat-label>
+              <drr-radio-button
+                class="drr-single-input"
+                [label]="t('fundingSourcesChanged')"
+                [rxFormControl]="workplanForm.get('fundingSourcesChanged')"
+                [options]="yesNoRadioOptions"
+              ></drr-radio-button>
+              @if (workplanForm.get("fundingSourcesChanged")?.value === true) {
+                <drr-textarea
+                  [label]="t('fundingSourcesChangedComment')"
+                  [rxFormControl]="
+                    workplanForm.get('fundingSourcesChangedComment')
+                  "
+                  [maxlength]="2000"
+                ></drr-textarea>
+              }
+            </div>
+          </div>
+        </div>
+        <div class="drr-stepper-actions">
+          <button mat-stroked-button color="primary" matStepperPrevious>
+            Back
+          </button>
+          <button
+            id="next2"
+            mat-flat-button
+            color="primary"
+            matStepperNext
+            type="button"
+          >
+            Next
+          </button>
+        </div></mat-step
+      >
+      <mat-step
+        [label]="t('eventInformation')"
+        [stepControl]="eventInformationForm"
+        [errorMessage]="t('stepError')"
+      >
+        <div style="display: flex; flex-direction: column; gap: 1rem">
+          <h5>Past Project Events</h5>
+          <drr-radio-button
+            class="drr-single-input"
+            [label]="t('eventsOccurredSinceLastReport')"
+            [options]="yesNoRadioOptions"
+            [rxFormControl]="
+              eventInformationForm.get('eventsOccurredSinceLastReport')
+            "
+          ></drr-radio-button>
+          @if (
+            eventInformationForm.get("eventsOccurredSinceLastReport")?.value ===
+            true
+          ) {
+            <div
+              *ngFor="
+                let pastEvent of getPastEventsArray().controls;
+                let i = index
+              "
+            >
+              <mat-card>
+                <mat-card-header>
+                  <mat-card-title-group>
+                    <mat-card-subtitle>
+                      Past Event {{ i + 1 }}
+                    </mat-card-subtitle>
+                  </mat-card-title-group></mat-card-header
+                >
+                <mat-card-content style="display: flex; gap: 1rem">
+                  <drr-input
+                    class="drr-single-input"
+                    [label]="t('eventName')"
+                    [rxFormControl]="pastEvent.get('details')"
+                    [maxlength]="50"
+                  ></drr-input>
+                  <drr-datepicker
+                    class="drr-single-input"
+                    [label]="t('eventDate')"
+                    [rxFormControl]="pastEvent.get('date')"
+                  ></drr-datepicker>
+                </mat-card-content>
+                @if (getPastEventsArray().controls.length > 1) {
+                  <mat-card-actions align="end">
+                    <button
+                      mat-raised-button
+                      color="warn"
+                      (click)="removePastEvent(i)"
                     >
                       Remove
                     </button>
@@ -552,384 +736,224 @@
               style="margin-top: 1rem; align-self: flex-start"
               mat-raised-button
               color="primary"
-              (click)="addSignage()"
+              (click)="addPastEvent()"
             >
-              Add Signage
+              Add Past Event
             </button>
           }
-          @if (workplanForm.get("signageRequired")?.value === false) {
-            <drr-input
-              style="width: 50rem"
-              [label]="t('signageNotRequiredComments')"
-              [rxFormControl]="workplanForm.get('signageNotRequiredComments')"
-              [maxlength]="50"
-            ></drr-input>
-          }
-        }
-        <div
-          style="
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            margin-top: 2rem;
-          "
-        >
-          <div class="workplan-item">
-            <mat-label class="drr-label">
-              {{ t("mediaAnnouncement") }}</mat-label
+
+          <h5>Upcoming Project Events</h5>
+          <drr-radio-button
+            class="drr-single-input"
+            [label]="t('anyUpcomingEvents')"
+            [options]="yesNoRadioOptions"
+            [rxFormControl]="eventInformationForm.get('anyUpcomingEvents')"
+          ></drr-radio-button>
+          @if (eventInformationForm.get("anyUpcomingEvents")?.value === true) {
+            <div
+              *ngFor="
+                let upcomingEvent of getUpcomingEventsArray().controls;
+                let i = index
+              "
             >
-            <drr-radio-button
-              class="drr-single-input"
-              label="Please select below"
-              [options]="yesNoRadioOptions"
-              [rxFormControl]="workplanForm.get('mediaAnnouncement')"
-            ></drr-radio-button>
-            @if (workplanForm.get("mediaAnnouncement")?.value === true) {
-              <drr-datepicker
-                class="drr-single-input"
-                label="Date of Announcement"
-                [rxFormControl]="workplanForm.get('mediaAnnouncementDate')"
-              ></drr-datepicker>
-              <drr-textarea
-                label="Comments"
-                [rxFormControl]="workplanForm.get('mediaAnnouncementComment')"
-                [maxlength]="2000"
-              ></drr-textarea>
-            }
-          </div>
-          <div class="workplan-item">
-            <mat-label class="drr-label"> Outstanding Issues </mat-label>
-            <drr-radio-button
-              class="drr-single-input"
-              [label]="t('outstandingIssues')"
-              [rxFormControl]="workplanForm.get('outstandingIssues')"
-              [options]="yesNoRadioOptions"
-            ></drr-radio-button>
-            @if (workplanForm.get("outstandingIssues")?.value === true) {
-              <drr-textarea
-                [label]="t('outstandingIssuesComments')"
-                [rxFormControl]="workplanForm.get('outstandingIssuesComments')"
-                [maxlength]="2000"
-              ></drr-textarea>
-            }
-          </div>
-          <div class="workplan-item">
-            <mat-label class="drr-label">
-              Changes to Funding Sources
-            </mat-label>
-            <drr-radio-button
-              class="drr-single-input"
-              [label]="t('fundingSourcesChanged')"
-              [rxFormControl]="workplanForm.get('fundingSourcesChanged')"
-              [options]="yesNoRadioOptions"
-            ></drr-radio-button>
-            @if (workplanForm.get("fundingSourcesChanged")?.value === true) {
-              <drr-textarea
-                [label]="t('fundingSourcesChangedComment')"
-                [rxFormControl]="
-                  workplanForm.get('fundingSourcesChangedComment')
-                "
-                [maxlength]="2000"
-              ></drr-textarea>
-            }
-          </div>
-        </div>
-      </div>
-      <div class="drr-stepper-actions">
-        <button mat-stroked-button color="primary" matStepperPrevious>
-          Back
-        </button>
-        <button
-          id="next2"
-          mat-flat-button
-          color="primary"
-          matStepperNext
-          type="button"
-        >
-          Next
-        </button>
-      </div></mat-step
-    >
-    <mat-step
-      [label]="t('eventInformation')"
-      [stepControl]="eventInformationForm"
-      [errorMessage]="t('stepError')"
-    >
-      <div style="display: flex; flex-direction: column; gap: 1rem">
-        <h5>Past Project Events</h5>
-        <drr-radio-button
-          class="drr-single-input"
-          [label]="t('eventsOccurredSinceLastReport')"
-          [options]="yesNoRadioOptions"
-          [rxFormControl]="
-            eventInformationForm.get('eventsOccurredSinceLastReport')
-          "
-        ></drr-radio-button>
-        @if (
-          eventInformationForm.get("eventsOccurredSinceLastReport")?.value ===
-          true
-        ) {
-          <div
-            *ngFor="
-              let pastEvent of getPastEventsArray().controls;
-              let i = index
-            "
-          >
-            <mat-card>
-              <mat-card-header>
-                <mat-card-title-group>
-                  <mat-card-subtitle>
-                    Past Event {{ i + 1 }}
-                  </mat-card-subtitle>
-                </mat-card-title-group></mat-card-header
-              >
-              <mat-card-content style="display: flex; gap: 1rem">
-                <drr-input
-                  class="drr-single-input"
-                  [label]="t('eventName')"
-                  [rxFormControl]="pastEvent.get('details')"
-                  [maxlength]="50"
-                ></drr-input>
-                <drr-datepicker
-                  class="drr-single-input"
-                  [label]="t('eventDate')"
-                  [rxFormControl]="pastEvent.get('date')"
-                ></drr-datepicker>
-              </mat-card-content>
-              @if (getPastEventsArray().controls.length > 1) {
-                <mat-card-actions align="end">
-                  <button
-                    mat-raised-button
-                    color="warn"
-                    (click)="removePastEvent(i)"
-                  >
-                    Remove
-                  </button>
-                </mat-card-actions>
-              }
-            </mat-card>
-          </div>
-          <button
-            style="margin-top: 1rem; align-self: flex-start"
-            mat-raised-button
-            color="primary"
-            (click)="addPastEvent()"
-          >
-            Add Past Event
-          </button>
-        }
-
-        <h5>Upcoming Project Events</h5>
-        <drr-radio-button
-          class="drr-single-input"
-          [label]="t('anyUpcomingEvents')"
-          [options]="yesNoRadioOptions"
-          [rxFormControl]="eventInformationForm.get('anyUpcomingEvents')"
-        ></drr-radio-button>
-        @if (eventInformationForm.get("anyUpcomingEvents")?.value === true) {
-          <div
-            *ngFor="
-              let upcomingEvent of getUpcomingEventsArray().controls;
-              let i = index
-            "
-          >
-            <mat-card>
-              <mat-card-header>
-                <mat-card-title-group>
-                  <mat-card-subtitle>
-                    Future Event {{ i + 1 }}
-                  </mat-card-subtitle>
-                </mat-card-title-group></mat-card-header
-              >
-              <mat-card-content
-                style="display: flex; flex-direction: column; gap: 1rem"
-              >
-                <div style="display: flex; gap: 1rem">
-                  <drr-input
-                    class="drr-single-input"
-                    [label]="t('eventName')"
-                    [rxFormControl]="upcomingEvent.get('details')"
-                    [maxlength]="50"
-                  ></drr-input>
-                  <drr-datepicker
-                    class="drr-single-input"
-                    [label]="t('futureEventDate')"
-                    [rxFormControl]="upcomingEvent.get('date')"
-                  ></drr-datepicker>
-                </div>
-                <mat-label class="drr-label">{{ t("contact") }}</mat-label>
-                <div style="display: flex; gap: 1rem">
-                  <drr-input
-                    [label]="'firstName' | transloco"
-                    [rxFormControl]="upcomingEvent.get('contact.firstName')"
-                    [maxlength]="40"
-                  ></drr-input>
-                  <drr-input
-                    [label]="'lastName' | transloco"
-                    [rxFormControl]="upcomingEvent.get('contact.lastName')"
-                    [maxlength]="40"
-                  ></drr-input>
-                  <drr-input
-                    [label]="'title' | transloco"
-                    [rxFormControl]="upcomingEvent.get('contact.title')"
-                    [maxlength]="100"
-                  ></drr-input>
-                  <drr-input
-                    [label]="'department' | transloco"
-                    [rxFormControl]="upcomingEvent.get('contact.department')"
-                    [maxlength]="40"
-                  ></drr-input>
-                  <drr-input
-                    [label]="'phone' | transloco"
-                    [rxFormControl]="upcomingEvent.get('contact.phone')"
-                    [maxlength]="10"
-                    type="tel"
-                  ></drr-input>
-                  <drr-input
-                    [label]="'email' | transloco"
-                    [rxFormControl]="upcomingEvent.get('contact.email')"
-                    [maxlength]="100"
-                    type="email"
-                  ></drr-input>
-                </div>
-                <div>
-                  <drr-radio-button
-                    class="drr-single-input"
-                    [label]="t('provincialRepresentativeRequest')"
-                    [options]="yesNoRadioOptions"
-                    [rxFormControl]="
-                      upcomingEvent.get('provincialRepresentativeRequest')
-                    "
-                  ></drr-radio-button>
-                  @if (
-                    upcomingEvent.get("provincialRepresentativeRequest")
-                      ?.value === true
-                  ) {
-                    <i style="margin-left: 1rem"
-                      >A DMAP team member will be in contact with you regarding
-                      the event.</i
+              <mat-card>
+                <mat-card-header>
+                  <mat-card-title-group>
+                    <mat-card-subtitle>
+                      Future Event {{ i + 1 }}
+                    </mat-card-subtitle>
+                  </mat-card-title-group></mat-card-header
+                >
+                <mat-card-content
+                  style="display: flex; flex-direction: column; gap: 1rem"
+                >
+                  <div style="display: flex; gap: 1rem">
+                    <drr-input
+                      class="drr-single-input"
+                      [label]="t('eventName')"
+                      [rxFormControl]="upcomingEvent.get('details')"
+                      [maxlength]="50"
+                    ></drr-input>
+                    <drr-datepicker
+                      class="drr-single-input"
+                      [label]="t('futureEventDate')"
+                      [rxFormControl]="upcomingEvent.get('date')"
+                    ></drr-datepicker>
+                  </div>
+                  <mat-label class="drr-label">{{ t("contact") }}</mat-label>
+                  <div style="display: flex; gap: 1rem">
+                    <drr-input
+                      [label]="'firstName' | transloco"
+                      [rxFormControl]="upcomingEvent.get('contact.firstName')"
+                      [maxlength]="40"
+                    ></drr-input>
+                    <drr-input
+                      [label]="'lastName' | transloco"
+                      [rxFormControl]="upcomingEvent.get('contact.lastName')"
+                      [maxlength]="40"
+                    ></drr-input>
+                    <drr-input
+                      [label]="'title' | transloco"
+                      [rxFormControl]="upcomingEvent.get('contact.title')"
+                      [maxlength]="100"
+                    ></drr-input>
+                    <drr-input
+                      [label]="'department' | transloco"
+                      [rxFormControl]="upcomingEvent.get('contact.department')"
+                      [maxlength]="40"
+                    ></drr-input>
+                    <drr-input
+                      [label]="'phone' | transloco"
+                      [rxFormControl]="upcomingEvent.get('contact.phone')"
+                      [maxlength]="10"
+                      type="tel"
+                    ></drr-input>
+                    <drr-input
+                      [label]="'email' | transloco"
+                      [rxFormControl]="upcomingEvent.get('contact.email')"
+                      [maxlength]="100"
+                      type="email"
+                    ></drr-input>
+                  </div>
+                  <div>
+                    <drr-radio-button
+                      class="drr-single-input"
+                      [label]="t('provincialRepresentativeRequest')"
+                      [options]="yesNoRadioOptions"
+                      [rxFormControl]="
+                        upcomingEvent.get('provincialRepresentativeRequest')
+                      "
+                    ></drr-radio-button>
+                    @if (
+                      upcomingEvent.get("provincialRepresentativeRequest")
+                        ?.value === true
+                    ) {
+                      <i style="margin-left: 1rem"
+                        >A DMAP team member will be in contact with you
+                        regarding the event.</i
+                      >
+                    }
+                  </div>
+                </mat-card-content>
+                @if (getUpcomingEventsArray().controls.length > 1) {
+                  <mat-card-actions align="end">
+                    <button
+                      mat-raised-button
+                      color="warn"
+                      (click)="removeFutureEvent(i)"
                     >
-                  }
-                </div>
-              </mat-card-content>
-              @if (getUpcomingEventsArray().controls.length > 1) {
-                <mat-card-actions align="end">
-                  <button
-                    mat-raised-button
-                    color="warn"
-                    (click)="removeFutureEvent(i)"
-                  >
-                    Remove
-                  </button>
-                </mat-card-actions>
-              }
-            </mat-card>
-          </div>
-          <button
-            style="margin-top: 1rem; align-self: flex-start"
-            mat-raised-button
-            color="primary"
-            (click)="addFutureEvent()"
-          >
-            Add Future Event
-          </button>
-        }
-      </div>
-      <div class="drr-stepper-actions">
-        <button mat-stroked-button color="primary" matStepperPrevious>
-          Back
-        </button>
-        <button
-          id="next2"
-          mat-flat-button
-          color="primary"
-          matStepperNext
-          type="button"
-        >
-          Next
-        </button>
-      </div>
-    </mat-step>
-    <mat-step
-      label="Attachments"
-      [stepControl]="progressReportForm.get('attachments')!"
-      [errorMessage]="t('stepError')"
-    >
-      <div class="attachments-container">
-        <drr-attachment
-          *ngFor="
-            let attachmentControl of getAttachmentsFormArray().controls;
-            let i = index
-          "
-          [title]="i == 0 ? t('attachments') : ''"
-          [attachmentForm]="attachmentControl"
-          (removeFile)="removeFile($event)"
-          (downloadFile)="downloadFile($event)"
-        ></drr-attachment>
-
-        <div style="display: flex; flex-direction: column; gap: 1rem">
-          <div>
-            <mat-label class="drr-label">
-              {{ t("attachmentUploadText") }}
-            </mat-label>
-          </div>
-
-          <drr-file-upload
-            (filesSelected)="uploadFiles($event)"
-            [attachButtonLabel]="t('uploadAttachment')"
-          ></drr-file-upload>
+                      Remove
+                    </button>
+                  </mat-card-actions>
+                }
+              </mat-card>
+            </div>
+            <button
+              style="margin-top: 1rem; align-self: flex-start"
+              mat-raised-button
+              color="primary"
+              (click)="addFutureEvent()"
+            >
+              Add Future Event
+            </button>
+          }
         </div>
-      </div>
-      <div class="drr-stepper-actions">
-        <button mat-stroked-button color="primary" matStepperPrevious>
-          Back
-        </button>
-        <button
-          id="next3"
-          mat-flat-button
-          color="primary"
-          matStepperNext
-          type="button"
-        >
-          Next
-        </button>
-      </div></mat-step
-    >
-    <mat-step
-      label="Review & Declaration"
-      [stepControl]="progressReportForm.get('declaration')!"
-      [errorMessage]="t('stepError')"
-    >
-      <div>
-        <drif-progress-report-summary
-          [progressReportForm]="progressReportForm"
-          [isReadOnlyView]="false"
-        ></drif-progress-report-summary>
+        <div class="drr-stepper-actions">
+          <button mat-stroked-button color="primary" matStepperPrevious>
+            Back
+          </button>
+          <button
+            id="next2"
+            mat-flat-button
+            color="primary"
+            matStepperNext
+            type="button"
+          >
+            Next
+          </button>
+        </div>
+      </mat-step>
+      <mat-step
+        label="Attachments"
+        [stepControl]="progressReportForm.get('attachments')!"
+        [errorMessage]="t('stepError')"
+      >
+        <div class="attachments-container">
+          <drr-attachment
+            *ngFor="
+              let attachmentControl of getAttachmentsFormArray().controls;
+              let i = index
+            "
+            [title]="i == 0 ? t('attachments') : ''"
+            [attachmentForm]="attachmentControl"
+            (removeFile)="removeFile($event)"
+            (downloadFile)="downloadFile($event)"
+          ></drr-attachment>
 
-        <drr-auth-rep
-          [authorizedRepresentativeForm]="authorizedRepresentativeForm"
-        ></drr-auth-rep>
+          <div style="display: flex; flex-direction: column; gap: 1rem">
+            <div>
+              <mat-label class="drr-label">
+                {{ t("attachmentUploadText") }}
+              </mat-label>
+            </div>
 
-        <drr-declaration
-          [declarationForm]="declarationForm"
-          [accuracyOfInformationText]="accuracyOfInformationText"
-          [authorizedRepresentativeText]="authorizedRepresentativeText"
-        ></drr-declaration>
-      </div>
-      <div class="drr-stepper-actions">
-        <button mat-stroked-button color="primary" matStepperPrevious>
-          Back
-        </button>
-        <button
-          id="submit"
-          mat-flat-button
-          color="primary"
-          type="button"
-          (click)="submit()"
-        >
-          Submit
-        </button>
-      </div></mat-step
-    >
-  </mat-stepper>
-</div>
+            <drr-file-upload
+              (filesSelected)="uploadFiles($event)"
+              [attachButtonLabel]="t('uploadAttachment')"
+            ></drr-file-upload>
+          </div>
+        </div>
+        <div class="drr-stepper-actions">
+          <button mat-stroked-button color="primary" matStepperPrevious>
+            Back
+          </button>
+          <button
+            id="next3"
+            mat-flat-button
+            color="primary"
+            matStepperNext
+            type="button"
+          >
+            Next
+          </button>
+        </div></mat-step
+      >
+      <mat-step
+        label="Review & Declaration"
+        [stepControl]="progressReportForm.get('declaration')!"
+        [errorMessage]="t('stepError')"
+      >
+        <div>
+          <drif-progress-report-summary
+            [progressReportForm]="progressReportForm"
+            [isReadOnlyView]="false"
+          ></drif-progress-report-summary>
+
+          <drr-auth-rep
+            [authorizedRepresentativeForm]="authorizedRepresentativeForm"
+          ></drr-auth-rep>
+
+          <drr-declaration
+            [declarationForm]="declarationForm"
+            [accuracyOfInformationText]="accuracyOfInformationText"
+            [authorizedRepresentativeText]="authorizedRepresentativeText"
+          ></drr-declaration>
+        </div>
+        <div class="drr-stepper-actions">
+          <button mat-stroked-button color="primary" matStepperPrevious>
+            Back
+          </button>
+          <button
+            id="submit"
+            mat-flat-button
+            color="primary"
+            type="button"
+            (click)="submit()"
+          >
+            Submit
+          </button>
+        </div></mat-step
+      >
+    </mat-stepper>
+  </mat-card-content>
+</mat-card>
