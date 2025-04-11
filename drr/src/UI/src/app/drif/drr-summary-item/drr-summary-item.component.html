@@ -1,7 +1,7 @@
 <div class="summary-item">
   <mat-label class="drr-label">{{ label }}</mat-label>
   <mat-label
-    *ngIf="value == null || value == undefined"
+    *ngIf="value == null || value == undefined || value == ''"
     [class.required]="isRequired()"
   >
     ({{ isRequired() ? "Required" : "Optional" }})</mat-label
