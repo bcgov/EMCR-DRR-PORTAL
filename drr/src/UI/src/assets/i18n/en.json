@@ -4,7 +4,7 @@
   "eoiFormHeaderFor": "DRIF EOI for {{projectTitle}}",
   "fpFormHeader": "DRIF Full Proposal",
   "fpFormHeaderFor": "DRIF Full Proposal for {{projectTitle}}",
-  "relatedEoi": "Related EOI #:",
+  "relatedEoi": "Related EOI #",
   "steps": {
     "eoi": {
       "step1": "Proponent Information",
@@ -494,7 +494,7 @@
   "screener": {
     "header": "Are you ready to submit your Full Proposal?",
     "fpFormHeaderFor": "DRIF Full Proposal for {{projectTitle}}",
-    "relatedEoi": "Related EOI #:",
+    "relatedEoi": "Related EOI #",
     "skip": "Skip",
     "cancel": "Cancel",
     "continue": "Continue",
