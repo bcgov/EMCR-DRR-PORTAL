@@ -193,13 +193,20 @@ export class DrifClaimCreateComponent {
   plannedEndDate!: Date;
   projectType!: InterimProjectType;
 
-  costCategoryOptions: DrrSelectOption[] = Object.values(CostCategory)
-    .filter((value) => value !== CostCategory.Contingency)
+  costCategoryOptions: DrrSelectOption[] = Object.keys(CostCategory)
+    .filter(
+      (value) =>
+        value !== CostCategory.Contingency && value !== CostCategory.Other,
+    )
     .map((value) => ({
       value,
       label: this.translocoService.translate(value),
     }))
-    .sort((a, b) => a.label.localeCompare(b.label));
+    .sort((a, b) => a.label.localeCompare(b.label))
+    .concat({
+      value: CostCategory.Other,
+      label: this.translocoService.translate(CostCategory.Other),
+    });
 
   getInvoiceFormArray(): FormArray | undefined {
     return this.claimForm?.get('expenditure')?.get('invoices') as FormArray;
