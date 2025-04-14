@@ -31,14 +31,23 @@
             let i = index
           "
         >
-          <td>{{ yearForecast.get("fiscalYear")?.value }}</td>
           <td>
-            {{ yearForecast.get("forecastAmount")?.value | currency }}
+            <drr-summary-item
+              [rxFormControl]="yearForecast.get('fiscalYear')"
+            ></drr-summary-item>
           </td>
           <td>
-            {{
-              yearForecast.get("totalProjectedExpenditure")?.value | currency
-            }}
+            <drr-summary-item
+              [rxFormControl]="yearForecast.get('forecastAmount')"
+              controlType="currency"
+            ></drr-summary-item>
+          </td>
+          <td>
+            <drr-summary-item
+              [rxFormControl]="yearForecast.get('totalProjectedExpenditure')"
+              controlType="currency"
+            >
+            </drr-summary-item>
           </td>
           <!-- <td>
             {{ yearForecast.get("claimsPaidToDate")?.value | currency }}
@@ -47,7 +56,10 @@
             {{ yearForecast.get("claimsSubmittedNotPaid")?.value | currency }}
           </td> -->
           <td>
-            {{ yearForecast.get("claimsOnThisReport")?.value | currency }}
+            <drr-summary-item
+              [rxFormControl]="yearForecast.get('claimsOnThisReport')"
+              controlType="currency"
+            ></drr-summary-item>
           </td>
           <!-- <td>
             {{ yearForecast.get("remainingClaims")?.value | currency }}

@@ -37,6 +37,7 @@ import {
   DeclarationType,
   DocumentType,
   DraftForecast,
+  Forecast,
   FormType,
   RecordType,
 } from '../../../../../model';
@@ -408,7 +409,7 @@ export class DrifForecastCreateComponent {
     this.router.navigate(['drif-projects', this.projectId]);
   }
 
-  getFormValue(): DraftForecast {
+  getFormValue(): Forecast {
     const formValue = this.forecastForm?.getRawValue();
 
     return {
@@ -418,6 +419,10 @@ export class DrifForecastCreateComponent {
       varianceComment: formValue.budgetForecast.varianceComment,
       attachments: formValue.attachments.attachments,
       authorizedRepresentative: formValue.declaration.authorizedRepresentative,
+      authorizedRepresentativeStatement:
+        formValue.declaration.authorizedRepresentativeStatement,
+      informationAccuracyStatement:
+        formValue.declaration.informationAccuracyStatement,
     };
   }
 
