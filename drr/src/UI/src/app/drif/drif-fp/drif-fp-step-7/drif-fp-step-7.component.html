@@ -10,32 +10,32 @@
     ></drr-radio-button>
 
     @if (standardsVisible) {
-    <mat-label style="margin: 1rem 0">
-      {{ t("standardsAcceptableHint") }}
-    </mat-label>
-    <mat-error *ngIf="showStandardsRequiredTrueError()">{{
-      t("standardsAcceptableError")
-    }}</mat-error>
+      <mat-label style="margin: 1rem 0">
+        {{ t("standardsAcceptableHint") }}
+      </mat-label>
+      <mat-error *ngIf="showStandardsRequiredTrueError()">{{
+        t("standardsAcceptableError")
+      }}</mat-error>
 
-    <div formArrayName="standards">
-      <div
-        *ngFor="let control of getStandardsInfoArrayControls(); let i = index"
-        [formGroupName]="i"
-      >
-        <mat-checkbox
-          style="margin-bottom: 1rem"
-          formControlName="isCategorySelected"
-          >{{ control.value.category }}</mat-checkbox
+      <div formArrayName="standards">
+        <div
+          *ngFor="let control of getStandardsInfoArrayControls(); let i = index"
+          [formGroupName]="i"
         >
+          <mat-checkbox
+            style="margin-bottom: 1rem"
+            formControlName="isCategorySelected"
+            >{{ control.value.category }}</mat-checkbox
+          >
 
-        <drr-chip-autocomplete
-          [label]="control.value.category + ' standards'"
-          [placeholder]="t('autocompletePlaceholder')"
-          [options]="getStandardsOptions(control.value.category)"
-          [rxFormControl]="control.get('standards')"
-        ></drr-chip-autocomplete>
+          <drr-chip-autocomplete
+            [label]="control.value.category + ' standards'"
+            [placeholder]="t('autocompletePlaceholder')"
+            [options]="getStandardsOptions(control.value.category)"
+            [rxFormControl]="control.get('standards')"
+          ></drr-chip-autocomplete>
+        </div>
       </div>
-    </div>
     }
 
     <drr-textarea
@@ -55,18 +55,22 @@
       [options]="professionalGuidanceOptions"
     ></drr-radio-button>
 
-    @if (permitsRegulationsAndStandardsForm.get('professionalGuidance') ?.value
-    === true) {
-    <mat-label>{{ t("professionals") }}*</mat-label>
-    <drr-select
-      [label]="'Qualified Professionals'"
-      class="drr-single-input"
-      [rxFormControl]="permitsRegulationsAndStandardsForm.get('professionals')"
-      [options]="professionalOptions"
-      [isMultiple]="true"
-    >
-    </drr-select
-    >}
+    @if (
+      permitsRegulationsAndStandardsForm.get("professionalGuidance")?.value ===
+      true
+    ) {
+      <mat-label>{{ t("professionals") }}*</mat-label>
+      <drr-select
+        [label]="'Qualified Professionals'"
+        class="drr-single-input"
+        [rxFormControl]="
+          permitsRegulationsAndStandardsForm.get('professionals')
+        "
+        [options]="professionalOptions"
+        [isMultiple]="true"
+      >
+      </drr-select>
+    }
 
     <drr-textarea
       [label]="t('professionalGuidanceComments')"
@@ -120,14 +124,16 @@
         class="permit-container"
         *ngFor="let permit of getPermitsFormArray().controls; let i = index"
       >
-        <drr-input
-          class="drr-single-input"
+        <drr-textarea
+          style="width: 95%"
           [id]="'permit_' + i"
           [label]="t('permitLabel')"
           [rxFormControl]="permit.get('value')"
           [maxlength]="200"
-        ></drr-input>
+          [rows]="2"
+        ></drr-textarea>
         <button
+          style="align-self: center"
           *ngIf="i > 0"
           mat-mini-fab
           color="warn"
