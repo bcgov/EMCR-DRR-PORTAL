@@ -479,7 +479,9 @@ export class DrifProgressReportCreateComponent {
                   comment?.addValidators(Validators.required);
                 } else {
                   date?.clearValidators();
+                  date?.setValue(null, { emitEvent: false });
                   comment?.clearValidators();
+                  comment?.setValue(null, { emitEvent: false });
                 }
 
                 date?.updateValueAndValidity();
