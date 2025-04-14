@@ -156,6 +156,8 @@ $my-app-theme: mat.m2-define-light-theme(
   .mat-mdc-tab-header.mat-mdc-tab-nav-bar-stretch-tabs .mat-mdc-tab-link {
     background-color: mat.m2-get-color-from-palette($bcgov-primary-palette, 60);
     border: 1px solid mat.m2-get-color-from-palette($bcgov-primary-palette, 100);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
 
     &:hover {
       background-color: mat.m2-get-color-from-palette(
@@ -175,6 +177,8 @@ $my-app-theme: mat.m2-define-light-theme(
     .mat-mdc-tab {
     background-color: mat.m2-get-color-from-palette($bcgov-primary-palette, 60);
     border: 1px solid mat.m2-get-color-from-palette($bcgov-primary-palette, 100);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
 
     &:hover {
       background-color: mat.m2-get-color-from-palette(
@@ -190,6 +194,8 @@ $my-app-theme: mat.m2-define-light-theme(
       70
     ) !important;
     border: 1px solid mat.m2-get-color-from-palette($bcgov-primary-palette, 500);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
   }
 }
 
