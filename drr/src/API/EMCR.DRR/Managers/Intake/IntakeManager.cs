@@ -547,7 +547,8 @@ namespace EMCR.DRR.Managers.Intake
 
             var forecast = mapper.Map<ForecastDetails>(cmd.Forecast);
 
-            //TODO - any other validations
+            if (forecast.InformationAccuracyStatement != true) throw new BusinessValidationException("InformationAccuracyStatement is required");
+            if (forecast.AuthorizedRepresentativeStatement != true) throw new BusinessValidationException("AuthorizedRepresentativeStatement is required");
             if (forecast.AuthorizedRepresentative == null) throw new BusinessValidationException("Authorized Representative is required.");
             if (string.IsNullOrEmpty(forecast.AuthorizedRepresentative.FirstName)) throw new BusinessValidationException("Authorized Representative first name is required.");
             if (string.IsNullOrEmpty(forecast.AuthorizedRepresentative.LastName)) throw new BusinessValidationException("Authorized Representative last name is required.");

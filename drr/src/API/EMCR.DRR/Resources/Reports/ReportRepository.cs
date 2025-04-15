@@ -417,7 +417,6 @@ namespace EMCR.DRR.API.Resources.Reports
             ctx.DetachAll();
 
             var createdReport = await ctx.drr_projectreports.Where(r => r.drr_projectreportid == report.drr_projectreportid).SingleOrDefaultAsync();
-            //return new ManageReportCommandResult { Id = $"DRIF-{createdReport.drr_autonumber}" };
             return new ManageReportCommandResult { Id = createdReport.drr_name };
 
         }
