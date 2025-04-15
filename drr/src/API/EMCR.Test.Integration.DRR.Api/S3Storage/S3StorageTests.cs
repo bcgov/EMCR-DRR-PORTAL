@@ -16,15 +16,18 @@ namespace EMCR.Tests.Integration.DRR.Api.S3Storage
             var storageProvider = host.Services.GetRequiredService<IS3Provider>();
 
             var body = DateTime.Now.ToString();
-            var fileName = "test.txt";
+            var key = "autotest-file-key";
+            var fileName = "ᓀᐦᐃᔭᐍᐏᐣ (Nēhiyawēwin).txt";
             byte[] bytes = Encoding.ASCII.GetBytes(body);
             var file = new S3File { FileName = fileName, Content = bytes, ContentType = "text/plain", };
 
-            var ret = await storageProvider.HandleCommand(new UploadFileCommand { Folder = "autotest-dev", Key = fileName, File = file });
-            ret.ShouldBe(fileName);
+            var ret = await storageProvider.HandleCommand(new UploadFileCommand { Folder = "autotest-dev", Key = key, File = file });
+            ret.ShouldBe(key);
 
-            var uploadedFile = await storageProvider.HandleQuery(new FileQuery { Key = fileName, Folder = "autotest-dev" });
+            var uploadedFile = await storageProvider.HandleQuery(new FileQuery { Key = key, Folder = "autotest-dev" });
             uploadedFile.ShouldNotBeNull().ShouldBeOfType<FileQueryResult>();
+            var fileRes = (FileQueryResult)uploadedFile;
+            fileRes.File.FileName.ShouldBe(fileName);
         }
 
 #pragma warning disable CS8602 // Dereference of a possibly null reference.

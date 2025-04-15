@@ -1,4 +1,4 @@
-﻿using System.Threading;
+﻿using System.Text;
 using System.Web;
 using Amazon.Runtime;
 using Amazon.S3;
@@ -54,7 +54,8 @@ namespace EMCR.DRR.API.Services.S3
                 TagSet = GetTagSet(cmd.FileTag?.Tags ?? []),
             };
             request.Metadata.Add("contenttype", file.ContentType);
-            request.Metadata.Add("filename", HttpUtility.HtmlEncode(file.FileName));
+            //Convert file name to base64 string to encode special characters not supported by S3
+            request.Metadata.Add("filename", HttpUtility.HtmlEncode(Convert.ToBase64String(Encoding.UTF8.GetBytes(file.FileName))));
             if (file.Metadata != null)
             {
                 foreach (FileMetadata md in file.Metadata)
@@ -82,7 +83,8 @@ namespace EMCR.DRR.API.Services.S3
                 TagSet = GetTagSet(cmd.FileTag?.Tags ?? []),
             };
             request.Metadata.Add("contenttype", file.ContentType);
-            request.Metadata.Add("filename", HttpUtility.HtmlEncode(file.FileName));
+            //Convert file name to base64 string to encode special characters not supported by S3
+            request.Metadata.Add("filename", HttpUtility.HtmlEncode(Convert.ToBase64String(Encoding.UTF8.GetBytes(file.FileName))));
             if (file.Metadata != null)
             {
                 foreach (FileMetadata md in file.Metadata)
@@ -129,7 +131,7 @@ namespace EMCR.DRR.API.Services.S3
                 File = new S3File
                 {
                     ContentType = response.Metadata["contenttype"],
-                    FileName = response.Metadata["filename"],
+                    FileName = GetSafeFileName(response.Metadata["filename"]),
                     Content = ms.ToArray(),
                     Metadata = GetMetadata(response.Metadata).AsEnumerable(),
                 },
@@ -173,6 +175,40 @@ namespace EMCR.DRR.API.Services.S3
 
         private static List<Tag> GetTags(List<Amazon.S3.Model.Tag> tags) =>
             tags.ConvertAll(tag => new Tag { Key = tag.Key, Value = tag.Value });
+
+        //File name might be base64 encoded - so return correct result
+        private static string GetSafeFileName(string possiblyBase64)
+        {
+            if (IsBase64String(possiblyBase64))
+            {
+                try
+                {
+                    return Encoding.UTF8.GetString(Convert.FromBase64String(possiblyBase64));
+                }
+                catch
+                {
+                    // fallback if something went wrong
+                    return possiblyBase64;
+                }
+            }
+            return possiblyBase64;
+        }
+
+        private static bool IsBase64String(string s)
+        {
+            if (string.IsNullOrWhiteSpace(s) || s.Length % 4 != 0)
+                return false;
+
+            try
+            {
+                Convert.FromBase64String(s);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 
     internal static class S3ClientEx
