@@ -5,11 +5,6 @@ ENV ASPNETCORE_URLS=http://*:8080
 ARG VERSION
 ENV VERSION=$VERSION
 
-RUN apt-get update && \
-    apt-get install -y curl && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
 WORKDIR /src
