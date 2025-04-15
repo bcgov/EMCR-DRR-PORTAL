@@ -178,7 +178,9 @@ services.AddAuthentication(options =>
 {
     options.DefaultScheme = defaultScheme;
     options.DefaultChallengeScheme = defaultScheme;
-}).AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+})
+//For portal users
+.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
 {
     options.MetadataAddress = configuration.GetValue<string>("jwt:metadataAddress");
     options.TokenValidationParameters = new TokenValidationParameters
@@ -218,6 +220,7 @@ services.AddAuthentication(options =>
     };
     options.Validate();
 })
+//For CRM service account to use our S3 integration
 .AddJwtBearer("SSO", options =>
 {
     options.MetadataAddress = configuration.GetValue<string>("SSO:jwt:metadataAddress");
