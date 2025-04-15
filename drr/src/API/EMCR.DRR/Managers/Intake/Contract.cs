@@ -929,7 +929,6 @@ namespace EMCR.DRR.Managers.Intake
         public bool? InformationAccuracyStatement { get; set; }
     }
 
-
     public class InterimReportDetails : InterimReport
     {
     }
