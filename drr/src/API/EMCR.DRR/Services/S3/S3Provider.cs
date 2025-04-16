@@ -54,8 +54,12 @@ namespace EMCR.DRR.API.Services.S3
                 TagSet = GetTagSet(cmd.FileTag?.Tags ?? []),
             };
             request.Metadata.Add("contenttype", file.ContentType);
+
+            //save an ascii safe version the file name for reference
+            //not used - just nice if you need to browse S3
+            request.Metadata.Add("filenameref", Encoding.ASCII.GetString(Encoding.ASCII.GetBytes(file.FileName)));
             //Convert file name to base64 string to encode special characters not supported by S3
-            request.Metadata.Add("filename", HttpUtility.HtmlEncode(Convert.ToBase64String(Encoding.UTF8.GetBytes(file.FileName))));
+            request.Metadata.Add("filename", Convert.ToBase64String(Encoding.UTF8.GetBytes(file.FileName)));
             if (file.Metadata != null)
             {
                 foreach (FileMetadata md in file.Metadata)
