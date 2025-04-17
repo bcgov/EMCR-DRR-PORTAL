@@ -97,16 +97,16 @@ namespace EMCR.DRR.API.Controllers
         //    return Ok(new { Message = "File uploaded successfully." });
         //}
 
-        [HttpGet("stream/{id}")]
-        public async Task<ActionResult<AttachmentStreamQueryResult>> DownloadAttachmentStream(string id)
-        {
-            var file = (FileStreamQueryResult)await intakeManager.Handle(new DownloadAttachmentStream { Id = id, UserInfo = GetCurrentUser() });
-            return File(
-                file.File.ContentStream,
-                file.File.ContentType,
-                file.File.FileName
-            );
-        }
+        //[HttpGet("stream/{id}")]
+        //public async Task<ActionResult<AttachmentStreamQueryResult>> DownloadAttachmentStream(string id)
+        //{
+        //    var file = (FileStreamQueryResult)await intakeManager.Handle(new DownloadAttachmentStream { Id = id, UserInfo = GetCurrentUser() });
+        //    return File(
+        //        file.File.ContentStream,
+        //        file.File.ContentType,
+        //        file.File.FileName
+        //    );
+        //}
     }
 
     public class AttachmentQueryResult
@@ -114,10 +114,10 @@ namespace EMCR.DRR.API.Controllers
         public required S3File File { get; set; }
     }
 
-    public class AttachmentStreamQueryResult
-    {
-        public required S3FileStreamResult File { get; set; }
-    }
+    //public class AttachmentStreamQueryResult
+    //{
+    //    public required S3FileStreamResult File { get; set; }
+    //}
 
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class DisableFormValueModelBindingAttribute : Attribute, IResourceFilter
