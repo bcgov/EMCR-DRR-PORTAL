@@ -97,6 +97,7 @@ namespace EMCR.DRR.Managers.Intake
             return cmd switch
             {
                 DownloadAttachment c => await Handle(c),
+                DownloadAttachmentStream c => await Handle(c),
                 _ => throw new NotSupportedException($"{cmd.GetType().Name} is not supported")
             };
         }
@@ -683,6 +684,19 @@ namespace EMCR.DRR.Managers.Intake
             return new ValidateCanCreateReportResult { CanCreate = canCreate, Description = description };
         }
 
+        public async Task<FileStreamQueryResult> Handle(DownloadAttachmentStream cmd)
+        {
+            var result = await documentRepository.Query(new DocumentQuery { Id = cmd.Id });
+
+            switch (result.Document.RecordType)
+            {
+                case RecordType.FullProposal: return await DownloadApplicationDocumentStream(cmd, result);
+                //case RecordType.ProgressReport: return await DownloadProgressReportDocument(cmd, result);
+                //case RecordType.Invoice: return await DownloadInvoiceDocument(cmd, result);
+                //case RecordType.ForecastReport: return await DownloadForecastReportDocument(cmd, result);
+                default: throw new BusinessValidationException("Unsupported Record Type");
+            }
+        }
 
         public async Task<FileQueryResult> Handle(DownloadAttachment cmd)
         {
@@ -710,6 +724,16 @@ namespace EMCR.DRR.Managers.Intake
             return mapper.Map<EntitiesQueryResult>(res);
         }
 
+        private async Task<FileStreamQueryResult> DownloadApplicationDocumentStream(DownloadAttachmentStream cmd, QueryDocumentCommandResult documentRes)
+        {
+            var canAccess = await CanAccessApplicationFromDocumentId(cmd.Id, cmd.UserInfo.BusinessId);
+            if (!canAccess) throw new ForbiddenException("Not allowed to access this application.");
+            //var recordId = (await documentRepository.Query(new DocumentQuery { Id = cmd.Id })).RecordId;
+
+            var res = await s3Provider.HandleQuery(new FileStreamQuery { Key = cmd.Id, Folder = $"{RecordType.FullProposal.ToDescriptionString()}/{documentRes.RecordId}" });
+            return (FileStreamQueryResult)res;
+        }
+        
         private async Task<FileQueryResult> DownloadApplicationDocument(DownloadAttachment cmd, QueryDocumentCommandResult documentRes)
         {
             var canAccess = await CanAccessApplicationFromDocumentId(cmd.Id, cmd.UserInfo.BusinessId);
