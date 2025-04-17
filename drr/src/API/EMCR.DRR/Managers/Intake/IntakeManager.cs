@@ -757,10 +757,10 @@ namespace EMCR.DRR.Managers.Intake
             if (progressReport == null) throw new NotFoundException("Progress Report not found");
             if (!ProgressReportInEditableStatus(progressReport)) throw new BusinessValidationException("Not allowed to update Progress Report");
             
-            if (cmd.AttachmentInfo.DocumentType != DocumentType.OtherSupportingDocument && progressReport.Attachments != null && progressReport.Attachments.Any(a => a.DocumentType == cmd.AttachmentInfo.DocumentType))
-            {
-                throw new BusinessValidationException($"A document with type {cmd.AttachmentInfo.DocumentType.ToDescriptionString()} already exists on the application {cmd.AttachmentInfo.RecordId}");
-            }
+            //if (cmd.AttachmentInfo.DocumentType != DocumentType.OtherSupportingDocument && progressReport.Attachments != null && progressReport.Attachments.Any(a => a.DocumentType == cmd.AttachmentInfo.DocumentType))
+            //{
+            //    throw new BusinessValidationException($"A document with type {cmd.AttachmentInfo.DocumentType.ToDescriptionString()} already exists on the progress report {cmd.AttachmentInfo.RecordId}");
+            //}
 
             var newDocId = Guid.NewGuid().ToString();
 
@@ -781,10 +781,10 @@ namespace EMCR.DRR.Managers.Intake
             if (!ClaimInEditableStatus(existingClaim)) throw new BusinessValidationException("Not allowed to update Claim");
 
             //if (!ApplicationInEditableStatus(progressReport)) throw new BusinessValidationException("Can only edit attachments when application is in Draft");
-            if (cmd.AttachmentInfo.DocumentType != DocumentType.OtherSupportingDocument && invoice.Attachments != null && invoice.Attachments.Any(a => a.DocumentType == cmd.AttachmentInfo.DocumentType))
-            {
-                throw new BusinessValidationException($"A document with type {cmd.AttachmentInfo.DocumentType.ToDescriptionString()} already exists on the invoice {cmd.AttachmentInfo.RecordId}");
-            }
+            //if (cmd.AttachmentInfo.DocumentType != DocumentType.OtherSupportingDocument && invoice.Attachments != null && invoice.Attachments.Any(a => a.DocumentType == cmd.AttachmentInfo.DocumentType))
+            //{
+            //    throw new BusinessValidationException($"A document with type {cmd.AttachmentInfo.DocumentType.ToDescriptionString()} already exists on the invoice {cmd.AttachmentInfo.RecordId}");
+            //}
 
             var newDocId = Guid.NewGuid().ToString();
 
