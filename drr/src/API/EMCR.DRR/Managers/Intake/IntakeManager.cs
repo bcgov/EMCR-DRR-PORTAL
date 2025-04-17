@@ -113,6 +113,7 @@ namespace EMCR.DRR.Managers.Intake
                 WithdrawApplicationCommand c => await Handle(c),
                 DeleteApplicationCommand c => await Handle(c),
                 UploadAttachmentCommand c => await Handle(c),
+                UploadAttachmentStreamCommand c => await Handle(c),
                 DeleteAttachmentCommand c => await Handle(c),
                 SaveProjectCommand c => await Handle(c),
                 SubmitProjectCommand c => await Handle(c),
@@ -365,6 +366,25 @@ namespace EMCR.DRR.Managers.Intake
             if (!application.ApplicationTypeName.Equals("EOI")) throw new BusinessValidationException("Only EOI applications can be deleted");
             var id = (await applicationRepository.Manage(new DeleteApplication { Id = cmd.Id })).Id;
             return id;
+        }
+
+        public async Task<string> Handle(UploadAttachmentStreamCommand cmd)
+        {
+            var canAccess = await CanAccessApplication(cmd.AttachmentInfo.RecordId, cmd.UserInfo.BusinessId);
+            if (!canAccess) throw new ForbiddenException("Not allowed to access this application.");
+            var application = (await applicationRepository.Query(new ApplicationsQuery { Id = cmd.AttachmentInfo.RecordId })).Items.SingleOrDefault();
+            if (application == null) throw new NotFoundException("Application not found");
+            if (!ApplicationInEditableStatus(application)) throw new BusinessValidationException("Can only edit attachments when application is in Draft");
+            if (cmd.AttachmentInfo.DocumentType != DocumentType.OtherSupportingDocument && application.Attachments != null && application.Attachments.Any(a => a.DocumentType == cmd.AttachmentInfo.DocumentType))
+            {
+                throw new BusinessValidationException($"A document with type {cmd.AttachmentInfo.DocumentType.ToDescriptionString()} already exists on the application {cmd.AttachmentInfo.RecordId}");
+            }
+
+            var newDocId = Guid.NewGuid().ToString();
+
+            await s3Provider.HandleCommand(new UploadFileStreamCommand { Key = newDocId, FileStream = cmd.AttachmentInfo.FileStream, Folder = $"{cmd.AttachmentInfo.RecordType.ToDescriptionString()}/{application.CrmId}" });
+            var documentRes = (await documentRepository.Manage(new CreateApplicationDocument { NewDocId = newDocId, ApplicationId = cmd.AttachmentInfo.RecordId, Document = new Document { Name = cmd.AttachmentInfo.FileStream.FileName, DocumentType = cmd.AttachmentInfo.DocumentType, Size = GetFileSizeTest(cmd.AttachmentInfo.FileStream.File.Length) } }));
+            return documentRes.Id;
         }
 
         public async Task<string> Handle(UploadAttachmentCommand cmd)
@@ -860,6 +880,19 @@ namespace EMCR.DRR.Managers.Intake
             bytes = bytes / 1024f;
             if (bytes < 1024) return $"{bytes.ToString("0.00")} GB";
             bytes = bytes / 1024f;
+            return $"{bytes.ToString("0.00")} TB";
+        }
+
+        private string GetFileSizeTest(long bytes)
+        {
+            if (bytes < 1024) return $"{bytes.ToString("0.00")} B";
+            bytes = bytes / 1024;
+            if (bytes < 1024) return $"{bytes.ToString("0.00")} KB";
+            bytes = bytes / 1024;
+            if (bytes < 1024) return $"{bytes.ToString("0.00")} MB";
+            bytes = bytes / 1024;
+            if (bytes < 1024) return $"{bytes.ToString("0.00")} GB";
+            bytes = bytes / 1024;
             return $"{bytes.ToString("0.00")} TB";
         }
 

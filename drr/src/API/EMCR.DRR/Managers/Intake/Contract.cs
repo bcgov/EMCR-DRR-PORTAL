@@ -330,7 +330,8 @@ namespace EMCR.DRR.Managers.Intake
     public class AttachmentInfoStream
     {
         public string? Id { get; set; }
-        public required string ApplicationId { get; set; }
+        public required string RecordId { get; set; }
+        public required RecordType RecordType { get; set; }
         public required S3FileStream FileStream { get; set; }
         public DocumentType DocumentType { get; set; } = DocumentType.OtherSupportingDocument;
     }
