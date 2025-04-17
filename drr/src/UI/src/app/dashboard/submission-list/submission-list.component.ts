@@ -33,7 +33,10 @@ import {
   SubmissionPortalStatus,
 } from '../../../model';
 import { TestService } from '../../core/test/test.service';
-import { DrrSelectComponent } from '../../shared/controls/drr-select/drr-select.component';
+import {
+  DrrSelectComponent,
+  DrrSelectOption,
+} from '../../shared/controls/drr-select/drr-select.component';
 import { ConfigurationStore } from '../../store/configuration.store';
 
 class SubmissionFilter {
@@ -132,10 +135,16 @@ export class SubmissionListComponent {
     value,
     label: this.translocoService.translate(value),
   }));
-  applicationTypeOptions = Object.values(ApplicationType).map((value) => ({
-    value,
-    label: this.translocoService.translate(value),
-  }));
+  applicationTypeOptions: DrrSelectOption[] = [
+    {
+      value: ApplicationType.EOI,
+      label: this.translocoService.translate(ApplicationType.EOI),
+    },
+    {
+      value: ApplicationType.FP,
+      label: this.translocoService.translate(ApplicationType.FP),
+    },
+  ];
   exludedStatuses: SubmissionPortalStatus[] = [
     SubmissionPortalStatus.ApprovedInPrinciple,
     SubmissionPortalStatus.Deleted,
