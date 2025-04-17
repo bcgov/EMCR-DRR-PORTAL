@@ -59,7 +59,7 @@
 
     public class S3FileStream
     {
-        public Stream? FileContentStream { get; set; }
+        public required IFormFile File { get; set; }
         public required string ContentType { get; set; }
         public required string FileName { get; set; }
         public IEnumerable<FileMetadata> Metadata { get; set; } = Array.Empty<FileMetadata>();

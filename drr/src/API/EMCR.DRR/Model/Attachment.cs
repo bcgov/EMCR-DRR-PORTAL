@@ -14,6 +14,14 @@ namespace EMCR.DRR.API.Model
         public DocumentType DocumentType { get; set; }
     }
 
+    public class FileUploadModel
+    {
+        public required string RecordId { get; set; }
+        public required string RecordType { get; set; }
+        public required string ContentType { get; set; }
+        public required IFormFile File { get; set; }
+    }
+
     public class Attachment
     {
         public required string Id { get; set; }

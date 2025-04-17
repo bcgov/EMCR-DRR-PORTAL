@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using System.Web;
 using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.S3.Model;
@@ -41,7 +40,6 @@ namespace EMCR.DRR.API.Services.S3
 
         private async Task<string> UploadStorageItem(UploadFileCommand cmd, CancellationToken cancellationToken)
         {
-            S3File file = cmd.File;
             var folder = cmd.Folder == null ? "" : $"{cmd.Folder}/";
             var key = $"{folder}{cmd.Key}";
 
@@ -49,20 +47,20 @@ namespace EMCR.DRR.API.Services.S3
             {
                 Key = key,
                 ContentType = !string.IsNullOrEmpty(cmd.File.ContentType) ? cmd.File.ContentType : null,
-                InputStream = new MemoryStream(file.Content),
+                InputStream = new MemoryStream(cmd.File.Content),
                 BucketName = bucketName,
                 TagSet = GetTagSet(cmd.FileTag?.Tags ?? []),
             };
-            request.Metadata.Add("contenttype", file.ContentType);
+            request.Metadata.Add("contenttype", cmd.File.ContentType);
 
             //save an ascii safe version the file name for reference
             //not used - just nice if you need to browse S3
-            request.Metadata.Add("filenameref", Encoding.ASCII.GetString(Encoding.ASCII.GetBytes(file.FileName)));
+            request.Metadata.Add("filenameref", Encoding.ASCII.GetString(Encoding.ASCII.GetBytes(cmd.File.FileName)));
             //Convert file name to base64 string to encode special characters not supported by S3
-            request.Metadata.Add("filename", Convert.ToBase64String(Encoding.UTF8.GetBytes(file.FileName)));
-            if (file.Metadata != null)
+            request.Metadata.Add("filename", Convert.ToBase64String(Encoding.UTF8.GetBytes(cmd.File.FileName)));
+            if (cmd.File.Metadata != null)
             {
-                foreach (FileMetadata md in file.Metadata)
+                foreach (FileMetadata md in cmd.File.Metadata)
                     request.Metadata.Add(md.Key, md.Value);
             }
 
@@ -74,30 +72,30 @@ namespace EMCR.DRR.API.Services.S3
 
         private async Task<string> UploadStorageItemStream(UploadFileStreamCommand cmd, CancellationToken cancellationToken)
         {
-            S3FileStream file = cmd.FileStream;
             var folder = cmd.Folder == null ? "" : $"{cmd.Folder}/";
             var key = $"{folder}{cmd.Key}";
 
-            var request = new PutObjectRequest
+            using var stream = cmd.FileStream.File.OpenReadStream();
+
+            var s3Request = new PutObjectRequest
             {
-                Key = key,
-                ContentType = cmd.FileStream.ContentType,
-                InputStream = file.FileContentStream,
                 BucketName = bucketName,
-                TagSet = GetTagSet(cmd.FileTag?.Tags ?? []),
+                Key = key,
+                InputStream = stream,
+                ContentType = cmd.FileStream.ContentType,
             };
-            request.Metadata.Add("contenttype", file.ContentType);
-            //Convert file name to base64 string to encode special characters not supported by S3
-            request.Metadata.Add("filename", HttpUtility.HtmlEncode(Convert.ToBase64String(Encoding.UTF8.GetBytes(file.FileName))));
-            if (file.Metadata != null)
+
+            s3Request.Metadata.Add("contenttype", cmd.FileStream.ContentType);
+            s3Request.Metadata.Add("filenameref", Encoding.ASCII.GetString(Encoding.ASCII.GetBytes(cmd.FileStream.File.FileName)));
+            s3Request.Metadata.Add("filename", Convert.ToBase64String(Encoding.UTF8.GetBytes(cmd.FileStream.File.FileName)));
+            if (cmd.FileStream.Metadata != null)
             {
-                foreach (FileMetadata md in file.Metadata)
-                    request.Metadata.Add(md.Key, md.Value);
+                foreach (FileMetadata md in cmd.FileStream.Metadata)
+                    s3Request.Metadata.Add(md.Key, md.Value);
             }
 
-            var response = await _amazonS3Client.PutObjectAsync(request, cancellationToken);
+            var response = await _amazonS3Client.PutObjectAsync(s3Request, cancellationToken);
             response.EnsureSuccess();
-
             return cmd.Key;
         }
 
