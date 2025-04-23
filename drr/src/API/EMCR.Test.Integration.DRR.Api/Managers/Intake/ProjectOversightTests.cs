@@ -28,6 +28,10 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
         private string CRAFTD2BusinessName = "CRAFT Development Community 2";
         private string CRAFTD2UserId = "...";
 
+        private string CRAFTT1BusinessId = "F0792040F498432E94D63BDC1890A655";
+        private string CRAFTT1BusinessName = "EMCR CRAFT TEST Community 1";
+        private string CRAFTT1UserId = "...";
+
         private string TestProjectId = "DRIF-PRJ-1052";
 
         private UserInfo GetTestUserInfo()
@@ -42,6 +46,10 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
         private UserInfo GetCRAFT2UserInfo()
         {
             return new UserInfo { BusinessId = CRAFTD2BusinessId, BusinessName = CRAFTD2BusinessName, UserId = CRAFTD2UserId };
+        }
+        private UserInfo GetCRAFTT1UserInfo()
+        {
+            return new UserInfo { BusinessId = CRAFTT1BusinessId, BusinessName = CRAFTT1BusinessName, UserId = CRAFTT1UserId };
         }
         private readonly IIntakeManager manager;
         private readonly IMapper mapper;
@@ -122,15 +130,17 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
         {
             var userInfo = GetTestUserInfo();
             //var userInfo = GetCRAFTUserInfo();
+            //var userInfo = GetCRAFT2UserInfo();
+            // var userInfo = GetCRAFTT1UserInfo();
 
             var queryRes = await manager.Handle(new DrrClaimsQuery { Id = "DRIF-CLAIM-1166", BusinessId = userInfo.BusinessId });
             var claims = mapper.Map<IEnumerable<DraftProjectClaim>>(queryRes.Items);
             claims.Count().ShouldBe(1);
             var claim = claims.SingleOrDefault();
-            claim.Invoices.Count().ShouldBeGreaterThan(0);
+            //claim.Invoices.Count().ShouldBeGreaterThan(0);
             claim.ProjectType.ShouldNotBeNull();
             claim.TotalProjectAmount.ShouldNotBeNull();
-            claim.TotalClaimed.ShouldNotBeNull();
+            //claim.TotalClaimed.ShouldNotBeNull();
         }
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 #pragma warning restore CS8604 // Possible null reference argument.

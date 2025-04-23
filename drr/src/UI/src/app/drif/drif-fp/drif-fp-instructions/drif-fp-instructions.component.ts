@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 
 import { MatCardModule } from '@angular/material/card';
@@ -17,6 +17,7 @@ import { ROUTE_PATH } from '../../../app.routes';
   standalone: true,
   imports: [
     CommonModule,
+    RouterModule,
     MatButtonModule,
     MatCardModule,
     TranslocoModule,
@@ -82,9 +83,5 @@ export class DrifFpInstructionsComponent {
       .subscribe((res) => {
         this.router.navigate(['/drif-fp', res.id]);
       });
-  }
-
-  getRelatedEOILink() {
-    return `/eoi-submission-details/${this.eoiId}`;
   }
 }

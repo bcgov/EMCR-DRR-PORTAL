@@ -43,30 +43,6 @@ namespace EMCR.DRR.API.Controllers
             this.errorParser = new ErrorParser();
         }
 
-        //--------TEST Upload stream for larger file sizes - may get removed
-        //        [HttpPost("{id}/upload-stream-multipartreader")]
-        //        [ProducesResponseType(StatusCodes.Status201Created)]
-        //        [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
-        //        [MultipartFormData]
-        //        [DisableFormValueModelBinding]
-        //        public async Task<IActionResult> Upload(string id)
-        //        {
-        //#pragma warning disable CS8601 // Possible null reference assignment.
-        //            var attachmentInfo = new AttachmentInfoStream
-        //            {
-        //                ApplicationId = id,
-        //                FileStream = new S3FileStream
-        //                {
-        //                    ContentType = Request.ContentType,
-        //                    FileContentStream = HttpContext.Request.Body,
-        //                    FileName = "test"
-        //                }
-        //            };
-        //#pragma warning restore CS8601 // Possible null reference assignment.
-        //            var ret = await intakeManager.Handle(new UploadAttachmentStreamCommand { AttachmentInfo = attachmentInfo, UserInfo = GetCurrentUser() });
-        //            return Ok(new ApplicationResult { Id = ret });
-        //        }
-
         [HttpPost]
         [RequestSizeLimit(75_000_000)] //Payload is larger than the actualy content length - this is large enough to handle 50MB file
         public async Task<ActionResult<ApplicationResult>> UploadAttachment([FromBody] FileData attachment)
@@ -101,12 +77,47 @@ namespace EMCR.DRR.API.Controllers
             await intakeManager.Handle(new DeleteAttachmentCommand { Id = id, UserInfo = GetCurrentUser() });
             return Ok(new ApplicationResult { Id = id });
         }
+
+        //Upload/Download endpoints that can stream file instead of having the whole thing load in memory. Should be more memory efficient for handling large files
+        //Might be included as a future update...
+
+        //[HttpPost("upload")]
+        //[RequestSizeLimit(75_000_000)] // 75MB
+        //[Consumes("multipart/form-data")]
+        //public async Task<IActionResult> UploadAttachmentStream([FromForm] FileUploadModel attachment)
+        //{
+        //    if (attachment.File == null || attachment.File.Length == 0)
+        //        return BadRequest("No file uploaded.");
+
+        //    if (attachment.File.Length >= 51 * 1024 * 1024)
+        //        throw new ContentTooLargeException("File size exceeds 50MB limit");
+
+        //    var attachmentInfo = mapper.Map<AttachmentInfoStream>(attachment);
+        //    var ret = await intakeManager.Handle(new UploadAttachmentStreamCommand { AttachmentInfo = attachmentInfo, UserInfo = GetCurrentUser() });
+        //    return Ok(new { Message = "File uploaded successfully." });
+        //}
+
+        //[HttpGet("stream/{id}")]
+        //public async Task<ActionResult<AttachmentStreamQueryResult>> DownloadAttachmentStream(string id)
+        //{
+        //    var file = (FileStreamQueryResult)await intakeManager.Handle(new DownloadAttachmentStream { Id = id, UserInfo = GetCurrentUser() });
+        //    return File(
+        //        file.File.ContentStream,
+        //        file.File.ContentType,
+        //        file.File.FileName
+        //    );
+        //}
     }
 
     public class AttachmentQueryResult
     {
         public required S3File File { get; set; }
     }
+
+    //public class AttachmentStreamQueryResult
+    //{
+    //    public required S3FileStreamResult File { get; set; }
+    //}
 
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class DisableFormValueModelBindingAttribute : Attribute, IResourceFilter

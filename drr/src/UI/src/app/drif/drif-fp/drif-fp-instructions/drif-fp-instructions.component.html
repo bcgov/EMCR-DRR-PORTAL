@@ -5,13 +5,11 @@
         t("fpFormHeaderFor", { projectTitle: projectTitle })
       }}</mat-card-title>
       <mat-card-subtitle
-        ><span>
-          {{ t("relatedEoi") }}
-          <a href="{{ getRelatedEOILink() }}" target="_blank">
-            {{ eoiId }}
-          </a>
-        </span></mat-card-subtitle
-      >
+        ><span> {{ t("relatedEoi") }}: </span>
+        <a [routerLink]="['/eoi-submission-details', eoiId]" target="_blank">{{
+          eoiId
+        }}</a>
+      </mat-card-subtitle>
     </mat-card-title-group>
   </mat-card-header>
   <mat-card-content>

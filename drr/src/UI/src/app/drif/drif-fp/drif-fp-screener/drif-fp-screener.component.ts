@@ -7,7 +7,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import {
@@ -29,6 +29,7 @@ import { ScreenerQuestionsForm } from './drif-fp-screener-form';
   standalone: true,
   imports: [
     CommonModule,
+    RouterModule,
     ReactiveFormsModule,
     FormsModule,
     RxReactiveFormsModule,
@@ -115,9 +116,5 @@ export class DrifFpScreenerComponent {
         },
       },
     );
-  }
-
-  getRelatedEOILink() {
-    return `/eoi-submission-details/${this.eoiId}`;
   }
 }

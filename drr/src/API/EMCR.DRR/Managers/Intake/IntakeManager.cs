@@ -97,6 +97,7 @@ namespace EMCR.DRR.Managers.Intake
             return cmd switch
             {
                 DownloadAttachment c => await Handle(c),
+                DownloadAttachmentStream c => await Handle(c),
                 _ => throw new NotSupportedException($"{cmd.GetType().Name} is not supported")
             };
         }
@@ -113,6 +114,7 @@ namespace EMCR.DRR.Managers.Intake
                 WithdrawApplicationCommand c => await Handle(c),
                 DeleteApplicationCommand c => await Handle(c),
                 UploadAttachmentCommand c => await Handle(c),
+                UploadAttachmentStreamCommand c => await Handle(c),
                 DeleteAttachmentCommand c => await Handle(c),
                 SaveProjectCommand c => await Handle(c),
                 SubmitProjectCommand c => await Handle(c),
@@ -367,6 +369,25 @@ namespace EMCR.DRR.Managers.Intake
             return id;
         }
 
+        public async Task<string> Handle(UploadAttachmentStreamCommand cmd)
+        {
+            var canAccess = await CanAccessApplication(cmd.AttachmentInfo.RecordId, cmd.UserInfo.BusinessId);
+            if (!canAccess) throw new ForbiddenException("Not allowed to access this application.");
+            var application = (await applicationRepository.Query(new ApplicationsQuery { Id = cmd.AttachmentInfo.RecordId })).Items.SingleOrDefault();
+            if (application == null) throw new NotFoundException("Application not found");
+            if (!ApplicationInEditableStatus(application)) throw new BusinessValidationException("Can only edit attachments when application is in Draft");
+            if (cmd.AttachmentInfo.DocumentType != DocumentType.OtherSupportingDocument && application.Attachments != null && application.Attachments.Any(a => a.DocumentType == cmd.AttachmentInfo.DocumentType))
+            {
+                throw new BusinessValidationException($"A document with type {cmd.AttachmentInfo.DocumentType.ToDescriptionString()} already exists on the application {cmd.AttachmentInfo.RecordId}");
+            }
+
+            var newDocId = Guid.NewGuid().ToString();
+
+            await s3Provider.HandleCommand(new UploadFileStreamCommand { Key = newDocId, FileStream = cmd.AttachmentInfo.FileStream, Folder = $"{cmd.AttachmentInfo.RecordType.ToDescriptionString()}/{application.CrmId}" });
+            var documentRes = (await documentRepository.Manage(new CreateApplicationDocument { NewDocId = newDocId, ApplicationId = cmd.AttachmentInfo.RecordId, Document = new Document { Name = cmd.AttachmentInfo.FileStream.FileName, DocumentType = cmd.AttachmentInfo.DocumentType, Size = GetFileSizeTest(cmd.AttachmentInfo.FileStream.File.Length) } }));
+            return documentRes.Id;
+        }
+
         public async Task<string> Handle(UploadAttachmentCommand cmd)
         {
             switch (cmd.AttachmentInfo.RecordType)
@@ -547,7 +568,8 @@ namespace EMCR.DRR.Managers.Intake
 
             var forecast = mapper.Map<ForecastDetails>(cmd.Forecast);
 
-            //TODO - any other validations
+            if (forecast.InformationAccuracyStatement != true) throw new BusinessValidationException("InformationAccuracyStatement is required");
+            if (forecast.AuthorizedRepresentativeStatement != true) throw new BusinessValidationException("AuthorizedRepresentativeStatement is required");
             if (forecast.AuthorizedRepresentative == null) throw new BusinessValidationException("Authorized Representative is required.");
             if (string.IsNullOrEmpty(forecast.AuthorizedRepresentative.FirstName)) throw new BusinessValidationException("Authorized Representative first name is required.");
             if (string.IsNullOrEmpty(forecast.AuthorizedRepresentative.LastName)) throw new BusinessValidationException("Authorized Representative last name is required.");
@@ -662,6 +684,19 @@ namespace EMCR.DRR.Managers.Intake
             return new ValidateCanCreateReportResult { CanCreate = canCreate, Description = description };
         }
 
+        public async Task<FileStreamQueryResult> Handle(DownloadAttachmentStream cmd)
+        {
+            var result = await documentRepository.Query(new DocumentQuery { Id = cmd.Id });
+
+            switch (result.Document.RecordType)
+            {
+                case RecordType.FullProposal: return await DownloadApplicationDocumentStream(cmd, result);
+                //case RecordType.ProgressReport: return await DownloadProgressReportDocument(cmd, result);
+                //case RecordType.Invoice: return await DownloadInvoiceDocument(cmd, result);
+                //case RecordType.ForecastReport: return await DownloadForecastReportDocument(cmd, result);
+                default: throw new BusinessValidationException("Unsupported Record Type");
+            }
+        }
 
         public async Task<FileQueryResult> Handle(DownloadAttachment cmd)
         {
@@ -689,6 +724,16 @@ namespace EMCR.DRR.Managers.Intake
             return mapper.Map<EntitiesQueryResult>(res);
         }
 
+        private async Task<FileStreamQueryResult> DownloadApplicationDocumentStream(DownloadAttachmentStream cmd, QueryDocumentCommandResult documentRes)
+        {
+            var canAccess = await CanAccessApplicationFromDocumentId(cmd.Id, cmd.UserInfo.BusinessId);
+            if (!canAccess) throw new ForbiddenException("Not allowed to access this application.");
+            //var recordId = (await documentRepository.Query(new DocumentQuery { Id = cmd.Id })).RecordId;
+
+            var res = await s3Provider.HandleQuery(new FileStreamQuery { Key = cmd.Id, Folder = $"{RecordType.FullProposal.ToDescriptionString()}/{documentRes.RecordId}" });
+            return (FileStreamQueryResult)res;
+        }
+        
         private async Task<FileQueryResult> DownloadApplicationDocument(DownloadAttachment cmd, QueryDocumentCommandResult documentRes)
         {
             var canAccess = await CanAccessApplicationFromDocumentId(cmd.Id, cmd.UserInfo.BusinessId);
@@ -756,10 +801,10 @@ namespace EMCR.DRR.Managers.Intake
             if (progressReport == null) throw new NotFoundException("Progress Report not found");
             if (!ProgressReportInEditableStatus(progressReport)) throw new BusinessValidationException("Not allowed to update Progress Report");
             
-            if (cmd.AttachmentInfo.DocumentType != DocumentType.OtherSupportingDocument && progressReport.Attachments != null && progressReport.Attachments.Any(a => a.DocumentType == cmd.AttachmentInfo.DocumentType))
-            {
-                throw new BusinessValidationException($"A document with type {cmd.AttachmentInfo.DocumentType.ToDescriptionString()} already exists on the application {cmd.AttachmentInfo.RecordId}");
-            }
+            //if (cmd.AttachmentInfo.DocumentType != DocumentType.OtherSupportingDocument && progressReport.Attachments != null && progressReport.Attachments.Any(a => a.DocumentType == cmd.AttachmentInfo.DocumentType))
+            //{
+            //    throw new BusinessValidationException($"A document with type {cmd.AttachmentInfo.DocumentType.ToDescriptionString()} already exists on the progress report {cmd.AttachmentInfo.RecordId}");
+            //}
 
             var newDocId = Guid.NewGuid().ToString();
 
@@ -780,10 +825,10 @@ namespace EMCR.DRR.Managers.Intake
             if (!ClaimInEditableStatus(existingClaim)) throw new BusinessValidationException("Not allowed to update Claim");
 
             //if (!ApplicationInEditableStatus(progressReport)) throw new BusinessValidationException("Can only edit attachments when application is in Draft");
-            if (cmd.AttachmentInfo.DocumentType != DocumentType.OtherSupportingDocument && invoice.Attachments != null && invoice.Attachments.Any(a => a.DocumentType == cmd.AttachmentInfo.DocumentType))
-            {
-                throw new BusinessValidationException($"A document with type {cmd.AttachmentInfo.DocumentType.ToDescriptionString()} already exists on the invoice {cmd.AttachmentInfo.RecordId}");
-            }
+            //if (cmd.AttachmentInfo.DocumentType != DocumentType.OtherSupportingDocument && invoice.Attachments != null && invoice.Attachments.Any(a => a.DocumentType == cmd.AttachmentInfo.DocumentType))
+            //{
+            //    throw new BusinessValidationException($"A document with type {cmd.AttachmentInfo.DocumentType.ToDescriptionString()} already exists on the invoice {cmd.AttachmentInfo.RecordId}");
+            //}
 
             var newDocId = Guid.NewGuid().ToString();
 
@@ -859,6 +904,19 @@ namespace EMCR.DRR.Managers.Intake
             bytes = bytes / 1024f;
             if (bytes < 1024) return $"{bytes.ToString("0.00")} GB";
             bytes = bytes / 1024f;
+            return $"{bytes.ToString("0.00")} TB";
+        }
+
+        private string GetFileSizeTest(long bytes)
+        {
+            if (bytes < 1024) return $"{bytes.ToString("0.00")} B";
+            bytes = bytes / 1024;
+            if (bytes < 1024) return $"{bytes.ToString("0.00")} KB";
+            bytes = bytes / 1024;
+            if (bytes < 1024) return $"{bytes.ToString("0.00")} MB";
+            bytes = bytes / 1024;
+            if (bytes < 1024) return $"{bytes.ToString("0.00")} GB";
+            bytes = bytes / 1024;
             return $"{bytes.ToString("0.00")} TB";
         }
 

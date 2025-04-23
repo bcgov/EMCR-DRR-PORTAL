@@ -6,11 +6,13 @@
       </mat-card-title>
       <mat-card-subtitle> for {{ getProjectTitle() }} </mat-card-subtitle>
       <mat-card-subtitle style="margin-top: 0.5rem">
-        <span style="color: black">{{ t("relatedEoi") }}</span>
-        <a href="{{ getRelatedEOILink() }}" target="_blank">
-          {{ getRelatedEOI() }}
-        </a></mat-card-subtitle
-      >
+        <span style="color: black">{{ t("relatedEoi") }}: </span>
+        <a
+          [routerLink]="['/eoi-submission-details', getRelatedEOI()]"
+          target="_blank"
+          >{{ getRelatedEOI() }}</a
+        >
+      </mat-card-subtitle>
       <div>
         <div class="header-actions">
           <button mat-stroked-button color="primary" (click)="goBack()">

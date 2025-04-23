@@ -36,6 +36,7 @@
     }
 
     public class FileQuery : StorageQuery { }
+    public class FileStreamQuery : StorageQuery { }
 
     public abstract class StorageQueryResults
     {
@@ -49,6 +50,12 @@
         public FileTag? FileTag { get; set; }
     }
 
+    public class FileStreamQueryResult: StorageQueryResults
+    {
+        public required S3FileStreamResult File { get; set; }
+        public FileTag? FileTag { get; set; }
+    }
+
     public class S3File
     {
         public byte[] Content { get; set; } = [];
@@ -59,7 +66,15 @@
 
     public class S3FileStream
     {
-        public Stream? FileContentStream { get; set; }
+        public required IFormFile File { get; set; }
+        public required string ContentType { get; set; }
+        public required string FileName { get; set; }
+        public IEnumerable<FileMetadata> Metadata { get; set; } = Array.Empty<FileMetadata>();
+    }
+    
+    public class S3FileStreamResult
+    {
+        public required Stream ContentStream { get; set; }
         public required string ContentType { get; set; }
         public required string FileName { get; set; }
         public IEnumerable<FileMetadata> Metadata { get; set; } = Array.Empty<FileMetadata>();

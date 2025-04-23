@@ -374,7 +374,7 @@ namespace EMCR.DRR.API.Utilities.TestData
         private static IEnumerable<CostEstimate> CreateCostEstimates(Faker f, int total, FundingStream stream)
         {
             var categoryOptions = Enum.GetValues(typeof(CostCategory)).Cast<CostCategory>().ToArray();
-            if (stream == FundingStream.Stream1) categoryOptions = categoryOptions.Where(e => e != CostCategory.Contingency).ToArray();
+            if (stream != FundingStream.Stream2) categoryOptions = categoryOptions.Where(e => e != CostCategory.Contingency).ToArray();
             var length = f.Random.Number(1, 4);
             var amounts = TestHelper.GenerateRandomNumbersWithTargetSum(total, length);
             var ret = new CostEstimate[length];

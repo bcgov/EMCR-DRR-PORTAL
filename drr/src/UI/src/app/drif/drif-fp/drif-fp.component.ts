@@ -16,7 +16,7 @@ import {
   MatStepperModule,
   StepperOrientation,
 } from '@angular/material/stepper';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import {
@@ -84,6 +84,7 @@ import { DrifFpStep9Component } from './drif-fp-step-9/drif-fp-step-9.component'
     MatCardModule,
     TranslocoModule,
     LayoutModule,
+    RouterModule,
     DrifFpStep1Component,
     DrifFpStep2Component,
     DrifFpStep3Component,
@@ -852,17 +853,8 @@ export class DrifFpComponent {
       ?.get('projectTitle')?.value;
   }
 
-  getRelatedEOILink() {
-    return `/eoi-submission-details/${this.getRelatedEOI()}`;
-  }
-
   getRelatedEOI() {
     return this.fullProposalForm?.get('eoiId')?.value;
-  }
-
-  onEoiClick(event: Event) {
-    event.preventDefault();
-    this.router.navigate(['/eoi-submission-details', this.getRelatedEOI()]);
   }
 
   goBack() {

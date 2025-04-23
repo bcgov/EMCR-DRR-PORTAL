@@ -1,15 +1,19 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { AbstractControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  AbstractControl,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { TranslocoModule } from '@ngneat/transloco';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { IFormGroup } from '@rxweb/reactive-form-validators';
 import { DocumentType } from '../../../../model';
 import { DrrFileUploadComponent } from '../../../shared/controls/drr-file-upload/drr-file-upload.component';
+import { DrrInputComponent } from '../../../shared/controls/drr-input/drr-input.component';
 import { DrrTextareaComponent } from '../../../shared/controls/drr-textarea/drr-textarea.component';
 import { AttachmentForm } from '../drif-fp-form';
 
@@ -17,6 +21,8 @@ export interface FileUploadEvent {
   files: File[];
   documentType: DocumentType;
 }
+
+export type CommentInputType = 'textarea' | 'input';
 
 @UntilDestroy({ checkProperties: true })
 @Component({
@@ -36,33 +42,45 @@ export interface FileUploadEvent {
       }}</mat-hint>
     </div>
     @if (attachmentForm?.get('id')?.value) {
-    <div class="attachment">
-      <div class="attachment__label">
-        <mat-label>{{
-          filename ?? attachmentForm?.get('name')?.value
-        }}</mat-label>
-        <div class="attachment__label__actions">
-          <button mat-stroked-button color="primary" (click)="onDownloadFile()">
-            {{ t('download') }}
-          </button>
-          <button mat-stroked-button color="warn" (click)="onRemoveFile()">
-            {{ t('delete') }}
-          </button>
+      <div class="attachment">
+        <div class="attachment__label">
+          <mat-label>{{
+            filename ?? attachmentForm?.get('name')?.value
+          }}</mat-label>
+          <div class="attachment__label__actions">
+            <button
+              mat-stroked-button
+              color="primary"
+              (click)="onDownloadFile()"
+            >
+              {{ t('download') }}
+            </button>
+            <button mat-stroked-button color="warn" (click)="onRemoveFile()">
+              {{ t('delete') }}
+            </button>
+          </div>
+        </div>
+        <div class="attachment__comments">
+          @if (inputType === 'textarea') {
+            <drr-textarea
+              [label]="t('comments')"
+              [rxFormControl]="attachmentForm?.get('comments')"
+              [maxlength]="maxCommentsLength"
+            ></drr-textarea>
+          } @else if (inputType === 'input') {
+            <drr-input
+              [label]="t('comments')"
+              [rxFormControl]="attachmentForm?.get('comments')"
+              [maxlength]="maxCommentsLength"
+            ></drr-input>
+          }
         </div>
       </div>
-      <div class="attachment__comments">
-        <drr-textarea
-          [label]="t('comments')"
-          [rxFormControl]="attachmentForm?.get('comments')"
-          [maxlength]="2000"
-        ></drr-textarea>
-      </div>
-    </div>
     } @else {
-    <drr-file-upload
-      (filesSelected)="onUploadFiles($event)"
-      [multiple]="false"
-    ></drr-file-upload>
+      <drr-file-upload
+        (filesSelected)="onUploadFiles($event)"
+        [multiple]="false"
+      ></drr-file-upload>
     }
   </div>`,
   styles: [
@@ -121,6 +139,7 @@ export interface FileUploadEvent {
     MatIconModule,
     MatButtonModule,
     DrrTextareaComponent,
+    DrrInputComponent,
     DrrFileUploadComponent,
   ],
 })
@@ -134,6 +153,10 @@ export class DrrAttahcmentComponent {
   @Input() attachmentForm?: AbstractControl<AttachmentForm>;
 
   @Input() documentType?: DocumentType;
+
+  @Input() maxCommentsLength: number = 2000;
+
+  @Input() inputType?: CommentInputType = 'textarea';
 
   @Output()
   uploadFiles: EventEmitter<FileUploadEvent> =

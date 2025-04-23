@@ -179,6 +179,8 @@
             [attachmentForm]="attachmentControl"
             (removeFile)="removeFile($event)"
             (downloadFile)="downloadFile($event)"
+            [maxCommentsLength]="50"
+            [inputType]="'input'"
           ></drr-attachment>
 
           <div style="display: flex; flex-direction: column; gap: 1rem">
