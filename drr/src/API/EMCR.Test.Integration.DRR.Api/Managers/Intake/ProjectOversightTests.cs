@@ -725,7 +725,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             progressReport.Workplan.DelayReason = Delay.Other;
             progressReport.Workplan.OtherDelayReason = "we are slow";
             progressReport.Workplan.BehindScheduleMitigatingComments = "mitigation steps";
-            progressReport.Workplan.ProjectCompletionPercentage = (decimal?)12.5;
+            progressReport.Workplan.ProjectCompletionPercentage = (decimal?)12;
             progressReport.Workplan.ConstructionCompletionPercentage = (decimal?)35.7;
             progressReport.Workplan.SignageRequired = true;
             progressReport.Workplan.MediaAnnouncement = true;

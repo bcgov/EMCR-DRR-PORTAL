@@ -224,7 +224,7 @@ namespace EMCR.DRR.API.Utilities.TestData
             .RuleFor(a => a.CostEstimateClass, f => f.Random.Enum<CostEstimateClass>())
             .RuleFor(a => a.CostEstimates, (f, a) => CreateCostEstimates(f, (int)a.EligibleFundingRequest, a.FundingStream.Value))
             .RuleFor(a => a.EstimatesMatchFundingRequest, f => false)
-            .RuleFor(a => a.Contingency, f => f.Random.Int(0, 25))
+            .RuleFor(a => a.Contingency, (f, a) => a.FundingStream.Value == FundingStream.Stream1 ? 0 : f.Random.Int(0, 25))
             .RuleFor(a => a.ContingencyComments, f => f.Lorem.Sentence())
             .RuleFor(a => a.TotalEligibleCosts, (f, a) => a.TotalDrifFundingRequest)
 

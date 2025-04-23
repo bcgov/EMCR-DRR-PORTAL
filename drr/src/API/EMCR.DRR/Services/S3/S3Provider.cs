@@ -34,7 +34,6 @@ namespace EMCR.DRR.API.Services.S3
             return query switch
             {
                 FileQuery q => await DownloadStorageItem(q.Key, q.Folder, ct),
-                FileStreamQuery q => await DownloadStorageItemStreamed(q.Key, q.Folder, ct),
                 _ => throw new NotSupportedException($"{query.GetType().Name} is not supported")
             };
         }
@@ -105,51 +104,6 @@ namespace EMCR.DRR.API.Services.S3
             var dir = folder == null ? "" : $"{folder}/";
             var requestKey = $"{dir}{key}";
 
-            //get object
-            var request = new GetObjectRequest
-            {
-                BucketName = bucketName,
-                Key = requestKey,
-            };
-            var response = await _amazonS3Client.GetObjectAsync(request, ct);
-            response.EnsureSuccess();
-            using var contentStream = response.ResponseStream;
-            using var ms = new MemoryStream();
-            await contentStream.CopyToAsync(ms, ct);
-            await contentStream.FlushAsync(ct);
-
-            //get tagging
-            var tagResponse = await _amazonS3Client.GetObjectTaggingAsync(
-                new GetObjectTaggingRequest
-                {
-                    BucketName = bucketName,
-                    Key = requestKey,
-                }, ct);
-            tagResponse.EnsureSuccess();
-
-            return new FileQueryResult
-            {
-                Key = key,
-                Folder = folder,
-                File = new S3File
-                {
-                    ContentType = response.Metadata["contenttype"],
-                    FileName = GetSafeFileName(response.Metadata["filename"]),
-                    Content = ms.ToArray(),
-                    Metadata = GetMetadata(response.Metadata).AsEnumerable(),
-                },
-                FileTag = new FileTag
-                {
-                    Tags = GetTags(tagResponse.Tagging).AsEnumerable()
-                }
-            };
-        }
-
-        private async Task<FileStreamQueryResult> DownloadStorageItemStreamed(string key, string? folder, CancellationToken ct)
-        {
-            var dir = folder == null ? "" : $"{folder}/";
-            var requestKey = $"{dir}{key}";
-
             var request = new GetObjectRequest
             {
                 BucketName = bucketName,
@@ -172,7 +126,7 @@ namespace EMCR.DRR.API.Services.S3
                 }, ct);
             tagResponse.EnsureSuccess();
 
-            return new FileStreamQueryResult
+            return new FileQueryResult
             {
                 Key = key,
                 Folder = folder,

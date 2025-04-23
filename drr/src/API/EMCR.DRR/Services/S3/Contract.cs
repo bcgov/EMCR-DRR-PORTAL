@@ -36,8 +36,7 @@
     }
 
     public class FileQuery : StorageQuery { }
-    public class FileStreamQuery : StorageQuery { }
-
+    
     public abstract class StorageQueryResults
     {
         public required string Key { get; set; }
@@ -45,12 +44,6 @@
     }
 
     public class FileQueryResult : StorageQueryResults
-    {
-        public required S3File File { get; set; }
-        public FileTag? FileTag { get; set; }
-    }
-
-    public class FileStreamQueryResult: StorageQueryResults
     {
         public required S3FileStreamResult File { get; set; }
         public FileTag? FileTag { get; set; }
