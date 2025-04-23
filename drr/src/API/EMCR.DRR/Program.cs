@@ -380,6 +380,16 @@ if (testDataEndpointsEnabled)
         var manager = ctx.RequestServices.GetRequiredService<IIntakeManager>();
         var mapper = ctx.RequestServices.GetRequiredService<IMapper>();
 
+        IFormFile CreateFormFile(string content, string fileName, string contentType = "text/plain")
+        {
+            var stream = new MemoryStream(Encoding.UTF8.GetBytes(content));
+            return new FormFile(stream, 0, stream.Length, "file", fileName)
+            {
+                Headers = new HeaderDictionary(),
+                ContentType = contentType
+            };
+        }
+
         EMCR.DRR.Managers.Intake.ScreenerQuestions CreateScreenerQuestions()
         {
             return new EMCR.DRR.Managers.Intake.ScreenerQuestions
@@ -415,9 +425,11 @@ if (testDataEndpointsEnabled)
 
         var body = DateTime.Now.ToString();
         byte[] bytes = Encoding.ASCII.GetBytes(body);
-        var costEstimateFile = new S3File { FileName = "autotest-dce.txt", Content = bytes, ContentType = "text/plain", };
+        var contentType = "text/plain";
+        var fileName = "autotest-dce.txt";
+        var costEstimateFile = new S3FileStream { FileName = fileName, File = CreateFormFile(body, fileName, contentType), ContentType = "text/plain", };
 
-        await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = fpId, RecordType = EMCR.DRR.Managers.Intake.RecordType.FullProposal, File = costEstimateFile, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.DetailedCostEstimate }, UserInfo = GetCurrentUser() });
+        await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = fpId, RecordType = EMCR.DRR.Managers.Intake.RecordType.FullProposal, FileStream = costEstimateFile, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.DetailedCostEstimate }, UserInfo = GetCurrentUser() });
 
         var fullProposal = (await manager.Handle(new DrrApplicationsQuery { Id = fpId, BusinessId = GetCurrentUser().BusinessId })).Items.SingleOrDefault();
         var fpToUpdate = mapper.Map<FpApplication>(TestHelper.FillInTestFpApplication(mapper.Map<DraftFpApplication>(fullProposal), "autogen-"));

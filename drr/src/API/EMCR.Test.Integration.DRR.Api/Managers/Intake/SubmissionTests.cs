@@ -6,6 +6,7 @@ using EMCR.DRR.API.Utilities.TestData;
 using EMCR.DRR.Controllers;
 using EMCR.DRR.Dynamics;
 using EMCR.DRR.Managers.Intake;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 
@@ -101,10 +102,10 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var body = DateTime.Now.ToString();
             byte[] bytes = Encoding.ASCII.GetBytes(body);
             var projectWorkplanFile = new S3File { FileName = "autotest-dpw.txt", Content = bytes, ContentType = "text/plain", };
-            var costEstimateFile = new S3File { FileName = "autotest-dce.txt", Content = bytes, ContentType = "text/plain", };
+            var costEstimateFile = new S3FileStream { FileName = "autotest-dce.txt", File = CreateFormFile(body, "autotest-dce.txt", "text/plain"), ContentType = "text/plain", };
 
             //await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { ApplicationId = fpId, File = projectWorkplanFile, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.DetailedProjectWorkplan }, UserInfo = GetTestUserInfo() });
-            await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = fpId, RecordType = EMCR.DRR.Managers.Intake.RecordType.FullProposal, File = costEstimateFile, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.DetailedCostEstimate }, UserInfo = GetTestUserInfo() });
+            await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = fpId, RecordType = EMCR.DRR.Managers.Intake.RecordType.FullProposal, FileStream = costEstimateFile, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.DetailedCostEstimate }, UserInfo = GetTestUserInfo() });
 
             var fullProposal = (await manager.Handle(new DrrApplicationsQuery { Id = fpId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault();
             fullProposal.Id.ShouldBe(fpId);
@@ -659,9 +660,10 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var body = DateTime.Now.ToString();
             var fileName = "autotest.txt";
             byte[] bytes = Encoding.ASCII.GetBytes(body);
-            var file = new S3File { FileName = fileName, Content = bytes, ContentType = "text/plain", };
+            var contentType = "text/plain";
+            var file = new S3FileStream { FileName = fileName, File = CreateFormFile(body, fileName, contentType), ContentType = "text/plain", };
 
-            var documentId = await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = fpId, RecordType = EMCR.DRR.Managers.Intake.RecordType.FullProposal, File = file, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.SitePlan }, UserInfo = GetTestUserInfo() });
+            var documentId = await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = fpId, RecordType = EMCR.DRR.Managers.Intake.RecordType.FullProposal, FileStream = file, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.SitePlan }, UserInfo = GetTestUserInfo() });
             var fullProposal = mapper.Map<DraftFpApplication>((await manager.Handle(new DrrApplicationsQuery { Id = fpId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
             fullProposal.HaveResolution = true;
             fullProposal.Attachments.Count().ShouldBe(1);
@@ -701,9 +703,10 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var body = DateTime.Now.ToString();
             var fileName = "autotest.txt";
             byte[] bytes = Encoding.ASCII.GetBytes(body);
-            var file = new S3File { FileName = fileName, Content = bytes, ContentType = "text/plain", };
+            var contentType = "text/plain";
+            var file = new S3FileStream { FileName = fileName, File = CreateFormFile(body, fileName, contentType), ContentType = "text/plain", };
 
-            var documentId = await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = fpId, RecordType = EMCR.DRR.Managers.Intake.RecordType.FullProposal, File = file, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.SitePlan }, UserInfo = GetTestUserInfo() });
+            var documentId = await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = fpId, RecordType = EMCR.DRR.Managers.Intake.RecordType.FullProposal, FileStream = file, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.SitePlan }, UserInfo = GetTestUserInfo() });
             var fullProposal = mapper.Map<DraftFpApplication>((await manager.Handle(new DrrApplicationsQuery { Id = fpId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
             fullProposal.Attachments.Count().ShouldBe(1);
 
@@ -739,9 +742,10 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var body = DateTime.Now.ToString();
             var fileName = "autotest.txt";
             byte[] bytes = Encoding.ASCII.GetBytes(body);
-            var file = new S3File { FileName = fileName, Content = bytes, ContentType = "text/plain", };
+            var contentType = "text/plain";
+            var file = new S3FileStream { FileName = fileName, File = CreateFormFile(body, fileName, contentType), ContentType = "text/plain", };
 
-            var documentId = await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = fpId, RecordType = EMCR.DRR.Managers.Intake.RecordType.FullProposal, File = file }, UserInfo = GetTestUserInfo() });
+            var documentId = await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = fpId, RecordType = EMCR.DRR.Managers.Intake.RecordType.FullProposal, FileStream = file }, UserInfo = GetTestUserInfo() });
             var fullProposal = mapper.Map<DraftFpApplication>((await manager.Handle(new DrrApplicationsQuery { Id = fpId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
             fullProposal.HaveResolution = true;
             fullProposal.Attachments.Count().ShouldBe(1);
@@ -773,10 +777,11 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var body = DateTime.Now.ToString();
             var fileName = "autotest.txt";
             byte[] bytes = Encoding.ASCII.GetBytes(body);
-            var file = new S3File { FileName = fileName, Content = bytes, ContentType = "text/plain", };
+            var contentType = "text/plain";
+            var file = new S3FileStream { FileName = fileName, File = CreateFormFile(body, fileName, contentType), ContentType = "text/plain", };
 
-            var documentId = await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = fpId, RecordType = EMCR.DRR.Managers.Intake.RecordType.FullProposal, File = file, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.SitePlan }, UserInfo = GetTestUserInfo() });
-            Should.Throw<Exception>(() => manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = fpId, RecordType = EMCR.DRR.Managers.Intake.RecordType.FullProposal, File = file, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.SitePlan }, UserInfo = GetTestUserInfo() }));
+            var documentId = await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = fpId, RecordType = EMCR.DRR.Managers.Intake.RecordType.FullProposal, FileStream = file, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.SitePlan }, UserInfo = GetTestUserInfo() });
+            Should.Throw<Exception>(() => manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = fpId, RecordType = EMCR.DRR.Managers.Intake.RecordType.FullProposal, FileStream = file, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.SitePlan }, UserInfo = GetTestUserInfo() }));
         }
 
 #pragma warning restore CS8604 // Possible null reference argument.
@@ -1147,6 +1152,16 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
                 Phone = "604-123-4567",
                 Department = "Position",
                 Title = "Title"
+            };
+        }
+
+        public IFormFile CreateFormFile(string content, string fileName, string contentType = "text/plain")
+        {
+            var stream = new MemoryStream(Encoding.UTF8.GetBytes(content));
+            return new FormFile(stream, 0, stream.Length, "file", fileName)
+            {
+                Headers = new HeaderDictionary(),
+                ContentType = contentType
             };
         }
     }

@@ -44,13 +44,7 @@ namespace EMCR.DRR.API.Mappers
                 .ReverseMap()
                 ;
 
-
-            CreateMap<FileData, Managers.Intake.AttachmentInfo>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore())
-                .ForMember(dest => dest.File, opt => opt.MapFrom(src => new S3File { Content = src.Content, ContentType = src.ContentType, FileName = src.Name }))
-                ;
-            
-            CreateMap<FileUploadModel, Managers.Intake.AttachmentInfoStream>()
+            CreateMap<FileUploadModel, Managers.Intake.AttachmentInfo>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.FileStream, opt => opt.MapFrom(src => new S3FileStream { File = src.File, ContentType = src.ContentType, FileName = src.File.FileName }))
                 ;
