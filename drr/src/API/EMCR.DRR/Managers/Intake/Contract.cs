@@ -221,12 +221,6 @@ namespace EMCR.DRR.Managers.Intake
         public UserInfo UserInfo { get; set; }
     }
 
-    public class UploadAttachmentStreamCommand : IntakeCommand
-    {
-        public AttachmentInfoStream AttachmentInfo { get; set; }
-        public UserInfo UserInfo { get; set; }
-    }
-
     public class SaveProjectCommand : IntakeCommand
     {
         public DrrProject Project { get; set; } = null!;
@@ -325,15 +319,6 @@ namespace EMCR.DRR.Managers.Intake
     }
 
     public class AttachmentInfo
-    {
-        public string? Id { get; set; }
-        public required string RecordId { get; set; }
-        public required RecordType RecordType { get; set; }
-        public required S3File File { get; set; }
-        public DocumentType DocumentType { get; set; } = DocumentType.OtherSupportingDocument;
-    }
-
-    public class AttachmentInfoStream
     {
         public string? Id { get; set; }
         public required string RecordId { get; set; }

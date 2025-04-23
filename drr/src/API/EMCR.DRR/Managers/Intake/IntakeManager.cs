@@ -114,7 +114,6 @@ namespace EMCR.DRR.Managers.Intake
                 WithdrawApplicationCommand c => await Handle(c),
                 DeleteApplicationCommand c => await Handle(c),
                 UploadAttachmentCommand c => await Handle(c),
-                UploadAttachmentStreamCommand c => await Handle(c),
                 DeleteAttachmentCommand c => await Handle(c),
                 SaveProjectCommand c => await Handle(c),
                 SubmitProjectCommand c => await Handle(c),
@@ -367,25 +366,6 @@ namespace EMCR.DRR.Managers.Intake
             if (!application.ApplicationTypeName.Equals("EOI")) throw new BusinessValidationException("Only EOI applications can be deleted");
             var id = (await applicationRepository.Manage(new DeleteApplication { Id = cmd.Id })).Id;
             return id;
-        }
-
-        public async Task<string> Handle(UploadAttachmentStreamCommand cmd)
-        {
-            var canAccess = await CanAccessApplication(cmd.AttachmentInfo.RecordId, cmd.UserInfo.BusinessId);
-            if (!canAccess) throw new ForbiddenException("Not allowed to access this application.");
-            var application = (await applicationRepository.Query(new ApplicationsQuery { Id = cmd.AttachmentInfo.RecordId })).Items.SingleOrDefault();
-            if (application == null) throw new NotFoundException("Application not found");
-            if (!ApplicationInEditableStatus(application)) throw new BusinessValidationException("Can only edit attachments when application is in Draft");
-            if (cmd.AttachmentInfo.DocumentType != DocumentType.OtherSupportingDocument && application.Attachments != null && application.Attachments.Any(a => a.DocumentType == cmd.AttachmentInfo.DocumentType))
-            {
-                throw new BusinessValidationException($"A document with type {cmd.AttachmentInfo.DocumentType.ToDescriptionString()} already exists on the application {cmd.AttachmentInfo.RecordId}");
-            }
-
-            var newDocId = Guid.NewGuid().ToString();
-
-            await s3Provider.HandleCommand(new UploadFileStreamCommand { Key = newDocId, FileStream = cmd.AttachmentInfo.FileStream, Folder = $"{cmd.AttachmentInfo.RecordType.ToDescriptionString()}/{application.CrmId}" });
-            var documentRes = (await documentRepository.Manage(new CreateApplicationDocument { NewDocId = newDocId, ApplicationId = cmd.AttachmentInfo.RecordId, Document = new Document { Name = cmd.AttachmentInfo.FileStream.FileName, DocumentType = cmd.AttachmentInfo.DocumentType, Size = GetFileSizeTest(cmd.AttachmentInfo.FileStream.File.Length) } }));
-            return documentRes.Id;
         }
 
         public async Task<string> Handle(UploadAttachmentCommand cmd)
@@ -733,7 +713,7 @@ namespace EMCR.DRR.Managers.Intake
             var res = await s3Provider.HandleQuery(new FileStreamQuery { Key = cmd.Id, Folder = $"{RecordType.FullProposal.ToDescriptionString()}/{documentRes.RecordId}" });
             return (FileStreamQueryResult)res;
         }
-        
+
         private async Task<FileQueryResult> DownloadApplicationDocument(DownloadAttachment cmd, QueryDocumentCommandResult documentRes)
         {
             var canAccess = await CanAccessApplicationFromDocumentId(cmd.Id, cmd.UserInfo.BusinessId);
@@ -788,8 +768,9 @@ namespace EMCR.DRR.Managers.Intake
 
             var newDocId = Guid.NewGuid().ToString();
 
-            await s3Provider.HandleCommand(new UploadFileCommand { Key = newDocId, File = cmd.AttachmentInfo.File, Folder = $"{cmd.AttachmentInfo.RecordType.ToDescriptionString()}/{application.CrmId}" });
-            var documentRes = (await documentRepository.Manage(new CreateApplicationDocument { NewDocId = newDocId, ApplicationId = cmd.AttachmentInfo.RecordId, Document = new Document { Name = cmd.AttachmentInfo.File.FileName, DocumentType = cmd.AttachmentInfo.DocumentType, Size = GetFileSize(cmd.AttachmentInfo.File.Content) } }));
+
+            await s3Provider.HandleCommand(new UploadFileStreamCommand { Key = newDocId, FileStream = cmd.AttachmentInfo.FileStream, Folder = $"{cmd.AttachmentInfo.RecordType.ToDescriptionString()}/{application.CrmId}" });
+            var documentRes = await documentRepository.Manage(new CreateApplicationDocument { NewDocId = newDocId, ApplicationId = cmd.AttachmentInfo.RecordId, Document = new Document { Name = cmd.AttachmentInfo.FileStream.FileName, DocumentType = cmd.AttachmentInfo.DocumentType, Size = GetFileSizeTest(cmd.AttachmentInfo.FileStream.File.Length) } });
             return documentRes.Id;
         }
 
@@ -800,7 +781,7 @@ namespace EMCR.DRR.Managers.Intake
             var progressReport = (await reportRepository.Query(new ProgressReportsQuery { Id = cmd.AttachmentInfo.RecordId })).Items.SingleOrDefault();
             if (progressReport == null) throw new NotFoundException("Progress Report not found");
             if (!ProgressReportInEditableStatus(progressReport)) throw new BusinessValidationException("Not allowed to update Progress Report");
-            
+
             //if (cmd.AttachmentInfo.DocumentType != DocumentType.OtherSupportingDocument && progressReport.Attachments != null && progressReport.Attachments.Any(a => a.DocumentType == cmd.AttachmentInfo.DocumentType))
             //{
             //    throw new BusinessValidationException($"A document with type {cmd.AttachmentInfo.DocumentType.ToDescriptionString()} already exists on the progress report {cmd.AttachmentInfo.RecordId}");
@@ -808,8 +789,8 @@ namespace EMCR.DRR.Managers.Intake
 
             var newDocId = Guid.NewGuid().ToString();
 
-            await s3Provider.HandleCommand(new UploadFileCommand { Key = newDocId, File = cmd.AttachmentInfo.File, Folder = $"{cmd.AttachmentInfo.RecordType.ToDescriptionString()}/{progressReport.CrmId}" });
-            var documentRes = (await documentRepository.Manage(new CreateProgressReportDocument { NewDocId = newDocId, ProgressReportId = cmd.AttachmentInfo.RecordId, Document = new Document { Name = cmd.AttachmentInfo.File.FileName, DocumentType = cmd.AttachmentInfo.DocumentType, Size = GetFileSize(cmd.AttachmentInfo.File.Content) } }));
+            await s3Provider.HandleCommand(new UploadFileStreamCommand { Key = newDocId, FileStream = cmd.AttachmentInfo.FileStream, Folder = $"{cmd.AttachmentInfo.RecordType.ToDescriptionString()}/{progressReport.CrmId}" });
+            var documentRes = await documentRepository.Manage(new CreateProgressReportDocument { NewDocId = newDocId, ProgressReportId = cmd.AttachmentInfo.RecordId, Document = new Document { Name = cmd.AttachmentInfo.FileStream.FileName, DocumentType = cmd.AttachmentInfo.DocumentType, Size = GetFileSizeTest(cmd.AttachmentInfo.FileStream.File.Length) } });
             return documentRes.Id;
         }
 
@@ -832,8 +813,8 @@ namespace EMCR.DRR.Managers.Intake
 
             var newDocId = Guid.NewGuid().ToString();
 
-            await s3Provider.HandleCommand(new UploadFileCommand { Key = newDocId, File = cmd.AttachmentInfo.File, Folder = $"{cmd.AttachmentInfo.RecordType.ToDescriptionString()}/{invoice.Id}" });
-            var documentRes = (await documentRepository.Manage(new CreateInvoiceDocument { NewDocId = newDocId, InvoiceId = cmd.AttachmentInfo.RecordId, Document = new Document { Name = cmd.AttachmentInfo.File.FileName, DocumentType = cmd.AttachmentInfo.DocumentType, Size = GetFileSize(cmd.AttachmentInfo.File.Content) } }));
+            await s3Provider.HandleCommand(new UploadFileStreamCommand { Key = newDocId, FileStream = cmd.AttachmentInfo.FileStream, Folder = $"{cmd.AttachmentInfo.RecordType.ToDescriptionString()}/{invoice.Id}" });
+            var documentRes = await documentRepository.Manage(new CreateInvoiceDocument { NewDocId = newDocId, InvoiceId = cmd.AttachmentInfo.RecordId, Document = new Document { Name = cmd.AttachmentInfo.FileStream.FileName, DocumentType = cmd.AttachmentInfo.DocumentType, Size = GetFileSizeTest(cmd.AttachmentInfo.FileStream.File.Length) } });
             return documentRes.Id;
         }
 
@@ -852,8 +833,8 @@ namespace EMCR.DRR.Managers.Intake
 
             var newDocId = Guid.NewGuid().ToString();
 
-            await s3Provider.HandleCommand(new UploadFileCommand { Key = newDocId, File = cmd.AttachmentInfo.File, Folder = $"{cmd.AttachmentInfo.RecordType.ToDescriptionString()}/{forecast.CrmId}" });
-            var documentRes = (await documentRepository.Manage(new CreateForecastReportDocument { NewDocId = newDocId, ForecastId = cmd.AttachmentInfo.RecordId, Document = new Document { Name = cmd.AttachmentInfo.File.FileName, DocumentType = cmd.AttachmentInfo.DocumentType, Size = GetFileSize(cmd.AttachmentInfo.File.Content) } }));
+            await s3Provider.HandleCommand(new UploadFileStreamCommand { Key = newDocId, FileStream = cmd.AttachmentInfo.FileStream, Folder = $"{cmd.AttachmentInfo.RecordType.ToDescriptionString()}/{forecast.CrmId}" });
+            var documentRes = await documentRepository.Manage(new CreateForecastReportDocument { NewDocId = newDocId, ForecastId = cmd.AttachmentInfo.RecordId, Document = new Document { Name = cmd.AttachmentInfo.FileStream.FileName, DocumentType = cmd.AttachmentInfo.DocumentType, Size = GetFileSizeTest(cmd.AttachmentInfo.FileStream.File.Length) } });
             return documentRes.Id;
         }
 
@@ -934,7 +915,7 @@ namespace EMCR.DRR.Managers.Intake
         {
             return claim.Status != ClaimStatus.Submitted;
         }
-        
+
         private bool ForecastInEditableStatus(Forecast forecast)
         {
             return forecast.Status != ForecastStatus.Submitted;

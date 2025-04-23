@@ -8,8 +8,8 @@ namespace EMCR.DRR.API.Model
     {
         public required string RecordId { get; set; }
         public required RecordType RecordType { get; set; }
-        public required string Name { get; set; }
         public required string ContentType { get; set; }
+        public required string Name { get; set; }
         public required byte[] Content { get; set; }
         public DocumentType DocumentType { get; set; }
     }
@@ -17,8 +17,9 @@ namespace EMCR.DRR.API.Model
     public class FileUploadModel
     {
         public required string RecordId { get; set; }
-        public required string RecordType { get; set; }
+        public required RecordType RecordType { get; set; }
         public required string ContentType { get; set; }
+        public DocumentType DocumentType { get; set; }
         public required IFormFile File { get; set; }
     }
 

@@ -7,7 +7,7 @@ using EMCR.DRR.Controllers;
 using EMCR.DRR.Dynamics;
 using EMCR.DRR.Managers.Intake;
 using EMCR.DRR.Resources.Applications;
-using Microsoft.Dynamics.CRM;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 
@@ -533,12 +533,13 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var body = DateTime.Now.ToString();
             var fileName = "autotest-invoice.txt";
             var fileName2 = "autotest-pop.txt";
+            var contentType = "text/plain";
             byte[] bytes = Encoding.ASCII.GetBytes(body);
-            var file = new S3File { FileName = fileName, Content = bytes, ContentType = "text/plain", };
-            var file2 = new S3File { FileName = fileName2, Content = bytes, ContentType = "text/plain", };
+            var file = new S3FileStream { FileName = fileName, File = CreateFormFile(body, fileName, contentType), ContentType = "text/plain", };
+            var file2 = new S3FileStream { FileName = fileName2, File = CreateFormFile(body, fileName2, contentType), ContentType = "text/plain", };
 
-            var documentId = await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = invoice.Id, RecordType = EMCR.DRR.Managers.Intake.RecordType.Invoice, File = file, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.Invoice }, UserInfo = userInfo });
-            var documentId2 = await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = invoice.Id, RecordType = EMCR.DRR.Managers.Intake.RecordType.Invoice, File = file, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.ProofOfPayment }, UserInfo = userInfo });
+            var documentId = await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = invoice.Id, RecordType = RecordType.Invoice, FileStream = file, DocumentType = DocumentType.Invoice }, UserInfo = userInfo });
+            var documentId2 = await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = invoice.Id, RecordType = RecordType.Invoice, FileStream = file, DocumentType = DocumentType.ProofOfPayment }, UserInfo = userInfo });
 
             var claimToUpdate = mapper.Map<EMCR.DRR.Controllers.ProjectClaim>((await manager.Handle(new DrrClaimsQuery { Id = claimId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
             var invoiceToUpdate = claimToUpdate.Invoices.SingleOrDefault(i => i.Id == invoice.Id);
@@ -648,9 +649,10 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var body = DateTime.Now.ToString();
             var fileName = "autotest.txt";
             byte[] bytes = Encoding.ASCII.GetBytes(body);
-            var file = new S3File { FileName = fileName, Content = bytes, ContentType = "text/plain", };
+            var contentType = "text/plain";
+            var file = new S3FileStream { FileName = fileName, File = CreateFormFile(body, fileName, contentType), ContentType = "text/plain", };
 
-            var documentId = await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = progressReport.Id, RecordType = EMCR.DRR.Managers.Intake.RecordType.ProgressReport, File = file, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.ProgressReport }, UserInfo = userInfo });
+            var documentId = await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = progressReport.Id, RecordType = EMCR.DRR.Managers.Intake.RecordType.ProgressReport, FileStream = file, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.ProgressReport }, UserInfo = userInfo });
 
             var progressReportToUpdate = mapper.Map<EMCR.DRR.Controllers.ProgressReport>((await manager.Handle(new DrrProgressReportsQuery { Id = progressReportId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
             progressReportToUpdate.Attachments.Count().ShouldBe(1);
@@ -680,9 +682,10 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var body = DateTime.Now.ToString();
             var fileName = "autotest.txt";
             byte[] bytes = Encoding.ASCII.GetBytes(body);
-            var file = new S3File { FileName = fileName, Content = bytes, ContentType = "text/plain", };
+            var contentType = "text/plain";
+            var file = new S3FileStream { FileName = fileName, File = CreateFormFile(body, fileName, contentType), ContentType = "text/plain", };
 
-            var documentId = await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = forecast.Id, RecordType = EMCR.DRR.Managers.Intake.RecordType.ForecastReport, File = file, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.ForecastReport }, UserInfo = userInfo });
+            var documentId = await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = forecast.Id, RecordType = EMCR.DRR.Managers.Intake.RecordType.ForecastReport, FileStream = file, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.ForecastReport }, UserInfo = userInfo });
 
             var forecastToUpdate = mapper.Map<EMCR.DRR.Controllers.Forecast>((await manager.Handle(new DrrForecastsQuery { Id = forecastId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
             forecastToUpdate.Attachments.Count().ShouldBe(1);
@@ -790,6 +793,16 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
                 Phone = "604-123-4567",
                 Department = "Position",
                 Title = "Title"
+            };
+        }
+
+        public IFormFile CreateFormFile(string content, string fileName, string contentType = "text/plain")
+        {
+            var stream = new MemoryStream(Encoding.UTF8.GetBytes(content));
+            return new FormFile(stream, 0, stream.Length, "file", fileName)
+            {
+                Headers = new HeaderDictionary(),
+                ContentType = contentType
             };
         }
 #pragma warning restore CS8601 // Possible null reference assignment.

@@ -44,6 +44,8 @@ namespace EMCR.DRR.API.Controllers
         }
 
         [HttpPost]
+        [RequestSizeLimit(100_000_000)] // 100MB
+        [Consumes("multipart/form-data")]
         public async Task<IActionResult> UploadAttachment([FromForm] FileUploadModel attachment)
         {
             if (attachment.File == null || attachment.File.Length == 0)
@@ -52,8 +54,8 @@ namespace EMCR.DRR.API.Controllers
             //if (attachment.File.Length >= 51 * 1024 * 1024)
             //    throw new ContentTooLargeException("File size exceeds 50MB limit");
 
-            var attachmentInfo = mapper.Map<AttachmentInfoStream>(attachment);
-            var ret = await intakeManager.Handle(new UploadAttachmentStreamCommand { AttachmentInfo = attachmentInfo, UserInfo = GetCurrentUser() });
+            var attachmentInfo = mapper.Map<AttachmentInfo>(attachment);
+            var ret = await intakeManager.Handle(new UploadAttachmentCommand { AttachmentInfo = attachmentInfo, UserInfo = GetCurrentUser() });
             return Ok(new { Message = "File uploaded successfully." });
         }
 
