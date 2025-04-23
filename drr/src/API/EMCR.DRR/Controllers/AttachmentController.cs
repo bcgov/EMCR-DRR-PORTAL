@@ -60,7 +60,7 @@ namespace EMCR.DRR.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<AttachmentQueryResult>> DownloadAttachment(string id)
+        public async Task<IActionResult> DownloadAttachment(string id)
         {
             var file = (FileQueryResult)await intakeManager.Handle(new DownloadAttachment { Id = id, UserInfo = GetCurrentUser() });
             return File(
