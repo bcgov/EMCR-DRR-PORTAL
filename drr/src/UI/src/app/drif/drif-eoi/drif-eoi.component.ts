@@ -348,15 +348,16 @@ export class EOIApplicationComponent {
       const fundingInformationItemForm = this.formBuilder.formGroup(
         new FundingInformationItemForm(funding),
       );
-      fundingInformationItemFormArray?.push(fundingInformationItemForm, {
-        emitEvent: false,
-      });
+
       if (funding.type === FundingType.OtherGrants) {
         fundingInformationItemForm
           .get('otherDescription')
           ?.setValidators([Validators.required]);
       }
-      fundingInformationItemFormArray?.push(fundingInformationItemForm);
+
+      fundingInformationItemFormArray?.push(fundingInformationItemForm, {
+        emitEvent: false,
+      });
     });
   }
 
