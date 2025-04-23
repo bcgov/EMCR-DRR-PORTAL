@@ -60,9 +60,9 @@ namespace EMCR.DRR.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<AttachmentStreamQueryResult>> DownloadAttachment(string id)
+        public async Task<ActionResult<AttachmentQueryResult>> DownloadAttachment(string id)
         {
-            var file = (FileStreamQueryResult)await intakeManager.Handle(new DownloadAttachmentStream { Id = id, UserInfo = GetCurrentUser() });
+            var file = (FileQueryResult)await intakeManager.Handle(new DownloadAttachment { Id = id, UserInfo = GetCurrentUser() });
             return File(
                 file.File.ContentStream,
                 file.File.ContentType,
@@ -79,11 +79,6 @@ namespace EMCR.DRR.API.Controllers
     }
 
     public class AttachmentQueryResult
-    {
-        public required S3File File { get; set; }
-    }
-
-    public class AttachmentStreamQueryResult
     {
         public required S3FileStreamResult File { get; set; }
     }
