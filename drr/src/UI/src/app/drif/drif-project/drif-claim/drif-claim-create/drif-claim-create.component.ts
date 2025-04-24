@@ -44,7 +44,6 @@ import {
   InterimProjectType,
   PreviousClaim,
   ProjectClaim,
-  RecordType,
 } from '../../../../../model';
 import { DrrCurrencyInputComponent } from '../../../../shared/controls/drr-currency-input/drr-currency-input.component';
 import { DrrDatepickerComponent } from '../../../../shared/controls/drr-datepicker/drr-datepicker.component';
@@ -61,7 +60,10 @@ import { AuthorizedRepresentativeForm } from '../../../../shared/drr-auth-rep/au
 import { DrrAuthRepComponent } from '../../../../shared/drr-auth-rep/drr-auth-rep.component';
 import { DeclarationForm } from '../../../../shared/drr-declaration/drr-declaration-form';
 import { DrrDeclarationComponent } from '../../../../shared/drr-declaration/drr-declaration.component';
-import { FileService } from '../../../../shared/services/file.service';
+import {
+  FileService,
+  RecordType,
+} from '../../../../shared/services/file.service';
 import { OptionsStore } from '../../../../store/options.store';
 import { ProfileStore } from '../../../../store/profile.store';
 import {
@@ -736,19 +738,16 @@ export class DrifClaimCreateComponent {
         return;
       }
 
-      const base64Content = await this.fileService.fileToBase64(file);
-
       this.attachmentsService
         .attachmentUploadAttachment({
-          recordId: invoiceControl.get('id')?.value,
-          recordType: RecordType.Invoice,
-          documentType: docType,
-          name: file.name,
-          contentType:
+          RecordId: invoiceControl.get('id')?.value,
+          RecordType: RecordType.Invoice,
+          DocumentType: docType,
+          ContentType:
             file.type === ''
               ? this.fileService.getCustomContentType(file)
               : file.type,
-          content: base64Content.split(',')[1],
+          File: file,
         })
         .subscribe({
           next: (attachment) => {

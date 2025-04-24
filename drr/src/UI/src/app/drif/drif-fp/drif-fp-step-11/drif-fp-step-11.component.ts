@@ -16,10 +16,10 @@ import {
 } from '@rxweb/reactive-form-validators';
 import { distinctUntilChanged } from 'rxjs';
 import { AttachmentService } from '../../../../api/attachment/attachment.service';
-import { DocumentType, RecordType } from '../../../../model';
+import { DocumentType } from '../../../../model';
 import { DrrFileUploadComponent } from '../../../shared/controls/drr-file-upload/drr-file-upload.component';
 import { DrrRadioButtonComponent } from '../../../shared/controls/drr-radio-button/drr-radio-button.component';
-import { FileService } from '../../../shared/services/file.service';
+import { FileService, RecordType } from '../../../shared/services/file.service';
 import { AttachmentForm, AttachmentsForm } from '../drif-fp-form';
 import {
   DrrAttahcmentComponent,
@@ -96,19 +96,16 @@ export class DrifFpStep11Component {
         return;
       }
 
-      const base64Content = await this.fileService.fileToBase64(file);
-
       this.attachmentsService
         .attachmentUploadAttachment({
-          recordId: this.applicationId,
-          recordType: RecordType.FullProposal,
-          documentType: event.documentType,
-          name: file.name,
-          contentType:
+          RecordId: this.applicationId,
+          RecordType: RecordType.FullProposal,
+          DocumentType: event.documentType,
+          ContentType:
             file.type === ''
               ? this.fileService.getCustomContentType(file)
               : file.type,
-          content: base64Content.split(',')[1],
+          File: file,
         })
         .subscribe({
           next: (attachment) => {

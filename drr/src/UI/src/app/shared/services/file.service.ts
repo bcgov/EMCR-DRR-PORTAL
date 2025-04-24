@@ -1,6 +1,14 @@
 import { inject, Injectable } from '@angular/core';
 import { AttachmentService } from '../../..';
 
+export const RecordType = {
+  FullProposal: 'FullProposal',
+  ProgressReport: 'ProgressReport',
+  Invoice: 'Invoice',
+  ForecastReport: 'ForecastReport',
+  ConditionRequest: 'ConditionRequest',
+};
+
 @Injectable({
   providedIn: 'root',
 })
@@ -16,33 +24,40 @@ export class FileService {
   };
 
   downloadFile(fileId: string) {
-    this.attachmentsService.attachmentDownloadAttachment(fileId).subscribe({
-      next: (response) => {
-        if (response.file?.content == null) {
-          // TODO: show error
-          return;
-        }
+    this.attachmentsService
+      .attachmentDownloadAttachment(fileId, { observe: 'response' })
+      .subscribe({
+        next: (response) => {
+          if (response == null) {
+            console.error('No response received for file download.');
+            return;
+          }
 
-        // alternative way to download file
-        // const byteArray = this.base64ToByteArray(response.file.content!);
-        // const blob = new Blob([byteArray], { type: response.file.contentType });
-        // saveAs(blob, response.file.fileName);
+          // Extract filename from Content-Disposition header
+          const contentDisposition = response.headers.get(
+            'Content-Disposition',
+          );
+          let filename = 'downloaded-file';
+          if (contentDisposition) {
+            const match = contentDisposition.match(/filename="(.+)"/);
+            if (match && match[1]) {
+              filename = match[1];
+            }
+          }
 
-        const byteArray = this.base64ToByteArray(response.file.content!);
-        const blob = new Blob([byteArray], {
-          type: response.file.contentType,
-        });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = response.file.fileName!;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-      },
-      error: () => {},
-    });
+          const url = window.URL.createObjectURL(response.body!);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+        },
+        error: (error) => {
+          console.error('Error downloading file:', error);
+        },
+      });
   }
 
   getCustomContentType(file: File): string {
@@ -59,24 +74,5 @@ export class FileService {
       default:
         return this.contentTypes.default;
     }
-  }
-
-  fileToBase64(file: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = (error) => reject(error);
-    });
-  }
-
-  private base64ToByteArray(base64: string): Uint8Array {
-    const binaryString = window.atob(base64);
-    const len = binaryString.length;
-    const bytes = new Uint8Array(len);
-    for (let i = 0; i < len; i++) {
-      bytes[i] = binaryString.charCodeAt(i);
-    }
-    return bytes;
   }
 }

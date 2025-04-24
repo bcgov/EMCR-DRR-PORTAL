@@ -22,12 +22,7 @@ import {
 import { distinctUntilChanged, pairwise, startWith } from 'rxjs';
 import { AttachmentService } from '../../../../../api/attachment/attachment.service';
 import { ProjectService } from '../../../../../api/project/project.service';
-import {
-  DeclarationType,
-  DocumentType,
-  FormType,
-  RecordType,
-} from '../../../../../model';
+import { DeclarationType, DocumentType, FormType } from '../../../../../model';
 import { DrrDatepickerComponent } from '../../../../shared/controls/drr-datepicker/drr-datepicker.component';
 import { DrrFileUploadComponent } from '../../../../shared/controls/drr-file-upload/drr-file-upload.component';
 import { DrrInputComponent } from '../../../../shared/controls/drr-input/drr-input.component';
@@ -38,7 +33,10 @@ import { AuthorizedRepresentativeForm } from '../../../../shared/drr-auth-rep/au
 import { DrrAuthRepComponent } from '../../../../shared/drr-auth-rep/drr-auth-rep.component';
 import { DeclarationForm } from '../../../../shared/drr-declaration/drr-declaration-form';
 import { DrrDeclarationComponent } from '../../../../shared/drr-declaration/drr-declaration.component';
-import { FileService } from '../../../../shared/services/file.service';
+import {
+  FileService,
+  RecordType,
+} from '../../../../shared/services/file.service';
 import { OptionsStore } from '../../../../store/options.store';
 import { ProfileStore } from '../../../../store/profile.store';
 import { DrrAttahcmentComponent } from '../../../drif-fp/drif-fp-step-11/drif-fp-attachment.component';
@@ -398,19 +396,16 @@ export class DrifConditionClearComponent {
         return;
       }
 
-      const base64Content = await this.fileService.fileToBase64(file);
-
       this.attachmentsService
         .attachmentUploadAttachment({
-          recordId: this.conditionId,
-          recordType: RecordType.ConditionRequest,
-          documentType: DocumentType.ConditionRequest,
-          name: file.name,
-          contentType:
+          RecordId: this.conditionId,
+          RecordType: RecordType.ConditionRequest,
+          DocumentType: DocumentType.ConditionRequest,
+          ContentType:
             file.type === ''
               ? this.fileService.getCustomContentType(file)
               : file.type,
-          content: base64Content.split(',')[1],
+          File: file,
         })
         .subscribe({
           next: (attachment) => {
