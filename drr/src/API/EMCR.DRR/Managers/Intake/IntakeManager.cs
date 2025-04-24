@@ -97,7 +97,6 @@ namespace EMCR.DRR.Managers.Intake
             return cmd switch
             {
                 DownloadAttachment c => await Handle(c),
-                DownloadAttachmentStream c => await Handle(c),
                 _ => throw new NotSupportedException($"{cmd.GetType().Name} is not supported")
             };
         }
