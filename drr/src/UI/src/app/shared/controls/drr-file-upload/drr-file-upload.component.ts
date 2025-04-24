@@ -58,8 +58,8 @@ export class DrrFileUploadComponent {
   async filesDropped(files: NgxFileDropEntry[]) {
     const filesToEmit: File[] = await Promise.all(
       files.map((file) =>
-        this.getFileFromEntry(file.fileEntry as FileSystemFileEntry)
-      )
+        this.getFileFromEntry(file.fileEntry as FileSystemFileEntry),
+      ),
     );
 
     this.onFilesSelected(filesToEmit);
@@ -85,10 +85,11 @@ export class DrrFileUploadComponent {
     const validFiles: File[] = [];
     files.forEach((file) => {
       // check if file size is less than 50MB
-      if (file.size > 50 * 1024 * 1024) {
+      // TODO: temporary increase the limit to 100MB for testing, change back to 50MB
+      if (file.size > 100 * 1024 * 1024) {
         this.hotToast.close();
         this.hotToast.error(
-          `Please review your files. File ${file.name} size exceeds 50MB`
+          `Please review your files. File ${file.name} size exceeds 50MB`,
         );
         return;
       }
@@ -97,7 +98,7 @@ export class DrrFileUploadComponent {
       if (!this.allowedExtensions.includes(fileExtension!)) {
         this.hotToast.close();
         this.hotToast.error(
-          `Please review your files. File type .${fileExtension} is not supported`
+          `Please review your files. File type .${fileExtension} is not supported`,
         );
         return;
       }
