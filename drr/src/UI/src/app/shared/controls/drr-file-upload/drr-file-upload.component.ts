@@ -85,8 +85,7 @@ export class DrrFileUploadComponent {
     const validFiles: File[] = [];
     files.forEach((file) => {
       // check if file size is less than 50MB
-      // TODO: temporary increase the limit to 100MB for testing, change back to 50MB
-      if (file.size > 100 * 1024 * 1024) {
+      if (file.size > 50 * 1024 * 1024) {
         this.hotToast.close();
         this.hotToast.error(
           `Please review your files. File ${file.name} size exceeds 50MB`,
