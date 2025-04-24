@@ -48,7 +48,7 @@ namespace EMCR.DRR.API.Controllers
         [HttpPost]
         [RequestSizeLimit(100_000_000)] // 100MB
         [Consumes("multipart/form-data")]
-        public async Task<IActionResult> UploadAttachment([FromForm] FileUploadModel attachment)
+        public async Task<ActionResult<ApplicationResult>> UploadAttachment([FromForm] FileUploadModel attachment)
         {
             if (attachment.File == null || attachment.File.Length == 0)
                 return BadRequest("No file uploaded.");
@@ -58,7 +58,7 @@ namespace EMCR.DRR.API.Controllers
 
             var attachmentInfo = mapper.Map<AttachmentInfo>(attachment);
             var ret = await intakeManager.Handle(new UploadAttachmentCommand { AttachmentInfo = attachmentInfo, UserInfo = GetCurrentUser() });
-            return Ok(new { Message = "File uploaded successfully." });
+            return Ok(new ApplicationResult { Id = ret });
         }
 
 #pragma warning disable ASP0019 // Suggest using IHeaderDictionary.Append or the indexer
