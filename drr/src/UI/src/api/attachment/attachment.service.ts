@@ -16,9 +16,8 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import type {
   ApplicationResult,
-  AttachmentQueryResult,
+  AttachmentUploadAttachmentBody,
   DeleteAttachment,
-  FileData,
 } from '../../model';
 
 type HttpClientOptions = {
@@ -47,40 +46,81 @@ type HttpClientOptions = {
 export class AttachmentService {
   constructor(private http: HttpClient) {}
   attachmentUploadAttachment<TData = ApplicationResult>(
-    fileData: FileData,
+    attachmentUploadAttachmentBody: AttachmentUploadAttachmentBody,
     options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'body' },
   ): Observable<TData>;
   attachmentUploadAttachment<TData = ApplicationResult>(
-    fileData: FileData,
+    attachmentUploadAttachmentBody: AttachmentUploadAttachmentBody,
     options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'response' },
   ): Observable<AngularHttpResponse<TData>>;
   attachmentUploadAttachment<TData = ApplicationResult>(
-    fileData: FileData,
+    attachmentUploadAttachmentBody: AttachmentUploadAttachmentBody,
     options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'events' },
   ): Observable<HttpEvent<TData>>;
   attachmentUploadAttachment<TData = ApplicationResult>(
-    fileData: FileData,
+    attachmentUploadAttachmentBody: AttachmentUploadAttachmentBody,
     options?: HttpClientOptions,
   ): Observable<TData> {
-    return this.http.post<TData>(`/api/attachment`, fileData, options);
+    const formData = new FormData();
+    if (
+      attachmentUploadAttachmentBody.RecordId !== undefined &&
+      attachmentUploadAttachmentBody.RecordId !== null
+    ) {
+      formData.append('RecordId', attachmentUploadAttachmentBody.RecordId);
+    }
+    if (
+      attachmentUploadAttachmentBody.RecordType !== undefined &&
+      attachmentUploadAttachmentBody.RecordType !== null
+    ) {
+      formData.append('RecordType', attachmentUploadAttachmentBody.RecordType);
+    }
+    if (
+      attachmentUploadAttachmentBody.ContentType !== undefined &&
+      attachmentUploadAttachmentBody.ContentType !== null
+    ) {
+      formData.append(
+        'ContentType',
+        attachmentUploadAttachmentBody.ContentType,
+      );
+    }
+    if (
+      attachmentUploadAttachmentBody.DocumentType !== undefined &&
+      attachmentUploadAttachmentBody.DocumentType !== null
+    ) {
+      formData.append(
+        'DocumentType',
+        attachmentUploadAttachmentBody.DocumentType,
+      );
+    }
+    if (
+      attachmentUploadAttachmentBody.File !== undefined &&
+      attachmentUploadAttachmentBody.File !== null
+    ) {
+      formData.append('File', attachmentUploadAttachmentBody.File);
+    }
+
+    return this.http.post<TData>(`/api/attachment`, formData, options);
   }
-  attachmentDownloadAttachment<TData = AttachmentQueryResult>(
+  attachmentDownloadAttachment<TData = Blob>(
     id: string,
     options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'body' },
   ): Observable<TData>;
-  attachmentDownloadAttachment<TData = AttachmentQueryResult>(
+  attachmentDownloadAttachment<TData = Blob>(
     id: string,
     options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'response' },
   ): Observable<AngularHttpResponse<TData>>;
-  attachmentDownloadAttachment<TData = AttachmentQueryResult>(
+  attachmentDownloadAttachment<TData = Blob>(
     id: string,
     options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'events' },
   ): Observable<HttpEvent<TData>>;
-  attachmentDownloadAttachment<TData = AttachmentQueryResult>(
+  attachmentDownloadAttachment<TData = Blob>(
     id: string,
     options?: HttpClientOptions,
   ): Observable<TData> {
-    return this.http.get<TData>(`/api/attachment/${id}`, options);
+    return this.http.get<TData>(`/api/attachment/${id}`, {
+      responseType: 'blob',
+      ...options,
+    });
   }
   attachmentDeleteAttachment<TData = ApplicationResult>(
     id: string,
@@ -111,7 +151,6 @@ export class AttachmentService {
 
 export type AttachmentUploadAttachmentClientResult =
   NonNullable<ApplicationResult>;
-export type AttachmentDownloadAttachmentClientResult =
-  NonNullable<AttachmentQueryResult>;
+export type AttachmentDownloadAttachmentClientResult = NonNullable<Blob>;
 export type AttachmentDeleteAttachmentClientResult =
   NonNullable<ApplicationResult>;

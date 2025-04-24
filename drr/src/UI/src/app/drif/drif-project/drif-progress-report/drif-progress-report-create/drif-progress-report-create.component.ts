@@ -45,7 +45,6 @@ import {
   InterimProjectType,
   ProgressReport,
   ProjectProgressStatus,
-  RecordType,
   SignageType,
   WorkplanActivity,
   WorkplanStatus,
@@ -68,7 +67,10 @@ import { AuthorizedRepresentativeForm } from '../../../../shared/drr-auth-rep/au
 import { DrrAuthRepComponent } from '../../../../shared/drr-auth-rep/drr-auth-rep.component';
 import { DeclarationForm } from '../../../../shared/drr-declaration/drr-declaration-form';
 import { DrrDeclarationComponent } from '../../../../shared/drr-declaration/drr-declaration.component';
-import { FileService } from '../../../../shared/services/file.service';
+import {
+  FileService,
+  RecordType,
+} from '../../../../shared/services/file.service';
 import { OptionsStore } from '../../../../store/options.store';
 import { ProfileStore } from '../../../../store/profile.store';
 import { AttachmentForm } from '../../../drif-fp/drif-fp-form';
@@ -1129,19 +1131,17 @@ export class DrifProgressReportCreateComponent {
         return;
       }
 
-      const base64Content = await this.fileService.fileToBase64(file);
-
       this.attachmentsService
         .attachmentUploadAttachment({
-          recordId: this.progressReportId,
-          recordType: RecordType.ProgressReport,
-          documentType: DocumentType.ProgressReport,
-          name: file.name,
-          contentType:
+          RecordId: this.progressReportId,
+          RecordType: RecordType.ProgressReport,
+          DocumentType: DocumentType.ProgressReport,
+
+          ContentType:
             file.type === ''
               ? this.fileService.getCustomContentType(file)
               : file.type,
-          content: base64Content.split(',')[1],
+          File: file,
         })
         .subscribe({
           next: (attachment) => {

@@ -39,7 +39,6 @@ import {
   DraftForecast,
   Forecast,
   FormType,
-  RecordType,
 } from '../../../../../model';
 import { DrrCurrencyInputComponent } from '../../../../shared/controls/drr-currency-input/drr-currency-input.component';
 import { DrrFileUploadComponent } from '../../../../shared/controls/drr-file-upload/drr-file-upload.component';
@@ -48,7 +47,10 @@ import { AuthorizedRepresentativeForm } from '../../../../shared/drr-auth-rep/au
 import { DrrAuthRepComponent } from '../../../../shared/drr-auth-rep/drr-auth-rep.component';
 import { DeclarationForm } from '../../../../shared/drr-declaration/drr-declaration-form';
 import { DrrDeclarationComponent } from '../../../../shared/drr-declaration/drr-declaration.component';
-import { FileService } from '../../../../shared/services/file.service';
+import {
+  FileService,
+  RecordType,
+} from '../../../../shared/services/file.service';
 import { OptionsStore } from '../../../../store/options.store';
 import { ProfileStore } from '../../../../store/profile.store';
 import { AttachmentForm } from '../../../drif-fp/drif-fp-form';
@@ -503,19 +505,16 @@ export class DrifForecastCreateComponent {
         return;
       }
 
-      const base64Content = await this.fileService.fileToBase64(file);
-
       this.attachmentsService
         .attachmentUploadAttachment({
-          recordId: this.forecastId,
-          recordType: RecordType.ForecastReport,
-          documentType: DocumentType.ForecastReport,
-          name: file.name,
-          contentType:
+          RecordId: this.forecastId,
+          RecordType: RecordType.ForecastReport,
+          DocumentType: DocumentType.ForecastReport,
+          ContentType:
             file.type === ''
               ? this.fileService.getCustomContentType(file)
               : file.type,
-          content: base64Content.split(',')[1],
+          File: file,
         })
         .subscribe({
           next: (attachment) => {
