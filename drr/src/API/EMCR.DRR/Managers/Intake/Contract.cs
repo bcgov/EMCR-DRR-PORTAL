@@ -311,12 +311,6 @@ namespace EMCR.DRR.Managers.Intake
         public required string Id { get; set; }
         public UserInfo UserInfo { get; set; }
     }
-    
-    public class DownloadAttachmentStream : AttachmentQuery
-    {
-        public required string Id { get; set; }
-        public UserInfo UserInfo { get; set; }
-    }
 
     public class AttachmentInfo
     {

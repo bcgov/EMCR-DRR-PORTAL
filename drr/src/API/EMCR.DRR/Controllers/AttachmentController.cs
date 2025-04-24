@@ -1,5 +1,7 @@
-﻿using System.Net.Mime;
+﻿using System.Globalization;
+using System.Net.Mime;
 using System.Security.Claims;
+using System.Text;
 using AutoMapper;
 using EMCR.DRR.API.Model;
 using EMCR.DRR.API.Services;
@@ -59,22 +61,50 @@ namespace EMCR.DRR.API.Controllers
             return Ok(new { Message = "File uploaded successfully." });
         }
 
+#pragma warning disable ASP0019 // Suggest using IHeaderDictionary.Append or the indexer
         [HttpGet("{id}")]
         public async Task<IActionResult> DownloadAttachment(string id)
         {
             var file = (FileQueryResult)await intakeManager.Handle(new DownloadAttachment { Id = id, UserInfo = GetCurrentUser() });
-            return File(
-                file.File.ContentStream,
-                file.File.ContentType,
-                file.File.FileName
-            );
+            var fileName = file.File.FileName;
+            // Encode filename per RFC 5987
+            var encodedFileName = Uri.EscapeDataString(fileName);
+            var fallbackName = GenerateSafeAsciiFileName(fileName);
+            var contentDisposition = $"attachment; filename=\"{fallbackName}\"; filename*=UTF-8''{encodedFileName}";
+
+            HttpContext.Response.Headers.Add("Content-Disposition", contentDisposition);
+
+            return new FileStreamResult(file.File.ContentStream, file.File.ContentType);
         }
+#pragma warning restore ASP0019 // Suggest using IHeaderDictionary.Append or the indexer
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<ApplicationResult>> DeleteAttachment([FromBody] DeleteAttachment attachment, string id)
         {
             await intakeManager.Handle(new DeleteAttachmentCommand { Id = id, UserInfo = GetCurrentUser() });
             return Ok(new ApplicationResult { Id = id });
+        }
+
+        private static string GenerateSafeAsciiFileName(string fileName)
+        {
+            // Normalize to decompose accents (é -> e + ´)
+            string normalized = fileName.Normalize(NormalizationForm.FormD);
+
+            var sb = new StringBuilder();
+            foreach (var c in normalized)
+            {
+                var uc = CharUnicodeInfo.GetUnicodeCategory(c);
+                if (uc != UnicodeCategory.NonSpacingMark && c < 128)
+                {
+                    sb.Append(c);
+                }
+            }
+
+            // Replace unsafe characters (spaces, symbols, etc.)
+            string cleaned = sb.ToString();
+            //cleaned = Regex.Replace(cleaned, @"[^a-zA-Z0-9_\.-]", "_");
+
+            return cleaned.Trim();
         }
     }
 

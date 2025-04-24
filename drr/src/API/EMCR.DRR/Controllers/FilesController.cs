@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Net;
 using System.Security.Claims;
 using AutoMapper;
 using EMCR.DRR.API.Services;
