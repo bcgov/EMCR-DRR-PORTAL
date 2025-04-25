@@ -306,19 +306,13 @@
                 @if (condition.conditionMet) {
                   <!-- TODO: details view link -->
                 } @else {
-                  <a
+                  <button
                     mat-raised-button
                     color="primary"
-                    [routerLink]="[
-                      '/drif-projects',
-                      projectId,
-                      'conditions',
-                      condition.id,
-                      'clear',
-                    ]"
+                    (click)="createConditionRequest()"
                   >
-                    Clear
-                  </a>
+                    Request Clearance
+                  </button>
                 }
               </div>
             </td>
@@ -330,13 +324,20 @@
               'limit',
               'conditionMet',
               'dateMet',
+              'actions',
             ]"
           ></tr>
           <tr
             mat-row
             *matRowDef="
               let row;
-              columns: ['conditionName', 'limit', 'conditionMet', 'dateMet']
+              columns: [
+                'conditionName',
+                'limit',
+                'conditionMet',
+                'dateMet',
+                'actions',
+              ]
             "
           ></tr>
         </table>

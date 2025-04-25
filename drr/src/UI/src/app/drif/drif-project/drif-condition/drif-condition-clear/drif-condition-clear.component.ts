@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { Component, HostListener, inject, viewChild } from '@angular/core';
 import { FormArray, FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import {
@@ -55,6 +56,7 @@ import { DrifConditionSummaryComponent } from '../drif-condition-summary/drif-co
     MatStepperModule,
     MatButtonModule,
     MatIconModule,
+    MatCardModule,
     TranslocoModule,
     RxReactiveFormsModule,
     FormsModule,
@@ -96,6 +98,8 @@ export class DrifConditionClearComponent {
 
   conditionForm?: IFormGroup<ConditionForm>;
   conditionDMAPMessageForm?: IFormGroup<ConditionDMAPMessageForm>;
+
+  todayDate = new Date();
 
   authorizedRepresentativeText?: string;
   accuracyOfInformationText?: string;
@@ -215,9 +219,11 @@ export class DrifConditionClearComponent {
       ) as IFormGroup<ConditionDMAPMessageForm>;
 
       const conditionFormValue = new ConditionForm({
-        name: 'Condition_Name',
-        limit: 23,
-        attachments: [],
+        conditionRequest: {
+          name: 'Condition_Name',
+          limit: 23,
+          attachments: [],
+        },
       });
       this.conditionForm = this.formBuilder.formGroup(
         ConditionForm,
@@ -387,7 +393,7 @@ export class DrifConditionClearComponent {
   }
 
   get attachmentsArray() {
-    return this.conditionForm?.get('attachments') as FormArray;
+    return this.conditionForm?.get('conditionRequest.attachments') as FormArray;
   }
 
   async uploadFiles(files: File[]) {

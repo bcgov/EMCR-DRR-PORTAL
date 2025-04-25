@@ -112,7 +112,7 @@ export const routes: Routes = [
     canActivate: [AuthenticationGuard],
   },
   {
-    path: 'drif-projects/:projectId/conditions/:conditionId/clear',
+    path: 'drif-projects/:projectId/conditions/:conditionId/edit',
     component: DrifConditionClearComponent,
     canActivate: [AuthenticationGuard],
   },

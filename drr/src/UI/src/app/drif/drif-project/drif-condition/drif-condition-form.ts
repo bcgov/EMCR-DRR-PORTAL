@@ -28,7 +28,7 @@ export class CondtionRequestAttachmentForm {
   }
 }
 
-export class ConditionForm {
+export class ConditionRequestForm {
   @prop()
   name?: string;
 
@@ -45,6 +45,15 @@ export class ConditionForm {
 
   @propArray(CondtionRequestAttachmentForm)
   attachments?: CondtionRequestAttachmentForm[] = [];
+
+  constructor(data?: Partial<ConditionRequestForm>) {
+    Object.assign(this, data);
+  }
+}
+
+export class ConditionForm {
+  @propObject(ConditionRequestForm)
+  conditionRequest?: ConditionRequestForm = new ConditionRequestForm({});
 
   @propObject(DeclarationForm)
   declaration?: DeclarationForm = new DeclarationForm({});

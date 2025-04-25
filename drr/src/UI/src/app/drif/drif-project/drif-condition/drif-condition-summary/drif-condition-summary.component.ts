@@ -32,7 +32,7 @@ export class DrifConditionSummaryComponent {
   @Input() isReadOnlyView = true;
 
   get attachmentsArray() {
-    return this.conditionForm?.get('attachments') as FormArray;
+    return this.conditionForm?.get('conditionRequest.attachments') as FormArray;
   }
 
   hasAttachments(): boolean {
