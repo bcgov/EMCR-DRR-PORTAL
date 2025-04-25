@@ -1,28 +1,28 @@
 <div class="summary-container" *transloco="let t; read: 'condition'">
   <mat-card>
     <mat-card-header>
-      <mat-card-title>Condition Request</mat-card-title>
+      <mat-card-title>Condition Clearance Request</mat-card-title>
     </mat-card-header>
     <mat-card-content style="display: flex; flex-direction: column; gap: 1rem">
       <drr-summary-item
         [label]="t('name')"
-        [rxFormControl]="conditionForm?.get('name')"
+        [rxFormControl]="conditionForm?.get('conditionRequest.name')"
         controlType="input"
       ></drr-summary-item>
       <drr-summary-item
         [label]="t('limit')"
-        [rxFormControl]="conditionForm?.get('limit')"
-        [value]="conditionForm?.get('limit')?.value + '%'"
+        [rxFormControl]="conditionForm?.get('conditionRequest.limit')"
+        [value]="conditionForm?.get('conditionRequest.limit')?.value + '%'"
       >
       </drr-summary-item>
       <drr-summary-item
         [label]="t('date')"
-        [rxFormControl]="conditionForm?.get('date')"
+        [rxFormControl]="conditionForm?.get('conditionRequest.date')"
         controlType="date"
       ></drr-summary-item>
       <drr-summary-item
         [label]="t('description')"
-        [rxFormControl]="conditionForm?.get('description')"
+        [rxFormControl]="conditionForm?.get('conditionRequest.description')"
         controlType="textarea"
       ></drr-summary-item>
 

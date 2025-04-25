@@ -1,37 +1,38 @@
-<div class="app-stepper-container" *transloco="let t; read: 'condition'">
-  <div class="app-stepper-header">
-    <div style="flex: 1">
-      <h5 style="font-size: 1.2rem; margin-bottom: 0.5rem">
+<mat-card class="app-stepper-container" *transloco="let t; read: 'condition'">
+  <mat-card-header>
+    <mat-card-title-group class="app-stepper-header">
+      <mat-card-title>
         {{ conditionName }}
-      </h5>
-    </div>
-    <div>
-      <div class="header-actions">
-        <button mat-stroked-button color="primary" (click)="goBack()">
-          Exit Form
-        </button>
-        <button mat-flat-button color="primary" (click)="save()">
-          <mat-icon>save</mat-icon>
-          Save
-        </button>
-      </div>
-      <div class="save-info">
-        <div style="display: flex; flex-direction: row; gap: 1rem">
-          <i *ngIf="autoSaveCountdown <= 30 && autoSaveCountdown > 0"
-            >Saving in {{ autoSaveCountdown }}
-            {{ autoSaveCountdown === 1 ? "second" : "seconds" }}...
-          </i>
-          <i
-            *ngIf="
-              lastSavedAt && (autoSaveCountdown === 0 || autoSaveCountdown > 30)
-            "
-            >Saved at {{ lastSavedAt | date: "mediumTime" }}</i
-          >
+      </mat-card-title>
+      <div>
+        <div class="header-actions">
+          <button mat-stroked-button color="primary" (click)="goBack()">
+            Exit Form
+          </button>
+          <button mat-flat-button color="primary" (click)="save()">
+            <mat-icon>save</mat-icon>
+            Save
+          </button>
+        </div>
+        <div class="save-info">
+          <div style="display: flex; flex-direction: row; gap: 1rem">
+            <i *ngIf="autoSaveCountdown <= 30 && autoSaveCountdown > 0"
+              >Saving in {{ autoSaveCountdown }}
+              {{ autoSaveCountdown === 1 ? "second" : "seconds" }}...
+            </i>
+            <i
+              *ngIf="
+                lastSavedAt &&
+                (autoSaveCountdown === 0 || autoSaveCountdown > 30)
+              "
+              >Saved at {{ lastSavedAt | date: "mediumTime" }}</i
+            >
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-  <div>
+    </mat-card-title-group>
+  </mat-card-header>
+  <mat-card-content>
     <mat-stepper
       class="app-stepper"
       [linear]="false"
@@ -42,103 +43,127 @@
     >
       <mat-step
         [label]="t('step1')"
-        [stepControl]="conditionForm!"
+        [stepControl]="conditionForm?.get('conditionRequest')!"
         [errorMessage]="'stepError' | transloco"
       >
-        <div>
+        <div style="display: flex; flex-direction: column; gap: 2rem">
           <!-- @if (hasConditionDMAPMessage()) {
-            <div style="display: flex; flex-direction: column; gap: 1rem">
-              <h5>DMAP Team Message</h5>
-              <drr-alert
-                [message]="
-                  'You have a message from the DMAP team. Please review the message and adjust your request as needed.'
-                "
-                [type]="'info'"
+            <mat-card>
+              <mat-card-header>
+                <mat-card-title>DMAP Team Message</mat-card-title>
+              </mat-card-header>
+              <mat-card-content
+                style="display: flex; flex-direction: column; gap: 1rem"
               >
-              </drr-alert>
-              <drr-textarea
-                [label]="t('message')"
-                [rxFormControl]="conditionDMAPMessageForm?.get('message')"
-                [disabled]="true"
-              ></drr-textarea>
-              <div style="display: flex; justify-content: space-between">
-                <drr-datepicker
-                  [label]="t('messageDate')"
-                  [rxFormControl]="conditionDMAPMessageForm?.get('date')"
+                <drr-alert
+                  style="margin-top: 1rem"
+                  [message]="
+                    'You have a message from the DMAP team. Please review the message and adjust your request as needed.'
+                  "
+                  [type]="'info'"
+                >
+                </drr-alert>
+                <drr-textarea
+                  style="margin-top: 1rem"
+                  [label]="t('message')"
+                  [rxFormControl]="conditionDMAPMessageForm?.get('message')"
                   [disabled]="true"
-                ></drr-datepicker>
+                ></drr-textarea>
+                <div style="display: flex; justify-content: space-between">
+                  <drr-datepicker
+                    [label]="t('messageDate')"
+                    [rxFormControl]="conditionDMAPMessageForm?.get('date')"
+                    [disabled]="true"
+                  ></drr-datepicker>
+                  <drr-input
+                    style="width: 25rem"
+                    [label]="t('author')"
+                    [rxFormControl]="conditionDMAPMessageForm?.get('author')"
+                    [disabled]="true"
+                  ></drr-input>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          } -->
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title> Condition Clearance Request</mat-card-title>
+            </mat-card-header>
+            <mat-card-content
+              style="
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+                margin-top: 2rem;
+              "
+            >
+              <div style="display: flex; gap: 1rem">
                 <drr-input
-                  style="width: 25rem"
-                  [label]="t('author')"
-                  [rxFormControl]="conditionDMAPMessageForm?.get('author')"
+                  style="width: 50rem"
+                  [label]="t('name')"
+                  [rxFormControl]="conditionForm?.get('conditionRequest.name')"
                   [disabled]="true"
                 ></drr-input>
-              </div>
-            </div>
-          } -->
-          <div
-            style="
-              display: flex;
-              flex-direction: column;
-              gap: 1rem;
-              align-items: flex-start;
-              margin-top: 2rem;
-            "
-          >
-            <h5>Condition Request</h5>
-            <div style="display: flex; gap: 1rem">
-              <drr-input
-                style="width: 25rem"
-                [label]="t('name')"
-                [rxFormControl]="conditionForm?.get('name')"
-                [disabled]="true"
-              ></drr-input>
-              <drr-numeric-input
-                style="width: 25rem"
-                [label]="t('limit')"
-                [rxFormControl]="conditionForm?.get('limit')"
-                [disabled]="true"
-                numericType="percentage"
-              ></drr-numeric-input>
-            </div>
-            <drr-datepicker
-              style="width: 25rem"
-              [label]="t('date')"
-              [rxFormControl]="conditionForm?.get('date')"
-            ></drr-datepicker>
-            <drr-textarea
-              style="align-self: stretch"
-              [label]="t('description')"
-              [rxFormControl]="conditionForm?.get('description')"
-              [maxlength]="2000"
-            ></drr-textarea>
-          </div>
-          <div class="attachments-container">
-            <h5>Attachments</h5>
-            <drr-attachment
-              *ngFor="
-                let attachmentControl of attachmentsArray.controls;
-                let i = index
-              "
-              [title]="i == 0 ? t('attachments') : ''"
-              [attachmentForm]="attachmentControl"
-              (removeFile)="removeFile($event)"
-              (downloadFile)="downloadFile($event)"
-            ></drr-attachment>
-
-            <div style="display: flex; flex-direction: column; gap: 1rem">
-              <div>
-                <mat-label class="drr-label">
-                  {{ t("attachmentUploadText") }}
-                </mat-label>
+                <drr-numeric-input
+                  [label]="t('limit')"
+                  [rxFormControl]="conditionForm?.get('conditionRequest.limit')"
+                  [disabled]="true"
+                  numericType="percentage"
+                ></drr-numeric-input>
+                <!-- <drr-datepicker
+                  [label]="t('date')"
+                  [rxFormControl]="conditionForm?.get('conditionRequest.date')"
+                  [max]="todayDate"
+                  [disabled]="true"
+                ></drr-datepicker> -->
               </div>
 
-              <drr-file-upload
-                (filesSelected)="uploadFiles($event)"
-                [attachButtonLabel]="t('uploadAttachment')"
-              ></drr-file-upload>
-            </div>
-          </div>
+              <mat-label>
+                Provide an explanation for the condition clearance request.
+              </mat-label>
+              <drr-textarea
+                style="align-self: stretch"
+                [label]="t('description')"
+                [rxFormControl]="
+                  conditionForm?.get('conditionRequest.description')
+                "
+                [maxlength]="2000"
+              ></drr-textarea>
+            </mat-card-content>
+          </mat-card>
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>Attachments</mat-card-title>
+            </mat-card-header>
+            <mat-card-content
+              style="display: flex; flex-direction: column; gap: 1rem"
+            >
+              <drr-attachment
+                *ngFor="
+                  let attachmentControl of attachmentsArray.controls;
+                  let i = index
+                "
+                [title]="i == 0 ? t('attachments') : ''"
+                [attachmentForm]="attachmentControl"
+                (removeFile)="removeFile($event)"
+                (downloadFile)="downloadFile($event)"
+              ></drr-attachment>
+
+              <div style="display: flex; flex-direction: column; gap: 1rem">
+                <div>
+                  <mat-label class="drr-label">
+                    {{ t("attachmentUploadText") }}
+                  </mat-label>
+                </div>
+
+                <drr-file-upload
+                  (filesSelected)="uploadFiles($event)"
+                  [attachButtonLabel]="t('uploadAttachment')"
+                ></drr-file-upload>
+              </div>
+            </mat-card-content>
+          </mat-card>
         </div>
         <div class="drr-stepper-action">
           <button mat-flat-button color="primary" matStepperNext type="button">
@@ -183,5 +208,5 @@
         </div>
       </mat-step>
     </mat-stepper>
-  </div>
-</div>
+  </mat-card-content>
+</mat-card>

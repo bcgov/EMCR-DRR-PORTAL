@@ -263,15 +263,14 @@ export class DrifProjectComponent {
       });
   }
 
-  editClaim() {}
-
-  deleteClaim() {}
-
-  editProgressReport() {}
-
-  deleteProgressReport() {}
-
-  editForecast() {}
-
-  deleteForecast() {}
+  createConditionRequest() {
+    // TODO: make call to API to create condition request
+    this.router.navigate([
+      'drif-projects',
+      this.projectId,
+      'conditions',
+      'CON-1111', // TODO: use real condition ID returned from API
+      'edit',
+    ]);
+  }
 }
