@@ -802,6 +802,7 @@ namespace EMCR.DRR.Managers.Intake
         public string? Id { get; set; }
         public string? CrmId { get; set; }
         public string? ConditionName { get; set; }
+        public string? Explanation { get; set; }
         public decimal? Limit { get; set; }
         public bool? ConditionMet { get; set; }
         public DateTime? DateMet { get; set; }

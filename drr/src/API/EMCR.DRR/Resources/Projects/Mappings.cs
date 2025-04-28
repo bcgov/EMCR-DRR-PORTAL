@@ -153,6 +153,7 @@ namespace EMCR.DRR.API.Resources.Projects
                 .ForMember(dest => dest.Limit, opt => opt.MapFrom(src => src.drr_conditionpercentagelimit))
                 .ForMember(dest => dest.DateMet, opt => opt.MapFrom(src => src.drr_conditionmetdate.HasValue ? src.drr_conditionmetdate.Value.UtcDateTime : (DateTime?)null))
                 .ForMember(dest => dest.ConditionMet, opt => opt.MapFrom(src => src.drr_conditionmet.HasValue ? src.drr_conditionmet == (int)DRRTwoOptions.Yes : (bool?)null))
+                .ForMember(dest => dest.Explanation, opt => opt.Ignore())
                 .ForMember(dest => dest.Attachments, opt => opt.Ignore())
                 .ForMember(dest => dest.AuthorizedRepresentative, opt => opt.Ignore())
                 .ForMember(dest => dest.AuthorizedRepresentativeStatement, opt => opt.Ignore())

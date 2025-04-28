@@ -430,6 +430,7 @@ namespace EMCR.DRR.Controllers
         public string? ConditionName { get; set; }
         public decimal? Limit { get; set; }
         public bool? ConditionMet { get; set; }
+        public string? Explanation { get; set; }
         public DateTime? DateMet { get; set; }
         public IEnumerable<Attachment>? Attachments { get; set; }
         public ContactDetails? AuthorizedRepresentative { get; set; }
