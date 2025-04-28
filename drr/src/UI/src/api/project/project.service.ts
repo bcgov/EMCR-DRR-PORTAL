@@ -16,6 +16,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import type {
   CanCreateReportResult,
+  ConditionResult,
   CreateInvoice,
   CreateInvoiceResult,
   CreateReport,
@@ -29,7 +30,6 @@ import type {
   Forecast,
   ForecastResult,
   InterimReport,
-  PaymentCondition,
   ProgressReport,
   ProgressReportResult,
   ProjectClaim,
@@ -582,22 +582,22 @@ export class ProjectService {
       options,
     );
   }
-  projectGetConditionRequest<TData = PaymentCondition>(
+  projectGetConditionRequest<TData = DraftConditionRequest>(
     projectId: string,
     conditionId: string,
     options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'body' },
   ): Observable<TData>;
-  projectGetConditionRequest<TData = PaymentCondition>(
+  projectGetConditionRequest<TData = DraftConditionRequest>(
     projectId: string,
     conditionId: string,
     options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'response' },
   ): Observable<AngularHttpResponse<TData>>;
-  projectGetConditionRequest<TData = PaymentCondition>(
+  projectGetConditionRequest<TData = DraftConditionRequest>(
     projectId: string,
     conditionId: string,
     options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'events' },
   ): Observable<HttpEvent<TData>>;
-  projectGetConditionRequest<TData = PaymentCondition>(
+  projectGetConditionRequest<TData = DraftConditionRequest>(
     projectId: string,
     conditionId: string,
     options?: HttpClientOptions,
@@ -607,25 +607,25 @@ export class ProjectService {
       options,
     );
   }
-  projectUpdateConditionRequest<TData = PaymentCondition>(
+  projectUpdateConditionRequest<TData = ConditionResult>(
     projectId: string,
     conditionId: string,
     draftConditionRequest: DraftConditionRequest,
     options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'body' },
   ): Observable<TData>;
-  projectUpdateConditionRequest<TData = PaymentCondition>(
+  projectUpdateConditionRequest<TData = ConditionResult>(
     projectId: string,
     conditionId: string,
     draftConditionRequest: DraftConditionRequest,
     options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'response' },
   ): Observable<AngularHttpResponse<TData>>;
-  projectUpdateConditionRequest<TData = PaymentCondition>(
+  projectUpdateConditionRequest<TData = ConditionResult>(
     projectId: string,
     conditionId: string,
     draftConditionRequest: DraftConditionRequest,
     options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'events' },
   ): Observable<HttpEvent<TData>>;
-  projectUpdateConditionRequest<TData = PaymentCondition>(
+  projectUpdateConditionRequest<TData = ConditionResult>(
     projectId: string,
     conditionId: string,
     draftConditionRequest: DraftConditionRequest,
@@ -664,6 +664,6 @@ export type ProjectUpdateForecastReportClientResult =
 export type ProjectSubmitForecastReportClientResult =
   NonNullable<ForecastResult>;
 export type ProjectGetConditionRequestClientResult =
-  NonNullable<PaymentCondition>;
+  NonNullable<DraftConditionRequest>;
 export type ProjectUpdateConditionRequestClientResult =
-  NonNullable<PaymentCondition>;
+  NonNullable<ConditionResult>;

@@ -15,6 +15,8 @@ export * from './attachment';
 export * from './attachmentUploadAttachmentBody';
 export * from './canCreateReportResult';
 export * from './claimStatus';
+export * from './conditionResult';
+export * from './conditionResultAllOf';
 export * from './configuration';
 export * from './contactDetails';
 export * from './costCategory';

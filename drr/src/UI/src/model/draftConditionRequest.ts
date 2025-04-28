@@ -19,6 +19,8 @@ export interface DraftConditionRequest {
   /** @nullable */
   dateMet?: string;
   /** @nullable */
+  explanation?: string;
+  /** @nullable */
   id?: string;
   /** @nullable */
   limit?: number;
