@@ -701,6 +701,48 @@ namespace EMCR.DRR.Managers.Intake
                 .ForMember(dest => dest.Standards, opt => opt.MapFrom(src => src.Standards.Select(p => p.Name)))
                 ;
 
+            CreateMap<DraftConditionRequest, Controllers.ConditionRequest>()
+                .ForMember(dest => dest.AuthorizedRepresentativeStatement, opt => opt.Ignore())
+                .ForMember(dest => dest.InformationAccuracyStatement, opt => opt.Ignore())
+                .ReverseMap()
+                ;
+
+            CreateMap<Controllers.ConditionRequest, ConditionRequest>()
+                .ForMember(dest => dest.CrmId, opt => opt.Ignore())
+                .ForMember(dest => dest.AuthorizedRepresentativeStatement, opt => opt.Ignore())
+                .ForMember(dest => dest.InformationAccuracyStatement, opt => opt.Ignore())
+                .AfterMap((src, dest) =>
+                {
+                    foreach (var prop in dest.GetType().GetProperties())
+                    {
+                        if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
+                        {
+                            prop.SetValue(dest, "");
+                        }
+                    }
+                })
+                .ReverseMap()
+                ;
+
+            CreateMap<DraftConditionRequest, ConditionRequest>()
+                .ForMember(dest => dest.CrmId, opt => opt.Ignore())
+                .ForMember(dest => dest.AuthorizedRepresentativeStatement, opt => opt.Ignore())
+                .ForMember(dest => dest.InformationAccuracyStatement, opt => opt.Ignore())
+                //.ForMember(dest => dest.Status, opt => opt.MapFrom(src => IntakeForecastStatusMapper(src.Status)))
+                .AfterMap((src, dest) =>
+                {
+                    foreach (var prop in dest.GetType().GetProperties())
+                    {
+                        if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
+                        {
+                            prop.SetValue(dest, "");
+                        }
+                    }
+                })
+                .ReverseMap()
+                //.ForMember(dest => dest.Status, opt => opt.MapFrom(src => DrrForecastStatusMapper(src.Status)))
+                ;
+
             CreateMap<string, PartneringProponent>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src))
                 ;

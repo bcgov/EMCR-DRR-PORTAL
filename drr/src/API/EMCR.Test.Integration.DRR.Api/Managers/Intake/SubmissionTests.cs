@@ -105,7 +105,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var costEstimateFile = new S3FileStream { FileName = "autotest-dce.txt", File = CreateFormFile(body, "autotest-dce.txt", "text/plain"), ContentType = "text/plain", };
 
             //await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { ApplicationId = fpId, File = projectWorkplanFile, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.DetailedProjectWorkplan }, UserInfo = GetTestUserInfo() });
-            await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = fpId, RecordType = EMCR.DRR.Managers.Intake.RecordType.FullProposal, FileStream = costEstimateFile, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.DetailedCostEstimate }, UserInfo = GetTestUserInfo() });
+            await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = fpId, RecordType = EMCR.DRR.Managers.Intake.RecordType.FullProposal, FileStream = costEstimateFile, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.OtherSupportingDocument }, UserInfo = GetTestUserInfo() });
 
             var fullProposal = (await manager.Handle(new DrrApplicationsQuery { Id = fpId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault();
             fullProposal.Id.ShouldBe(fpId);

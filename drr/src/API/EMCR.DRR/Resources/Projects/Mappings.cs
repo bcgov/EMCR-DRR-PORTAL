@@ -128,7 +128,8 @@ namespace EMCR.DRR.API.Resources.Projects
             //;
 
             CreateMap<PaymentCondition, drr_projectcondition>(MemberList.None)
-                .ForMember(dest => dest.drr_name, opt => opt.Ignore())
+                .ForMember(dest => dest.drr_name, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.drr_conditionpercentagelimit, opt => opt.MapFrom(src => src.Limit))
                 .ReverseMap()
                 .ValidateMemberList(MemberList.Destination)
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.drr_name))
@@ -136,6 +137,29 @@ namespace EMCR.DRR.API.Resources.Projects
                 .ForMember(dest => dest.Limit, opt => opt.MapFrom(src => src.drr_conditionpercentagelimit))
                 .ForMember(dest => dest.DateMet, opt => opt.MapFrom(src => src.drr_conditionmetdate.HasValue ? src.drr_conditionmetdate.Value.UtcDateTime : (DateTime?)null))
                 .ForMember(dest => dest.ConditionMet, opt => opt.MapFrom(src => src.drr_conditionmet.HasValue ? src.drr_conditionmet == (int)DRRTwoOptions.Yes : (bool?)null))
+            ;
+            
+            CreateMap<ConditionRequest, drr_projectcondition>(MemberList.None)
+                .ForMember(dest => dest.drr_name, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.drr_conditionpercentagelimit, opt => opt.MapFrom(src => src.Limit))
+                //.ForMember(dest => dest.drr_AuthorizedRepresentativeContact, opt => opt.MapFrom(src => src.AuthorizedRepresentative))
+                //.ForMember(dest => dest.drr_authorizedrepresentative, opt => opt.MapFrom(src => src.AuthorizedRepresentativeStatement.HasValue ? src.AuthorizedRepresentativeStatement.Value ? (int?)DRRTwoOptions.Yes : (int?)DRRTwoOptions.No : null))
+                //.ForMember(dest => dest.drr_accuracyofinformation, opt => opt.MapFrom(src => src.InformationAccuracyStatement.HasValue ? src.InformationAccuracyStatement.Value ? (int?)DRRTwoOptions.Yes : (int?)DRRTwoOptions.No : null))
+                .ReverseMap()
+                .ValidateMemberList(MemberList.Destination)
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.drr_name))
+                .ForMember(dest => dest.CrmId, opt => opt.MapFrom(src => src.drr_projectconditionid))
+                .ForMember(dest => dest.ConditionName, opt => opt.MapFrom(src => src.drr_Condition.drr_name))
+                .ForMember(dest => dest.Limit, opt => opt.MapFrom(src => src.drr_conditionpercentagelimit))
+                .ForMember(dest => dest.DateMet, opt => opt.MapFrom(src => src.drr_conditionmetdate.HasValue ? src.drr_conditionmetdate.Value.UtcDateTime : (DateTime?)null))
+                .ForMember(dest => dest.ConditionMet, opt => opt.MapFrom(src => src.drr_conditionmet.HasValue ? src.drr_conditionmet == (int)DRRTwoOptions.Yes : (bool?)null))
+                .ForMember(dest => dest.Attachments, opt => opt.Ignore())
+                .ForMember(dest => dest.AuthorizedRepresentative, opt => opt.Ignore())
+                .ForMember(dest => dest.AuthorizedRepresentativeStatement, opt => opt.Ignore())
+                .ForMember(dest => dest.InformationAccuracyStatement, opt => opt.Ignore())
+            //.ForMember(dest => dest.AuthorizedRepresentative, opt => opt.MapFrom(src => src.drr_AuthorizedRepresentativeContact))
+            //.ForMember(dest => dest.AuthorizedRepresentativeStatement, opt => opt.MapFrom(src => src.drr_authorizedrepresentative == (int)DRRTwoOptions.Yes))
+            //.ForMember(dest => dest.InformationAccuracyStatement, opt => opt.MapFrom(src => src.drr_accuracyofinformation == (int)DRRTwoOptions.Yes))
             ;
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 #pragma warning restore CS8629 // Nullable value type may be null.

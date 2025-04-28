@@ -292,7 +292,7 @@ namespace EMCR.DRR.Controllers
         }
 
         [HttpPatch("{projectId}/interim-reports/{reportId}/forecasts/{forecastId}")]
-        public async Task<ActionResult<ProgressReportResult>> UpdateForecastReport([FromBody] DraftForecast forecast, string forecastId)
+        public async Task<ActionResult<ForecastResult>> UpdateForecastReport([FromBody] DraftForecast forecast, string forecastId)
         {
             try
             {
@@ -300,7 +300,7 @@ namespace EMCR.DRR.Controllers
                 forecast.Status = ForecastStatus.Draft;
 
                 var drr_id = await intakeManager.Handle(new SaveForecastCommand { Forecast = mapper.Map<Forecast>(forecast), UserInfo = GetCurrentUser() });
-                return Ok(new ProgressReportResult { Id = drr_id });
+                return Ok(new ForecastResult { Id = drr_id });
             }
             catch (Exception e)
             {
@@ -309,7 +309,7 @@ namespace EMCR.DRR.Controllers
         }
 
         [HttpPatch("{projectId}/interim-reports/{reportId}/forecasts/{forecastId}/submit")]
-        public async Task<ActionResult<ProgressReportResult>> SubmitForecastReport([FromBody] Forecast forecast, string forecastId)
+        public async Task<ActionResult<ForecastResult>> SubmitForecastReport([FromBody] Forecast forecast, string forecastId)
         {
             try
             {
@@ -317,7 +317,38 @@ namespace EMCR.DRR.Controllers
                 forecast.Status = ForecastStatus.Draft; //Need to set the status after final update save
 
                 var drr_id = await intakeManager.Handle(new SubmitForecastCommand { Forecast = forecast, UserInfo = GetCurrentUser() });
-                return Ok(new ProgressReportResult { Id = drr_id });
+                return Ok(new ForecastResult { Id = drr_id });
+            }
+            catch (Exception e)
+            {
+                return errorParser.Parse(e, logger);
+            }
+        }
+
+        [HttpGet("{projectId}/condition/{conditionId}")]
+        public async Task<ActionResult<PaymentCondition>> GetConditionRequest(string projectId, string conditionId)
+        {
+            try
+            {
+                var condition = (await intakeManager.Handle(new DrrConditionsQuery { Id = conditionId, BusinessId = GetCurrentBusinessId() })).Items.FirstOrDefault();
+                if (condition == null) return new NotFoundObjectResult(new ProblemDetails { Type = "NotFoundException", Title = "Not Found", Detail = "" });
+                return Ok(mapper.Map<PaymentCondition>(condition));
+            }
+            catch (Exception e)
+            {
+                return errorParser.Parse(e, logger);
+            }
+        }
+
+        [HttpPatch("{projectId}/condition/{conditionId}")]
+        public async Task<ActionResult<PaymentCondition>> UpdateConditionRequest([FromBody] DraftConditionRequest condition, string projectId, string conditionId)
+        {
+            try
+            {
+                condition.Id = conditionId;
+
+                var drr_id = await intakeManager.Handle(new SaveConditionCommand { Condition = mapper.Map<ConditionRequest>(condition), UserInfo = GetCurrentUser() });
+                return Ok(new ForecastResult { Id = drr_id });
             }
             catch (Exception e)
             {
@@ -377,7 +408,7 @@ namespace EMCR.DRR.Controllers
         public decimal? OriginalForecast { get; set; }
         public decimal? CurrentForecast { get; set; }
     }
-    
+
     public class PaymentCondition
     {
         public string? Id { get; set; }
@@ -385,6 +416,23 @@ namespace EMCR.DRR.Controllers
         public decimal? Limit { get; set; }
         public bool? ConditionMet { get; set; }
         public DateTime? DateMet { get; set; }
+    }
+
+    public class ConditionRequest : DraftConditionRequest
+    {
+        public required bool AuthorizedRepresentativeStatement { get; set; }
+        public required bool InformationAccuracyStatement { get; set; }
+    }
+
+    public class DraftConditionRequest
+    {
+        public string? Id { get; set; }
+        public string? ConditionName { get; set; }
+        public decimal? Limit { get; set; }
+        public bool? ConditionMet { get; set; }
+        public DateTime? DateMet { get; set; }
+        public IEnumerable<Attachment>? Attachments { get; set; }
+        public ContactDetails? AuthorizedRepresentative { get; set; }
     }
 
     public class InterimReport
@@ -465,7 +513,7 @@ namespace EMCR.DRR.Controllers
         public DateTime? ReportDate { get; set; }
         public DateTime? DateApproved { get; set; }
         public DateTime? DateSubmitted { get; set; }
-        public bool? HaveClaimExpenses {  get; set; }
+        public bool? HaveClaimExpenses { get; set; }
         public IEnumerable<Invoice>? Invoices { get; set; }
         [StringLength(500)]
         [MandatoryIf(typeof(ProjectClaim), "HaveClaimExpenses", false)]
@@ -970,6 +1018,10 @@ namespace EMCR.DRR.Controllers
     }
 
     public class ProjectClaimResult : ReportResult
+    {
+    }
+
+    public class ForecastResult : ReportResult
     {
     }
 

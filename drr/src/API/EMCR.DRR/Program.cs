@@ -429,7 +429,7 @@ if (testDataEndpointsEnabled)
         var fileName = "autotest-dce.txt";
         var costEstimateFile = new S3FileStream { FileName = fileName, File = CreateFormFile(body, fileName, contentType), ContentType = "text/plain", };
 
-        await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = fpId, RecordType = EMCR.DRR.Managers.Intake.RecordType.FullProposal, FileStream = costEstimateFile, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.DetailedCostEstimate }, UserInfo = GetCurrentUser() });
+        await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = fpId, RecordType = EMCR.DRR.Managers.Intake.RecordType.FullProposal, FileStream = costEstimateFile, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.OtherSupportingDocument }, UserInfo = GetCurrentUser() });
 
         var fullProposal = (await manager.Handle(new DrrApplicationsQuery { Id = fpId, BusinessId = GetCurrentUser().BusinessId })).Items.SingleOrDefault();
         var fpToUpdate = mapper.Map<FpApplication>(TestHelper.FillInTestFpApplication(mapper.Map<DraftFpApplication>(fullProposal), "autogen-"));
