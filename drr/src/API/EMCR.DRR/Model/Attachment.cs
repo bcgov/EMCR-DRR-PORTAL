@@ -43,7 +43,7 @@ namespace EMCR.DRR.API.Model
     {
         OtherSupportingDocument,
         Resolution,
-        DetailedCostEstimate,
+        //DetailedCostEstimate,
         PreliminaryDesign,
         SitePlan,
         ProgressReport,

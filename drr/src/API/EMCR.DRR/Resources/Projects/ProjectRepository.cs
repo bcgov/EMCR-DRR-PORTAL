@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using AutoMapper;
+using EMCR.DRR.API.Services;
 using EMCR.DRR.Dynamics;
 using EMCR.DRR.Managers.Intake;
 using EMCR.Utilities.Extensions;
@@ -18,6 +19,34 @@ namespace EMCR.DRR.API.Resources.Projects
             this.dRRContextFactory = dRRContextFactory;
         }
 
+        public async Task<ManageProjectCommandResult> Manage(ManageProjectCommand cmd)
+        {
+            return cmd switch
+            {
+                SaveCondition c => await HandleSaveCondition(c),
+                _ => throw new NotSupportedException($"{cmd.GetType().Name} is not supported")
+            };
+        }
+
+        public async Task<ManageProjectCommandResult> HandleSaveCondition(SaveCondition cmd)
+        {
+            var ctx = dRRContextFactory.Create();
+            var existingCondition = await ctx.drr_projectconditions.Where(p => p.drr_name == cmd.Condition.Id).SingleOrDefaultAsync();
+            if (existingCondition == null) throw new NotFoundException("Condition not found");
+
+            ctx.DetachAll();
+            var drrCondition = mapper.Map<drr_projectcondition>(cmd.Condition);
+            drrCondition.drr_projectconditionid = existingCondition.drr_projectconditionid;
+
+            ctx.AttachTo(nameof(ctx.drr_projectconditions), drrCondition);
+
+            ctx.UpdateObject(drrCondition);
+            await ctx.SaveChangesAsync();
+            ctx.DetachAll();
+
+            return new ManageProjectCommandResult { Id = existingCondition.drr_name };
+        }
+
         public async Task<ProjectQueryResult> Query(ProjectQuery query)
         {
             return query switch
@@ -25,6 +54,32 @@ namespace EMCR.DRR.API.Resources.Projects
                 ProjectsQuery q => await HandleQueryProject(q),
                 _ => throw new NotSupportedException($"{query.GetType().Name} is not supported")
             };
+        }
+
+        public async Task<ConditionQueryResult> Query(ConditionQuery query)
+        {
+            return query switch
+            {
+                ConditionsQuery q => await HandleQueryCondition(q),
+                _ => throw new NotSupportedException($"{query.GetType().Name} is not supported")
+            };
+        }
+
+        private async Task<ConditionQueryResult> HandleQueryCondition(ConditionsQuery query)
+        {
+            var ct = new CancellationTokenSource().Token;
+            var readCtx = dRRContextFactory.CreateReadOnly();
+
+            var conditionsQuery = readCtx.drr_projectconditions
+                .Where(a => a.statuscode != (int)InvoiceStatusOptionSet.Inactive);
+            if (!string.IsNullOrEmpty(query.Id)) conditionsQuery = conditionsQuery.Where(a => a.drr_name == query.Id);
+
+            var results = (await conditionsQuery.GetAllPagesAsync(ct)).ToList();
+            var length = results.Count;
+            
+            await Parallel.ForEachAsync(results, ct, async (condition, ct) => await ParallelLoadCondition(readCtx, condition, ct));
+
+            return new ConditionQueryResult { Items = mapper.Map<IEnumerable<ConditionRequest>>(results), Length = length };
         }
 
         private async Task<ProjectQueryResult> HandleQueryProject(ProjectsQuery query)
@@ -101,7 +156,7 @@ namespace EMCR.DRR.API.Resources.Projects
                 ParallelLoadProgressReports(ctx, project, ct),
                 ParallelLoadForecasts(ctx, project, ct),
                 ParallelLoadClaims(ctx, project, ct),
-                ParallelLoadConditions(ctx, project, ct),
+                ParallelLoadProjectConditions(ctx, project, ct),
                 ParallelLoadFundingRequests(ctx, project, ct),
                 ]);
 
@@ -142,7 +197,7 @@ namespace EMCR.DRR.API.Resources.Projects
             });
         }
 
-        private static async Task ParallelLoadConditions(DRRContext ctx, drr_project project, CancellationToken ct)
+        private static async Task ParallelLoadProjectConditions(DRRContext ctx, drr_project project, CancellationToken ct)
         {
             await project.drr_drr_project_drr_projectcondition_Project.ForEachAsync(5, async condition =>
             {
@@ -150,7 +205,7 @@ namespace EMCR.DRR.API.Resources.Projects
                 await ctx.LoadPropertyAsync(condition, nameof(drr_projectcondition.drr_Condition), ct);
             });
         }
-        
+
         private static async Task ParallelLoadFundingRequests(DRRContext ctx, drr_project project, CancellationToken ct)
         {
             await project.drr_drr_project_drr_driffundingrequest_Project.ForEachAsync(5, async fund =>
@@ -182,6 +237,12 @@ namespace EMCR.DRR.API.Resources.Projects
             });
         }
 
+        private static async Task ParallelLoadCondition(DRRContext ctx, drr_projectcondition condition, CancellationToken ct)
+        {
+            ctx.AttachTo(nameof(DRRContext.drr_projectconditions), condition);
+            await ctx.LoadPropertyAsync(condition, nameof(drr_projectcondition.drr_Condition), ct);
+        }
+
         public async Task<bool> CanAccessProject(string id, string businessId)
         {
             var readCtx = dRRContextFactory.CreateReadOnly();
@@ -189,6 +250,16 @@ namespace EMCR.DRR.API.Resources.Projects
             if (existingProject == null) return true;
             if (existingProject.drr_ProponentName == null) return false;
             return (!string.IsNullOrEmpty(existingProject.drr_ProponentName.drr_bceidguid)) && existingProject.drr_ProponentName.drr_bceidguid.Equals(businessId);
+        }
+
+        public async Task<bool> CanAccessCondition(string id, string businessId)
+        {
+            var readCtx = dRRContextFactory.CreateReadOnly();
+            var existingCondition = await readCtx.drr_projectconditions.Expand(a => a.drr_Project).Where(a => a.drr_name == id).SingleOrDefaultAsync();
+            if (existingCondition == null) return true;
+            readCtx.AttachTo(nameof(readCtx.drr_projects), existingCondition.drr_Project);
+            await readCtx.LoadPropertyAsync(existingCondition.drr_Project, nameof(drr_project.drr_ProponentName));
+            return (!string.IsNullOrEmpty(existingCondition.drr_Project.drr_ProponentName.drr_bceidguid)) && existingCondition.drr_Project.drr_ProponentName.drr_bceidguid.Equals(businessId);
         }
 
         private List<drr_project> SortAndPageResults(List<drr_project> projects, ProjectsQuery query)

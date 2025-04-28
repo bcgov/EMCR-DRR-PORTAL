@@ -5,8 +5,24 @@ namespace EMCR.DRR.API.Resources.Projects
 {
     public interface IProjectRepository
     {
+        Task<ManageProjectCommandResult> Manage(ManageProjectCommand cmd);
         Task<ProjectQueryResult> Query(ProjectQuery query);
+        Task<ConditionQueryResult> Query(ConditionQuery query);
         Task<bool> CanAccessProject(string id, string businessId);
+        Task<bool> CanAccessCondition(string id, string businessId);
+    }
+
+    public abstract class ManageProjectCommand
+    { }
+
+    public class ManageProjectCommandResult
+    {
+        public required string Id { get; set; }
+    }
+
+    public class SaveCondition : ManageProjectCommand
+    {
+        public required ConditionRequest Condition { get; set; }
     }
 
     public abstract class ProjectQuery
@@ -26,6 +42,21 @@ namespace EMCR.DRR.API.Resources.Projects
         public int Count { get; set; } = 0;
         public string? OrderBy { get; set; }
         public FilterOptions? FilterOptions { get; set; }
+    }
+
+    public class ConditionQueryResult
+    {
+        public IEnumerable<ConditionRequest> Items { get; set; } = Array.Empty<ConditionRequest>();
+        public int Length { get; set; }
+    }
+
+    public abstract class ConditionQuery
+    { }
+
+    public class ConditionsQuery : ConditionQuery
+    {
+        public string? Id { get; set; }
+        public string? BusinessId { get; set; }
     }
 
     //public class ProjectFilterOptions

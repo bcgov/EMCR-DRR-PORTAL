@@ -16,6 +16,7 @@ namespace EMCR.DRR.Managers.Intake
         Task<ClaimsQueryResponse> Handle(ClaimQuery cmd);
         Task<ProgressReportsQueryResponse> Handle(ProgressReportQuery cmd);
         Task<ForecastsQueryResponse> Handle(ForecastQuery cmd);
+        Task<ConditionsQueryResponse> Handle(DrrConditionsQuery cmd);
         Task<StorageQueryResults> Handle(AttachmentQuery cmd);
         Task<ValidateCanCreateReportResult> Handle(ValidateCanCreateReportCommand cmd);
     }
@@ -162,6 +163,22 @@ namespace EMCR.DRR.Managers.Intake
     public abstract class ForecastQuery
     { }
 
+    public class ConditionsQueryResponse
+    {
+        public required IEnumerable<ConditionRequest> Items { get; set; }
+        public int Length { get; set; }
+    }
+
+    public class DrrConditionsQuery : ConditionQuery
+    {
+        public string? Id { get; set; }
+        public string? ProjectId { get; set; }
+        public string? BusinessId { get; set; }
+    }
+
+    public abstract class ConditionQuery
+    { }
+
     public abstract class IntakeCommand
     { }
 
@@ -290,6 +307,12 @@ namespace EMCR.DRR.Managers.Intake
         public UserInfo UserInfo { get; set; }
     }
 
+    public class SaveConditionCommand : IntakeCommand
+    {
+        public Controllers.ConditionRequest Condition { get; set; } = null!;
+        public UserInfo UserInfo { get; set; }
+    }
+
     public class ValidateCanCreateReportCommand
     {
         public string ProjectId { get; set; } = null!;
@@ -340,8 +363,8 @@ namespace EMCR.DRR.Managers.Intake
         OtherSupportingDocument,
         [Description("Council/Board Resolution")]
         Resolution,
-        [Description("Detailed Cost Estimate")]
-        DetailedCostEstimate,
+        //[Description("Detailed Cost Estimate")]
+        //DetailedCostEstimate,
         [Description("Funding Approval")]
         FundingApproval,
         [Description("Preliminary Design")]
@@ -772,6 +795,20 @@ namespace EMCR.DRR.Managers.Intake
         public decimal? Limit { get; set; }
         public bool? ConditionMet { get; set; }
         public DateTime? DateMet { get; set; }
+    }
+    
+    public class ConditionRequest
+    {
+        public string? Id { get; set; }
+        public string? CrmId { get; set; }
+        public string? ConditionName { get; set; }
+        public decimal? Limit { get; set; }
+        public bool? ConditionMet { get; set; }
+        public DateTime? DateMet { get; set; }
+        public IEnumerable<Attachment>? Attachments { get; set; }
+        public ContactDetails? AuthorizedRepresentative { get; set; }
+        public bool? AuthorizedRepresentativeStatement { get; set; }
+        public bool? InformationAccuracyStatement { get; set; }
     }
 
     public class InterimReport
