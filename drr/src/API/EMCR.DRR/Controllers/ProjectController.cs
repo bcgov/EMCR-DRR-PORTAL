@@ -326,13 +326,13 @@ namespace EMCR.DRR.Controllers
         }
 
         [HttpGet("{projectId}/condition/{conditionId}")]
-        public async Task<ActionResult<PaymentCondition>> GetConditionRequest(string projectId, string conditionId)
+        public async Task<ActionResult<DraftConditionRequest>> GetConditionRequest(string projectId, string conditionId)
         {
             try
             {
                 var condition = (await intakeManager.Handle(new DrrConditionsQuery { Id = conditionId, BusinessId = GetCurrentBusinessId() })).Items.FirstOrDefault();
                 if (condition == null) return new NotFoundObjectResult(new ProblemDetails { Type = "NotFoundException", Title = "Not Found", Detail = "" });
-                return Ok(mapper.Map<PaymentCondition>(condition));
+                return Ok(mapper.Map<DraftConditionRequest>(condition));
             }
             catch (Exception e)
             {
@@ -341,14 +341,14 @@ namespace EMCR.DRR.Controllers
         }
 
         [HttpPatch("{projectId}/condition/{conditionId}")]
-        public async Task<ActionResult<PaymentCondition>> UpdateConditionRequest([FromBody] DraftConditionRequest condition, string projectId, string conditionId)
+        public async Task<ActionResult<ConditionResult>> UpdateConditionRequest([FromBody] DraftConditionRequest condition, string projectId, string conditionId)
         {
             try
             {
                 condition.Id = conditionId;
 
                 var drr_id = await intakeManager.Handle(new SaveConditionCommand { Condition = mapper.Map<ConditionRequest>(condition), UserInfo = GetCurrentUser() });
-                return Ok(new ForecastResult { Id = drr_id });
+                return Ok(new ConditionResult { Id = drr_id });
             }
             catch (Exception e)
             {
@@ -1023,6 +1023,10 @@ namespace EMCR.DRR.Controllers
     }
 
     public class ForecastResult : ReportResult
+    {
+    }
+    
+    public class ConditionResult : ReportResult
     {
     }
 
