@@ -255,7 +255,6 @@ export class DrifConditionClearComponent {
     });
   }
 
-  // TODO: consider moving this to a service or component
   setAuthorizedRepresentative() {
     const profileData = this.profileStore.getProfile();
 
@@ -338,35 +337,58 @@ export class DrifConditionClearComponent {
     this.router.navigate(['/drif-projects', this.projectId]);
   }
 
-  private getFormValue() {}
+  private getFormValue(): DraftConditionRequest {
+    const formValue = this.conditionForm?.value as ConditionForm;
+
+    const conditionRequestDraft: DraftConditionRequest = {
+      id: this.conditionId,
+      conditionName: formValue?.conditionRequest?.name,
+      limit: formValue?.conditionRequest?.limit,
+      dateMet: formValue?.conditionRequest?.date,
+      explanation: formValue?.conditionRequest?.description,
+      authorizedRepresentative:
+        formValue?.declaration?.authorizedRepresentative,
+      attachments: formValue?.conditionRequest?.attachments,
+      // authorizedRepresentativeStatement:
+      //   claimForm.declaration.authorizedRepresentativeStatement,
+      // informationAccuracyStatement:
+      //   claimForm.declaration.informationAccuracyStatement,
+    };
+
+    return conditionRequestDraft;
+  }
 
   save() {
     if (!this.formChanged) {
       return;
     }
 
-    const conditionFormValue = this.getFormValue();
+    const conditionRequestDraft = this.getFormValue();
 
     this.lastSavedAt = undefined;
 
-    // this.projectService
-    //   .conditionSave(this.projectId!, this.conditionId!, conditionFormValue)
-    //   .subscribe({
-    //     next: () => {
-    //       this.lastSavedAt = new Date();
+    this.projectService
+      .projectUpdateConditionRequest(
+        this.projectId!,
+        this.conditionId!,
+        conditionRequestDraft,
+      )
+      .subscribe({
+        next: () => {
+          this.lastSavedAt = new Date();
 
-    //       this.toastService.close();
-    //       this.toastService.success('Condition request saved successfully');
+          this.toastService.close();
+          this.toastService.success('Condition request saved successfully');
 
-    //       this.formChanged = false;
-    //       this.resetAutoSaveTimer();
-    //     },
-    //     error: (error) => {
-    //       this.toastService.close();
-    //       this.toastService.error('Failed to save condition request');
-    //       console.error(error);
-    //     },
-    //   });
+          this.formChanged = false;
+          this.resetAutoSaveTimer();
+        },
+        error: (error) => {
+          this.toastService.close();
+          this.toastService.error('Failed to save condition request');
+          console.error(error);
+        },
+      });
   }
 
   submit() {
