@@ -171,7 +171,7 @@ namespace EMCR.DRR.Managers.Intake
 
     public class DrrConditionsQuery : ConditionQuery
     {
-        public string? Id { get; set; }
+        public string? ConditionId { get; set; }
         public string? ProjectId { get; set; }
         public string? BusinessId { get; set; }
     }
@@ -594,6 +594,7 @@ namespace EMCR.DRR.Managers.Intake
         public IEnumerable<ProgressReport>? ProgressReports { get; set; }
         public IEnumerable<Forecast>? Forecast { get; set; }
         public IEnumerable<ProjectEvent>? Events { get; set; }
+        public IEnumerable<Request>? Requests { get; set; }
         public IEnumerable<BcGovDocument>? Attachments { get; set; }
     }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
@@ -806,7 +807,7 @@ namespace EMCR.DRR.Managers.Intake
         public decimal? Limit { get; set; }
         public bool? ConditionMet { get; set; }
         public DateTime? DateMet { get; set; }
-        public IEnumerable<Attachment>? Attachments { get; set; }
+        public IEnumerable<BcGovDocument>? Attachments { get; set; }
         public ContactDetails? AuthorizedRepresentative { get; set; }
         public bool? AuthorizedRepresentativeStatement { get; set; }
         public bool? InformationAccuracyStatement { get; set; }
@@ -902,6 +903,19 @@ namespace EMCR.DRR.Managers.Intake
     public class ProjectEvent
     {
         public EventStatus? Status { get; set; }
+    }
+
+    public class Request
+    {
+        public string? Id { get; set; }
+        public RequestType Type { get; set; }
+        public PaymentCondition? Condition { get; set; }
+        public string? Name { get; set; }
+        public RequestStatus Status { get; set; }
+        public IEnumerable<BcGovDocument>? Attachments { get; set; }
+        public ContactDetails? AuthorizedRepresentative { get; set; }
+        public bool? AuthorizedRepresentativeStatement { get; set; }
+        public bool? InformationAccuracyStatement { get; set; }
     }
 
     public class EventInformationDetails
@@ -1259,6 +1273,19 @@ namespace EMCR.DRR.Managers.Intake
         Approved,
         Skipped,
         Inactive,
+    }
+    
+    public enum RequestType
+    {
+        Condition,
+    }
+    
+    public enum RequestStatus
+    {
+        Cleared,
+        Draft,
+        Requested,
+        UpdateNeeded,
     }
 
     public enum ProponentType

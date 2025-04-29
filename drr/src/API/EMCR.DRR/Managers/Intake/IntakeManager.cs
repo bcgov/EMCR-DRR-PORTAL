@@ -281,14 +281,14 @@ namespace EMCR.DRR.Managers.Intake
 
         public async Task<ConditionsQueryResponse> Handle(DrrConditionsQuery q)
         {
-            if (!string.IsNullOrEmpty(q.Id))
+            if (!string.IsNullOrEmpty(q.ConditionId))
             {
-                var canAccess = await CanAccessCondition(q.Id, q.BusinessId);
+                var canAccess = await CanAccessCondition(q.ConditionId, q.BusinessId);
                 if (!canAccess) throw new ForbiddenException("Not allowed to access this forecast.");
             }
-            var res = await projectRepository.Query(new ConditionsQuery { Id = q.Id, BusinessId = q.BusinessId });
+            var res = await projectRepository.Query(new RequestsQuery { ConditionId = q.ConditionId, BusinessId = q.BusinessId });
 
-            return new ConditionsQueryResponse { Items = res.Items, Length = res.Length };
+            return new ConditionsQueryResponse { Items = mapper.Map<IEnumerable<ConditionRequest>>(res.Items), Length = res.Length };
         }
 
         public async Task<string> Handle(EoiSaveApplicationCommand cmd)
@@ -631,13 +631,13 @@ namespace EMCR.DRR.Managers.Intake
             var canAccess = await CanAccessCondition(cmd.Condition.Id, cmd.UserInfo.BusinessId);
             if (!canAccess) throw new ForbiddenException("Not allowed to access this condition.");
 
-            var existingCondition = (await projectRepository.Query(new ConditionsQuery { Id = cmd.Condition.Id, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
-            if (existingCondition == null) throw new NotFoundException("Condition not found");
+            var existingCondition = (await projectRepository.Query(new RequestsQuery { ConditionId = cmd.Condition.Id, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
+            if (existingCondition == null) throw new NotFoundException("Condition Request not found");
             //if (!ConditionInEditableStatus(existingCondition)) throw new BusinessValidationException("Not allowed to update Condition");
 
             var condition = mapper.Map<ConditionRequest>(cmd.Condition);
 
-            var id = (await projectRepository.Manage(new SaveCondition { Condition = condition })).Id;
+            var id = (await projectRepository.Manage(new SaveConditionRequest { Condition = condition })).Id;
             return id;
         }
 

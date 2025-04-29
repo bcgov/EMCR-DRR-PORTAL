@@ -330,7 +330,7 @@ namespace EMCR.DRR.Controllers
         {
             try
             {
-                var condition = (await intakeManager.Handle(new DrrConditionsQuery { Id = conditionId, BusinessId = GetCurrentBusinessId() })).Items.FirstOrDefault();
+                var condition = (await intakeManager.Handle(new DrrConditionsQuery { ConditionId = conditionId, BusinessId = GetCurrentBusinessId() })).Items.FirstOrDefault();
                 if (condition == null) return new NotFoundObjectResult(new ProblemDetails { Type = "NotFoundException", Title = "Not Found", Detail = "" });
                 return Ok(mapper.Map<DraftConditionRequest>(condition));
             }
@@ -399,6 +399,7 @@ namespace EMCR.DRR.Controllers
         public IEnumerable<DraftProgressReport>? ProgressReports { get; set; }
         public IEnumerable<DraftForecast>? Forecast { get; set; }
         public IEnumerable<ProjectEvent>? Events { get; set; }
+        public IEnumerable<ConditionRequestListItem>? ConditionRequests { get; set; }
         public IEnumerable<Attachment>? Attachments { get; set; }
     }
 
@@ -591,6 +592,17 @@ namespace EMCR.DRR.Controllers
         public DateTime? Date { get; set; }
         public ContactDetails? Contact { get; set; }
         public bool? ProvincialRepresentativeRequest { get; set; }
+    }
+    
+    public class ConditionRequestListItem
+    {
+        public string? Id { get; set; }
+        public string? ConditionId { get; set; }
+        public string? ConditionName { get; set; }
+        public decimal? Limit { get; set; }
+        public bool? ConditionMet { get; set; }
+        public DateTime? DateMet { get; set; }
+        public RequestStatus Status { get; set; }
     }
 
     public class Workplan
@@ -996,6 +1008,22 @@ namespace EMCR.DRR.Controllers
 
         [Description("Skipped")]
         Skipped,
+    }
+    
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public enum RequestStatus
+    {
+        [Description("Draft")]
+        Draft,
+
+        [Description("Cleared")]
+        Cleared,
+
+        [Description("Requested")]
+        Requested,
+
+        [Description("Update Needed")]
+        UpdateNeeded,
     }
 
     public class ProjectResult
