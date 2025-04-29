@@ -23,7 +23,12 @@ import {
 import { distinctUntilChanged, pairwise, startWith } from 'rxjs';
 import { AttachmentService } from '../../../../../api/attachment/attachment.service';
 import { ProjectService } from '../../../../../api/project/project.service';
-import { DeclarationType, DocumentType, FormType } from '../../../../../model';
+import {
+  DeclarationType,
+  DocumentType,
+  DraftConditionRequest,
+  FormType,
+} from '../../../../../model';
 import { DrrDatepickerComponent } from '../../../../shared/controls/drr-datepicker/drr-datepicker.component';
 import { DrrFileUploadComponent } from '../../../../shared/controls/drr-file-upload/drr-file-upload.component';
 import { DrrInputComponent } from '../../../../shared/controls/drr-input/drr-input.component';
@@ -96,7 +101,10 @@ export class DrifConditionClearComponent {
   breakpointObserver = inject(BreakpointObserver);
   stepperOrientation: StepperOrientation = 'horizontal';
 
-  conditionForm?: IFormGroup<ConditionForm>;
+  conditionForm: IFormGroup<ConditionForm> = this.formBuilder.formGroup(
+    ConditionForm,
+    {},
+  ) as IFormGroup<ConditionForm>;
   conditionDMAPMessageForm?: IFormGroup<ConditionDMAPMessageForm>;
 
   todayDate = new Date();
@@ -207,36 +215,46 @@ export class DrifConditionClearComponent {
 
   load(): Promise<void> {
     return new Promise((resolve) => {
-      // TODO: if (hasCondidionMessage in response)
-      const conditionDMAPMessageFormValue = new ConditionDMAPMessageForm({
-        author: 'John Doe',
-        date: new Date().toISOString(),
-        message: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-      });
-      this.conditionDMAPMessageForm = this.formBuilder.formGroup(
-        ConditionDMAPMessageForm,
-        conditionDMAPMessageFormValue,
-      ) as IFormGroup<ConditionDMAPMessageForm>;
+      this.projectService
+        .projectGetConditionRequest(this.projectId!, this.conditionId!)
+        .subscribe({
+          next: (response: DraftConditionRequest) => {
+            // TODO: if (hasCondidionMessage in response)
+            // const conditionDMAPMessageFormValue = new ConditionDMAPMessageForm({
+            //   author: 'John Doe',
+            //   date: new Date().toISOString(),
+            //   message:
+            //     'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+            // });
+            // this.conditionDMAPMessageForm = this.formBuilder.formGroup(
+            //   ConditionDMAPMessageForm,
+            //   conditionDMAPMessageFormValue,
+            // ) as IFormGroup<ConditionDMAPMessageForm>;
 
-      const conditionFormValue = new ConditionForm({
-        conditionRequest: {
-          name: 'Condition_Name',
-          limit: 23,
-          attachments: [],
-        },
-      });
-      this.conditionForm = this.formBuilder.formGroup(
-        ConditionForm,
-        conditionFormValue,
-      ) as IFormGroup<ConditionForm>;
+            const conditionFormValue = new ConditionForm({
+              conditionRequest: {
+                name: response.conditionName,
+                limit: response.limit,
+                date: response.dateMet,
+                description: response.explanation,
+                attachments: response.attachments,
+              },
+              declaration: {
+                // TODO: use correct values from API
+              },
+            });
+            this.conditionForm?.patchValue(conditionFormValue, {
+              emitEvent: false,
+            });
 
-      this.setAuthorizedRepresentative();
+            this.setAuthorizedRepresentative();
 
-      resolve();
+            resolve();
+          },
+        });
     });
   }
 
-  // TODO: consider moving this to a service or component
   setAuthorizedRepresentative() {
     const profileData = this.profileStore.getProfile();
 
@@ -319,35 +337,58 @@ export class DrifConditionClearComponent {
     this.router.navigate(['/drif-projects', this.projectId]);
   }
 
-  private getFormValue() {}
+  private getFormValue(): DraftConditionRequest {
+    const formValue = this.conditionForm?.value as ConditionForm;
+
+    const conditionRequestDraft: DraftConditionRequest = {
+      id: this.conditionId,
+      conditionName: formValue?.conditionRequest?.name,
+      limit: formValue?.conditionRequest?.limit,
+      dateMet: formValue?.conditionRequest?.date,
+      explanation: formValue?.conditionRequest?.description,
+      authorizedRepresentative:
+        formValue?.declaration?.authorizedRepresentative,
+      attachments: formValue?.conditionRequest?.attachments,
+      // authorizedRepresentativeStatement:
+      //   claimForm.declaration.authorizedRepresentativeStatement,
+      // informationAccuracyStatement:
+      //   claimForm.declaration.informationAccuracyStatement,
+    };
+
+    return conditionRequestDraft;
+  }
 
   save() {
     if (!this.formChanged) {
       return;
     }
 
-    const conditionFormValue = this.getFormValue();
+    const conditionRequestDraft = this.getFormValue();
 
     this.lastSavedAt = undefined;
 
-    // this.projectService
-    //   .conditionSave(this.projectId!, this.conditionId!, conditionFormValue)
-    //   .subscribe({
-    //     next: () => {
-    //       this.lastSavedAt = new Date();
+    this.projectService
+      .projectUpdateConditionRequest(
+        this.projectId!,
+        this.conditionId!,
+        conditionRequestDraft,
+      )
+      .subscribe({
+        next: () => {
+          this.lastSavedAt = new Date();
 
-    //       this.toastService.close();
-    //       this.toastService.success('Condition request saved successfully');
+          this.toastService.close();
+          this.toastService.success('Condition request saved successfully');
 
-    //       this.formChanged = false;
-    //       this.resetAutoSaveTimer();
-    //     },
-    //     error: (error) => {
-    //       this.toastService.close();
-    //       this.toastService.error('Failed to save condition request');
-    //       console.error(error);
-    //     },
-    //   });
+          this.formChanged = false;
+          this.resetAutoSaveTimer();
+        },
+        error: (error) => {
+          this.toastService.close();
+          this.toastService.error('Failed to save condition request');
+          console.error(error);
+        },
+      });
   }
 
   submit() {

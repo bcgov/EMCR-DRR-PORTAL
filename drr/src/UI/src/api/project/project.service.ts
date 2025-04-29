@@ -16,16 +16,19 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import type {
   CanCreateReportResult,
+  ConditionResult,
   CreateInvoice,
   CreateInvoiceResult,
   CreateReport,
   CreateReportResult,
+  DraftConditionRequest,
   DraftDrrProject,
   DraftForecast,
   DraftProgressReport,
   DraftProjectClaim,
   DrrProject,
   Forecast,
+  ForecastResult,
   InterimReport,
   ProgressReport,
   ProgressReportResult,
@@ -511,28 +514,28 @@ export class ProjectService {
       options,
     );
   }
-  projectUpdateForecastReport<TData = ProgressReportResult>(
+  projectUpdateForecastReport<TData = ForecastResult>(
     projectId: string,
     reportId: string,
     forecastId: string,
     draftForecast: DraftForecast,
     options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'body' },
   ): Observable<TData>;
-  projectUpdateForecastReport<TData = ProgressReportResult>(
+  projectUpdateForecastReport<TData = ForecastResult>(
     projectId: string,
     reportId: string,
     forecastId: string,
     draftForecast: DraftForecast,
     options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'response' },
   ): Observable<AngularHttpResponse<TData>>;
-  projectUpdateForecastReport<TData = ProgressReportResult>(
+  projectUpdateForecastReport<TData = ForecastResult>(
     projectId: string,
     reportId: string,
     forecastId: string,
     draftForecast: DraftForecast,
     options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'events' },
   ): Observable<HttpEvent<TData>>;
-  projectUpdateForecastReport<TData = ProgressReportResult>(
+  projectUpdateForecastReport<TData = ForecastResult>(
     projectId: string,
     reportId: string,
     forecastId: string,
@@ -545,28 +548,28 @@ export class ProjectService {
       options,
     );
   }
-  projectSubmitForecastReport<TData = ProgressReportResult>(
+  projectSubmitForecastReport<TData = ForecastResult>(
     projectId: string,
     reportId: string,
     forecastId: string,
     forecast: Forecast,
     options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'body' },
   ): Observable<TData>;
-  projectSubmitForecastReport<TData = ProgressReportResult>(
+  projectSubmitForecastReport<TData = ForecastResult>(
     projectId: string,
     reportId: string,
     forecastId: string,
     forecast: Forecast,
     options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'response' },
   ): Observable<AngularHttpResponse<TData>>;
-  projectSubmitForecastReport<TData = ProgressReportResult>(
+  projectSubmitForecastReport<TData = ForecastResult>(
     projectId: string,
     reportId: string,
     forecastId: string,
     forecast: Forecast,
     options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'events' },
   ): Observable<HttpEvent<TData>>;
-  projectSubmitForecastReport<TData = ProgressReportResult>(
+  projectSubmitForecastReport<TData = ForecastResult>(
     projectId: string,
     reportId: string,
     forecastId: string,
@@ -576,6 +579,61 @@ export class ProjectService {
     return this.http.patch<TData>(
       `/api/project/${projectId}/interim-reports/${reportId}/forecasts/${forecastId}/submit`,
       forecast,
+      options,
+    );
+  }
+  projectGetConditionRequest<TData = DraftConditionRequest>(
+    projectId: string,
+    conditionId: string,
+    options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'body' },
+  ): Observable<TData>;
+  projectGetConditionRequest<TData = DraftConditionRequest>(
+    projectId: string,
+    conditionId: string,
+    options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'response' },
+  ): Observable<AngularHttpResponse<TData>>;
+  projectGetConditionRequest<TData = DraftConditionRequest>(
+    projectId: string,
+    conditionId: string,
+    options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'events' },
+  ): Observable<HttpEvent<TData>>;
+  projectGetConditionRequest<TData = DraftConditionRequest>(
+    projectId: string,
+    conditionId: string,
+    options?: HttpClientOptions,
+  ): Observable<TData> {
+    return this.http.get<TData>(
+      `/api/project/${projectId}/condition/${conditionId}`,
+      options,
+    );
+  }
+  projectUpdateConditionRequest<TData = ConditionResult>(
+    projectId: string,
+    conditionId: string,
+    draftConditionRequest: DraftConditionRequest,
+    options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'body' },
+  ): Observable<TData>;
+  projectUpdateConditionRequest<TData = ConditionResult>(
+    projectId: string,
+    conditionId: string,
+    draftConditionRequest: DraftConditionRequest,
+    options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'response' },
+  ): Observable<AngularHttpResponse<TData>>;
+  projectUpdateConditionRequest<TData = ConditionResult>(
+    projectId: string,
+    conditionId: string,
+    draftConditionRequest: DraftConditionRequest,
+    options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'events' },
+  ): Observable<HttpEvent<TData>>;
+  projectUpdateConditionRequest<TData = ConditionResult>(
+    projectId: string,
+    conditionId: string,
+    draftConditionRequest: DraftConditionRequest,
+    options?: HttpClientOptions,
+  ): Observable<TData> {
+    return this.http.patch<TData>(
+      `/api/project/${projectId}/condition/${conditionId}`,
+      draftConditionRequest,
       options,
     );
   }
@@ -602,6 +660,10 @@ export type ProjectSubmitProgressReportClientResult =
   NonNullable<ProgressReportResult>;
 export type ProjectGetForecastReportClientResult = NonNullable<DraftForecast>;
 export type ProjectUpdateForecastReportClientResult =
-  NonNullable<ProgressReportResult>;
+  NonNullable<ForecastResult>;
 export type ProjectSubmitForecastReportClientResult =
-  NonNullable<ProgressReportResult>;
+  NonNullable<ForecastResult>;
+export type ProjectGetConditionRequestClientResult =
+  NonNullable<DraftConditionRequest>;
+export type ProjectUpdateConditionRequestClientResult =
+  NonNullable<ConditionResult>;
