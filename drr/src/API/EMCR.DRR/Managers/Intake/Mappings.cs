@@ -163,6 +163,7 @@ namespace EMCR.DRR.Managers.Intake
 
             CreateMap<DraftDrrProject, Project>(MemberList.None)
                 .ForMember(dest => dest.FirstReportPeriod, opt => opt.Ignore())
+                .ForMember(dest => dest.Requests, opt => opt.MapFrom(src => src.ConditionRequests))
                 .AfterMap((src, dest) =>
                 {
                     foreach (var prop in dest.GetType().GetProperties())
@@ -174,6 +175,7 @@ namespace EMCR.DRR.Managers.Intake
                     }
                 })
                 .ReverseMap()
+                .ForMember(dest => dest.ConditionRequests, opt => opt.MapFrom(src => src.Requests))
                 ;
 
             CreateMap<Controllers.PaymentCondition, PaymentCondition>()
@@ -741,6 +743,54 @@ namespace EMCR.DRR.Managers.Intake
                 })
                 .ReverseMap()
                 //.ForMember(dest => dest.Status, opt => opt.MapFrom(src => DrrForecastStatusMapper(src.Status)))
+                ;
+
+            CreateMap<ConditionRequest, Request>()
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => RequestType.Condition))
+                .ForMember(dest => dest.Condition, opt => opt.MapFrom(src => new PaymentCondition
+                {
+                    Id = src.Id,
+                    ConditionName = src.ConditionName,
+                    Limit = src.Limit,
+                    ConditionMet = src.ConditionMet,
+                    DateMet = src.DateMet,
+                }))
+                .ForMember(dest => dest.Name, opt => opt.Ignore())
+                .ForMember(dest => dest.Status, opt => opt.Ignore())
+                .ReverseMap()
+                .ForMember(dest => dest.CrmId, opt => opt.Ignore())
+                .ForMember(dest => dest.Explanation, opt => opt.Ignore())
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Condition != null ? src.Condition.Id : null))
+                .ForMember(dest => dest.ConditionName, opt => opt.MapFrom(src => src.Condition != null ? src.Condition.ConditionName : null))
+                .ForMember(dest => dest.Limit, opt => opt.MapFrom(src => src.Condition != null ? src.Condition.Limit : null))
+                .ForMember(dest => dest.ConditionMet, opt => opt.MapFrom(src => src.Condition != null ? src.Condition.ConditionMet : null))
+                .ForMember(dest => dest.DateMet, opt => opt.MapFrom(src => src.Condition != null ? src.Condition.DateMet : null))
+                //.ForMember(dest => dest.Status, opt => opt.Ignore())
+                ;
+
+            CreateMap<ConditionRequestListItem, Request>()
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => RequestType.Condition))
+                .ForMember(dest => dest.Condition, opt => opt.MapFrom(src => new PaymentCondition
+                {
+                    Id = src.ConditionId,
+                    ConditionName = src.ConditionName,
+                    Limit = src.Limit,
+                    ConditionMet = src.ConditionMet,
+                    DateMet = src.DateMet,
+                }))
+                .ForMember(dest => dest.Name, opt => opt.Ignore())
+                .ForMember(dest => dest.Status, opt => opt.Ignore())
+                .ForMember(dest => dest.Attachments, opt => opt.Ignore())
+                .ForMember(dest => dest.AuthorizedRepresentative, opt => opt.Ignore())
+                .ForMember(dest => dest.AuthorizedRepresentativeStatement, opt => opt.Ignore())
+                .ForMember(dest => dest.InformationAccuracyStatement, opt => opt.Ignore())
+                .ReverseMap()
+                .ForMember(dest => dest.ConditionId, opt => opt.MapFrom(src => src.Condition != null ? src.Condition.Id : null))
+                .ForMember(dest => dest.ConditionName, opt => opt.MapFrom(src => src.Condition != null ? src.Condition.ConditionName : null))
+                .ForMember(dest => dest.Limit, opt => opt.MapFrom(src => src.Condition != null ? src.Condition.Limit : null))
+                .ForMember(dest => dest.ConditionMet, opt => opt.MapFrom(src => src.Condition != null ? src.Condition.ConditionMet : null))
+                .ForMember(dest => dest.DateMet, opt => opt.MapFrom(src => src.Condition != null ? src.Condition.DateMet : null))
+                .ForMember(dest => dest.Status, opt => opt.Ignore())
                 ;
 
             CreateMap<string, PartneringProponent>()

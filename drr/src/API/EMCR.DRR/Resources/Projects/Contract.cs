@@ -7,7 +7,7 @@ namespace EMCR.DRR.API.Resources.Projects
     {
         Task<ManageProjectCommandResult> Manage(ManageProjectCommand cmd);
         Task<ProjectQueryResult> Query(ProjectQuery query);
-        Task<ConditionQueryResult> Query(ConditionQuery query);
+        Task<RequestQueryResult> Query(RequestQuery query);
         Task<bool> CanAccessProject(string id, string businessId);
         Task<bool> CanAccessCondition(string id, string businessId);
     }
@@ -20,7 +20,7 @@ namespace EMCR.DRR.API.Resources.Projects
         public required string Id { get; set; }
     }
 
-    public class SaveCondition : ManageProjectCommand
+    public class SaveConditionRequest : ManageProjectCommand
     {
         public required ConditionRequest Condition { get; set; }
     }
@@ -44,18 +44,20 @@ namespace EMCR.DRR.API.Resources.Projects
         public FilterOptions? FilterOptions { get; set; }
     }
 
-    public class ConditionQueryResult
+    public class RequestQueryResult
     {
-        public IEnumerable<ConditionRequest> Items { get; set; } = Array.Empty<ConditionRequest>();
+        public IEnumerable<Request> Items { get; set; } = Array.Empty<Request>();
         public int Length { get; set; }
     }
 
-    public abstract class ConditionQuery
+    public abstract class RequestQuery
     { }
 
-    public class ConditionsQuery : ConditionQuery
+    public class RequestsQuery : RequestQuery
     {
         public string? Id { get; set; }
+        public string? Name { get; set; }
+        public string? ConditionId { get; set; }
         public string? BusinessId { get; set; }
     }
 
@@ -123,6 +125,17 @@ namespace EMCR.DRR.API.Resources.Projects
         Approved = 172580003,
         Skipped = 172580005,
         Inactive = 2,
+    }
+    
+    public enum RequestStatusOptionSet
+    {
+        Draft = 1,
+        Inactive = 2,
+    }
+    
+    public enum RequestTypeOptionSet
+    {
+        Condition = 172580000,
     }
 
     public enum PeriodTypeOptionSet
