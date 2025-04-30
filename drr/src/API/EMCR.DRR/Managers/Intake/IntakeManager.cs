@@ -134,7 +134,7 @@ namespace EMCR.DRR.Managers.Intake
                 SubmitForecastCommand c => await Handle(c),
                 CreateInvoiceCommand c => await Handle(c),
                 DeleteInvoiceCommand c => await Handle(c),
-                SaveConditionCommand c => await Handle(c),
+                SaveConditionRequestCommand c => await Handle(c),
                 _ => throw new NotSupportedException($"{cmd.GetType().Name} is not supported")
             };
         }
@@ -397,6 +397,7 @@ namespace EMCR.DRR.Managers.Intake
                 case RecordType.ProgressReport: return await UploadProgressReportDocument(cmd);
                 case RecordType.Invoice: return await UploadInvoiceDocument(cmd);
                 case RecordType.ForecastReport: return await UploadForecastReportDocument(cmd);
+                case RecordType.ConditionRequest: return await UploadRequestDocument(cmd);
                 default: throw new BusinessValidationException("Unsupported Record Type");
             }
         }
@@ -411,6 +412,7 @@ namespace EMCR.DRR.Managers.Intake
                 case RecordType.ProgressReport: return await DeleteProgressReportDocument(cmd);
                 case RecordType.Invoice: return await DeleteInvoiceDocument(cmd);
                 case RecordType.ForecastReport: return await DeleteForecastReportDocument(cmd);
+                case RecordType.ConditionRequest: return await DeleteRequestDocument(cmd);
                 default: throw new BusinessValidationException("Unsupported Record Type");
             }
         }
@@ -626,7 +628,7 @@ namespace EMCR.DRR.Managers.Intake
             return id;
         }
 
-        public async Task<string> Handle(SaveConditionCommand cmd)
+        public async Task<string> Handle(SaveConditionRequestCommand cmd)
         {
             var canAccess = await CanAccessCondition(cmd.Condition.Id, cmd.UserInfo.BusinessId);
             if (!canAccess) throw new ForbiddenException("Not allowed to access this condition.");
@@ -849,6 +851,19 @@ namespace EMCR.DRR.Managers.Intake
             var documentRes = await documentRepository.Manage(new CreateForecastReportDocument { NewDocId = newDocId, ForecastId = cmd.AttachmentInfo.RecordId, Document = new Document { Name = cmd.AttachmentInfo.FileStream.FileName, DocumentType = cmd.AttachmentInfo.DocumentType, Size = GetFileSizeTest(cmd.AttachmentInfo.FileStream.File.Length) } });
             return documentRes.Id;
         }
+        
+        private async Task<string> UploadRequestDocument(UploadAttachmentCommand cmd)
+        {
+            var canAccess = await CanAccessConditionFromDocumentId(cmd.AttachmentInfo.Id, cmd.UserInfo.BusinessId);
+            if (!canAccess) throw new ForbiddenException("Not allowed to access this condition request.");
+            var condition = (await projectRepository.Query(new RequestsQuery { ConditionId = cmd.AttachmentInfo.RecordId })).Items.SingleOrDefault();
+            if (condition == null) throw new NotFoundException("Condition Request not found");
+
+            var newDocId = Guid.NewGuid().ToString();
+            await s3Provider.HandleCommand(new UploadFileStreamCommand { Key = newDocId, FileStream = cmd.AttachmentInfo.FileStream, Folder = $"{cmd.AttachmentInfo.RecordType.ToDescriptionString()}/{condition.Id}" });
+            var documentRes = await documentRepository.Manage(new CreateConditionRequestDocument { NewDocId = newDocId, ConditionId = cmd.AttachmentInfo.RecordId, Document = new Document { Name = cmd.AttachmentInfo.FileStream.FileName, DocumentType = cmd.AttachmentInfo.DocumentType, Size = GetFileSizeTest(cmd.AttachmentInfo.FileStream.File.Length) } });
+            return documentRes.Id;
+        }
 
         private async Task<string> DeleteApplicationDocument(DeleteAttachmentCommand cmd)
         {
@@ -883,6 +898,15 @@ namespace EMCR.DRR.Managers.Intake
             if (!canAccess) throw new ForbiddenException("Not allowed to access this forecast.");
             var documentRes = await documentRepository.Manage(new DeleteForecastReportDocument { Id = cmd.Id });
             await s3Provider.HandleCommand(new UpdateTagsCommand { Key = cmd.Id, Folder = $"{RecordType.ForecastReport.ToDescriptionString()}/{documentRes.RecordId}", FileTag = GetDeletedFileTag() });
+            return documentRes.Id;
+        }
+        
+        private async Task<string> DeleteRequestDocument(DeleteAttachmentCommand cmd)
+        {
+            var canAccess = await CanAccessConditionFromDocumentId(cmd.Id, cmd.UserInfo.BusinessId, true);
+            if (!canAccess) throw new ForbiddenException("Not allowed to access this condition request.");
+            var documentRes = await documentRepository.Manage(new DeleteConditionRequestDocument { Id = cmd.Id });
+            await s3Provider.HandleCommand(new UpdateTagsCommand { Key = cmd.Id, Folder = $"{RecordType.ConditionRequest.ToDescriptionString()}/{documentRes.RecordId}", FileTag = GetDeletedFileTag() });
             return documentRes.Id;
         }
 
@@ -1096,12 +1120,19 @@ namespace EMCR.DRR.Managers.Intake
             if (string.IsNullOrEmpty(id)) return true;
             return await projectRepository.CanAccessCondition(id, businessId);
         }
-
+        
         private async Task<bool> CanAccessForecastFromDocumentId(string? id, string? businessId, bool forUpdate = false)
         {
             if (string.IsNullOrEmpty(businessId)) throw new ArgumentNullException("Missing user's BusinessId");
             if (string.IsNullOrEmpty(id)) return true;
             return await reportRepository.CanAccessForecastFromDocumentId(id, businessId, forUpdate);
+        }
+
+        private async Task<bool> CanAccessConditionFromDocumentId(string? id, string? businessId, bool forUpdate = false)
+        {
+            if (string.IsNullOrEmpty(businessId)) throw new ArgumentNullException("Missing user's BusinessId");
+            if (string.IsNullOrEmpty(id)) return true;
+            return await projectRepository.CanAccessConditionFromDocumentId(id, businessId, forUpdate);
         }
 
         private async Task<bool> CanAccessInvoiceFromDocumentId(string? id, string? businessId, bool forUpdate = false)

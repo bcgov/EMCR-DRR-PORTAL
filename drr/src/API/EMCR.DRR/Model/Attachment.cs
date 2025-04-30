@@ -49,7 +49,8 @@ namespace EMCR.DRR.API.Model
         ProgressReport,
         Invoice,
         ProofOfPayment,
-        ForecastReport
+        ForecastReport,
+        ConditionApproval
     }
 
     [JsonConverter(typeof(JsonStringEnumConverter))]
@@ -58,6 +59,7 @@ namespace EMCR.DRR.API.Model
         FullProposal,
         ProgressReport,
         Invoice,
-        ForecastReport
+        ForecastReport,
+        ConditionRequest
     }
 }
