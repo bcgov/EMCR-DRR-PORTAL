@@ -22,6 +22,7 @@ import { ProjectService } from '../../../api/project/project.service';
 import {
   Attachment,
   ClaimStatus,
+  ConditionRequestListItem,
   ContactDetails,
   CostProjectionItem,
   DraftDrrProject,
@@ -96,6 +97,9 @@ export class DrifProjectComponent {
   conditionsDataSource = new MatTableDataSource<
     PaymentCondition & { actions?: [] }
   >([]);
+  conditionRequestsDataSource = new MatTableDataSource<
+    ConditionRequestListItem & { actions?: [] }
+  >([]);
 
   costProjectionsDataSource = new MatTableDataSource<CostProjectionItem>([]);
 
@@ -134,15 +138,14 @@ export class DrifProjectComponent {
       .subscribe((project) => {
         this.project = project;
 
-        this.conditionsDataSource.data = [...this.project!.conditions!];
+        this.conditionsDataSource.data = [...project.conditions!];
+        this.conditionRequestsDataSource.data = [...project.conditionRequests!];
 
-        this.costProjectionsDataSource.data = [
-          ...this.project!.costProjections!,
-        ];
+        this.costProjectionsDataSource.data = [...project.costProjections!];
 
-        this.projectContactsDataSource.data = this.project!.contacts!;
+        this.projectContactsDataSource.data = [...project.contacts!];
 
-        const reportsDue = this.project!.interimReports!.filter(
+        const reportsDue = project.interimReports!.filter(
           (report) =>
             report.status !== InterimReportStatus.Approved &&
             report.status !== InterimReportStatus.Skipped,
@@ -211,13 +214,13 @@ export class DrifProjectComponent {
 
         this.interimReportsDataSource.data = subReportsDue;
 
-        this.pastReportsDataSource.data = this.project!.interimReports!.filter(
+        this.pastReportsDataSource.data = project.interimReports!.filter(
           (report) =>
             report.status === InterimReportStatus.Approved ||
             report.status === InterimReportStatus.Skipped,
         );
 
-        this.attachmentsDataSource.data = this.project!.attachments!;
+        this.attachmentsDataSource.data = project.attachments!;
       });
   }
 
