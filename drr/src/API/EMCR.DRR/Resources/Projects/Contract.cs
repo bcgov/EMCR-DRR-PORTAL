@@ -10,6 +10,7 @@ namespace EMCR.DRR.API.Resources.Projects
         Task<RequestQueryResult> Query(RequestQuery query);
         Task<bool> CanAccessProject(string id, string businessId);
         Task<bool> CanAccessCondition(string id, string businessId);
+        Task<bool> CanAccessConditionFromDocumentId(string id, string businessId, bool forUpdate);
     }
 
     public abstract class ManageProjectCommand

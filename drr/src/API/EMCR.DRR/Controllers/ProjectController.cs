@@ -325,7 +325,7 @@ namespace EMCR.DRR.Controllers
             }
         }
 
-        [HttpGet("{projectId}/condition/{conditionId}")]
+        [HttpGet("{projectId}/condition-requests/by-condition/{conditionId}")]
         public async Task<ActionResult<DraftConditionRequest>> GetConditionRequest(string projectId, string conditionId)
         {
             try
@@ -340,14 +340,14 @@ namespace EMCR.DRR.Controllers
             }
         }
 
-        [HttpPatch("{projectId}/condition/{conditionId}")]
+        [HttpPatch("{projectId}/condition-requests/by-condition/{conditionId}")]
         public async Task<ActionResult<ConditionResult>> UpdateConditionRequest([FromBody] DraftConditionRequest condition, string projectId, string conditionId)
         {
             try
             {
                 condition.Id = conditionId;
 
-                var drr_id = await intakeManager.Handle(new SaveConditionCommand { Condition = mapper.Map<ConditionRequest>(condition), UserInfo = GetCurrentUser() });
+                var drr_id = await intakeManager.Handle(new SaveConditionRequestCommand { Condition = mapper.Map<ConditionRequest>(condition), UserInfo = GetCurrentUser() });
                 return Ok(new ConditionResult { Id = drr_id });
             }
             catch (Exception e)
@@ -603,6 +603,20 @@ namespace EMCR.DRR.Controllers
         public bool? ConditionMet { get; set; }
         public DateTime? DateMet { get; set; }
         public RequestStatus Status { get; set; }
+        public required IEnumerable<RequestActions> Actions { get; set; } = Array.Empty<RequestActions>();
+    }
+
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public enum RequestActions
+    {
+        [Description("View")]
+        View,
+
+        [Description("Edit")]
+        Edit,
+        
+        [Description("Request to Clear")]
+        Create,
     }
 
     public class Workplan
