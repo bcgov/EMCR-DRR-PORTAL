@@ -43,7 +43,7 @@
     >
       <mat-step
         [label]="t('step1')"
-        [stepControl]="conditionForm?.get('conditionRequest')!"
+        [stepControl]="conditionForm.get('conditionRequest')!"
         [errorMessage]="'stepError' | transloco"
       >
         <div style="display: flex; flex-direction: column; gap: 2rem">
@@ -102,21 +102,15 @@
                 <drr-input
                   style="width: 50rem"
                   [label]="t('name')"
-                  [rxFormControl]="conditionForm?.get('conditionRequest.name')"
+                  [rxFormControl]="conditionForm.get('conditionRequest.name')"
                   [disabled]="true"
                 ></drr-input>
                 <drr-numeric-input
                   [label]="t('limit')"
-                  [rxFormControl]="conditionForm?.get('conditionRequest.limit')"
+                  [rxFormControl]="conditionForm.get('conditionRequest.limit')"
                   [disabled]="true"
                   numericType="percentage"
                 ></drr-numeric-input>
-                <!-- <drr-datepicker
-                  [label]="t('date')"
-                  [rxFormControl]="conditionForm?.get('conditionRequest.date')"
-                  [max]="todayDate"
-                  [disabled]="true"
-                ></drr-datepicker> -->
               </div>
 
               <mat-label>
@@ -126,7 +120,7 @@
                 style="align-self: stretch"
                 [label]="t('description')"
                 [rxFormControl]="
-                  conditionForm?.get('conditionRequest.description')
+                  conditionForm.get('conditionRequest.description')
                 "
                 [maxlength]="2000"
               ></drr-textarea>
