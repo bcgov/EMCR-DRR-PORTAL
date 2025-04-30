@@ -6,6 +6,7 @@
  */
 import type { Attachment } from './attachment';
 import type { DraftProjectClaim } from './draftProjectClaim';
+import type { ConditionRequestListItem } from './conditionRequestListItem';
 import type { PaymentCondition } from './paymentCondition';
 import type { ContactDetails } from './contactDetails';
 import type { CostProjectionItem } from './costProjectionItem';
@@ -23,6 +24,8 @@ export interface DrrProject {
   attachments?: Attachment[];
   /** @nullable */
   claims?: DraftProjectClaim[];
+  /** @nullable */
+  conditionRequests?: ConditionRequestListItem[];
   /** @nullable */
   conditions?: PaymentCondition[];
   /** @nullable */

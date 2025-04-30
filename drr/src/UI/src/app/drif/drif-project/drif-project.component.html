@@ -274,7 +274,11 @@
 
     <mat-tab label="Conditions">
       <mat-card class="tab-mat-card">
-        <table class="drr-table" mat-table [dataSource]="conditionsDataSource">
+        <table
+          class="drr-table"
+          mat-table
+          [dataSource]="conditionRequestsDataSource"
+        >
           <ng-container matColumnDef="conditionName">
             <th mat-header-cell *matHeaderCellDef>Condition</th>
             <td mat-cell *matCellDef="let condition">
@@ -297,9 +301,15 @@
               {{ condition.dateMet | date: "yyyy-MM-dd" }}
             </td>
           </ng-container>
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Request to Clear Status</th>
+            <td mat-cell *matCellDef="let condition">
+              {{ condition.status | transloco }}
+            </td>
+          </ng-container>
           <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef style="text-align: center">
-              Actions
+              Action
             </th>
             <td mat-cell *matCellDef="let condition">
               <div class="table-actions">
@@ -311,7 +321,7 @@
                     color="primary"
                     (click)="createConditionRequest(condition)"
                   >
-                    Request Clearance
+                    Request to Clear
                   </button>
                 }
               </div>
@@ -324,6 +334,7 @@
               'limit',
               'conditionMet',
               'dateMet',
+              'status',
               'actions',
             ]"
           ></tr>
@@ -336,6 +347,7 @@
                 'limit',
                 'conditionMet',
                 'dateMet',
+                'status',
                 'actions',
               ]
             "
