@@ -7,10 +7,11 @@ namespace EMCR.DRR.API.Resources.Projects
     {
         Task<ManageProjectCommandResult> Manage(ManageProjectCommand cmd);
         Task<ProjectQueryResult> Query(ProjectQuery query);
-        Task<RequestQueryResult> Query(RequestQuery query);
         Task<bool> CanAccessProject(string id, string businessId);
+
+        //Project Conditions
+        Task<ConditionQueryResult> Query(ConditionQuery query);
         Task<bool> CanAccessCondition(string id, string businessId);
-        Task<bool> CanAccessConditionFromDocumentId(string id, string businessId, bool forUpdate);
     }
 
     public abstract class ManageProjectCommand
@@ -19,11 +20,6 @@ namespace EMCR.DRR.API.Resources.Projects
     public class ManageProjectCommandResult
     {
         public required string Id { get; set; }
-    }
-
-    public class SaveConditionRequest : ManageProjectCommand
-    {
-        public required ConditionRequest Condition { get; set; }
     }
 
     public abstract class ProjectQuery
@@ -45,29 +41,26 @@ namespace EMCR.DRR.API.Resources.Projects
         public FilterOptions? FilterOptions { get; set; }
     }
 
-    public class RequestQueryResult
-    {
-        public IEnumerable<Request> Items { get; set; } = Array.Empty<Request>();
-        public int Length { get; set; }
-    }
-
-    public abstract class RequestQuery
-    { }
-
-    public class RequestsQuery : RequestQuery
-    {
-        public string? Id { get; set; }
-        public string? Name { get; set; }
-        public string? ConditionId { get; set; }
-        public string? BusinessId { get; set; }
-    }
-
     //public class ProjectFilterOptions
     //{
     //    public string? ProejctType { get; set; }
     //    public string? ProgramType { get; set; }
     //    public List<int>? Statuses { get; set; }
     //}
+
+    public class ConditionQueryResult
+    {
+        public IEnumerable<PaymentCondition> Items { get; set; } = Array.Empty<PaymentCondition>();
+        public int Length { get; set; }
+    }
+
+    public abstract class ConditionQuery
+    { }
+
+    public class ConditionsQuery : ConditionQuery
+    {
+        public string? Id { get; set; }
+    }
 
     public enum ProjectStatusOptionSet
     {
@@ -128,17 +121,6 @@ namespace EMCR.DRR.API.Resources.Projects
         Inactive = 2,
     }
     
-    public enum RequestStatusOptionSet
-    {
-        Draft = 1,
-        Inactive = 2,
-    }
-    
-    public enum RequestTypeOptionSet
-    {
-        Condition = 172580000,
-    }
-
     public enum PeriodTypeOptionSet
     {
         OffCycle = 172580000,
