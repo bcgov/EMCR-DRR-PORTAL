@@ -84,6 +84,8 @@ namespace EMCR.DRR.API.Mappers
                     return ApplicationType.Forecast;
                 case "Claims Form":
                     return ApplicationType.Claim;
+                case "Condition Request":
+                    return ApplicationType.ConditionRequest;
                 default: return null;
             }
         }
