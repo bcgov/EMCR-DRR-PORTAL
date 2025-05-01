@@ -326,13 +326,7 @@
                   <button
                     mat-raised-button
                     color="primary"
-                    [routerLink]="[
-                      'drif-projects',
-                      projectId,
-                      'conditions',
-                      condition.id,
-                      'view',
-                    ]"
+                    [routerLink]="['conditions', condition.conditionId, 'view']"
                   >
                     View
                   </button>
@@ -341,13 +335,7 @@
                   <button
                     mat-raised-button
                     color="primary"
-                    [routerLink]="[
-                      'drif-projects',
-                      projectId,
-                      'conditions',
-                      condition.id,
-                      'edit',
-                    ]"
+                    [routerLink]="['conditions', condition.conditionId, 'edit']"
                   >
                     Edit
                   </button>
