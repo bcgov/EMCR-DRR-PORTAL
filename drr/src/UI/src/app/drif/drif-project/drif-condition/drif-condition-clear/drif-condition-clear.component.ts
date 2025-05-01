@@ -24,6 +24,7 @@ import { distinctUntilChanged, pairwise, startWith } from 'rxjs';
 import { AttachmentService } from '../../../../../api/attachment/attachment.service';
 import { ProjectService } from '../../../../../api/project/project.service';
 import {
+  ApplicationType,
   DeclarationType,
   DocumentType,
   DraftConditionRequest,
@@ -157,10 +158,12 @@ export class DrifConditionClearComponent {
       this.authorizedRepresentativeText = this.optionsStore.getDeclarations?.(
         DeclarationType.AuthorizedRepresentative,
         FormType.Application,
+        ApplicationType.ConditionRequest,
       );
       this.accuracyOfInformationText = this.optionsStore.getDeclarations?.(
         DeclarationType.AccuracyOfInformation,
         FormType.Application,
+        ApplicationType.ConditionRequest,
       );
 
       // TODO: use contion % or description from API

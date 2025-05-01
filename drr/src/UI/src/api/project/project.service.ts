@@ -669,22 +669,22 @@ export class ProjectService {
       options,
     );
   }
-  projectCreateConditionRequest<TData = DraftConditionRequest>(
+  projectCreateConditionRequest<TData = ConditionResult>(
     projectId: string,
     params?: ProjectCreateConditionRequestParams,
     options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'body' },
   ): Observable<TData>;
-  projectCreateConditionRequest<TData = DraftConditionRequest>(
+  projectCreateConditionRequest<TData = ConditionResult>(
     projectId: string,
     params?: ProjectCreateConditionRequestParams,
     options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'response' },
   ): Observable<AngularHttpResponse<TData>>;
-  projectCreateConditionRequest<TData = DraftConditionRequest>(
+  projectCreateConditionRequest<TData = ConditionResult>(
     projectId: string,
     params?: ProjectCreateConditionRequestParams,
     options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'events' },
   ): Observable<HttpEvent<TData>>;
-  projectCreateConditionRequest<TData = DraftConditionRequest>(
+  projectCreateConditionRequest<TData = ConditionResult>(
     projectId: string,
     params?: ProjectCreateConditionRequestParams,
     options?: HttpClientOptions,
@@ -731,4 +731,4 @@ export type ProjectUpdateConditionRequestClientResult =
 export type ProjectSubmitConditionRequestClientResult =
   NonNullable<ConditionResult>;
 export type ProjectCreateConditionRequestClientResult =
-  NonNullable<DraftConditionRequest>;
+  NonNullable<ConditionResult>;

@@ -15,4 +15,5 @@ export const ApplicationType = {
   Progress: 'Progress',
   Forecast: 'Forecast',
   Claim: 'Claim',
+  ConditionRequest: 'ConditionRequest',
 } as const;
