@@ -30,6 +30,8 @@ namespace EMCR.DRR.API.Resources.Documents
                 DeleteInvoiceDocument c => await Handle(c),
                 CreateForecastReportDocument c => await Handle(c),
                 DeleteForecastReportDocument c => await Handle(c),
+                CreateConditionRequestDocument c => await Handle(c),
+                DeleteConditionRequestDocument c => await Handle(c),
                 _ => throw new NotSupportedException($"{cmd.GetType().Name} is not supported")
             };
         }
@@ -224,6 +226,45 @@ namespace EMCR.DRR.API.Resources.Documents
             await ctx.SaveChangesAsync();
 
             return new ManageDocumentCommandResult { Id = cmd.Id, RecordId = document?._bcgov_projectbudgetforecastid_value.ToString() };
+        }
+
+        public async Task<ManageDocumentCommandResult> Handle(CreateConditionRequestDocument cmd)
+        {
+            var ctx = dRRContextFactory.Create();
+            var bcGovDocument = mapper.Map<bcgov_documenturl>(cmd.Document);
+            bcGovDocument.bcgov_documenturlid = Guid.Parse(cmd.NewDocId);
+            var request = await ctx.drr_requests.Expand(r => r.drr_ProjectConditionId).Where(a => a.drr_ProjectConditionId.drr_name == cmd.ConditionId).SingleOrDefaultAsync();
+            //if (progressReport.statuscode != (int)ApplicationStatusOptionSet.DraftProponent)
+            //{
+            //    progressReport.statuscode = (int)ApplicationStatusOptionSet.DraftProponent;
+            //    ctx.UpdateObject(progressReport);
+            //}
+            bcGovDocument.bcgov_url = $"drr_request/{request.drr_requestid}";
+            bcGovDocument.bcgov_origincode = (int?)OriginOptionSet.Web;
+            bcGovDocument.bcgov_filesize = cmd.Document.Size;
+            bcGovDocument.bcgov_receiveddate = DateTime.UtcNow;
+            //Set Document Type
+            ctx.AddTobcgov_documenturls(bcGovDocument);
+            ctx.AddLink(request, nameof(request.drr_request_bcgov_documenturl_RequestId), bcGovDocument);
+            ctx.SetLink(bcGovDocument, nameof(bcGovDocument.drr_RequestId), request);
+            var documentType = await ctx.bcgov_documenttypes.Where(t => t.bcgov_isportalaccessible == (int)DRRTwoOptions.Yes && t.bcgov_name == cmd.Document.DocumentType.ToDescriptionString()).SingleOrDefaultAsync();
+            if (documentType == null) documentType = await ctx.bcgov_documenttypes.Where(t => t.bcgov_name == DocumentType.OtherSupportingDocument.ToDescriptionString()).SingleOrDefaultAsync();
+            ctx.SetLink(bcGovDocument, nameof(bcGovDocument.bcgov_DocumentType), documentType);
+            await ctx.SaveChangesAsync();
+
+            return new ManageDocumentCommandResult { Id = bcGovDocument.bcgov_documenturlid.ToString(), RecordId = request.drr_requestid.ToString() };
+        }
+
+        public async Task<ManageDocumentCommandResult> Handle(DeleteConditionRequestDocument cmd)
+        {
+            var ctx = dRRContextFactory.Create();
+
+            var document = await ctx.bcgov_documenturls.Where(d => d.bcgov_documenturlid == Guid.Parse(cmd.Id)).SingleOrDefaultAsync();
+            if (document != null) ctx.DeleteObject(document);
+
+            await ctx.SaveChangesAsync();
+
+            return new ManageDocumentCommandResult { Id = cmd.Id, RecordId = document?._drr_requestid_value.ToString() };
         }
     }
 #pragma warning restore CS8601 // Possible null reference assignment.

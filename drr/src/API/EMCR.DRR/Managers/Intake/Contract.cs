@@ -307,7 +307,7 @@ namespace EMCR.DRR.Managers.Intake
         public UserInfo UserInfo { get; set; }
     }
 
-    public class SaveConditionCommand : IntakeCommand
+    public class SaveConditionRequestCommand : IntakeCommand
     {
         public Controllers.ConditionRequest Condition { get; set; } = null!;
         public UserInfo UserInfo { get; set; }
@@ -354,6 +354,8 @@ namespace EMCR.DRR.Managers.Intake
         Invoice,
         [Description("drr_projectbudgetforecast")]
         ForecastReport,
+        [Description("drr_request")]
+        ConditionRequest,
         None,
     }
 
@@ -381,6 +383,8 @@ namespace EMCR.DRR.Managers.Intake
         ProofOfPayment,
         [Description("Forecast Report")]
         ForecastReport,
+        [Description("Condition Approval")]
+        ConditionApproval,
     }
 
     public class Application

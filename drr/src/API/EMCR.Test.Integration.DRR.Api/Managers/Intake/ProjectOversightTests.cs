@@ -202,8 +202,8 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
 
             var conditionId = "DRIF-CONDITION-1201";
             var condition = mapper.Map<EMCR.DRR.Controllers.ConditionRequest>((await manager.Handle(new DrrConditionsQuery { ConditionId = conditionId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
-            condition.Limit = new Random().Next(10, 50); ;
-            await manager.Handle(new SaveConditionCommand { Condition = condition, UserInfo = userInfo });
+            condition.Limit = new Random().Next(10, 50);
+            await manager.Handle(new SaveConditionRequestCommand { Condition = condition, UserInfo = userInfo });
             var updatedCondition = mapper.Map<EMCR.DRR.Controllers.DraftConditionRequest>((await manager.Handle(new DrrConditionsQuery { ConditionId = conditionId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
             //updatedCondition.Limit.ShouldBe(condition.Limit);
         }
@@ -739,6 +739,38 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
 
             var updatedForecast = mapper.Map<DraftForecast>((await manager.Handle(new DrrForecastsQuery { Id = forecastToUpdate.Id, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
             updatedForecast.Attachments.Single().Comments.ShouldBe(forecastToUpdate.Attachments.Single().Comments);
+        }
+
+        [Test]
+        public async Task CanAddAttachmentToCondition()
+        {
+            var userInfo = GetTestUserInfo();
+            //var userInfo = GetCRAFTUserInfo();
+
+            var conditionId = "DRIF-CONDITION-1201";
+            var condition = mapper.Map<EMCR.DRR.Controllers.ConditionRequest>((await manager.Handle(new DrrConditionsQuery { ConditionId = conditionId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+            foreach (var doc in condition.Attachments)
+            {
+                await manager.Handle(new DeleteAttachmentCommand { Id = doc.Id, UserInfo = userInfo });
+            }
+
+            var body = DateTime.Now.ToString();
+            var fileName = "autotest.txt";
+            byte[] bytes = Encoding.ASCII.GetBytes(body);
+            var contentType = "text/plain";
+            var file = new S3FileStream { FileName = fileName, File = CreateFormFile(body, fileName, contentType), ContentType = "text/plain", };
+
+            var documentId = await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = condition.Id, RecordType = EMCR.DRR.Managers.Intake.RecordType.ConditionRequest, FileStream = file, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.ConditionApproval }, UserInfo = userInfo });
+
+            var conditionToUpdate = mapper.Map<EMCR.DRR.Controllers.ConditionRequest>((await manager.Handle(new DrrConditionsQuery { ConditionId = conditionId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+            conditionToUpdate.Attachments.Count().ShouldBe(1);
+            conditionToUpdate.Attachments.Single().DocumentType.ShouldBe(EMCR.DRR.API.Model.DocumentType.ConditionApproval);
+            conditionToUpdate.Attachments.Single().Comments = "condition report comments";
+
+            await manager.Handle(new SaveConditionRequestCommand { Condition = conditionToUpdate, UserInfo = userInfo });
+
+            var updatedCondition = mapper.Map<EMCR.DRR.Controllers.ConditionRequest>((await manager.Handle(new DrrConditionsQuery { ConditionId = conditionId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+            updatedCondition.Attachments.Single().Comments.ShouldBe(conditionToUpdate.Attachments.Single().Comments);
         }
 
         [Test]

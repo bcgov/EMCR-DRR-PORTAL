@@ -261,7 +261,28 @@ namespace EMCR.DRR.API.Resources.Projects
         private static async Task ParallelLoadRequest(DRRContext ctx, drr_request request, CancellationToken ct)
         {
             ctx.AttachTo(nameof(DRRContext.drr_requests), request);
-            await ctx.LoadPropertyAsync(request, nameof(drr_request.drr_ProjectConditionId), ct);
+            var loadTasks = new List<Task>
+            {
+                ctx.LoadPropertyAsync(request, nameof(drr_request.drr_ProjectConditionId), ct),
+                ctx.LoadPropertyAsync(request, nameof(drr_request.drr_request_bcgov_documenturl_RequestId), ct)
+            };
+
+            await Task.WhenAll(loadTasks);
+
+            var secondLoadTasks = new List<Task>{
+                ParallelLoadRequestDocumentTypes(ctx, request, ct),
+            };
+
+            await Task.WhenAll(secondLoadTasks);
+        }
+
+        private static async Task ParallelLoadRequestDocumentTypes(DRRContext ctx, drr_request request, CancellationToken ct)
+        {
+            await request.drr_request_bcgov_documenturl_RequestId.ForEachAsync(5, async doc =>
+            {
+                ctx.AttachTo(nameof(DRRContext.bcgov_documenturls), doc);
+                await ctx.LoadPropertyAsync(doc, nameof(bcgov_documenturl.bcgov_DocumentType), ct);
+            });
         }
 
         public async Task<bool> CanAccessProject(string id, string businessId)
@@ -281,6 +302,18 @@ namespace EMCR.DRR.API.Resources.Projects
             readCtx.AttachTo(nameof(readCtx.drr_projects), existingCondition.drr_Project);
             await readCtx.LoadPropertyAsync(existingCondition.drr_Project, nameof(drr_project.drr_ProponentName));
             return (!string.IsNullOrEmpty(existingCondition.drr_Project.drr_ProponentName.drr_bceidguid)) && existingCondition.drr_Project.drr_ProponentName.drr_bceidguid.Equals(businessId);
+        }
+
+        public async Task<bool> CanAccessConditionFromDocumentId(string id, string businessId, bool forUpdate)
+        {
+            var readCtx = dRRContextFactory.CreateReadOnly();
+            var document = await readCtx.bcgov_documenturls.Expand(d => d.drr_RequestId).Where(a => a.bcgov_documenturlid == Guid.Parse(id)).SingleOrDefaultAsync();
+            var existingRequest = await readCtx.drr_requests.Expand(a => a.drr_ProjectId).Where(a => a.drr_requestid == document._drr_requestid_value).SingleOrDefaultAsync();
+            if (existingRequest == null) return true;
+            if (forUpdate && existingRequest.statuscode == (int)RequestStatusOptionSet.Inactive) return false;
+            readCtx.AttachTo(nameof(readCtx.drr_projects), existingRequest.drr_ProjectId);
+            await readCtx.LoadPropertyAsync(existingRequest.drr_ProjectId, nameof(drr_project.drr_ProponentName));
+            return (!string.IsNullOrEmpty(existingRequest.drr_ProjectId.drr_ProponentName.drr_bceidguid)) && existingRequest.drr_ProjectId.drr_ProponentName.drr_bceidguid.Equals(businessId);
         }
 
         private List<drr_project> SortAndPageResults(List<drr_project> projects, ProjectsQuery query)

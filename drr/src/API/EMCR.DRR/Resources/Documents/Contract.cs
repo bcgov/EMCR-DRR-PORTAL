@@ -78,6 +78,18 @@ namespace EMCR.DRR.API.Resources.Documents
         public required string Id { get; set; }
     }
 
+    public class CreateConditionRequestDocument : ManageDocumentCommand
+    {
+        public required string ConditionId { get; set; }
+        public required string NewDocId { get; set; }
+        public required Document Document { get; set; }
+    }
+
+    public class DeleteConditionRequestDocument : ManageDocumentCommand
+    {
+        public required string Id { get; set; }
+    }
+
     public class Document
     {
         public required string Name { get; set; }

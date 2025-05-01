@@ -176,6 +176,30 @@ namespace EMCR.DRR.Managers.Intake
                 })
                 .ReverseMap()
                 .ForMember(dest => dest.ConditionRequests, opt => opt.MapFrom(src => src.Requests))
+                .AfterMap((src, dest) =>
+                {
+                    //add any payment conditions that don't have a request to the condition requests - with action "request to clear" 
+                    if (dest.Conditions != null && dest.ConditionRequests != null)
+                    {
+                        var createActionAdded = false;
+                        var uncreatedConditions = dest.Conditions.Where(c => !dest.ConditionRequests.Any(r => r.ConditionId == c.Id));
+                        foreach (var c in uncreatedConditions)
+                        {
+                            dest.ConditionRequests = dest.ConditionRequests.Append(new ConditionRequestListItem
+                            {
+                                Id = null,
+                                ConditionId = c.Id,
+                                ConditionMet = c.ConditionMet,
+                                ConditionName = c.ConditionName,
+                                DateMet = c.DateMet,
+                                Limit = c.Limit,
+                                Status = Controllers.RequestStatus.Draft,
+                                Actions = createActionAdded ? Array.Empty<RequestActions>() : new[] { RequestActions.Create }
+                            }).ToList();
+                            createActionAdded = true;
+                        }
+                    }
+                })
                 ;
 
             CreateMap<Controllers.PaymentCondition, PaymentCondition>()
@@ -791,6 +815,7 @@ namespace EMCR.DRR.Managers.Intake
                 .ForMember(dest => dest.ConditionMet, opt => opt.MapFrom(src => src.Condition != null ? src.Condition.ConditionMet : null))
                 .ForMember(dest => dest.DateMet, opt => opt.MapFrom(src => src.Condition != null ? src.Condition.DateMet : null))
                 .ForMember(dest => dest.Status, opt => opt.Ignore())
+                .ForMember(dest => dest.Actions, opt => opt.MapFrom(src => new[] { RequestActions.View, RequestActions.Edit }))
                 ;
 
             CreateMap<string, PartneringProponent>()
