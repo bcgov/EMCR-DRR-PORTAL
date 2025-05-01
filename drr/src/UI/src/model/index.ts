@@ -105,6 +105,7 @@ export * from './proposedActivity';
 export * from './reportResult';
 export * from './reportType';
 export * from './reportingScheduleType';
+export * from './requestActions';
 export * from './requestStatus';
 export * from './resourceCategory';
 export * from './screenerQuestions';

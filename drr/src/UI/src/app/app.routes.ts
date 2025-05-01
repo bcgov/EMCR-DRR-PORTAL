@@ -12,6 +12,7 @@ import { DrifFpComponent } from './drif/drif-fp/drif-fp.component';
 import { DrifClaimCreateComponent } from './drif/drif-project/drif-claim/drif-claim-create/drif-claim-create.component';
 import { DrifClaimViewComponent } from './drif/drif-project/drif-claim/drif-claim-view/drif-claim-view.component';
 import { DrifConditionClearComponent } from './drif/drif-project/drif-condition/drif-condition-clear/drif-condition-clear.component';
+import { DrifConditionViewComponent } from './drif/drif-project/drif-condition/drif-condition-view/drif-condition-view.component';
 import { DrifForecastCreateComponent } from './drif/drif-project/drif-forecast/drif-forecast-create/drif-forecast-create.component';
 import { DrifForecastViewComponent } from './drif/drif-project/drif-forecast/drif-forecast-view/drif-forecast-view.component';
 import { DrifInterimReportCreateComponent } from './drif/drif-project/drif-interim-report/drif-interim-report-create/drif-interim-report-create.component';
@@ -114,6 +115,11 @@ export const routes: Routes = [
   {
     path: 'drif-projects/:projectId/conditions/:conditionId/edit',
     component: DrifConditionClearComponent,
+    canActivate: [AuthenticationGuard],
+  },
+  {
+    path: 'drif-projects/:projectId/conditions/:conditionId/view',
+    component: DrifConditionViewComponent,
     canActivate: [AuthenticationGuard],
   },
 ];

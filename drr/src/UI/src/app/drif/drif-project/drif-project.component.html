@@ -272,7 +272,7 @@
       </mat-card>
     </mat-tab>
 
-    <mat-tab label="Conditions">
+    <mat-tab label="Condition Requests">
       <mat-card class="tab-mat-card">
         <table
           class="drr-table"
@@ -313,15 +313,43 @@
             </th>
             <td mat-cell *matCellDef="let condition">
               <div class="table-actions">
-                @if (condition.conditionMet) {
-                  <!-- TODO: details view link -->
-                } @else {
+                @if (canCreateConditionRequest(condition)) {
                   <button
                     mat-raised-button
                     color="primary"
                     (click)="createConditionRequest(condition)"
                   >
                     Request to Clear
+                  </button>
+                }
+                @if (canViewConditionRequest(condition)) {
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    [routerLink]="[
+                      'drif-projects',
+                      projectId,
+                      'conditions',
+                      condition.id,
+                      'view',
+                    ]"
+                  >
+                    View
+                  </button>
+                }
+                @if (canEditConditionRequest(condition)) {
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    [routerLink]="[
+                      'drif-projects',
+                      projectId,
+                      'conditions',
+                      condition.id,
+                      'edit',
+                    ]"
+                  >
+                    Edit
                   </button>
                 }
               </div>

@@ -603,7 +603,7 @@ export class ProjectService {
     options?: HttpClientOptions,
   ): Observable<TData> {
     return this.http.get<TData>(
-      `/api/project/${projectId}/condition/${conditionId}`,
+      `/api/project/${projectId}/condition-requests/by-condition/${conditionId}`,
       options,
     );
   }
@@ -632,7 +632,7 @@ export class ProjectService {
     options?: HttpClientOptions,
   ): Observable<TData> {
     return this.http.patch<TData>(
-      `/api/project/${projectId}/condition/${conditionId}`,
+      `/api/project/${projectId}/condition-requests/by-condition/${conditionId}`,
       draftConditionRequest,
       options,
     );
