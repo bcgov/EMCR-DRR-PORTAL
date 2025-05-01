@@ -57,6 +57,9 @@ namespace EMCR.DRR.Dynamics
             "drr_dateremoved",
             "drr_plannedeventdate",
             "drr_dateoccurred",
+
+            //Requests
+            "drr_descriptionofrequest",
         };
 
         public DynamicsODataClientHandler(IOptions<DRRContextOptions> options, ISecurityTokenProvider tokenProvider)

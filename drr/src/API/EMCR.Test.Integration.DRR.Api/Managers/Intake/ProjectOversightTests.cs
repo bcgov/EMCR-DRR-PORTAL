@@ -182,30 +182,77 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
         }
 
         [Test]
-        public async Task QueryConditions_CanFilterById()
+        public async Task QueryConditionRequest_CanFilterByConditionId()
         {
             var userInfo = GetTestUserInfo();
             //var userInfo = GetCRAFTUserInfo();
             //var userInfo = GetCRAFT2UserInfo();
 
-            var queryRes = await manager.Handle(new DrrConditionsQuery { ConditionId = "DRIF-CONDITION-1201", BusinessId = userInfo.BusinessId });
+            var queryRes = await manager.Handle(new ConditionRequestQuery { ConditionId = "DRIF-CONDITION-1201", BusinessId = userInfo.BusinessId });
             var conditions = mapper.Map<IEnumerable<EMCR.DRR.Controllers.DraftConditionRequest>>(queryRes.Items);
             conditions.Count().ShouldBe(1);
         }
 
         [Test]
-        public async Task CanUpdateCondition()
+        public async Task CanUpdateConditionRequest()
         {
             var userInfo = GetTestUserInfo();
             //var userInfo = GetCRAFTUserInfo();
             //var userInfo = GetCRAFT2UserInfo();
 
             var conditionId = "DRIF-CONDITION-1201";
-            var condition = mapper.Map<EMCR.DRR.Controllers.ConditionRequest>((await manager.Handle(new DrrConditionsQuery { ConditionId = conditionId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
-            condition.Limit = new Random().Next(10, 50);
+            await RecreateConditionRequest(conditionId, userInfo);
+            var condition = mapper.Map<EMCR.DRR.Controllers.ConditionRequest>((await manager.Handle(new ConditionRequestQuery { ConditionId = conditionId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+            condition.Explanation = "very valid explanation";
             await manager.Handle(new SaveConditionRequestCommand { Condition = condition, UserInfo = userInfo });
-            var updatedCondition = mapper.Map<EMCR.DRR.Controllers.DraftConditionRequest>((await manager.Handle(new DrrConditionsQuery { ConditionId = conditionId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
-            //updatedCondition.Limit.ShouldBe(condition.Limit);
+            var updatedCondition = mapper.Map<EMCR.DRR.Controllers.DraftConditionRequest>((await manager.Handle(new ConditionRequestQuery { ConditionId = conditionId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+            updatedCondition.Explanation.ShouldBe(condition.Explanation);
+        }
+
+        [Test]
+        public async Task CanSubmitConditionRequest()
+        {
+            var userInfo = GetTestUserInfo();
+            //var userInfo = GetCRAFTUserInfo();
+            //var userInfo = GetCRAFT2UserInfo();
+
+            var conditionId = "DRIF-CONDITION-1201";
+            await RecreateConditionRequest(conditionId, userInfo);
+
+            var condition = mapper.Map<EMCR.DRR.Controllers.ConditionRequest>((await manager.Handle(new ConditionRequestQuery { ConditionId = conditionId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+
+            condition.Status = EMCR.DRR.Controllers.RequestStatus.Draft;
+            condition.AuthorizedRepresentativeStatement = true;
+            condition.InformationAccuracyStatement = true;
+            condition.AuthorizedRepresentative = new EMCR.DRR.Controllers.ContactDetails
+            {
+                FirstName = "Joe",
+                LastName = "autotest",
+                Department = "dep",
+                Title = "title",
+                Email = "email@test.com",
+                Phone = "6041234567"
+            };
+
+            await manager.Handle(new SubmitConditionRequestCommand { Condition = condition, UserInfo = userInfo });
+
+            Console.WriteLine(condition.Id);
+            var updatedCondition = mapper.Map<EMCR.DRR.Controllers.DraftConditionRequest>((await manager.Handle(new ConditionRequestQuery { ConditionId = conditionId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+            updatedCondition.Status.ShouldBe(EMCR.DRR.Controllers.RequestStatus.Submitted);
+        }
+
+        [Test]
+        public async Task CanCreateConditionRequest()
+        {
+            var userInfo = GetTestUserInfo();
+            //var userInfo = GetCRAFTUserInfo();
+            //var userInfo = GetCRAFT2UserInfo();
+
+            var conditionId = "DRIF-CONDITION-1201";
+            await DeleteConditionRequest(conditionId);
+            var requestId = await manager.Handle(new CreateConditionRequestCommand { ConditionId = conditionId, UserInfo = userInfo });
+            var request = mapper.Map<EMCR.DRR.Controllers.DraftConditionRequest>((await manager.Handle(new ConditionRequestQuery { ConditionId = conditionId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+            request.ShouldNotBeNull();
         }
 
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
@@ -631,51 +678,6 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             project.InterimReports.First().Forecast.ShouldNotBeNull();
         }
 
-        private async Task AllReportsApprovedForProject(string projectId)
-        {
-            var host = Application.Host;
-            var factory = host.Services.GetRequiredService<IDRRContextFactory>();
-            var ctx = factory.Create();
-            var project = (await ctx.drr_projects.Expand(p => p.drr_drr_project_drr_projectreport_Project).Where(p => p.drr_name == projectId).GetAllPagesAsync()).SingleOrDefault();
-            foreach (var report in project.drr_drr_project_drr_projectreport_Project)
-            {
-                //ctx.AttachTo(nameof(ctx.drr_projectreports), report);
-                report.statuscode = (int)ProjectReportStatusOptionSet.Approved;
-                ctx.UpdateObject(report);
-            }
-            await ctx.SaveChangesAsync();
-        }
-
-        private async Task ClearAllReportsForProject(string projectId)
-        {
-            var host = Application.Host;
-            var factory = host.Services.GetRequiredService<IDRRContextFactory>();
-            var ctx = factory.Create();
-            var project = (await ctx.drr_projects
-                .Expand(p => p.drr_drr_project_drr_projectreport_Project)
-                .Expand(p => p.drr_drr_project_drr_projectprogress_Project)
-                .Expand(p => p.drr_drr_project_drr_projectclaim_Project)
-                .Expand(p => p.drr_drr_project_drr_projectbudgetforecast_Project)
-                .Where(p => p.drr_name == projectId).GetAllPagesAsync()).SingleOrDefault();
-            foreach (var report in project.drr_drr_project_drr_projectreport_Project) { ctx.DeleteObject(report); }
-            foreach (var report in project.drr_drr_project_drr_projectprogress_Project) { ctx.DeleteObject(report); }
-            foreach (var report in project.drr_drr_project_drr_projectclaim_Project) { ctx.DeleteObject(report); }
-            foreach (var report in project.drr_drr_project_drr_projectbudgetforecast_Project) { ctx.DeleteObject(report); }
-
-            await ctx.SaveChangesAsync();
-        }
-
-        private async Task SetWorkplanActivityCopiedActivity(string activityId)
-        {
-            var host = Application.Host;
-            var factory = host.Services.GetRequiredService<IDRRContextFactory>();
-            var ctx = factory.Create();
-            var wp = (await ctx.drr_projectworkplanactivities.Where(p => p.drr_name == activityId).GetAllPagesAsync()).SingleOrDefault();
-            wp.drr_copiedactivity = (int)DRRTwoOptions.Yes;
-            ctx.UpdateObject(wp);
-            await ctx.SaveChangesAsync();
-        }
-
         [Test]
         public async Task CanAddAttachmentToProgressReport()
         {
@@ -748,7 +750,8 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             //var userInfo = GetCRAFTUserInfo();
 
             var conditionId = "DRIF-CONDITION-1201";
-            var condition = mapper.Map<EMCR.DRR.Controllers.ConditionRequest>((await manager.Handle(new DrrConditionsQuery { ConditionId = conditionId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+            await RecreateConditionRequest(conditionId, userInfo);
+            var condition = mapper.Map<EMCR.DRR.Controllers.ConditionRequest>((await manager.Handle(new ConditionRequestQuery { ConditionId = conditionId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
             foreach (var doc in condition.Attachments)
             {
                 await manager.Handle(new DeleteAttachmentCommand { Id = doc.Id, UserInfo = userInfo });
@@ -760,16 +763,16 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var contentType = "text/plain";
             var file = new S3FileStream { FileName = fileName, File = CreateFormFile(body, fileName, contentType), ContentType = "text/plain", };
 
-            var documentId = await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = condition.Id, RecordType = EMCR.DRR.Managers.Intake.RecordType.ConditionRequest, FileStream = file, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.ConditionApproval }, UserInfo = userInfo });
+            var documentId = await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = condition.ConditionId, RecordType = EMCR.DRR.Managers.Intake.RecordType.ConditionRequest, FileStream = file, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.ConditionApproval }, UserInfo = userInfo });
 
-            var conditionToUpdate = mapper.Map<EMCR.DRR.Controllers.ConditionRequest>((await manager.Handle(new DrrConditionsQuery { ConditionId = conditionId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+            var conditionToUpdate = mapper.Map<EMCR.DRR.Controllers.ConditionRequest>((await manager.Handle(new ConditionRequestQuery { ConditionId = conditionId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
             conditionToUpdate.Attachments.Count().ShouldBe(1);
             conditionToUpdate.Attachments.Single().DocumentType.ShouldBe(EMCR.DRR.API.Model.DocumentType.ConditionApproval);
             conditionToUpdate.Attachments.Single().Comments = "condition report comments";
 
             await manager.Handle(new SaveConditionRequestCommand { Condition = conditionToUpdate, UserInfo = userInfo });
 
-            var updatedCondition = mapper.Map<EMCR.DRR.Controllers.ConditionRequest>((await manager.Handle(new DrrConditionsQuery { ConditionId = conditionId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+            var updatedCondition = mapper.Map<EMCR.DRR.Controllers.ConditionRequest>((await manager.Handle(new ConditionRequestQuery { ConditionId = conditionId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
             updatedCondition.Attachments.Single().Comments.ShouldBe(conditionToUpdate.Attachments.Single().Comments);
         }
 
@@ -782,6 +785,75 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var document = (FileQueryResult)(await manager.Handle(new DownloadAttachment { Id = "fed185a3-b079-4a4c-9680-36b220352cdc", UserInfo = userInfo }));
             document.File.FileName.ShouldNotBeNull();
 
+        }
+
+        private async Task AllReportsApprovedForProject(string projectId)
+        {
+            var host = Application.Host;
+            var factory = host.Services.GetRequiredService<IDRRContextFactory>();
+            var ctx = factory.Create();
+            var project = (await ctx.drr_projects.Expand(p => p.drr_drr_project_drr_projectreport_Project).Where(p => p.drr_name == projectId).GetAllPagesAsync()).SingleOrDefault();
+            foreach (var report in project.drr_drr_project_drr_projectreport_Project)
+            {
+                //ctx.AttachTo(nameof(ctx.drr_projectreports), report);
+                report.statuscode = (int)ProjectReportStatusOptionSet.Approved;
+                ctx.UpdateObject(report);
+            }
+            await ctx.SaveChangesAsync();
+        }
+
+        private async Task ClearAllReportsForProject(string projectId)
+        {
+            var host = Application.Host;
+            var factory = host.Services.GetRequiredService<IDRRContextFactory>();
+            var ctx = factory.Create();
+            var project = (await ctx.drr_projects
+                .Expand(p => p.drr_drr_project_drr_projectreport_Project)
+                .Expand(p => p.drr_drr_project_drr_projectprogress_Project)
+                .Expand(p => p.drr_drr_project_drr_projectclaim_Project)
+                .Expand(p => p.drr_drr_project_drr_projectbudgetforecast_Project)
+                .Where(p => p.drr_name == projectId).GetAllPagesAsync()).SingleOrDefault();
+            foreach (var report in project.drr_drr_project_drr_projectreport_Project) { ctx.DeleteObject(report); }
+            foreach (var report in project.drr_drr_project_drr_projectprogress_Project) { ctx.DeleteObject(report); }
+            foreach (var report in project.drr_drr_project_drr_projectclaim_Project) { ctx.DeleteObject(report); }
+            foreach (var report in project.drr_drr_project_drr_projectbudgetforecast_Project) { ctx.DeleteObject(report); }
+
+            await ctx.SaveChangesAsync();
+        }
+
+        private async Task RecreateConditionRequest(string conditionId, UserInfo userInfo)
+        {
+            await DeleteConditionRequest(conditionId);
+            await CreateConditionRequest(conditionId, userInfo);
+        }
+
+        private async Task DeleteConditionRequest(string conditionId)
+        {
+            var host = Application.Host;
+            var factory = host.Services.GetRequiredService<IDRRContextFactory>();
+            var ctx = factory.Create();
+            var request = await ctx.drr_requests.Expand(r => r.drr_ProjectConditionId).Where(r => r.drr_ProjectConditionId.drr_name == conditionId).SingleOrDefaultAsync();
+            if (request != null)
+            {
+                ctx.DeleteObject(request);
+                await ctx.SaveChangesAsync();
+            }
+        }
+
+        private async Task CreateConditionRequest(string conditionId, UserInfo userInfo)
+        {
+            await manager.Handle(new CreateConditionRequestCommand { ConditionId = conditionId, UserInfo = userInfo });
+        }
+
+        private async Task SetWorkplanActivityCopiedActivity(string activityId)
+        {
+            var host = Application.Host;
+            var factory = host.Services.GetRequiredService<IDRRContextFactory>();
+            var ctx = factory.Create();
+            var wp = await ctx.drr_projectworkplanactivities.Where(p => p.drr_name == activityId).SingleOrDefaultAsync();
+            wp.drr_copiedactivity = (int)DRRTwoOptions.Yes;
+            ctx.UpdateObject(wp);
+            await ctx.SaveChangesAsync();
         }
 
         private EMCR.DRR.Controllers.ProjectClaim FillInClaim(EMCR.DRR.Controllers.ProjectClaim claim, string uniqueSignature = "autotest")

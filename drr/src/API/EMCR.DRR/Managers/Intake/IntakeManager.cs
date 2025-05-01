@@ -5,6 +5,7 @@ using EMCR.DRR.API.Resources.Cases;
 using EMCR.DRR.API.Resources.Documents;
 using EMCR.DRR.API.Resources.Projects;
 using EMCR.DRR.API.Resources.Reports;
+using EMCR.DRR.API.Resources.Requests;
 using EMCR.DRR.API.Services;
 using EMCR.DRR.API.Services.S3;
 using EMCR.DRR.API.Utilities.Extensions;
@@ -19,6 +20,7 @@ namespace EMCR.DRR.Managers.Intake
         private readonly IMapper mapper;
         private readonly IApplicationRepository applicationRepository;
         private readonly IProjectRepository projectRepository;
+        private readonly IRequestRepository requestRepository;
         private readonly IReportRepository reportRepository;
         private readonly IDocumentRepository documentRepository;
         private readonly ICaseRepository caseRepository;
@@ -26,7 +28,7 @@ namespace EMCR.DRR.Managers.Intake
 
         private FileTag GetDeletedFileTag() => new FileTag { Tags = new[] { new Tag { Key = "Deleted", Value = "true" } } };
 
-        public IntakeManager(ILogger<IntakeManager> logger, IMapper mapper, IApplicationRepository applicationRepository, IDocumentRepository documentRepository, ICaseRepository caseRepository, IProjectRepository projectRepository, IReportRepository reportRepository, IS3Provider s3Provider)
+        public IntakeManager(ILogger<IntakeManager> logger, IMapper mapper, IApplicationRepository applicationRepository, IDocumentRepository documentRepository, ICaseRepository caseRepository, IProjectRepository projectRepository, IReportRepository reportRepository, IRequestRepository requestRepository, IS3Provider s3Provider)
         {
             this.logger = logger;
             this.mapper = mapper;
@@ -35,6 +37,7 @@ namespace EMCR.DRR.Managers.Intake
             this.caseRepository = caseRepository;
             this.projectRepository = projectRepository;
             this.reportRepository = reportRepository;
+            this.requestRepository = requestRepository;
             this.s3Provider = s3Provider;
         }
 
@@ -96,7 +99,7 @@ namespace EMCR.DRR.Managers.Intake
         {
             return cmd switch
             {
-                DrrConditionsQuery c => await Handle(c),
+                ConditionRequestQuery c => await Handle(c),
                 _ => throw new NotSupportedException($"{cmd.GetType().Name} is not supported")
             };
         }
@@ -134,7 +137,9 @@ namespace EMCR.DRR.Managers.Intake
                 SubmitForecastCommand c => await Handle(c),
                 CreateInvoiceCommand c => await Handle(c),
                 DeleteInvoiceCommand c => await Handle(c),
+                CreateConditionRequestCommand c => await Handle(c),
                 SaveConditionRequestCommand c => await Handle(c),
+                SubmitConditionRequestCommand c => await Handle(c),
                 _ => throw new NotSupportedException($"{cmd.GetType().Name} is not supported")
             };
         }
@@ -279,14 +284,14 @@ namespace EMCR.DRR.Managers.Intake
             return new ForecastsQueryResponse { Items = res.Items, Length = res.Length };
         }
 
-        public async Task<ConditionsQueryResponse> Handle(DrrConditionsQuery q)
+        public async Task<ConditionsQueryResponse> Handle(ConditionRequestQuery q)
         {
             if (!string.IsNullOrEmpty(q.ConditionId))
             {
                 var canAccess = await CanAccessCondition(q.ConditionId, q.BusinessId);
                 if (!canAccess) throw new ForbiddenException("Not allowed to access this forecast.");
             }
-            var res = await projectRepository.Query(new RequestsQuery { ConditionId = q.ConditionId, BusinessId = q.BusinessId });
+            var res = await requestRepository.Query(new RequestsQuery { ConditionId = q.ConditionId, BusinessId = q.BusinessId });
 
             return new ConditionsQueryResponse { Items = mapper.Map<IEnumerable<ConditionRequest>>(res.Items), Length = res.Length };
         }
@@ -628,18 +633,62 @@ namespace EMCR.DRR.Managers.Intake
             return id;
         }
 
+        public async Task<string> Handle(CreateConditionRequestCommand cmd)
+        {
+            var canAccess = await CanAccessCondition(cmd.ConditionId, cmd.UserInfo.BusinessId);
+            if (!canAccess) throw new ForbiddenException("Not allowed to access this condition.");
+
+            var existingCondition = (await projectRepository.Query(new ConditionsQuery { Id = cmd.ConditionId })).Items.SingleOrDefault();
+            if (existingCondition == null) throw new NotFoundException("Condition not found");
+
+            var existingRequest = (await requestRepository.Query(new RequestsQuery { ConditionId = cmd.ConditionId })).Items.SingleOrDefault();
+            if (existingRequest != null) throw new BusinessValidationException($"A request already exists for condition {cmd.ConditionId}");
+
+            //any other validations?
+
+            var res = (await requestRepository.Manage(new CreateConditionRequest { ConditionId = cmd.ConditionId })).Id;
+            return res;
+        }
+
         public async Task<string> Handle(SaveConditionRequestCommand cmd)
         {
             var canAccess = await CanAccessCondition(cmd.Condition.Id, cmd.UserInfo.BusinessId);
             if (!canAccess) throw new ForbiddenException("Not allowed to access this condition.");
 
-            var existingCondition = (await projectRepository.Query(new RequestsQuery { ConditionId = cmd.Condition.Id, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
+            var existingCondition = (await requestRepository.Query(new RequestsQuery { ConditionId = cmd.Condition.ConditionId, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
             if (existingCondition == null) throw new NotFoundException("Condition Request not found");
             //if (!ConditionInEditableStatus(existingCondition)) throw new BusinessValidationException("Not allowed to update Condition");
 
             var condition = mapper.Map<ConditionRequest>(cmd.Condition);
 
-            var id = (await projectRepository.Manage(new SaveConditionRequest { Condition = condition })).Id;
+            var id = (await requestRepository.Manage(new SaveConditionRequest { Condition = condition })).Id;
+            return id;
+        }
+        
+        public async Task<string> Handle(SubmitConditionRequestCommand cmd)
+        {
+            var canAccess = await CanAccessCondition(cmd.Condition.Id, cmd.UserInfo.BusinessId);
+            if (!canAccess) throw new ForbiddenException("Not allowed to access this condition.");
+
+            var existingCondition = (await requestRepository.Query(new RequestsQuery { ConditionId = cmd.Condition.ConditionId, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
+            if (existingCondition == null) throw new NotFoundException("Condition Request not found");
+            if (!RequestInEditableStatus(existingCondition)) throw new BusinessValidationException("Not allowed to update Condition Request");
+
+            var condition = mapper.Map<ConditionRequest>(cmd.Condition);
+
+            if (condition.InformationAccuracyStatement != true) throw new BusinessValidationException("InformationAccuracyStatement is required");
+            if (condition.AuthorizedRepresentativeStatement != true) throw new BusinessValidationException("AuthorizedRepresentativeStatement is required");
+            if (condition.AuthorizedRepresentative == null) throw new BusinessValidationException("Authorized Representative is required.");
+            if (string.IsNullOrEmpty(condition.AuthorizedRepresentative.FirstName)) throw new BusinessValidationException("Authorized Representative first name is required.");
+            if (string.IsNullOrEmpty(condition.AuthorizedRepresentative.LastName)) throw new BusinessValidationException("Authorized Representative last name is required.");
+            if (string.IsNullOrEmpty(condition.AuthorizedRepresentative.Department)) throw new BusinessValidationException("Authorized Representative department is required.");
+            if (string.IsNullOrEmpty(condition.AuthorizedRepresentative.Email)) throw new BusinessValidationException("Authorized Representative email is required.");
+            if (string.IsNullOrEmpty(condition.AuthorizedRepresentative.Phone)) throw new BusinessValidationException("Authorized Representative phone number is required.");
+            if (string.IsNullOrEmpty(condition.AuthorizedRepresentative.Title)) throw new BusinessValidationException("Authorized Representative title is required.");
+            condition.AuthorizedRepresentative.BCeId = cmd.UserInfo.UserId;
+
+            var id = (await requestRepository.Manage(new SaveConditionRequest { Condition = condition })).Id;
+            await requestRepository.Manage(new SubmitConditionRequest { Id = id });
             return id;
         }
 
@@ -851,12 +900,12 @@ namespace EMCR.DRR.Managers.Intake
             var documentRes = await documentRepository.Manage(new CreateForecastReportDocument { NewDocId = newDocId, ForecastId = cmd.AttachmentInfo.RecordId, Document = new Document { Name = cmd.AttachmentInfo.FileStream.FileName, DocumentType = cmd.AttachmentInfo.DocumentType, Size = GetFileSizeTest(cmd.AttachmentInfo.FileStream.File.Length) } });
             return documentRes.Id;
         }
-        
+
         private async Task<string> UploadRequestDocument(UploadAttachmentCommand cmd)
         {
-            var canAccess = await CanAccessConditionFromDocumentId(cmd.AttachmentInfo.Id, cmd.UserInfo.BusinessId);
+            var canAccess = await CanAccessRequestFromDocumentId(cmd.AttachmentInfo.Id, cmd.UserInfo.BusinessId);
             if (!canAccess) throw new ForbiddenException("Not allowed to access this condition request.");
-            var condition = (await projectRepository.Query(new RequestsQuery { ConditionId = cmd.AttachmentInfo.RecordId })).Items.SingleOrDefault();
+            var condition = (await requestRepository.Query(new RequestsQuery { ConditionId = cmd.AttachmentInfo.RecordId })).Items.SingleOrDefault();
             if (condition == null) throw new NotFoundException("Condition Request not found");
 
             var newDocId = Guid.NewGuid().ToString();
@@ -900,10 +949,10 @@ namespace EMCR.DRR.Managers.Intake
             await s3Provider.HandleCommand(new UpdateTagsCommand { Key = cmd.Id, Folder = $"{RecordType.ForecastReport.ToDescriptionString()}/{documentRes.RecordId}", FileTag = GetDeletedFileTag() });
             return documentRes.Id;
         }
-        
+
         private async Task<string> DeleteRequestDocument(DeleteAttachmentCommand cmd)
         {
-            var canAccess = await CanAccessConditionFromDocumentId(cmd.Id, cmd.UserInfo.BusinessId, true);
+            var canAccess = await CanAccessRequestFromDocumentId(cmd.Id, cmd.UserInfo.BusinessId, true);
             if (!canAccess) throw new ForbiddenException("Not allowed to access this condition request.");
             var documentRes = await documentRepository.Manage(new DeleteConditionRequestDocument { Id = cmd.Id });
             await s3Provider.HandleCommand(new UpdateTagsCommand { Key = cmd.Id, Folder = $"{RecordType.ConditionRequest.ToDescriptionString()}/{documentRes.RecordId}", FileTag = GetDeletedFileTag() });
@@ -955,6 +1004,11 @@ namespace EMCR.DRR.Managers.Intake
         private bool ForecastInEditableStatus(Forecast forecast)
         {
             return forecast.Status != ForecastStatus.Submitted;
+        }
+
+        private bool RequestInEditableStatus(Request request)
+        {
+            return request.Status != RequestStatus.Submitted;
         }
 
         private string GetNextReportPeriodFromString(ReportingScheduleType? type, string period)
@@ -1120,7 +1174,7 @@ namespace EMCR.DRR.Managers.Intake
             if (string.IsNullOrEmpty(id)) return true;
             return await projectRepository.CanAccessCondition(id, businessId);
         }
-        
+
         private async Task<bool> CanAccessForecastFromDocumentId(string? id, string? businessId, bool forUpdate = false)
         {
             if (string.IsNullOrEmpty(businessId)) throw new ArgumentNullException("Missing user's BusinessId");
@@ -1128,11 +1182,18 @@ namespace EMCR.DRR.Managers.Intake
             return await reportRepository.CanAccessForecastFromDocumentId(id, businessId, forUpdate);
         }
 
-        private async Task<bool> CanAccessConditionFromDocumentId(string? id, string? businessId, bool forUpdate = false)
+        private async Task<bool> CanAccessRequest(string? id, string? businessId)
         {
             if (string.IsNullOrEmpty(businessId)) throw new ArgumentNullException("Missing user's BusinessId");
             if (string.IsNullOrEmpty(id)) return true;
-            return await projectRepository.CanAccessConditionFromDocumentId(id, businessId, forUpdate);
+            return await requestRepository.CanAccessRequest(id, businessId);
+        }
+
+        private async Task<bool> CanAccessRequestFromDocumentId(string? id, string? businessId, bool forUpdate = false)
+        {
+            if (string.IsNullOrEmpty(businessId)) throw new ArgumentNullException("Missing user's BusinessId");
+            if (string.IsNullOrEmpty(id)) return true;
+            return await requestRepository.CanAccessRequestFromDocumentId(id, businessId, forUpdate);
         }
 
         private async Task<bool> CanAccessInvoiceFromDocumentId(string? id, string? businessId, bool forUpdate = false)

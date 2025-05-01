@@ -107,8 +107,13 @@ services.AddRepositories();
 services.AddS3Storage(configuration);
 services.AddTransient<IUserService, UserService>();
 services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-services.AddAutoMapper(typeof(ApplicationMapperProfile));
-services.AddAutoMapper(typeof(IntakeMapperProfile));
+
+var mapperTypes = AppDomain.CurrentDomain.GetAssemblies()
+        .SelectMany(a => a.GetTypes())
+        .Where(t => t.IsSubclassOf(typeof(Profile)));
+
+services.AddAutoMapper(mapperTypes.ToArray());
+
 services.AddSingleton(sp =>
 {
     var dynamicsApiEndpoint = configuration.GetValue<string>("Dynamics:DynamicsApiEndpoint");

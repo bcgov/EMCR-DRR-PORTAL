@@ -181,7 +181,6 @@ namespace EMCR.DRR.Managers.Intake
                     //add any payment conditions that don't have a request to the condition requests - with action "request to clear" 
                     if (dest.Conditions != null && dest.ConditionRequests != null)
                     {
-                        var createActionAdded = false;
                         var uncreatedConditions = dest.Conditions.Where(c => !dest.ConditionRequests.Any(r => r.ConditionId == c.Id));
                         foreach (var c in uncreatedConditions)
                         {
@@ -193,10 +192,9 @@ namespace EMCR.DRR.Managers.Intake
                                 ConditionName = c.ConditionName,
                                 DateMet = c.DateMet,
                                 Limit = c.Limit,
-                                Status = Controllers.RequestStatus.Draft,
-                                Actions = createActionAdded ? Array.Empty<RequestActions>() : new[] { RequestActions.Create }
+                                Status = null,
+                                Actions = [RequestActions.Create]
                             }).ToList();
-                            createActionAdded = true;
                         }
                     }
                 })
@@ -734,9 +732,8 @@ namespace EMCR.DRR.Managers.Intake
                 ;
 
             CreateMap<Controllers.ConditionRequest, ConditionRequest>()
-                .ForMember(dest => dest.CrmId, opt => opt.Ignore())
-                .ForMember(dest => dest.AuthorizedRepresentativeStatement, opt => opt.Ignore())
-                .ForMember(dest => dest.InformationAccuracyStatement, opt => opt.Ignore())
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => IntakeRequestStatusMapper(src.Status)))
                 .AfterMap((src, dest) =>
                 {
                     foreach (var prop in dest.GetType().GetProperties())
@@ -748,13 +745,13 @@ namespace EMCR.DRR.Managers.Intake
                     }
                 })
                 .ReverseMap()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => DrrRequestStatusMapper(src.Status)))
                 ;
 
             CreateMap<DraftConditionRequest, ConditionRequest>()
-                .ForMember(dest => dest.CrmId, opt => opt.Ignore())
                 .ForMember(dest => dest.AuthorizedRepresentativeStatement, opt => opt.Ignore())
                 .ForMember(dest => dest.InformationAccuracyStatement, opt => opt.Ignore())
-                //.ForMember(dest => dest.Status, opt => opt.MapFrom(src => IntakeForecastStatusMapper(src.Status)))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => IntakeRequestStatusMapper(src.Status)))
                 .AfterMap((src, dest) =>
                 {
                     foreach (var prop in dest.GetType().GetProperties())
@@ -766,30 +763,27 @@ namespace EMCR.DRR.Managers.Intake
                     }
                 })
                 .ReverseMap()
-                //.ForMember(dest => dest.Status, opt => opt.MapFrom(src => DrrForecastStatusMapper(src.Status)))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => DrrRequestStatusMapper(src.Status)))
                 ;
 
             CreateMap<ConditionRequest, Request>()
                 .ForMember(dest => dest.Type, opt => opt.MapFrom(src => RequestType.Condition))
                 .ForMember(dest => dest.Condition, opt => opt.MapFrom(src => new PaymentCondition
                 {
-                    Id = src.Id,
+                    Id = src.ConditionId,
                     ConditionName = src.ConditionName,
                     Limit = src.Limit,
                     ConditionMet = src.ConditionMet,
                     DateMet = src.DateMet,
                 }))
-                .ForMember(dest => dest.Name, opt => opt.Ignore())
-                .ForMember(dest => dest.Status, opt => opt.Ignore())
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Explanation))
                 .ReverseMap()
-                .ForMember(dest => dest.CrmId, opt => opt.Ignore())
-                .ForMember(dest => dest.Explanation, opt => opt.Ignore())
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Condition != null ? src.Condition.Id : null))
+                .ForMember(dest => dest.Explanation, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.ConditionId, opt => opt.MapFrom(src => src.Condition != null ? src.Condition.Id : null))
                 .ForMember(dest => dest.ConditionName, opt => opt.MapFrom(src => src.Condition != null ? src.Condition.ConditionName : null))
                 .ForMember(dest => dest.Limit, opt => opt.MapFrom(src => src.Condition != null ? src.Condition.Limit : null))
                 .ForMember(dest => dest.ConditionMet, opt => opt.MapFrom(src => src.Condition != null ? src.Condition.ConditionMet : null))
                 .ForMember(dest => dest.DateMet, opt => opt.MapFrom(src => src.Condition != null ? src.Condition.DateMet : null))
-                //.ForMember(dest => dest.Status, opt => opt.Ignore())
                 ;
 
             CreateMap<ConditionRequestListItem, Request>()
@@ -802,20 +796,31 @@ namespace EMCR.DRR.Managers.Intake
                     ConditionMet = src.ConditionMet,
                     DateMet = src.DateMet,
                 }))
-                .ForMember(dest => dest.Name, opt => opt.Ignore())
+                .ForMember(dest => dest.Description, opt => opt.Ignore())
                 .ForMember(dest => dest.Status, opt => opt.Ignore())
                 .ForMember(dest => dest.Attachments, opt => opt.Ignore())
                 .ForMember(dest => dest.AuthorizedRepresentative, opt => opt.Ignore())
                 .ForMember(dest => dest.AuthorizedRepresentativeStatement, opt => opt.Ignore())
                 .ForMember(dest => dest.InformationAccuracyStatement, opt => opt.Ignore())
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => IntakeRequestStatusMapper(src.Status)))
+                .AfterMap((src, dest) =>
+                {
+                    foreach (var prop in dest.GetType().GetProperties())
+                    {
+                        if (prop.PropertyType == typeof(string) && prop.GetValue(dest) == null)
+                        {
+                            prop.SetValue(dest, "");
+                        }
+                    }
+                })
                 .ReverseMap()
                 .ForMember(dest => dest.ConditionId, opt => opt.MapFrom(src => src.Condition != null ? src.Condition.Id : null))
                 .ForMember(dest => dest.ConditionName, opt => opt.MapFrom(src => src.Condition != null ? src.Condition.ConditionName : null))
                 .ForMember(dest => dest.Limit, opt => opt.MapFrom(src => src.Condition != null ? src.Condition.Limit : null))
                 .ForMember(dest => dest.ConditionMet, opt => opt.MapFrom(src => src.Condition != null ? src.Condition.ConditionMet : null))
                 .ForMember(dest => dest.DateMet, opt => opt.MapFrom(src => src.Condition != null ? src.Condition.DateMet : null))
-                .ForMember(dest => dest.Status, opt => opt.Ignore())
                 .ForMember(dest => dest.Actions, opt => opt.MapFrom(src => new[] { RequestActions.View, RequestActions.Edit }))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => DrrRequestStatusMapper(src.Status)))
                 ;
 
             CreateMap<string, PartneringProponent>()
@@ -1254,6 +1259,61 @@ namespace EMCR.DRR.Managers.Intake
                 default:
                     return ApplicationStatus.DraftProponent;
             }
+        }
+
+        private RequestStatus IntakeRequestStatusMapper(Controllers.RequestStatus? status)
+        {
+            switch (status)
+            {
+                case Controllers.RequestStatus.Draft:
+                    return RequestStatus.DraftProponent;
+                case Controllers.RequestStatus.Submitted:
+                    return RequestStatus.Submitted;
+                case Controllers.RequestStatus.TechnicalReview:
+                    return RequestStatus.TechnicalReview;
+                case Controllers.RequestStatus.ReadyForApproval:
+                    return RequestStatus.ReadyForApproval;
+                case Controllers.RequestStatus.ApprovalReview:
+                    return RequestStatus.ApprovalReview;
+                case Controllers.RequestStatus.UpdateNeeded:
+                    return RequestStatus.UpdateNeeded;
+                case Controllers.RequestStatus.Approved:
+                    return RequestStatus.Approved;
+                default: return RequestStatus.DraftProponent;
+            }
+        }
+
+        private Controllers.RequestStatus DrrRequestStatusMapper(RequestStatus? status)
+        {
+            switch (status)
+            {
+                case RequestStatus.DraftProponent:
+                case RequestStatus.DraftStaff:
+                    return Controllers.RequestStatus.Draft;
+                case RequestStatus.Submitted:
+                    return Controllers.RequestStatus.Submitted;
+                case RequestStatus.TechnicalReview:
+                    return Controllers.RequestStatus.TechnicalReview;
+                case RequestStatus.ReadyForApproval:
+                    return Controllers.RequestStatus.ReadyForApproval;
+                case RequestStatus.ApprovalReview:
+                    return Controllers.RequestStatus.ApprovalReview;
+                case RequestStatus.UpdateNeeded:
+                    return Controllers.RequestStatus.UpdateNeeded;
+                case RequestStatus.Approved:
+                    return Controllers.RequestStatus.Approved;
+                default: return Controllers.RequestStatus.Draft;
+            }
+
+            //DraftProponent,
+            //DraftStaff,
+            //Submitted,
+            //TechnicalReview,
+            //ReadyForApproval,
+            //ApprovalReview,
+            //UpdateNeeded,
+            //Approved,
+            //Inactive,
         }
     }
 }
