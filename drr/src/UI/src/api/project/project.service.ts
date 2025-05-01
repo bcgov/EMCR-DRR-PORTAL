@@ -18,6 +18,7 @@ import type {
   CanCreateReportResult,
   ConditionRequest,
   ConditionResult,
+  CreateConditionRequest,
   CreateInvoice,
   CreateInvoiceResult,
   CreateReport,
@@ -35,7 +36,6 @@ import type {
   ProgressReportResult,
   ProjectClaim,
   ProjectClaimResult,
-  ProjectCreateConditionRequestParams,
   ProjectResponse,
   ProjectResult,
 } from '../../model';
@@ -671,31 +671,28 @@ export class ProjectService {
   }
   projectCreateConditionRequest<TData = ConditionResult>(
     projectId: string,
-    params?: ProjectCreateConditionRequestParams,
+    createConditionRequest: CreateConditionRequest,
     options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'body' },
   ): Observable<TData>;
   projectCreateConditionRequest<TData = ConditionResult>(
     projectId: string,
-    params?: ProjectCreateConditionRequestParams,
+    createConditionRequest: CreateConditionRequest,
     options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'response' },
   ): Observable<AngularHttpResponse<TData>>;
   projectCreateConditionRequest<TData = ConditionResult>(
     projectId: string,
-    params?: ProjectCreateConditionRequestParams,
+    createConditionRequest: CreateConditionRequest,
     options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'events' },
   ): Observable<HttpEvent<TData>>;
   projectCreateConditionRequest<TData = ConditionResult>(
     projectId: string,
-    params?: ProjectCreateConditionRequestParams,
+    createConditionRequest: CreateConditionRequest,
     options?: HttpClientOptions,
   ): Observable<TData> {
     return this.http.post<TData>(
       `/api/project/${projectId}/condition-request`,
-      undefined,
-      {
-        ...options,
-        params: { ...params, ...options?.params },
-      },
+      createConditionRequest,
+      options,
     );
   }
 }
