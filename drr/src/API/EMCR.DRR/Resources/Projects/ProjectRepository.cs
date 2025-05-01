@@ -1,6 +1,5 @@
 ﻿using System.Text.RegularExpressions;
 using AutoMapper;
-using EMCR.DRR.API.Services;
 using EMCR.DRR.Dynamics;
 using EMCR.DRR.Managers.Intake;
 using EMCR.Utilities.Extensions;
@@ -19,32 +18,32 @@ namespace EMCR.DRR.API.Resources.Projects
             this.dRRContextFactory = dRRContextFactory;
         }
 
-        public async Task<ManageProjectCommandResult> Manage(ManageProjectCommand cmd)
+        public async Task<bool> CanAccessProject(string id, string businessId)
         {
-            return cmd switch
-            {
-                SaveConditionRequest c => await HandleSaveConditionRequest(c),
-                _ => throw new NotSupportedException($"{cmd.GetType().Name} is not supported")
-            };
+            var readCtx = dRRContextFactory.CreateReadOnly();
+            var existingProject = await readCtx.drr_projects.Expand(a => a.drr_ProponentName).Where(a => a.drr_name == id).SingleOrDefaultAsync();
+            if (existingProject == null) return true;
+            if (existingProject.drr_ProponentName == null) return false;
+            return (!string.IsNullOrEmpty(existingProject.drr_ProponentName.drr_bceidguid)) && existingProject.drr_ProponentName.drr_bceidguid.Equals(businessId);
         }
 
-        public async Task<ManageProjectCommandResult> HandleSaveConditionRequest(SaveConditionRequest cmd)
+        public async Task<bool> CanAccessCondition(string id, string businessId)
         {
-            var ctx = dRRContextFactory.Create();
-            var existingRequest = await ctx.drr_requests.Expand(r => r.drr_ProjectConditionId).Where(p => p.drr_ProjectConditionId.drr_name == cmd.Condition.Id).SingleOrDefaultAsync();
-            if (existingRequest == null) throw new NotFoundException("Condition Request not found");
+            var readCtx = dRRContextFactory.CreateReadOnly();
+            var existingCondition = await readCtx.drr_projectconditions.Expand(a => a.drr_Project).Where(a => a.drr_name == id).SingleOrDefaultAsync();
+            if (existingCondition == null) return true;
+            readCtx.AttachTo(nameof(readCtx.drr_projects), existingCondition.drr_Project);
+            await readCtx.LoadPropertyAsync(existingCondition.drr_Project, nameof(drr_project.drr_ProponentName));
+            return (!string.IsNullOrEmpty(existingCondition.drr_Project.drr_ProponentName.drr_bceidguid)) && existingCondition.drr_Project.drr_ProponentName.drr_bceidguid.Equals(businessId);
+        }
 
-            ctx.DetachAll();
-            var drrRequest = mapper.Map<drr_request>(cmd.Condition);
-            drrRequest.drr_requestid = existingRequest.drr_requestid;
-
-            ctx.AttachTo(nameof(ctx.drr_requests), drrRequest);
-
-            //ctx.UpdateObject(drrRequest);
-            //await ctx.SaveChangesAsync();
-            ctx.DetachAll();
-
-            return new ManageProjectCommandResult { Id = existingRequest.drr_ProjectConditionId.drr_name };
+        public async Task<ManageProjectCommandResult> Manage(ManageProjectCommand cmd)
+        {
+            await Task.CompletedTask;
+            return cmd switch
+            {
+                _ => throw new NotSupportedException($"{cmd.GetType().Name} is not supported")
+            };
         }
 
         public async Task<ProjectQueryResult> Query(ProjectQuery query)
@@ -56,32 +55,27 @@ namespace EMCR.DRR.API.Resources.Projects
             };
         }
 
-        public async Task<RequestQueryResult> Query(RequestQuery query)
+        public async Task<ConditionQueryResult> Query(ConditionQuery query)
         {
             return query switch
             {
-                RequestsQuery q => await HandleQueryRequest(q),
+                ConditionsQuery q => await HandleQueryCondition(q),
                 _ => throw new NotSupportedException($"{query.GetType().Name} is not supported")
             };
         }
 
-        private async Task<RequestQueryResult> HandleQueryRequest(RequestsQuery query)
+        private async Task<ConditionQueryResult> HandleQueryCondition(ConditionsQuery query)
         {
             var ct = new CancellationTokenSource().Token;
             var readCtx = dRRContextFactory.CreateReadOnly();
 
-            var requestsQuery = readCtx.drr_requests.Expand(r => r.drr_ProjectConditionId)
-                .Where(a => a.statuscode != (int)InvoiceStatusOptionSet.Inactive);
-            if (!string.IsNullOrEmpty(query.Id)) requestsQuery = requestsQuery.Where(a => a.drr_requestid == Guid.Parse(query.Id));
-            if (!string.IsNullOrEmpty(query.Name)) requestsQuery = requestsQuery.Where(a => a.drr_name == query.Name);
-            if (!string.IsNullOrEmpty(query.ConditionId)) requestsQuery = requestsQuery.Where(a => a.drr_ProjectConditionId.drr_name == query.ConditionId);
+            var requestsQuery = readCtx.drr_projectconditions.Where(a => a.statuscode != (int)InvoiceStatusOptionSet.Inactive);
+            if (!string.IsNullOrEmpty(query.Id)) requestsQuery = requestsQuery.Where(a => a.drr_name == query.Id);
 
             var results = (await requestsQuery.GetAllPagesAsync(ct)).ToList();
             var length = results.Count;
-            
-            await Parallel.ForEachAsync(results, ct, async (request, ct) => await ParallelLoadRequest(readCtx, request, ct));
 
-            return new RequestQueryResult { Items = mapper.Map<IEnumerable<Request>>(results), Length = length };
+            return new ConditionQueryResult { Items = mapper.Map<IEnumerable<PaymentCondition>>(results), Length = length };
         }
 
         private async Task<ProjectQueryResult> HandleQueryProject(ProjectsQuery query)
@@ -256,64 +250,6 @@ namespace EMCR.DRR.API.Resources.Projects
                 var projectReport = project.drr_drr_project_drr_projectreport_Project.Where(pr => pr._drr_claimreport_value == report.drr_projectclaimid).SingleOrDefault();
                 if (projectReport != null) report.drr_ProjectReport = projectReport;
             });
-        }
-
-        private static async Task ParallelLoadRequest(DRRContext ctx, drr_request request, CancellationToken ct)
-        {
-            ctx.AttachTo(nameof(DRRContext.drr_requests), request);
-            var loadTasks = new List<Task>
-            {
-                ctx.LoadPropertyAsync(request, nameof(drr_request.drr_ProjectConditionId), ct),
-                ctx.LoadPropertyAsync(request, nameof(drr_request.drr_request_bcgov_documenturl_RequestId), ct)
-            };
-
-            await Task.WhenAll(loadTasks);
-
-            var secondLoadTasks = new List<Task>{
-                ParallelLoadRequestDocumentTypes(ctx, request, ct),
-            };
-
-            await Task.WhenAll(secondLoadTasks);
-        }
-
-        private static async Task ParallelLoadRequestDocumentTypes(DRRContext ctx, drr_request request, CancellationToken ct)
-        {
-            await request.drr_request_bcgov_documenturl_RequestId.ForEachAsync(5, async doc =>
-            {
-                ctx.AttachTo(nameof(DRRContext.bcgov_documenturls), doc);
-                await ctx.LoadPropertyAsync(doc, nameof(bcgov_documenturl.bcgov_DocumentType), ct);
-            });
-        }
-
-        public async Task<bool> CanAccessProject(string id, string businessId)
-        {
-            var readCtx = dRRContextFactory.CreateReadOnly();
-            var existingProject = await readCtx.drr_projects.Expand(a => a.drr_ProponentName).Where(a => a.drr_name == id).SingleOrDefaultAsync();
-            if (existingProject == null) return true;
-            if (existingProject.drr_ProponentName == null) return false;
-            return (!string.IsNullOrEmpty(existingProject.drr_ProponentName.drr_bceidguid)) && existingProject.drr_ProponentName.drr_bceidguid.Equals(businessId);
-        }
-
-        public async Task<bool> CanAccessCondition(string id, string businessId)
-        {
-            var readCtx = dRRContextFactory.CreateReadOnly();
-            var existingCondition = await readCtx.drr_projectconditions.Expand(a => a.drr_Project).Where(a => a.drr_name == id).SingleOrDefaultAsync();
-            if (existingCondition == null) return true;
-            readCtx.AttachTo(nameof(readCtx.drr_projects), existingCondition.drr_Project);
-            await readCtx.LoadPropertyAsync(existingCondition.drr_Project, nameof(drr_project.drr_ProponentName));
-            return (!string.IsNullOrEmpty(existingCondition.drr_Project.drr_ProponentName.drr_bceidguid)) && existingCondition.drr_Project.drr_ProponentName.drr_bceidguid.Equals(businessId);
-        }
-
-        public async Task<bool> CanAccessConditionFromDocumentId(string id, string businessId, bool forUpdate)
-        {
-            var readCtx = dRRContextFactory.CreateReadOnly();
-            var document = await readCtx.bcgov_documenturls.Expand(d => d.drr_RequestId).Where(a => a.bcgov_documenturlid == Guid.Parse(id)).SingleOrDefaultAsync();
-            var existingRequest = await readCtx.drr_requests.Expand(a => a.drr_ProjectId).Where(a => a.drr_requestid == document._drr_requestid_value).SingleOrDefaultAsync();
-            if (existingRequest == null) return true;
-            if (forUpdate && existingRequest.statuscode == (int)RequestStatusOptionSet.Inactive) return false;
-            readCtx.AttachTo(nameof(readCtx.drr_projects), existingRequest.drr_ProjectId);
-            await readCtx.LoadPropertyAsync(existingRequest.drr_ProjectId, nameof(drr_project.drr_ProponentName));
-            return (!string.IsNullOrEmpty(existingRequest.drr_ProjectId.drr_ProponentName.drr_bceidguid)) && existingRequest.drr_ProjectId.drr_ProponentName.drr_bceidguid.Equals(businessId);
         }
 
         private List<drr_project> SortAndPageResults(List<drr_project> projects, ProjectsQuery query)

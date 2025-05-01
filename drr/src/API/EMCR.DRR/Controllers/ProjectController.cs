@@ -330,7 +330,7 @@ namespace EMCR.DRR.Controllers
         {
             try
             {
-                var condition = (await intakeManager.Handle(new DrrConditionsQuery { ConditionId = conditionId, BusinessId = GetCurrentBusinessId() })).Items.FirstOrDefault();
+                var condition = (await intakeManager.Handle(new ConditionRequestQuery { ConditionId = conditionId, BusinessId = GetCurrentBusinessId() })).Items.FirstOrDefault();
                 if (condition == null) return new NotFoundObjectResult(new ProblemDetails { Type = "NotFoundException", Title = "Not Found", Detail = "" });
                 return Ok(mapper.Map<DraftConditionRequest>(condition));
             }
@@ -349,6 +349,39 @@ namespace EMCR.DRR.Controllers
 
                 var drr_id = await intakeManager.Handle(new SaveConditionRequestCommand { Condition = mapper.Map<ConditionRequest>(condition), UserInfo = GetCurrentUser() });
                 return Ok(new ConditionResult { Id = drr_id });
+            }
+            catch (Exception e)
+            {
+                return errorParser.Parse(e, logger);
+            }
+        }
+
+        [HttpPatch("{projectId}/condition-requests/by-condition/{conditionId}/submit")]
+        public async Task<ActionResult<ConditionResult>> SubmitConditionRequest([FromBody] ConditionRequest condition, string projectId, string conditionId)
+        {
+            try
+            {
+                condition.Id = conditionId;
+                condition.Status = RequestStatus.Draft;
+
+                var drr_id = await intakeManager.Handle(new SubmitConditionRequestCommand { Condition = condition, UserInfo = GetCurrentUser() });
+                return Ok(new ConditionResult { Id = drr_id });
+            }
+            catch (Exception e)
+            {
+                return errorParser.Parse(e, logger);
+            }
+        }
+
+        [HttpPost("{projectId}/condition-request")]
+        public async Task<ActionResult<DraftConditionRequest>> CreateConditionRequest([FromQuery] string conditionId, string projectId)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(conditionId)) throw new ArgumentNullException(nameof(conditionId));
+                var condition = (await intakeManager.Handle(new ConditionRequestQuery { ConditionId = conditionId, BusinessId = GetCurrentBusinessId() })).Items.FirstOrDefault();
+                if (condition == null) return new NotFoundObjectResult(new ProblemDetails { Type = "NotFoundException", Title = "Not Found", Detail = "" });
+                return Ok(mapper.Map<DraftConditionRequest>(condition));
             }
             catch (Exception e)
             {
@@ -428,6 +461,7 @@ namespace EMCR.DRR.Controllers
     public class DraftConditionRequest
     {
         public string? Id { get; set; }
+        public string? ConditionId { get; set; }
         public string? ConditionName { get; set; }
         public decimal? Limit { get; set; }
         public bool? ConditionMet { get; set; }
@@ -435,6 +469,7 @@ namespace EMCR.DRR.Controllers
         public DateTime? DateMet { get; set; }
         public IEnumerable<Attachment>? Attachments { get; set; }
         public ContactDetails? AuthorizedRepresentative { get; set; }
+        public RequestStatus? Status { get; set; }
     }
 
     public class InterimReport
@@ -602,7 +637,7 @@ namespace EMCR.DRR.Controllers
         public decimal? Limit { get; set; }
         public bool? ConditionMet { get; set; }
         public DateTime? DateMet { get; set; }
-        public RequestStatus Status { get; set; }
+        public RequestStatus? Status { get; set; }
         public required IEnumerable<RequestActions> Actions { get; set; } = Array.Empty<RequestActions>();
     }
 
@@ -1030,11 +1065,20 @@ namespace EMCR.DRR.Controllers
         [Description("Draft")]
         Draft,
 
-        [Description("Cleared")]
-        Cleared,
+        [Description("Submitted")]
+        Submitted,
+        
+        [Description("Ready For Approval")]
+        ReadyForApproval,     
+        
+        [Description("Approval Review")]
+        ApprovalReview,    
+        
+        [Description("Approved")]
+        Approved,    
 
-        [Description("Requested")]
-        Requested,
+        [Description("Technical Review")]
+        TechnicalReview,
 
         [Description("Update Needed")]
         UpdateNeeded,

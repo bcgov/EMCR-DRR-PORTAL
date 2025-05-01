@@ -3,6 +3,7 @@ using EMCR.DRR.API.Resources.Cases;
 using EMCR.DRR.API.Resources.Documents;
 using EMCR.DRR.API.Resources.Projects;
 using EMCR.DRR.API.Resources.Reports;
+using EMCR.DRR.API.Resources.Requests;
 using EMCR.DRR.Resources.Applications;
 
 namespace EMCR.DRR.Controllers
@@ -17,6 +18,7 @@ namespace EMCR.DRR.Controllers
             services.AddTransient<IDocumentRepository, DocumentRepository>();
             services.AddTransient<IProjectRepository, ProjectRepository>();
             services.AddTransient<IReportRepository, ReportRepository>();
+            services.AddTransient<IRequestRepository, RequestRepository>();
             return services;
         }
     }

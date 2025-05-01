@@ -10,14 +10,14 @@ namespace EMCR.DRR.Managers.Intake
         Task<DeclarationQueryResult> Handle(DeclarationQuery query);
         Task<EntitiesQueryResult> Handle(EntitiesQuery query);
         Task<string> Handle(IntakeCommand cmd);
-        Task<ApplicationQueryResponse> Handle(ApplicationQuery cmd);
-        Task<ProjectsQueryResponse> Handle(ProjectQuery cmd);
-        Task<ReportsQueryResponse> Handle(ReportQuery cmd);
-        Task<ClaimsQueryResponse> Handle(ClaimQuery cmd);
-        Task<ProgressReportsQueryResponse> Handle(ProgressReportQuery cmd);
-        Task<ForecastsQueryResponse> Handle(ForecastQuery cmd);
-        Task<ConditionsQueryResponse> Handle(DrrConditionsQuery cmd);
-        Task<StorageQueryResults> Handle(AttachmentQuery cmd);
+        Task<ApplicationQueryResponse> Handle(ApplicationQuery query);
+        Task<ProjectsQueryResponse> Handle(ProjectQuery query);
+        Task<ReportsQueryResponse> Handle(ReportQuery query);
+        Task<ClaimsQueryResponse> Handle(ClaimQuery query);
+        Task<ProgressReportsQueryResponse> Handle(ProgressReportQuery query);
+        Task<ForecastsQueryResponse> Handle(ForecastQuery query);
+        Task<ConditionsQueryResponse> Handle(ConditionRequestQuery query);
+        Task<StorageQueryResults> Handle(AttachmentQuery query);
         Task<ValidateCanCreateReportResult> Handle(ValidateCanCreateReportCommand cmd);
     }
 
@@ -169,7 +169,7 @@ namespace EMCR.DRR.Managers.Intake
         public int Length { get; set; }
     }
 
-    public class DrrConditionsQuery : ConditionQuery
+    public class ConditionRequestQuery : ConditionQuery
     {
         public string? ConditionId { get; set; }
         public string? ProjectId { get; set; }
@@ -307,7 +307,19 @@ namespace EMCR.DRR.Managers.Intake
         public UserInfo UserInfo { get; set; }
     }
 
+    public class CreateConditionRequestCommand : IntakeCommand
+    {
+        public required string ConditionId { get; set; }
+        public UserInfo UserInfo { get; set; }
+    }
+
     public class SaveConditionRequestCommand : IntakeCommand
+    {
+        public Controllers.ConditionRequest Condition { get; set; } = null!;
+        public UserInfo UserInfo { get; set; }
+    }
+    
+    public class SubmitConditionRequestCommand : IntakeCommand
     {
         public Controllers.ConditionRequest Condition { get; set; } = null!;
         public UserInfo UserInfo { get; set; }
@@ -805,7 +817,7 @@ namespace EMCR.DRR.Managers.Intake
     public class ConditionRequest
     {
         public string? Id { get; set; }
-        public string? CrmId { get; set; }
+        public string? ConditionId { get; set; }
         public string? ConditionName { get; set; }
         public string? Explanation { get; set; }
         public decimal? Limit { get; set; }
@@ -815,6 +827,7 @@ namespace EMCR.DRR.Managers.Intake
         public ContactDetails? AuthorizedRepresentative { get; set; }
         public bool? AuthorizedRepresentativeStatement { get; set; }
         public bool? InformationAccuracyStatement { get; set; }
+        public RequestStatus? Status { get; set; }
     }
 
     public class InterimReport
@@ -914,7 +927,7 @@ namespace EMCR.DRR.Managers.Intake
         public string? Id { get; set; }
         public RequestType Type { get; set; }
         public PaymentCondition? Condition { get; set; }
-        public string? Name { get; set; }
+        public string? Description { get; set; }
         public RequestStatus Status { get; set; }
         public IEnumerable<BcGovDocument>? Attachments { get; set; }
         public ContactDetails? AuthorizedRepresentative { get; set; }
@@ -1286,10 +1299,15 @@ namespace EMCR.DRR.Managers.Intake
     
     public enum RequestStatus
     {
-        Cleared,
-        Draft,
-        Requested,
+        DraftProponent,
+        DraftStaff,
+        Submitted,
+        TechnicalReview,
+        ReadyForApproval,
+        ApprovalReview,
         UpdateNeeded,
+        Approved,
+        Inactive,
     }
 
     public enum ProponentType
