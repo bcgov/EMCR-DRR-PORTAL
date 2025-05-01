@@ -267,15 +267,24 @@ export class DrifProjectComponent {
   }
 
   createConditionRequest(condition: ConditionRequestListItem) {
-    // TODO: make call to API to create condition request
-
-    this.router.navigate([
-      'drif-projects',
-      this.projectId,
-      'conditions',
-      condition.id,
-      'edit',
-    ]);
+    this.projectService
+      .projectCreateConditionRequest(this.projectId!, {
+        conditionId: condition.conditionId,
+      })
+      .subscribe({
+        next: (res) => {
+          this.router.navigate([
+            'drif-projects',
+            this.projectId,
+            'conditions',
+            condition.conditionId,
+            'edit',
+          ]);
+        },
+        error: (err) => {
+          console.error(err);
+        },
+      });
   }
 
   canCreateConditionRequest(condition: ConditionRequestListItem) {
@@ -285,7 +294,7 @@ export class DrifProjectComponent {
   canEditConditionRequest(condition: ConditionRequestListItem) {
     return condition.actions?.includes(RequestActions.Edit);
   }
-  
+
   canViewConditionRequest(condition: ConditionRequestListItem) {
     return condition.actions?.includes(RequestActions.View);
   }

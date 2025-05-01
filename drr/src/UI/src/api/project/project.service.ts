@@ -16,6 +16,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import type {
   CanCreateReportResult,
+  ConditionRequest,
   ConditionResult,
   CreateInvoice,
   CreateInvoiceResult,
@@ -34,6 +35,7 @@ import type {
   ProgressReportResult,
   ProjectClaim,
   ProjectClaimResult,
+  ProjectCreateConditionRequestParams,
   ProjectResponse,
   ProjectResult,
 } from '../../model';
@@ -637,6 +639,65 @@ export class ProjectService {
       options,
     );
   }
+  projectSubmitConditionRequest<TData = ConditionResult>(
+    projectId: string,
+    conditionId: string,
+    conditionRequest: ConditionRequest,
+    options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'body' },
+  ): Observable<TData>;
+  projectSubmitConditionRequest<TData = ConditionResult>(
+    projectId: string,
+    conditionId: string,
+    conditionRequest: ConditionRequest,
+    options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'response' },
+  ): Observable<AngularHttpResponse<TData>>;
+  projectSubmitConditionRequest<TData = ConditionResult>(
+    projectId: string,
+    conditionId: string,
+    conditionRequest: ConditionRequest,
+    options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'events' },
+  ): Observable<HttpEvent<TData>>;
+  projectSubmitConditionRequest<TData = ConditionResult>(
+    projectId: string,
+    conditionId: string,
+    conditionRequest: ConditionRequest,
+    options?: HttpClientOptions,
+  ): Observable<TData> {
+    return this.http.patch<TData>(
+      `/api/project/${projectId}/condition-requests/by-condition/${conditionId}/submit`,
+      conditionRequest,
+      options,
+    );
+  }
+  projectCreateConditionRequest<TData = DraftConditionRequest>(
+    projectId: string,
+    params?: ProjectCreateConditionRequestParams,
+    options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'body' },
+  ): Observable<TData>;
+  projectCreateConditionRequest<TData = DraftConditionRequest>(
+    projectId: string,
+    params?: ProjectCreateConditionRequestParams,
+    options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'response' },
+  ): Observable<AngularHttpResponse<TData>>;
+  projectCreateConditionRequest<TData = DraftConditionRequest>(
+    projectId: string,
+    params?: ProjectCreateConditionRequestParams,
+    options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'events' },
+  ): Observable<HttpEvent<TData>>;
+  projectCreateConditionRequest<TData = DraftConditionRequest>(
+    projectId: string,
+    params?: ProjectCreateConditionRequestParams,
+    options?: HttpClientOptions,
+  ): Observable<TData> {
+    return this.http.post<TData>(
+      `/api/project/${projectId}/condition-request`,
+      undefined,
+      {
+        ...options,
+        params: { ...params, ...options?.params },
+      },
+    );
+  }
 }
 
 export type ProjectGetClientResult = NonNullable<ProjectResponse>;
@@ -667,3 +728,7 @@ export type ProjectGetConditionRequestClientResult =
   NonNullable<DraftConditionRequest>;
 export type ProjectUpdateConditionRequestClientResult =
   NonNullable<ConditionResult>;
+export type ProjectSubmitConditionRequestClientResult =
+  NonNullable<ConditionResult>;
+export type ProjectCreateConditionRequestClientResult =
+  NonNullable<DraftConditionRequest>;

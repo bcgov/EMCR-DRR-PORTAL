@@ -11,5 +11,4 @@ export type FormType = (typeof FormType)[keyof typeof FormType];
 export const FormType = {
   Application: 'Application',
   Report: 'Report',
-  Request: 'Request',
 } as const;

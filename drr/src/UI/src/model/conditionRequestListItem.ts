@@ -21,5 +21,6 @@ export interface ConditionRequestListItem {
   id?: string;
   /** @nullable */
   limit?: number;
+  /** @nullable */
   status?: RequestStatus;
 }

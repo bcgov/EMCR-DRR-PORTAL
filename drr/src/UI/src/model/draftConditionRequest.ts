@@ -6,12 +6,15 @@
  */
 import type { Attachment } from './attachment';
 import type { ContactDetails } from './contactDetails';
+import type { RequestStatus } from './requestStatus';
 
 export interface DraftConditionRequest {
   /** @nullable */
   attachments?: Attachment[];
   /** @nullable */
   authorizedRepresentative?: ContactDetails;
+  /** @nullable */
+  conditionId?: string;
   /** @nullable */
   conditionMet?: boolean;
   /** @nullable */
@@ -24,4 +27,6 @@ export interface DraftConditionRequest {
   id?: string;
   /** @nullable */
   limit?: number;
+  /** @nullable */
+  status?: RequestStatus;
 }

@@ -156,11 +156,11 @@ export class DrifConditionClearComponent {
 
       this.authorizedRepresentativeText = this.optionsStore.getDeclarations?.(
         DeclarationType.AuthorizedRepresentative,
-        FormType.Request,
+        FormType.Application,
       );
       this.accuracyOfInformationText = this.optionsStore.getDeclarations?.(
         DeclarationType.AccuracyOfInformation,
-        FormType.Request,
+        FormType.Application,
       );
 
       // TODO: use contion % or description from API
@@ -447,7 +447,7 @@ export class DrifConditionClearComponent {
         .attachmentUploadAttachment({
           RecordId: this.conditionId,
           RecordType: RecordType.ConditionRequest,
-          DocumentType: DocumentType.ConditionRequest,
+          DocumentType: DocumentType.ConditionApproval,
           ContentType:
             file.type === ''
               ? this.fileService.getCustomContentType(file)
@@ -460,7 +460,7 @@ export class DrifConditionClearComponent {
               name: file.name,
               comments: '',
               id: attachment.id,
-              documentType: DocumentType.ConditionRequest,
+              documentType: DocumentType.ConditionApproval,
             } as CondtionRequestAttachmentForm;
 
             this.attachmentsArray.push(
