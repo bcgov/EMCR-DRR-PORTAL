@@ -374,14 +374,13 @@ namespace EMCR.DRR.Controllers
         }
 
         [HttpPost("{projectId}/condition-request")]
-        public async Task<ActionResult<DraftConditionRequest>> CreateConditionRequest([FromQuery] string conditionId, string projectId)
+        public async Task<ActionResult<ConditionResult>> CreateConditionRequest([FromQuery] string conditionId, string projectId)
         {
             try
             {
                 if (string.IsNullOrEmpty(conditionId)) throw new ArgumentNullException(nameof(conditionId));
-                var condition = (await intakeManager.Handle(new ConditionRequestQuery { ConditionId = conditionId, BusinessId = GetCurrentBusinessId() })).Items.FirstOrDefault();
-                if (condition == null) return new NotFoundObjectResult(new ProblemDetails { Type = "NotFoundException", Title = "Not Found", Detail = "" });
-                return Ok(mapper.Map<DraftConditionRequest>(condition));
+                var requestId = await intakeManager.Handle(new CreateConditionRequestCommand { ConditionId = conditionId, UserInfo = GetCurrentUser() });
+                return Ok(mapper.Map<ConditionResult>(requestId));
             }
             catch (Exception e)
             {
