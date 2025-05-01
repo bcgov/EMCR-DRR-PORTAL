@@ -374,12 +374,12 @@ namespace EMCR.DRR.Controllers
         }
 
         [HttpPost("{projectId}/condition-request")]
-        public async Task<ActionResult<ConditionResult>> CreateConditionRequest([FromQuery] string conditionId, string projectId)
+        public async Task<ActionResult<ConditionResult>> CreateConditionRequest([FromBody] CreateConditionRequest cmd, string projectId)
         {
             try
             {
-                if (string.IsNullOrEmpty(conditionId)) throw new ArgumentNullException(nameof(conditionId));
-                var requestId = await intakeManager.Handle(new CreateConditionRequestCommand { ConditionId = conditionId, UserInfo = GetCurrentUser() });
+                if (string.IsNullOrEmpty(cmd.ConditionId)) throw new ArgumentNullException(nameof(cmd.ConditionId));
+                var requestId = await intakeManager.Handle(new CreateConditionRequestCommand { ConditionId = cmd.ConditionId, UserInfo = GetCurrentUser() });
                 return Ok(mapper.Map<ConditionResult>(requestId));
             }
             catch (Exception e)
@@ -1092,6 +1092,11 @@ namespace EMCR.DRR.Controllers
     {
         public IEnumerable<DraftDrrProject> Projects { get; set; } = Array.Empty<DraftDrrProject>();
         public int Length { get; set; }
+    }
+
+    public class CreateConditionRequest
+    {
+        public required string ConditionId { get; set; }
     }
 
     public class ReportResult
