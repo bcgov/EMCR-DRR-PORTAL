@@ -43,6 +43,9 @@ namespace EMCR.DRR.API.Model
 
         [Description("Claims Form")]
         Claim,
+
+        [Description("Condition Request")]
+        ConditionRequest,
     }
 
     [JsonConverter(typeof(JsonStringEnumConverter))]

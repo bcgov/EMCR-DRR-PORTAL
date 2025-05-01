@@ -31,6 +31,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var res = mapper.Map<IEnumerable<EMCR.DRR.Controllers.DeclarationInfo>>((await manager.Handle(new DeclarationQuery())).Items);
             res.Count().ShouldBeGreaterThan(0);
             res.Where(d => d.Type == DeclarationType.AuthorizedRepresentative).Count().ShouldBeGreaterThan(0);
+            res.Where(d => d.ApplicationType == EMCR.DRR.API.Model.ApplicationType.ConditionRequest).Count().ShouldBeGreaterThan(0);
         }
     }
 }
