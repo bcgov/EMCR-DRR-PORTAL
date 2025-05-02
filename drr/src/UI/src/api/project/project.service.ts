@@ -586,85 +586,85 @@ export class ProjectService {
   }
   projectGetConditionRequest<TData = DraftConditionRequest>(
     projectId: string,
-    conditionId: string,
+    requestId: string,
     options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'body' },
   ): Observable<TData>;
   projectGetConditionRequest<TData = DraftConditionRequest>(
     projectId: string,
-    conditionId: string,
+    requestId: string,
     options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'response' },
   ): Observable<AngularHttpResponse<TData>>;
   projectGetConditionRequest<TData = DraftConditionRequest>(
     projectId: string,
-    conditionId: string,
+    requestId: string,
     options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'events' },
   ): Observable<HttpEvent<TData>>;
   projectGetConditionRequest<TData = DraftConditionRequest>(
     projectId: string,
-    conditionId: string,
+    requestId: string,
     options?: HttpClientOptions,
   ): Observable<TData> {
     return this.http.get<TData>(
-      `/api/project/${projectId}/condition-requests/by-condition/${conditionId}`,
+      `/api/project/${projectId}/condition-requests/${requestId}`,
       options,
     );
   }
   projectUpdateConditionRequest<TData = ConditionResult>(
     projectId: string,
-    conditionId: string,
+    requestId: string,
     draftConditionRequest: DraftConditionRequest,
     options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'body' },
   ): Observable<TData>;
   projectUpdateConditionRequest<TData = ConditionResult>(
     projectId: string,
-    conditionId: string,
+    requestId: string,
     draftConditionRequest: DraftConditionRequest,
     options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'response' },
   ): Observable<AngularHttpResponse<TData>>;
   projectUpdateConditionRequest<TData = ConditionResult>(
     projectId: string,
-    conditionId: string,
+    requestId: string,
     draftConditionRequest: DraftConditionRequest,
     options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'events' },
   ): Observable<HttpEvent<TData>>;
   projectUpdateConditionRequest<TData = ConditionResult>(
     projectId: string,
-    conditionId: string,
+    requestId: string,
     draftConditionRequest: DraftConditionRequest,
     options?: HttpClientOptions,
   ): Observable<TData> {
     return this.http.patch<TData>(
-      `/api/project/${projectId}/condition-requests/by-condition/${conditionId}`,
+      `/api/project/${projectId}/condition-requests/${requestId}`,
       draftConditionRequest,
       options,
     );
   }
   projectSubmitConditionRequest<TData = ConditionResult>(
     projectId: string,
-    conditionId: string,
+    requestId: string,
     conditionRequest: ConditionRequest,
     options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'body' },
   ): Observable<TData>;
   projectSubmitConditionRequest<TData = ConditionResult>(
     projectId: string,
-    conditionId: string,
+    requestId: string,
     conditionRequest: ConditionRequest,
     options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'response' },
   ): Observable<AngularHttpResponse<TData>>;
   projectSubmitConditionRequest<TData = ConditionResult>(
     projectId: string,
-    conditionId: string,
+    requestId: string,
     conditionRequest: ConditionRequest,
     options?: Omit<HttpClientOptions, 'observe'> & { observe?: 'events' },
   ): Observable<HttpEvent<TData>>;
   projectSubmitConditionRequest<TData = ConditionResult>(
     projectId: string,
-    conditionId: string,
+    requestId: string,
     conditionRequest: ConditionRequest,
     options?: HttpClientOptions,
   ): Observable<TData> {
     return this.http.patch<TData>(
-      `/api/project/${projectId}/condition-requests/by-condition/${conditionId}/submit`,
+      `/api/project/${projectId}/condition-requests/${requestId}/submit`,
       conditionRequest,
       options,
     );

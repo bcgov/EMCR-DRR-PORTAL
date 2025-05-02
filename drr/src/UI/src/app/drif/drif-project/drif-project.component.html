@@ -281,61 +281,63 @@
         >
           <ng-container matColumnDef="conditionName">
             <th mat-header-cell *matHeaderCellDef>Condition</th>
-            <td mat-cell *matCellDef="let condition">
-              {{ condition.conditionName }}
+            <td mat-cell *matCellDef="let conditionRequest">
+              {{ conditionRequest.conditionName }}
             </td>
           </ng-container>
           <ng-container matColumnDef="limit">
             <th mat-header-cell *matHeaderCellDef>Limit</th>
-            <td mat-cell *matCellDef="let condition">{{ condition.limit }}%</td>
+            <td mat-cell *matCellDef="let conditionRequest">
+              {{ conditionRequest.limit }}%
+            </td>
           </ng-container>
           <ng-container matColumnDef="conditionMet">
             <th mat-header-cell *matHeaderCellDef>Condition Met?</th>
-            <td mat-cell *matCellDef="let condition">
-              {{ condition.conditionMet ? "Yes" : "No" }}
+            <td mat-cell *matCellDef="let conditionRequest">
+              {{ conditionRequest.conditionMet ? "Yes" : "No" }}
             </td>
           </ng-container>
           <ng-container matColumnDef="dateMet">
             <th mat-header-cell *matHeaderCellDef>Date Met</th>
-            <td mat-cell *matCellDef="let condition">
-              {{ condition.dateMet | date: "yyyy-MM-dd" }}
+            <td mat-cell *matCellDef="let conditionRequest">
+              {{ conditionRequest.dateMet | date: "yyyy-MM-dd" }}
             </td>
           </ng-container>
           <ng-container matColumnDef="status">
             <th mat-header-cell *matHeaderCellDef>Request to Clear Status</th>
-            <td mat-cell *matCellDef="let condition">
-              {{ condition.status | transloco }}
+            <td mat-cell *matCellDef="let conditionRequest">
+              {{ conditionRequest.status | transloco }}
             </td>
           </ng-container>
           <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef style="text-align: center">
               Action
             </th>
-            <td mat-cell *matCellDef="let condition">
+            <td mat-cell *matCellDef="let conditionRequest">
               <div class="table-actions">
-                @if (canCreateConditionRequest(condition)) {
+                @if (canCreateConditionRequest(conditionRequest)) {
                   <button
                     mat-raised-button
                     color="primary"
-                    (click)="createConditionRequest(condition)"
+                    (click)="createConditionRequest(conditionRequest)"
                   >
                     Request to Clear
                   </button>
                 }
-                @if (canViewConditionRequest(condition)) {
+                @if (canViewConditionRequest(conditionRequest)) {
                   <button
                     mat-raised-button
                     color="primary"
-                    [routerLink]="['conditions', condition.conditionId, 'view']"
+                    [routerLink]="['conditions', conditionRequest.id, 'view']"
                   >
                     View
                   </button>
                 }
-                @if (canEditConditionRequest(condition)) {
+                @if (canEditConditionRequest(conditionRequest)) {
                   <button
                     mat-raised-button
                     color="primary"
-                    [routerLink]="['conditions', condition.conditionId, 'edit']"
+                    [routerLink]="['conditions', conditionRequest.id, 'edit']"
                   >
                     Edit
                   </button>

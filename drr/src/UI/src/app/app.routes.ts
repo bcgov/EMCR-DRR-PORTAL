@@ -113,12 +113,12 @@ export const routes: Routes = [
     canActivate: [AuthenticationGuard],
   },
   {
-    path: 'drif-projects/:projectId/conditions/:conditionId/edit',
+    path: 'drif-projects/:projectId/conditions/:requestId/edit',
     component: DrifConditionClearComponent,
     canActivate: [AuthenticationGuard],
   },
   {
-    path: 'drif-projects/:projectId/conditions/:conditionId/view',
+    path: 'drif-projects/:projectId/conditions/:requestId/view',
     component: DrifConditionViewComponent,
     canActivate: [AuthenticationGuard],
   },

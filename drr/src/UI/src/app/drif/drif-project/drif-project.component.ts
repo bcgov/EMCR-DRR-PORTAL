@@ -270,10 +270,10 @@ export class DrifProjectComponent {
       });
   }
 
-  createConditionRequest(condition: ConditionRequestListItem) {
+  createConditionRequest(conditionRequest: ConditionRequestListItem) {
     this.projectService
       .projectCreateConditionRequest(this.projectId!, {
-        conditionId: condition.conditionId,
+        conditionId: conditionRequest.conditionId,
       })
       .subscribe({
         next: (res) => {
@@ -281,7 +281,7 @@ export class DrifProjectComponent {
             'drif-projects',
             this.projectId,
             'conditions',
-            condition.conditionId,
+            conditionRequest.id,
             'edit',
           ]);
         },

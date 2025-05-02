@@ -94,7 +94,7 @@ export class DrifConditionClearComponent {
   toastService = inject(HotToastService);
 
   projectId?: string;
-  conditionId?: string;
+  requestId?: string;
 
   conditionName?: string;
 
@@ -153,7 +153,7 @@ export class DrifConditionClearComponent {
 
     this.route.params.subscribe((params) => {
       this.projectId = params['projectId'];
-      this.conditionId = params['conditionId'];
+      this.requestId = params['requestId'];
 
       this.authorizedRepresentativeText = this.optionsStore.getDeclarations?.(
         DeclarationType.AuthorizedRepresentative,
@@ -165,9 +165,6 @@ export class DrifConditionClearComponent {
         FormType.Application,
         ApplicationType.ConditionRequest,
       );
-
-      // TODO: use contion % or description from API
-      this.conditionName = `Request to Clear Condition for ProjectName`;
 
       this.load().then(() => {
         this.formChanged = false;
@@ -219,7 +216,7 @@ export class DrifConditionClearComponent {
   load(): Promise<void> {
     return new Promise((resolve) => {
       this.projectService
-        .projectGetConditionRequest(this.projectId!, this.conditionId!)
+        .projectGetConditionRequest(this.projectId!, this.requestId!)
         .subscribe({
           next: (response: DraftConditionRequest) => {
             // TODO: if (hasCondidionMessage in response)
@@ -233,6 +230,8 @@ export class DrifConditionClearComponent {
             //   ConditionDMAPMessageForm,
             //   conditionDMAPMessageFormValue,
             // ) as IFormGroup<ConditionDMAPMessageForm>;
+
+            this.conditionName = `Request to Clear ${response.limit}% Condition`;
 
             const conditionFormValue = new ConditionForm({
               conditionRequest: {
@@ -344,7 +343,7 @@ export class DrifConditionClearComponent {
     const formValue = this.conditionForm?.value as ConditionForm;
 
     const conditionRequestDraft: DraftConditionRequest = {
-      id: this.conditionId,
+      id: this.requestId,
       conditionName: formValue?.conditionRequest?.name,
       limit: formValue?.conditionRequest?.limit,
       dateMet: formValue?.conditionRequest?.date,
@@ -373,7 +372,7 @@ export class DrifConditionClearComponent {
     this.projectService
       .projectUpdateConditionRequest(
         this.projectId!,
-        this.conditionId!,
+        this.requestId!,
         conditionRequestDraft,
       )
       .subscribe({
@@ -407,7 +406,7 @@ export class DrifConditionClearComponent {
     const conditionFormValue = this.getFormValue();
 
     this.projectService
-      .projectSubmitConditionRequest(this.projectId!, this.conditionId!, {
+      .projectSubmitConditionRequest(this.projectId!, this.requestId!, {
         ...conditionFormValue,
       })
       .subscribe({
@@ -450,7 +449,7 @@ export class DrifConditionClearComponent {
 
       this.attachmentsService
         .attachmentUploadAttachment({
-          RecordId: this.conditionId,
+          RecordId: this.requestId,
           RecordType: RecordType.ConditionRequest,
           DocumentType: DocumentType.ConditionApproval,
           ContentType:
@@ -491,7 +490,7 @@ export class DrifConditionClearComponent {
   removeFile(fileId: string) {
     this.attachmentsService
       .attachmentDeleteAttachment(fileId, {
-        recordId: this.conditionId,
+        recordId: this.requestId,
         id: fileId,
       })
       .subscribe({
