@@ -94,7 +94,7 @@ export class DrifConditionClearComponent {
   toastService = inject(HotToastService);
 
   projectId?: string;
-  conditionId?: string;
+  requestId?: string;
 
   conditionName?: string;
 
@@ -153,7 +153,7 @@ export class DrifConditionClearComponent {
 
     this.route.params.subscribe((params) => {
       this.projectId = params['projectId'];
-      this.conditionId = params['conditionId'];
+      this.requestId = params['requestId'];
 
       this.authorizedRepresentativeText = this.optionsStore.getDeclarations?.(
         DeclarationType.AuthorizedRepresentative,
@@ -165,9 +165,6 @@ export class DrifConditionClearComponent {
         FormType.Application,
         ApplicationType.ConditionRequest,
       );
-
-      // TODO: use contion % or description from API
-      this.conditionName = `Request to Clear Condition for ProjectName`;
 
       this.load().then(() => {
         this.formChanged = false;
@@ -219,7 +216,7 @@ export class DrifConditionClearComponent {
   load(): Promise<void> {
     return new Promise((resolve) => {
       this.projectService
-        .projectGetConditionRequest(this.projectId!, this.conditionId!)
+        .projectGetConditionRequest(this.projectId!, this.requestId!)
         .subscribe({
           next: (response: DraftConditionRequest) => {
             // TODO: if (hasCondidionMessage in response)
@@ -234,6 +231,8 @@ export class DrifConditionClearComponent {
             //   conditionDMAPMessageFormValue,
             // ) as IFormGroup<ConditionDMAPMessageForm>;
 
+            this.conditionName = `Request to Clear ${response.limit}% Condition`;
+
             const conditionFormValue = new ConditionForm({
               conditionRequest: {
                 name: response.conditionName,
@@ -243,12 +242,15 @@ export class DrifConditionClearComponent {
                 attachments: response.attachments,
               },
               declaration: {
-                // TODO: use correct values from API
+                authorizedRepresentative: response.authorizedRepresentative,
               },
             });
-            this.conditionForm?.patchValue(conditionFormValue, {
-              emitEvent: false,
-            });
+            this.conditionForm = this.formBuilder.formGroup(
+              ConditionForm,
+              conditionFormValue,
+            ) as IFormGroup<ConditionForm>;
+            this.conditionForm.get('conditionRequest.name')?.disable();
+            this.conditionForm.get('conditionRequest.limit')?.disable();
 
             this.setAuthorizedRepresentative();
 
@@ -344,7 +346,7 @@ export class DrifConditionClearComponent {
     const formValue = this.conditionForm?.value as ConditionForm;
 
     const conditionRequestDraft: DraftConditionRequest = {
-      id: this.conditionId,
+      id: this.requestId,
       conditionName: formValue?.conditionRequest?.name,
       limit: formValue?.conditionRequest?.limit,
       dateMet: formValue?.conditionRequest?.date,
@@ -373,7 +375,7 @@ export class DrifConditionClearComponent {
     this.projectService
       .projectUpdateConditionRequest(
         this.projectId!,
-        this.conditionId!,
+        this.requestId!,
         conditionRequestDraft,
       )
       .subscribe({
@@ -406,22 +408,24 @@ export class DrifConditionClearComponent {
 
     const conditionFormValue = this.getFormValue();
 
-    // this.projectService
-    //   .conditionSubmit(this.projectId!, this.conditionId!, {
-    //     ...conditionFormValue,
-    //   })
-    //   .subscribe({
-    //     next: () => {
-    //       this.toastService.close();
-    //       this.toastService.success('Condition clear request submitted');
+    this.projectService
+      .projectSubmitConditionRequest(this.projectId!, this.requestId!, {
+        ...conditionFormValue,
+      })
+      .subscribe({
+        next: () => {
+          this.toastService.close();
+          this.toastService.success(
+            'Condition clear request submitted successfully',
+          );
 
-    //       this.router.navigate(['drif-projects', this.projectId]);
-    //     },
-    //     error: (error) => {
-    //       this.toastService.error('Condition clear request failed');
-    //       console.error(error);
-    //     },
-    //   });
+          this.router.navigate(['drif-projects', this.projectId]);
+        },
+        error: (error) => {
+          this.toastService.error('Condition clear request submission failed');
+          console.error(error);
+        },
+      });
   }
 
   get declarationForm() {
@@ -448,7 +452,7 @@ export class DrifConditionClearComponent {
 
       this.attachmentsService
         .attachmentUploadAttachment({
-          RecordId: this.conditionId,
+          RecordId: this.requestId,
           RecordType: RecordType.ConditionRequest,
           DocumentType: DocumentType.ConditionApproval,
           ContentType:
@@ -489,7 +493,7 @@ export class DrifConditionClearComponent {
   removeFile(fileId: string) {
     this.attachmentsService
       .attachmentDeleteAttachment(fileId, {
-        recordId: this.conditionId,
+        recordId: this.requestId,
         id: fileId,
       })
       .subscribe({

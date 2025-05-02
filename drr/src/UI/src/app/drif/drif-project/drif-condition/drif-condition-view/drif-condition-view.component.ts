@@ -28,7 +28,7 @@ export class DrifConditionViewComponent {
   formBuilder = inject(RxFormBuilder);
 
   projectId?: string;
-  conditionId?: string;
+  requestId?: string;
 
   conditionForm?: IFormGroup<ConditionForm>;
 
@@ -37,14 +37,14 @@ export class DrifConditionViewComponent {
   ngOnInit() {
     this.route.params.subscribe((params) => {
       this.projectId = params['projectId'];
-      this.conditionId = params['conditionId'];
+      this.requestId = params['requestId'];
     });
   }
 
   load(): Promise<void> {
     return new Promise((resolve, reject) => {
       // this.projectService
-      //   .projectGetCondition(this.projectId!, this.conditionId!)
+      //   .projectGetCondition(this.projectId!, this.requestId!)
       //   .subscribe({
       //     next: (condition) => {
       //       const formValue = new ConditionForm(condition);

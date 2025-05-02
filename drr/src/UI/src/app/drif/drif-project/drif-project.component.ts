@@ -139,7 +139,11 @@ export class DrifProjectComponent {
         this.project = project;
 
         this.conditionsDataSource.data = [...project.conditions!];
-        this.conditionRequestsDataSource.data = [...project.conditionRequests!];
+        this.conditionRequestsDataSource.data = [
+          ...project.conditionRequests?.sort(
+            (a, b) => (a.limit || 0) - (b.limit || 0),
+          )!,
+        ];
 
         this.costProjectionsDataSource.data = [...project.costProjections!];
 
@@ -266,10 +270,10 @@ export class DrifProjectComponent {
       });
   }
 
-  createConditionRequest(condition: ConditionRequestListItem) {
+  createConditionRequest(conditionRequest: ConditionRequestListItem) {
     this.projectService
       .projectCreateConditionRequest(this.projectId!, {
-        conditionId: condition.conditionId,
+        conditionId: conditionRequest.conditionId,
       })
       .subscribe({
         next: (res) => {
@@ -277,7 +281,7 @@ export class DrifProjectComponent {
             'drif-projects',
             this.projectId,
             'conditions',
-            condition.conditionId,
+            conditionRequest.id,
             'edit',
           ]);
         },
