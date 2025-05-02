@@ -291,7 +291,7 @@ namespace EMCR.DRR.Managers.Intake
                 var canAccess = await CanAccessCondition(q.ConditionId, q.BusinessId);
                 if (!canAccess) throw new ForbiddenException("Not allowed to access this forecast.");
             }
-            var res = await requestRepository.Query(new RequestsQuery { ConditionId = q.ConditionId, BusinessId = q.BusinessId });
+            var res = await requestRepository.Query(new RequestsQuery { Id = q.Id, ConditionId = q.ConditionId });
 
             return new ConditionsQueryResponse { Items = mapper.Map<IEnumerable<ConditionRequest>>(res.Items), Length = res.Length };
         }
@@ -641,8 +641,8 @@ namespace EMCR.DRR.Managers.Intake
             var existingCondition = (await projectRepository.Query(new ConditionsQuery { Id = cmd.ConditionId })).Items.SingleOrDefault();
             if (existingCondition == null) throw new NotFoundException("Condition not found");
 
-            var existingRequest = (await requestRepository.Query(new RequestsQuery { ConditionId = cmd.ConditionId })).Items.SingleOrDefault();
-            if (existingRequest != null) throw new BusinessValidationException($"A request already exists for condition {cmd.ConditionId}");
+            var existingRequest = (await requestRepository.Query(new RequestsQuery { ConditionId = cmd.ConditionId, ProjectId = cmd.ProjectId })).Items.SingleOrDefault();
+            if (existingRequest != null) throw new BusinessValidationException($"A request already exists on project {cmd.ProjectId} for condition {cmd.ConditionId}");
 
             //any other validations?
 
@@ -652,25 +652,25 @@ namespace EMCR.DRR.Managers.Intake
 
         public async Task<string> Handle(SaveConditionRequestCommand cmd)
         {
-            var canAccess = await CanAccessCondition(cmd.Condition.Id, cmd.UserInfo.BusinessId);
+            var canAccess = await CanAccessCondition(cmd.Request.Id, cmd.UserInfo.BusinessId);
             if (!canAccess) throw new ForbiddenException("Not allowed to access this condition.");
 
-            var existingCondition = (await requestRepository.Query(new RequestsQuery { ConditionId = cmd.Condition.ConditionId, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
+            var existingCondition = (await requestRepository.Query(new RequestsQuery { Id = cmd.Request.Id })).Items.SingleOrDefault();
             if (existingCondition == null) throw new NotFoundException("Condition Request not found");
             //if (!ConditionInEditableStatus(existingCondition)) throw new BusinessValidationException("Not allowed to update Condition");
 
-            var condition = mapper.Map<ConditionRequest>(cmd.Condition);
+            var condition = mapper.Map<ConditionRequest>(cmd.Request);
 
             var id = (await requestRepository.Manage(new SaveConditionRequest { Condition = condition })).Id;
             return id;
         }
-        
+
         public async Task<string> Handle(SubmitConditionRequestCommand cmd)
         {
             var canAccess = await CanAccessCondition(cmd.Condition.Id, cmd.UserInfo.BusinessId);
             if (!canAccess) throw new ForbiddenException("Not allowed to access this condition.");
 
-            var existingCondition = (await requestRepository.Query(new RequestsQuery { ConditionId = cmd.Condition.ConditionId, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
+            var existingCondition = (await requestRepository.Query(new RequestsQuery { Id = cmd.Condition.Id })).Items.SingleOrDefault();
             if (existingCondition == null) throw new NotFoundException("Condition Request not found");
             if (!RequestInEditableStatus(existingCondition)) throw new BusinessValidationException("Not allowed to update Condition Request");
 

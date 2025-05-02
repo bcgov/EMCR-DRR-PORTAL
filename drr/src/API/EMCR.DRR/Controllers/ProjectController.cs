@@ -325,14 +325,14 @@ namespace EMCR.DRR.Controllers
             }
         }
 
-        [HttpGet("{projectId}/condition-requests/by-condition/{conditionId}")]
-        public async Task<ActionResult<DraftConditionRequest>> GetConditionRequest(string projectId, string conditionId)
+        [HttpGet("{projectId}/condition-requests/{requestId}")]
+        public async Task<ActionResult<DraftConditionRequest>> GetConditionRequest(string projectId, string requestId)
         {
             try
             {
-                var condition = (await intakeManager.Handle(new ConditionRequestQuery { ConditionId = conditionId, BusinessId = GetCurrentBusinessId() })).Items.FirstOrDefault();
-                if (condition == null) return new NotFoundObjectResult(new ProblemDetails { Type = "NotFoundException", Title = "Not Found", Detail = "" });
-                return Ok(mapper.Map<DraftConditionRequest>(condition));
+                var request = (await intakeManager.Handle(new ConditionRequestQuery { Id = requestId, BusinessId = GetCurrentBusinessId() })).Items.FirstOrDefault();
+                if (request == null) return new NotFoundObjectResult(new ProblemDetails { Type = "NotFoundException", Title = "Not Found", Detail = "" });
+                return Ok(mapper.Map<DraftConditionRequest>(request));
             }
             catch (Exception e)
             {
@@ -340,14 +340,14 @@ namespace EMCR.DRR.Controllers
             }
         }
 
-        [HttpPatch("{projectId}/condition-requests/by-condition/{conditionId}")]
-        public async Task<ActionResult<ConditionResult>> UpdateConditionRequest([FromBody] DraftConditionRequest condition, string projectId, string conditionId)
+        [HttpPatch("{projectId}/condition-requests/{requestId}")]
+        public async Task<ActionResult<ConditionResult>> UpdateConditionRequest([FromBody] DraftConditionRequest request, string projectId, string requestId)
         {
             try
             {
-                condition.Id = conditionId;
+                request.Id = requestId;
 
-                var drr_id = await intakeManager.Handle(new SaveConditionRequestCommand { Condition = mapper.Map<ConditionRequest>(condition), UserInfo = GetCurrentUser() });
+                var drr_id = await intakeManager.Handle(new SaveConditionRequestCommand { Request = mapper.Map<ConditionRequest>(request), UserInfo = GetCurrentUser() });
                 return Ok(new ConditionResult { Id = drr_id });
             }
             catch (Exception e)
@@ -356,15 +356,15 @@ namespace EMCR.DRR.Controllers
             }
         }
 
-        [HttpPatch("{projectId}/condition-requests/by-condition/{conditionId}/submit")]
-        public async Task<ActionResult<ConditionResult>> SubmitConditionRequest([FromBody] ConditionRequest condition, string projectId, string conditionId)
+        [HttpPatch("{projectId}/condition-requests/{requestId}/submit")]
+        public async Task<ActionResult<ConditionResult>> SubmitConditionRequest([FromBody] ConditionRequest request, string projectId, string requestId)
         {
             try
             {
-                condition.Id = conditionId;
-                condition.Status = RequestStatus.Draft;
+                request.Id = requestId;
+                request.Status = RequestStatus.Draft;
 
-                var drr_id = await intakeManager.Handle(new SubmitConditionRequestCommand { Condition = condition, UserInfo = GetCurrentUser() });
+                var drr_id = await intakeManager.Handle(new SubmitConditionRequestCommand { Condition = request, UserInfo = GetCurrentUser() });
                 return Ok(new ConditionResult { Id = drr_id });
             }
             catch (Exception e)
@@ -379,7 +379,7 @@ namespace EMCR.DRR.Controllers
             try
             {
                 if (string.IsNullOrEmpty(cmd.ConditionId)) throw new ArgumentNullException(nameof(cmd.ConditionId));
-                var requestId = await intakeManager.Handle(new CreateConditionRequestCommand { ConditionId = cmd.ConditionId, UserInfo = GetCurrentUser() });
+                var requestId = await intakeManager.Handle(new CreateConditionRequestCommand { ConditionId = cmd.ConditionId, ProjectId = projectId, UserInfo = GetCurrentUser() });
                 return Ok(mapper.Map<ConditionResult>(requestId));
             }
             catch (Exception e)
@@ -627,7 +627,7 @@ namespace EMCR.DRR.Controllers
         public ContactDetails? Contact { get; set; }
         public bool? ProvincialRepresentativeRequest { get; set; }
     }
-    
+
     public class ConditionRequestListItem
     {
         public string? Id { get; set; }
@@ -648,7 +648,7 @@ namespace EMCR.DRR.Controllers
 
         [Description("Edit")]
         Edit,
-        
+
         [Description("Request to Clear")]
         Create,
     }
@@ -1057,7 +1057,7 @@ namespace EMCR.DRR.Controllers
         [Description("Skipped")]
         Skipped,
     }
-    
+
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum RequestStatus
     {
@@ -1066,15 +1066,15 @@ namespace EMCR.DRR.Controllers
 
         [Description("Submitted")]
         Submitted,
-        
+
         [Description("Ready For Approval")]
-        ReadyForApproval,     
-        
+        ReadyForApproval,
+
         [Description("Approval Review")]
-        ApprovalReview,    
-        
+        ApprovalReview,
+
         [Description("Approved")]
-        Approved,    
+        Approved,
 
         [Description("Technical Review")]
         TechnicalReview,
@@ -1115,7 +1115,7 @@ namespace EMCR.DRR.Controllers
     public class ForecastResult : ReportResult
     {
     }
-    
+
     public class ConditionResult : ReportResult
     {
     }

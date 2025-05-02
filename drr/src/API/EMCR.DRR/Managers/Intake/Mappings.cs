@@ -196,6 +196,8 @@ namespace EMCR.DRR.Managers.Intake
                                 Actions = [RequestActions.Create]
                             }).ToList();
                         }
+
+                        dest.ConditionRequests = dest.ConditionRequests.OrderBy(r => r.Limit).ToList();
                     }
                 })
                 ;
