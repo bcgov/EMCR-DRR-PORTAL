@@ -46,7 +46,7 @@ namespace EMCR.DRR.API.Resources.Requests
         public string? Id { get; set; }
         public string? Name { get; set; }
         public string? ConditionId { get; set; }
-        public string? BusinessId { get; set; }
+        public string? ProjectId { get; set; }
     }
 
     public enum RequestStatusOptionSet
