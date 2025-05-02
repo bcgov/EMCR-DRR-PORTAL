@@ -23,7 +23,7 @@ namespace EMCR.DRR.API.Resources.Requests
         public async Task<bool> CanAccessRequest(string id, string businessId)
         {
             var readCtx = dRRContextFactory.CreateReadOnly();
-            var existingRequest = await readCtx.drr_requests.Expand(a => a.drr_ProjectId).Where(a => a.drr_requestid == Guid.Parse(id)).SingleOrDefaultAsync();
+            var existingRequest = await readCtx.drr_requests.Expand(a => a.drr_ProjectId).Where(a => a.drr_name == id).SingleOrDefaultAsync();
             if (existingRequest == null) return true;
             readCtx.AttachTo(nameof(readCtx.drr_projects), existingRequest.drr_ProjectId);
             await readCtx.LoadPropertyAsync(existingRequest.drr_ProjectId, nameof(drr_project.drr_ProponentName));
@@ -77,7 +77,7 @@ namespace EMCR.DRR.API.Resources.Requests
         public async Task<ManageRequestCommandResult> HandleSaveConditionRequest(SaveConditionRequest cmd)
         {
             var ctx = dRRContextFactory.Create();
-            var existingRequest = await ctx.drr_requests.Where(p => p.drr_ProjectConditionId.drr_name == cmd.Condition.ConditionId).SingleOrDefaultAsync();
+            var existingRequest = await ctx.drr_requests.Where(p => p.drr_name == cmd.Request.Id).SingleOrDefaultAsync();
             if (existingRequest == null) throw new NotFoundException("Condition Request not found");
 
             var loadTasks = new List<Task>
@@ -89,7 +89,7 @@ namespace EMCR.DRR.API.Resources.Requests
             await Task.WhenAll(loadTasks);
 
             ctx.DetachAll();
-            var drrRequest = mapper.Map<drr_request>(cmd.Condition);
+            var drrRequest = mapper.Map<drr_request>(cmd.Request);
             drrRequest.drr_requestid = existingRequest.drr_requestid;
 
             foreach (var doc in drrRequest.drr_request_bcgov_documenturl_RequestId)

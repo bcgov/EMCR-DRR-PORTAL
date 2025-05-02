@@ -652,29 +652,29 @@ namespace EMCR.DRR.Managers.Intake
 
         public async Task<string> Handle(SaveConditionRequestCommand cmd)
         {
-            var canAccess = await CanAccessCondition(cmd.Request.Id, cmd.UserInfo.BusinessId);
-            if (!canAccess) throw new ForbiddenException("Not allowed to access this condition.");
+            var canAccess = await CanAccessRequest(cmd.Request.Id, cmd.UserInfo.BusinessId);
+            if (!canAccess) throw new ForbiddenException("Not allowed to access this condition request.");
 
-            var existingCondition = (await requestRepository.Query(new RequestsQuery { Id = cmd.Request.Id })).Items.SingleOrDefault();
-            if (existingCondition == null) throw new NotFoundException("Condition Request not found");
-            //if (!ConditionInEditableStatus(existingCondition)) throw new BusinessValidationException("Not allowed to update Condition");
+            var existingRequest = (await requestRepository.Query(new RequestsQuery { Id = cmd.Request.Id })).Items.SingleOrDefault();
+            if (existingRequest == null) throw new NotFoundException("Condition Request not found");
+            if (!RequestInEditableStatus(existingRequest)) throw new BusinessValidationException("Not allowed to update Condition Request");
 
-            var condition = mapper.Map<ConditionRequest>(cmd.Request);
+            var request = mapper.Map<ConditionRequest>(cmd.Request);
 
-            var id = (await requestRepository.Manage(new SaveConditionRequest { Condition = condition })).Id;
+            var id = (await requestRepository.Manage(new SaveConditionRequest { Request = request })).Id;
             return id;
         }
 
         public async Task<string> Handle(SubmitConditionRequestCommand cmd)
         {
-            var canAccess = await CanAccessCondition(cmd.Condition.Id, cmd.UserInfo.BusinessId);
-            if (!canAccess) throw new ForbiddenException("Not allowed to access this condition.");
+            var canAccess = await CanAccessRequest(cmd.Request.Id, cmd.UserInfo.BusinessId);
+            if (!canAccess) throw new ForbiddenException("Not allowed to access this condition request.");
 
-            var existingCondition = (await requestRepository.Query(new RequestsQuery { Id = cmd.Condition.Id })).Items.SingleOrDefault();
-            if (existingCondition == null) throw new NotFoundException("Condition Request not found");
-            if (!RequestInEditableStatus(existingCondition)) throw new BusinessValidationException("Not allowed to update Condition Request");
+            var existingRequest = (await requestRepository.Query(new RequestsQuery { Id = cmd.Request.Id })).Items.SingleOrDefault();
+            if (existingRequest == null) throw new NotFoundException("Condition Request not found");
+            if (!RequestInEditableStatus(existingRequest)) throw new BusinessValidationException("Not allowed to update Condition Request");
 
-            var condition = mapper.Map<ConditionRequest>(cmd.Condition);
+            var condition = mapper.Map<ConditionRequest>(cmd.Request);
 
             if (condition.InformationAccuracyStatement != true) throw new BusinessValidationException("InformationAccuracyStatement is required");
             if (condition.AuthorizedRepresentativeStatement != true) throw new BusinessValidationException("AuthorizedRepresentativeStatement is required");
@@ -687,7 +687,7 @@ namespace EMCR.DRR.Managers.Intake
             if (string.IsNullOrEmpty(condition.AuthorizedRepresentative.Title)) throw new BusinessValidationException("Authorized Representative title is required.");
             condition.AuthorizedRepresentative.BCeId = cmd.UserInfo.UserId;
 
-            var id = (await requestRepository.Manage(new SaveConditionRequest { Condition = condition })).Id;
+            var id = (await requestRepository.Manage(new SaveConditionRequest { Request = condition })).Id;
             await requestRepository.Manage(new SubmitConditionRequest { Id = id });
             return id;
         }
@@ -1008,7 +1008,7 @@ namespace EMCR.DRR.Managers.Intake
 
         private bool RequestInEditableStatus(Request request)
         {
-            return request.Status != RequestStatus.Submitted;
+            return request.Status == RequestStatus.DraftStaff || request.Status == RequestStatus.DraftProponent || request.Status == RequestStatus.UpdateNeeded;
         }
 
         private string GetNextReportPeriodFromString(ReportingScheduleType? type, string period)
