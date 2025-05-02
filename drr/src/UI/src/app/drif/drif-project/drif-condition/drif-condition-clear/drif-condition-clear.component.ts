@@ -242,12 +242,13 @@ export class DrifConditionClearComponent {
                 attachments: response.attachments,
               },
               declaration: {
-                // TODO: use correct values from API
+                authorizedRepresentative: response.authorizedRepresentative,
               },
             });
-            this.conditionForm?.patchValue(conditionFormValue, {
-              emitEvent: false,
-            });
+            this.conditionForm = this.formBuilder.formGroup(
+              ConditionForm,
+              conditionFormValue,
+            ) as IFormGroup<ConditionForm>;
 
             this.setAuthorizedRepresentative();
 
