@@ -323,7 +323,7 @@ namespace EMCR.DRR.Managers.Intake
     
     public class SubmitConditionRequestCommand : IntakeCommand
     {
-        public Controllers.ConditionRequest Condition { get; set; } = null!;
+        public Controllers.ConditionRequest Request { get; set; } = null!;
         public UserInfo UserInfo { get; set; }
     }
 

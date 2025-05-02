@@ -19,7 +19,7 @@ namespace EMCR.DRR.API.Resources.Requests
 
     public class SaveConditionRequest : ManageRequestCommand
     {
-        public required ConditionRequest Condition { get; set; }
+        public required ConditionRequest Request { get; set; }
     }
     
     public class SubmitConditionRequest : ManageRequestCommand
