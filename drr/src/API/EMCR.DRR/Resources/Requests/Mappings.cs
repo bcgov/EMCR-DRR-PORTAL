@@ -20,6 +20,7 @@ namespace EMCR.DRR.API.Resources.Requests
                     .ReverseMap()
                     .ValidateMemberList(MemberList.Destination)
                     .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.drr_name))
+                    .ForMember(dest => dest.CrmId, opt => opt.MapFrom(src => src.drr_requestid))
                     .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.drr_descriptionofrequest))
                     .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.drr_requesttype.HasValue ? (int?)Enum.Parse<RequestType>(((RequestTypeOptionSet)src.drr_requesttype).ToString()) : null))
                     .ForMember(dest => dest.Condition, opt => opt.MapFrom(src => src.drr_ProjectConditionId))

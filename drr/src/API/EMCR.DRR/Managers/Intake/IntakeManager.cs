@@ -124,8 +124,6 @@ namespace EMCR.DRR.Managers.Intake
                 FpSubmitApplicationCommand c => await Handle(c),
                 WithdrawApplicationCommand c => await Handle(c),
                 DeleteApplicationCommand c => await Handle(c),
-                UploadAttachmentCommand c => await Handle(c),
-                DeleteAttachmentCommand c => await Handle(c),
                 SaveProjectCommand c => await Handle(c),
                 SubmitProjectCommand c => await Handle(c),
                 SaveProgressReportCommand c => await Handle(c),
@@ -140,6 +138,8 @@ namespace EMCR.DRR.Managers.Intake
                 CreateConditionRequestCommand c => await Handle(c),
                 SaveConditionRequestCommand c => await Handle(c),
                 SubmitConditionRequestCommand c => await Handle(c),
+                UploadAttachmentCommand c => await Handle(c),
+                DeleteAttachmentCommand c => await Handle(c),
                 _ => throw new NotSupportedException($"{cmd.GetType().Name} is not supported")
             };
         }
@@ -905,12 +905,12 @@ namespace EMCR.DRR.Managers.Intake
         {
             var canAccess = await CanAccessRequestFromDocumentId(cmd.AttachmentInfo.Id, cmd.UserInfo.BusinessId);
             if (!canAccess) throw new ForbiddenException("Not allowed to access this condition request.");
-            var condition = (await requestRepository.Query(new RequestsQuery { ConditionId = cmd.AttachmentInfo.RecordId })).Items.SingleOrDefault();
-            if (condition == null) throw new NotFoundException("Condition Request not found");
+            var request = (await requestRepository.Query(new RequestsQuery { Id = cmd.AttachmentInfo.RecordId })).Items.SingleOrDefault();
+            if (request == null) throw new NotFoundException("Condition Request not found");
 
             var newDocId = Guid.NewGuid().ToString();
-            await s3Provider.HandleCommand(new UploadFileStreamCommand { Key = newDocId, FileStream = cmd.AttachmentInfo.FileStream, Folder = $"{cmd.AttachmentInfo.RecordType.ToDescriptionString()}/{condition.Id}" });
-            var documentRes = await documentRepository.Manage(new CreateConditionRequestDocument { NewDocId = newDocId, ConditionId = cmd.AttachmentInfo.RecordId, Document = new Document { Name = cmd.AttachmentInfo.FileStream.FileName, DocumentType = cmd.AttachmentInfo.DocumentType, Size = GetFileSizeTest(cmd.AttachmentInfo.FileStream.File.Length) } });
+            await s3Provider.HandleCommand(new UploadFileStreamCommand { Key = newDocId, FileStream = cmd.AttachmentInfo.FileStream, Folder = $"{cmd.AttachmentInfo.RecordType.ToDescriptionString()}/{request.CrmId}" });
+            var documentRes = await documentRepository.Manage(new CreateConditionRequestDocument { NewDocId = newDocId, RequestId = cmd.AttachmentInfo.RecordId, Document = new Document { Name = cmd.AttachmentInfo.FileStream.FileName, DocumentType = cmd.AttachmentInfo.DocumentType, Size = GetFileSizeTest(cmd.AttachmentInfo.FileStream.File.Length) } });
             return documentRes.Id;
         }
 
