@@ -249,6 +249,8 @@ export class DrifConditionClearComponent {
               ConditionForm,
               conditionFormValue,
             ) as IFormGroup<ConditionForm>;
+            this.conditionForm.get('conditionRequest.name')?.disable();
+            this.conditionForm.get('conditionRequest.limit')?.disable();
 
             this.setAuthorizedRepresentative();
 
