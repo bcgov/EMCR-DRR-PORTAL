@@ -216,7 +216,7 @@ namespace EMCR.DRR.API.Resources.Projects
 
         private static async Task ParallelLoadRequests(DRRContext ctx, drr_project project, CancellationToken ct)
         {
-            var conditionTypes = await ctx.drr_conditiontypes.GetAllPagesAsync();
+            var conditionTypes = (await ctx.drr_conditiontypes.GetAllPagesAsync()).ToList();
             await project.drr_project_drr_request_ProjectId.ForEachAsync(5, async request =>
             {
                 ctx.AttachTo(nameof(DRRContext.drr_requests), request);
