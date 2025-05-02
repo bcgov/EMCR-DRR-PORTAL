@@ -80,7 +80,7 @@ namespace EMCR.DRR.API.Resources.Documents
 
     public class CreateConditionRequestDocument : ManageDocumentCommand
     {
-        public required string ConditionId { get; set; }
+        public required string RequestId { get; set; }
         public required string NewDocId { get; set; }
         public required Document Document { get; set; }
     }

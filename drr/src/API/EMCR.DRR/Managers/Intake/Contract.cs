@@ -927,6 +927,7 @@ namespace EMCR.DRR.Managers.Intake
     public class Request
     {
         public string? Id { get; set; }
+        public string? CrmId { get; set; }
         public RequestType Type { get; set; }
         public PaymentCondition? Condition { get; set; }
         public string? Description { get; set; }

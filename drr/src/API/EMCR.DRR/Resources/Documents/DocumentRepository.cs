@@ -233,7 +233,7 @@ namespace EMCR.DRR.API.Resources.Documents
             var ctx = dRRContextFactory.Create();
             var bcGovDocument = mapper.Map<bcgov_documenturl>(cmd.Document);
             bcGovDocument.bcgov_documenturlid = Guid.Parse(cmd.NewDocId);
-            var request = await ctx.drr_requests.Expand(r => r.drr_ProjectConditionId).Where(a => a.drr_ProjectConditionId.drr_name == cmd.ConditionId).SingleOrDefaultAsync();
+            var request = await ctx.drr_requests.Expand(r => r.drr_ProjectConditionId).Where(a => a.drr_name == cmd.RequestId).SingleOrDefaultAsync();
             //if (progressReport.statuscode != (int)ApplicationStatusOptionSet.DraftProponent)
             //{
             //    progressReport.statuscode = (int)ApplicationStatusOptionSet.DraftProponent;

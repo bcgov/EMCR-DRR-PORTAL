@@ -94,6 +94,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
 
             var queryOptions = new QueryOptions { Filter = "programType=DRIF,applicationType=FP,status=*UnderReview\\|EligiblePending" };
             var queryRes = await manager.Handle(new DrrProjectsQuery { Id = TestProjectId, BusinessId = userInfo.BusinessId, QueryOptions = queryOptions });
+            //var queryRes = await manager.Handle(new DrrProjectsQuery { Id = "DRIF-PRJ-1139", BusinessId = userInfo.BusinessId, QueryOptions = queryOptions });
             var projects = mapper.Map<IEnumerable<DraftDrrProject>>(queryRes.Items);
             projects.Count().ShouldBe(1);
             projects.First().Claims.Last().ReportPeriod.ShouldNotBeNullOrEmpty();
@@ -765,7 +766,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
         }
 
         [Test]
-        public async Task CanAddAttachmentToCondition()
+        public async Task CanAddAttachmentToConditionRequest()
         {
             var userInfo = GetTestUserInfo();
             //var userInfo = GetCRAFTUserInfo();
@@ -773,8 +774,8 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var conditionId = "DRIF-CONDITION-1201";
             var projectId = "DRIF-PRJ-1052";
             var requestId = await EnsureRequestExists(conditionId, projectId, userInfo, true);
-            var condition = mapper.Map<EMCR.DRR.Controllers.ConditionRequest>((await manager.Handle(new ConditionRequestQuery { ConditionId = conditionId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
-            foreach (var doc in condition.Attachments)
+            var request = mapper.Map<EMCR.DRR.Controllers.ConditionRequest>((await manager.Handle(new ConditionRequestQuery { Id = requestId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+            foreach (var doc in request.Attachments)
             {
                 await manager.Handle(new DeleteAttachmentCommand { Id = doc.Id, UserInfo = userInfo });
             }
@@ -785,16 +786,17 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var contentType = "text/plain";
             var file = new S3FileStream { FileName = fileName, File = CreateFormFile(body, fileName, contentType), ContentType = "text/plain", };
 
-            var documentId = await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = condition.ConditionId, RecordType = EMCR.DRR.Managers.Intake.RecordType.ConditionRequest, FileStream = file, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.ConditionApproval }, UserInfo = userInfo });
+            var documentId = await manager.Handle(new UploadAttachmentCommand { AttachmentInfo = new AttachmentInfo { RecordId = request.Id, RecordType = EMCR.DRR.Managers.Intake.RecordType.ConditionRequest, FileStream = file, DocumentType = EMCR.DRR.Managers.Intake.DocumentType.ConditionApproval }, UserInfo = userInfo });
 
-            var conditionToUpdate = mapper.Map<EMCR.DRR.Controllers.ConditionRequest>((await manager.Handle(new ConditionRequestQuery { ConditionId = conditionId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+            var conditionToUpdate = mapper.Map<EMCR.DRR.Controllers.ConditionRequest>((await manager.Handle(new ConditionRequestQuery { Id = requestId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
             conditionToUpdate.Attachments.Count().ShouldBe(1);
             conditionToUpdate.Attachments.Single().DocumentType.ShouldBe(EMCR.DRR.API.Model.DocumentType.ConditionApproval);
-            conditionToUpdate.Attachments.Single().Comments = "condition report comments";
+            var now = DateTime.Now.ToString();
+            conditionToUpdate.Attachments.Single().Comments = $"condition report comments - {now}";
 
             await manager.Handle(new SaveConditionRequestCommand { Request = conditionToUpdate, UserInfo = userInfo });
 
-            var updatedCondition = mapper.Map<EMCR.DRR.Controllers.ConditionRequest>((await manager.Handle(new ConditionRequestQuery { ConditionId = conditionId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+            var updatedCondition = mapper.Map<EMCR.DRR.Controllers.ConditionRequest>((await manager.Handle(new ConditionRequestQuery { Id = requestId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
             updatedCondition.Attachments.Single().Comments.ShouldBe(conditionToUpdate.Attachments.Single().Comments);
         }
 

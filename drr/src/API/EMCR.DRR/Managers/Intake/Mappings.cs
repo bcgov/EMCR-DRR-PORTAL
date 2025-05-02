@@ -769,6 +769,7 @@ namespace EMCR.DRR.Managers.Intake
                 ;
 
             CreateMap<ConditionRequest, Request>()
+                .ForMember(dest => dest.CrmId, opt => opt.Ignore())
                 .ForMember(dest => dest.Type, opt => opt.MapFrom(src => RequestType.Condition))
                 .ForMember(dest => dest.Condition, opt => opt.MapFrom(src => new PaymentCondition
                 {
@@ -789,6 +790,7 @@ namespace EMCR.DRR.Managers.Intake
                 ;
 
             CreateMap<ConditionRequestListItem, Request>()
+                .ForMember(dest => dest.CrmId, opt => opt.Ignore())
                 .ForMember(dest => dest.Type, opt => opt.MapFrom(src => RequestType.Condition))
                 .ForMember(dest => dest.Condition, opt => opt.MapFrom(src => new PaymentCondition
                 {
