@@ -37,7 +37,7 @@ export class DrifForecastSummaryComponent {
   @Input() forecastForm?: IFormGroup<ForecastForm>;
   @Input() isReadOnlyView = true;
 
-  get budgetForecastForm() {
+  get budgetForecastForm(): IFormGroup<BudgetForecastForm> | undefined {
     return this.forecastForm?.get(
       'budgetForecast',
     ) as IFormGroup<BudgetForecastForm>;
@@ -61,7 +61,7 @@ export class DrifForecastSummaryComponent {
     return this.attachmentsArray?.length > 0;
   }
 
-  get declarationForm() {
+  get declarationForm(): IFormGroup<DeclarationForm> | undefined {
     return this.forecastForm?.get('declaration') as IFormGroup<DeclarationForm>;
   }
 
