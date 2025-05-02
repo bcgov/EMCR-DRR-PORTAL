@@ -171,6 +171,7 @@ namespace EMCR.DRR.Managers.Intake
 
     public class ConditionRequestQuery : ConditionQuery
     {
+        public string? Id { get; set; }
         public string? ConditionId { get; set; }
         public string? ProjectId { get; set; }
         public string? BusinessId { get; set; }
@@ -310,12 +311,13 @@ namespace EMCR.DRR.Managers.Intake
     public class CreateConditionRequestCommand : IntakeCommand
     {
         public required string ConditionId { get; set; }
+        public required string ProjectId { get; set; }
         public UserInfo UserInfo { get; set; }
     }
 
     public class SaveConditionRequestCommand : IntakeCommand
     {
-        public Controllers.ConditionRequest Condition { get; set; } = null!;
+        public Controllers.ConditionRequest Request { get; set; } = null!;
         public UserInfo UserInfo { get; set; }
     }
     

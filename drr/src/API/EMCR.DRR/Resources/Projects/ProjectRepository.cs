@@ -164,6 +164,7 @@ namespace EMCR.DRR.API.Resources.Projects
             project.drr_drr_project_drr_projectbudgetforecast_Project = new System.Collections.ObjectModel.Collection<drr_projectbudgetforecast>(project.drr_drr_project_drr_projectbudgetforecast_Project.OrderByDescending(rep => rep.drr_submissiondate).ToList());
             project.drr_drr_project_drr_projectclaim_Project = new System.Collections.ObjectModel.Collection<drr_projectclaim>(project.drr_drr_project_drr_projectclaim_Project.OrderBy(rep => rep.drr_claimnumber).ToList());
             project.drr_drr_project_drr_projectcondition_Project = new System.Collections.ObjectModel.Collection<drr_projectcondition>(project.drr_drr_project_drr_projectcondition_Project.OrderBy(rep => rep.drr_conditionpercentagelimit).ToList());
+            project.drr_project_drr_request_ProjectId = new System.Collections.ObjectModel.Collection<drr_request>(project.drr_project_drr_request_ProjectId.OrderBy(r => r.drr_ProjectConditionId.drr_conditionpercentagelimit).ToList());
         }
 
         private static async Task ParallelLoadReportDetails(DRRContext ctx, drr_project project, CancellationToken ct)
@@ -212,9 +213,10 @@ namespace EMCR.DRR.API.Resources.Projects
                 await ctx.LoadPropertyAsync(fund, nameof(drr_driffundingrequest.drr_FiscalYear), ct);
             });
         }
-        
+
         private static async Task ParallelLoadRequests(DRRContext ctx, drr_project project, CancellationToken ct)
         {
+            var conditionTypes = await ctx.drr_conditiontypes.GetAllPagesAsync();
             await project.drr_project_drr_request_ProjectId.ForEachAsync(5, async request =>
             {
                 ctx.AttachTo(nameof(DRRContext.drr_requests), request);
@@ -227,6 +229,8 @@ namespace EMCR.DRR.API.Resources.Projects
                 };
 
                 await Task.WhenAll(loadTasks);
+
+                request.drr_ProjectConditionId.drr_Condition = conditionTypes.SingleOrDefault(c => c.drr_conditiontypeid == request.drr_ProjectConditionId._drr_condition_value);
             });
         }
 

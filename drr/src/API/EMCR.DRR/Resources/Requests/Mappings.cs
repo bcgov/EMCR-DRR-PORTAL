@@ -31,7 +31,7 @@ namespace EMCR.DRR.API.Resources.Requests
                 ;
 
             CreateMap<ConditionRequest, drr_request>(MemberList.None)
-                .ForMember(dest => dest.drr_name, opt => opt.MapFrom(src => src.ConditionId))
+                //.ForMember(dest => dest.drr_name, opt => opt.MapFrom(src => src.ConditionId))
                 .ForMember(dest => dest.drr_descriptionofrequest, opt => opt.MapFrom(src => src.Explanation))
                 .ForMember(dest => dest.drr_request_bcgov_documenturl_RequestId, opt => opt.MapFrom(src => src.Attachments))
                 .ForMember(dest => dest.drr_AuthorizedRepresentativeContactId, opt => opt.MapFrom(src => src.AuthorizedRepresentative))
@@ -39,9 +39,9 @@ namespace EMCR.DRR.API.Resources.Requests
                 .ForMember(dest => dest.drr_accuracyofinformation, opt => opt.MapFrom(src => src.InformationAccuracyStatement.HasValue ? src.InformationAccuracyStatement.Value ? (int?)DRRTwoOptions.Yes : (int?)DRRTwoOptions.No : null))
                 .ReverseMap()
                 .ValidateMemberList(MemberList.Destination)
-                .ForMember(dest => dest.ConditionId, opt => opt.MapFrom(src => src.drr_name))
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.drr_requestid))
-                .ForMember(dest => dest.ConditionName, opt => opt.MapFrom(src => src.drr_ProjectConditionId.drr_name))
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.drr_name))
+                .ForMember(dest => dest.ConditionId, opt => opt.MapFrom(src => src.drr_ProjectConditionId.drr_name))
+                .ForMember(dest => dest.ConditionName, opt => opt.MapFrom(src => src.drr_ProjectConditionId.drr_Condition.drr_name))
                 .ForMember(dest => dest.Limit, opt => opt.MapFrom(src => src.drr_ProjectConditionId.drr_conditionpercentagelimit))
                 .ForMember(dest => dest.DateMet, opt => opt.MapFrom(src => src.drr_ProjectConditionId.drr_conditionmetdate.HasValue ? src.drr_ProjectConditionId.drr_conditionmetdate.Value.UtcDateTime : (DateTime?)null))
                 .ForMember(dest => dest.ConditionMet, opt => opt.MapFrom(src => src.drr_ProjectConditionId.drr_conditionmet.HasValue ? src.drr_ProjectConditionId.drr_conditionmet == (int)DRRTwoOptions.Yes : (bool?)null))

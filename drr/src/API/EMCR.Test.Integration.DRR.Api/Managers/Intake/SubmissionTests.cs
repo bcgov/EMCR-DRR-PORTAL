@@ -345,7 +345,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
         [Test]
         public async Task CanQueryFp()
         {
-            var fp = (await manager.Handle(new DrrApplicationsQuery { Id = "DRIF-FP-7294", BusinessId = GetTestUserInfo().BusinessId })).Items.SingleOrDefault();
+            var fp = (await manager.Handle(new DrrApplicationsQuery { Id = "DRIF-FP-8001", BusinessId = GetTestUserInfo().BusinessId })).Items.SingleOrDefault();
             var ret = mapper.Map<DraftFpApplication>(fp);
             ret.ProposedActivities.ShouldNotBeEmpty();
         }

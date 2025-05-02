@@ -2,6 +2,7 @@
 using System.Text;
 using AutoMapper;
 using EMCR.DRR.API.Resources.Projects;
+using EMCR.DRR.API.Resources.Requests;
 using EMCR.DRR.API.Services.S3;
 using EMCR.DRR.API.Utilities.TestData;
 using EMCR.DRR.Controllers;
@@ -189,8 +190,24 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             //var userInfo = GetCRAFT2UserInfo();
 
             var queryRes = await manager.Handle(new ConditionRequestQuery { ConditionId = "DRIF-CONDITION-1201", BusinessId = userInfo.BusinessId });
-            var conditions = mapper.Map<IEnumerable<EMCR.DRR.Controllers.DraftConditionRequest>>(queryRes.Items);
-            conditions.Count().ShouldBe(1);
+            var requests = mapper.Map<IEnumerable<EMCR.DRR.Controllers.DraftConditionRequest>>(queryRes.Items);
+            requests.Count().ShouldBe(1);
+        }
+
+        [Test]
+        public async Task QueryConditionRequest_CanFilterById()
+        {
+            var userInfo = GetTestUserInfo();
+            //var userInfo = GetCRAFTUserInfo();
+            //var userInfo = GetCRAFT2UserInfo();
+
+            var conditionId = "DRIF-CONDITION-1201";
+            var projectId = "DRIF-PRJ-1052";
+            var requestId = await EnsureRequestExists(conditionId, projectId, userInfo);
+
+            var queryRes = await manager.Handle(new ConditionRequestQuery { Id = requestId, BusinessId = userInfo.BusinessId });
+            var requests = mapper.Map<IEnumerable<EMCR.DRR.Controllers.DraftConditionRequest>>(queryRes.Items);
+            requests.Count().ShouldBe(1);
         }
 
         [Test]
@@ -201,12 +218,13 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             //var userInfo = GetCRAFT2UserInfo();
 
             var conditionId = "DRIF-CONDITION-1201";
-            await RecreateConditionRequest(conditionId, userInfo);
-            var condition = mapper.Map<EMCR.DRR.Controllers.ConditionRequest>((await manager.Handle(new ConditionRequestQuery { ConditionId = conditionId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
-            condition.Explanation = "very valid explanation";
-            await manager.Handle(new SaveConditionRequestCommand { Condition = condition, UserInfo = userInfo });
-            var updatedCondition = mapper.Map<EMCR.DRR.Controllers.DraftConditionRequest>((await manager.Handle(new ConditionRequestQuery { ConditionId = conditionId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
-            updatedCondition.Explanation.ShouldBe(condition.Explanation);
+            var projectId = "DRIF-PRJ-1052";
+            var requestId = await EnsureRequestExists(conditionId, projectId, userInfo, true);
+            var request = mapper.Map<EMCR.DRR.Controllers.ConditionRequest>((await manager.Handle(new ConditionRequestQuery { Id = requestId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+            request.Explanation = "very valid explanation";
+            await manager.Handle(new SaveConditionRequestCommand { Request = request, UserInfo = userInfo });
+            var updatedCondition = mapper.Map<EMCR.DRR.Controllers.DraftConditionRequest>((await manager.Handle(new ConditionRequestQuery { Id = requestId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+            updatedCondition.Explanation.ShouldBe(request.Explanation);
         }
 
         [Test]
@@ -217,14 +235,15 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             //var userInfo = GetCRAFT2UserInfo();
 
             var conditionId = "DRIF-CONDITION-1201";
-            await RecreateConditionRequest(conditionId, userInfo);
+            var projectId = "DRIF-PRJ-1052";
+            var requestId = await EnsureRequestExists(conditionId, projectId, userInfo, true);
 
-            var condition = mapper.Map<EMCR.DRR.Controllers.ConditionRequest>((await manager.Handle(new ConditionRequestQuery { ConditionId = conditionId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+            var request = mapper.Map<EMCR.DRR.Controllers.ConditionRequest>((await manager.Handle(new ConditionRequestQuery { Id = requestId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
 
-            condition.Status = EMCR.DRR.Controllers.RequestStatus.Draft;
-            condition.AuthorizedRepresentativeStatement = true;
-            condition.InformationAccuracyStatement = true;
-            condition.AuthorizedRepresentative = new EMCR.DRR.Controllers.ContactDetails
+            request.Status = EMCR.DRR.Controllers.RequestStatus.Draft;
+            request.AuthorizedRepresentativeStatement = true;
+            request.InformationAccuracyStatement = true;
+            request.AuthorizedRepresentative = new EMCR.DRR.Controllers.ContactDetails
             {
                 FirstName = "Joe",
                 LastName = "autotest",
@@ -234,10 +253,10 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
                 Phone = "6041234567"
             };
 
-            await manager.Handle(new SubmitConditionRequestCommand { Condition = condition, UserInfo = userInfo });
+            await manager.Handle(new SubmitConditionRequestCommand { Condition = request, UserInfo = userInfo });
 
-            Console.WriteLine(condition.Id);
-            var updatedCondition = mapper.Map<EMCR.DRR.Controllers.DraftConditionRequest>((await manager.Handle(new ConditionRequestQuery { ConditionId = conditionId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+            Console.WriteLine(request.Id);
+            var updatedCondition = mapper.Map<EMCR.DRR.Controllers.DraftConditionRequest>((await manager.Handle(new ConditionRequestQuery { Id = requestId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
             updatedCondition.Status.ShouldBe(EMCR.DRR.Controllers.RequestStatus.Submitted);
         }
 
@@ -249,10 +268,12 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             //var userInfo = GetCRAFT2UserInfo();
 
             var conditionId = "DRIF-CONDITION-1201";
+            var projectId = "DRIF-PRJ-1052";
             await DeleteConditionRequest(conditionId);
-            var requestId = await manager.Handle(new CreateConditionRequestCommand { ConditionId = conditionId, UserInfo = userInfo });
-            var request = mapper.Map<EMCR.DRR.Controllers.DraftConditionRequest>((await manager.Handle(new ConditionRequestQuery { ConditionId = conditionId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
+            var requestId = await manager.Handle(new CreateConditionRequestCommand { ConditionId = conditionId, ProjectId = projectId, UserInfo = userInfo });
+            var request = mapper.Map<EMCR.DRR.Controllers.DraftConditionRequest>((await manager.Handle(new ConditionRequestQuery { Id = requestId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
             request.ShouldNotBeNull();
+            request.Id.ShouldNotBeNullOrEmpty();
         }
 
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
@@ -750,7 +771,8 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             //var userInfo = GetCRAFTUserInfo();
 
             var conditionId = "DRIF-CONDITION-1201";
-            await RecreateConditionRequest(conditionId, userInfo);
+            var projectId = "DRIF-PRJ-1052";
+            var requestId = await EnsureRequestExists(conditionId, projectId, userInfo, true);
             var condition = mapper.Map<EMCR.DRR.Controllers.ConditionRequest>((await manager.Handle(new ConditionRequestQuery { ConditionId = conditionId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
             foreach (var doc in condition.Attachments)
             {
@@ -770,7 +792,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             conditionToUpdate.Attachments.Single().DocumentType.ShouldBe(EMCR.DRR.API.Model.DocumentType.ConditionApproval);
             conditionToUpdate.Attachments.Single().Comments = "condition report comments";
 
-            await manager.Handle(new SaveConditionRequestCommand { Condition = conditionToUpdate, UserInfo = userInfo });
+            await manager.Handle(new SaveConditionRequestCommand { Request = conditionToUpdate, UserInfo = userInfo });
 
             var updatedCondition = mapper.Map<EMCR.DRR.Controllers.ConditionRequest>((await manager.Handle(new ConditionRequestQuery { ConditionId = conditionId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
             updatedCondition.Attachments.Single().Comments.ShouldBe(conditionToUpdate.Attachments.Single().Comments);
@@ -821,10 +843,23 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             await ctx.SaveChangesAsync();
         }
 
-        private async Task RecreateConditionRequest(string conditionId, UserInfo userInfo)
+        private async Task<string> EnsureRequestExists(string conditionId, string projectId, UserInfo userInfo, bool mustBeEditable = false)
+        {
+            var host = Application.Host;
+            var factory = host.Services.GetRequiredService<IDRRContextFactory>();
+            var ctx = factory.Create();
+            var request = await ctx.drr_requests.Expand(r => r.drr_ProjectConditionId).Where(r => r.drr_ProjectConditionId.drr_name == conditionId).SingleOrDefaultAsync();
+            if (request == null || (mustBeEditable && request.statuscode == (int)RequestStatusOptionSet.Submitted))
+            {
+                return await RecreateConditionRequest(conditionId, projectId, userInfo);
+            }
+            return request.drr_name;
+        }
+
+        private async Task<string> RecreateConditionRequest(string conditionId, string projectId, UserInfo userInfo)
         {
             await DeleteConditionRequest(conditionId);
-            await CreateConditionRequest(conditionId, userInfo);
+            return await CreateConditionRequest(conditionId, projectId, userInfo);
         }
 
         private async Task DeleteConditionRequest(string conditionId)
@@ -840,9 +875,9 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             }
         }
 
-        private async Task CreateConditionRequest(string conditionId, UserInfo userInfo)
+        private async Task<string> CreateConditionRequest(string conditionId, string projectId, UserInfo userInfo)
         {
-            await manager.Handle(new CreateConditionRequestCommand { ConditionId = conditionId, UserInfo = userInfo });
+            return await manager.Handle(new CreateConditionRequestCommand { ConditionId = conditionId, ProjectId = projectId, UserInfo = userInfo });
         }
 
         private async Task SetWorkplanActivityCopiedActivity(string activityId)

@@ -1,5 +1,4 @@
-﻿using Amazon.Runtime.Internal;
-using AutoMapper;
+﻿using AutoMapper;
 using EMCR.DRR.API.Resources.Projects;
 using EMCR.DRR.API.Services;
 using EMCR.DRR.Dynamics;
@@ -70,8 +69,8 @@ namespace EMCR.DRR.API.Resources.Requests
             ctx.SetLink(request, nameof(request.drr_ProjectId), condition.drr_Project);
             await ctx.SaveChangesAsync();
 
-            var res = await ctx.drr_requests.Where(r => r.drr_requestid == request.drr_requestid).SingleOrDefaultAsync();
-            return new ManageRequestCommandResult { Id = res.drr_name };
+            var res = ctx.drr_requests.Where(r => r.drr_requestid == request.drr_requestid).Select(r => r.drr_name).Single();
+            return new ManageRequestCommandResult { Id = res };
         }
 #pragma warning restore CS8601 // Possible null reference assignment.
 
@@ -112,7 +111,7 @@ namespace EMCR.DRR.API.Resources.Requests
             await ctx.SaveChangesAsync();
             ctx.DetachAll();
 
-            return new ManageRequestCommandResult { Id = existingRequest.drr_ProjectConditionId.drr_name };
+            return new ManageRequestCommandResult { Id = existingRequest.drr_name };
         }
 
         public async Task<ManageRequestCommandResult> HandleSubmitConditionRequest(SubmitConditionRequest cmd)
@@ -129,14 +128,6 @@ namespace EMCR.DRR.API.Resources.Requests
 
         private static void UpdateRequestDocuments(DRRContext drrContext, drr_request request, drr_request existingRequest)
         {
-            //foreach (var doc in request.drr_request_bcgov_documenturl_RequestId)
-            //{
-            //    var curr = existingRequest.drr_request_bcgov_documenturl_RequestId.SingleOrDefault(d => d.bcgov_documenturlid == doc.bcgov_documenturlid);
-            //    if (curr != null) curr.bcgov_documentcomments = doc.bcgov_documentcomments;
-            //}
-
-            //request.drr_request_bcgov_documenturl_RequestId = existingRequest.drr_request_bcgov_documenturl_RequestId;
-
             foreach (var doc in request.drr_request_bcgov_documenturl_RequestId)
             {
                 if (doc != null)
@@ -192,11 +183,11 @@ namespace EMCR.DRR.API.Resources.Requests
             var ct = new CancellationTokenSource().Token;
             var readCtx = dRRContextFactory.CreateReadOnly();
 
-            var requestsQuery = readCtx.drr_requests.Expand(r => r.drr_ProjectConditionId)
+            var requestsQuery = readCtx.drr_requests.Expand(r => r.drr_ProjectConditionId).Expand(r => r.drr_ProjectId)
                 .Where(a => a.statuscode != (int)InvoiceStatusOptionSet.Inactive);
-            if (!string.IsNullOrEmpty(query.Id)) requestsQuery = requestsQuery.Where(a => a.drr_requestid == Guid.Parse(query.Id));
-            if (!string.IsNullOrEmpty(query.Name)) requestsQuery = requestsQuery.Where(a => a.drr_name == query.Name);
+            if (!string.IsNullOrEmpty(query.Id)) requestsQuery = requestsQuery.Where(a => a.drr_name == query.Id);
             if (!string.IsNullOrEmpty(query.ConditionId)) requestsQuery = requestsQuery.Where(a => a.drr_ProjectConditionId.drr_name == query.ConditionId);
+            if (!string.IsNullOrEmpty(query.ProjectId)) requestsQuery = requestsQuery.Where(a => a.drr_ProjectId.drr_name == query.ProjectId);
 
             var results = (await requestsQuery.GetAllPagesAsync(ct)).ToList();
             var length = results.Count;
@@ -217,8 +208,11 @@ namespace EMCR.DRR.API.Resources.Requests
 
             await Task.WhenAll(loadTasks);
 
+            ctx.AttachTo(nameof(DRRContext.drr_projectconditions), request.drr_ProjectConditionId);
+
             var secondLoadTasks = new List<Task>{
                 ParallelLoadRequestDocumentTypes(ctx, request, ct),
+                ctx.LoadPropertyAsync(request.drr_ProjectConditionId, nameof(drr_projectcondition.drr_Condition), ct),
             };
 
             await Task.WhenAll(secondLoadTasks);
