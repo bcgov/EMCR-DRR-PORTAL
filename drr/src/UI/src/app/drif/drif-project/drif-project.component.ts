@@ -139,7 +139,11 @@ export class DrifProjectComponent {
         this.project = project;
 
         this.conditionsDataSource.data = [...project.conditions!];
-        this.conditionRequestsDataSource.data = [...project.conditionRequests!];
+        this.conditionRequestsDataSource.data = [
+          ...project.conditionRequests?.sort(
+            (a, b) => (a.limit || 0) - (b.limit || 0),
+          )!,
+        ];
 
         this.costProjectionsDataSource.data = [...project.costProjections!];
 

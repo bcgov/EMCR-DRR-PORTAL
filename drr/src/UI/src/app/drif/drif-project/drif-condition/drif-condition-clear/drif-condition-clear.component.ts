@@ -406,22 +406,24 @@ export class DrifConditionClearComponent {
 
     const conditionFormValue = this.getFormValue();
 
-    // this.projectService
-    //   .conditionSubmit(this.projectId!, this.conditionId!, {
-    //     ...conditionFormValue,
-    //   })
-    //   .subscribe({
-    //     next: () => {
-    //       this.toastService.close();
-    //       this.toastService.success('Condition clear request submitted');
+    this.projectService
+      .projectSubmitConditionRequest(this.projectId!, this.conditionId!, {
+        ...conditionFormValue,
+      })
+      .subscribe({
+        next: () => {
+          this.toastService.close();
+          this.toastService.success(
+            'Condition clear request submitted successfully',
+          );
 
-    //       this.router.navigate(['drif-projects', this.projectId]);
-    //     },
-    //     error: (error) => {
-    //       this.toastService.error('Condition clear request failed');
-    //       console.error(error);
-    //     },
-    //   });
+          this.router.navigate(['drif-projects', this.projectId]);
+        },
+        error: (error) => {
+          this.toastService.error('Condition clear request submission failed');
+          console.error(error);
+        },
+      });
   }
 
   get declarationForm() {
