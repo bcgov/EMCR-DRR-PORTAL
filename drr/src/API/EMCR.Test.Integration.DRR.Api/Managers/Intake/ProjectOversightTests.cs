@@ -217,12 +217,15 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var userInfo = GetTestUserInfo();
             //var userInfo = GetCRAFTUserInfo();
             //var userInfo = GetCRAFT2UserInfo();
+            //var requestId = "DRIF-CDR-001029";
 
             var conditionId = "DRIF-CONDITION-1201";
             var projectId = "DRIF-PRJ-1052";
             var requestId = await EnsureRequestExists(conditionId, projectId, userInfo, true);
+
             var request = mapper.Map<EMCR.DRR.Controllers.ConditionRequest>((await manager.Handle(new ConditionRequestQuery { Id = requestId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
-            request.Explanation = "very valid explanation";
+            var now = DateTime.Now.ToString();
+            request.Explanation = $"very valid explanation - {now}";
             await manager.Handle(new SaveConditionRequestCommand { Request = request, UserInfo = userInfo });
             var updatedCondition = mapper.Map<EMCR.DRR.Controllers.DraftConditionRequest>((await manager.Handle(new ConditionRequestQuery { Id = requestId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
             updatedCondition.Explanation.ShouldBe(request.Explanation);
@@ -254,7 +257,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
                 Phone = "6041234567"
             };
 
-            await manager.Handle(new SubmitConditionRequestCommand { Condition = request, UserInfo = userInfo });
+            await manager.Handle(new SubmitConditionRequestCommand { Request = request, UserInfo = userInfo });
 
             Console.WriteLine(request.Id);
             var updatedCondition = mapper.Map<EMCR.DRR.Controllers.DraftConditionRequest>((await manager.Handle(new ConditionRequestQuery { Id = requestId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());

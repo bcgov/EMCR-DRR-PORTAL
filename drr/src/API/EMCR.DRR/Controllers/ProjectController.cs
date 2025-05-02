@@ -364,7 +364,7 @@ namespace EMCR.DRR.Controllers
                 request.Id = requestId;
                 request.Status = RequestStatus.Draft;
 
-                var drr_id = await intakeManager.Handle(new SubmitConditionRequestCommand { Condition = request, UserInfo = GetCurrentUser() });
+                var drr_id = await intakeManager.Handle(new SubmitConditionRequestCommand { Request = request, UserInfo = GetCurrentUser() });
                 return Ok(new ConditionResult { Id = drr_id });
             }
             catch (Exception e)

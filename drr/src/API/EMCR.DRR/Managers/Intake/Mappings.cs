@@ -734,7 +734,6 @@ namespace EMCR.DRR.Managers.Intake
                 ;
 
             CreateMap<Controllers.ConditionRequest, ConditionRequest>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => IntakeRequestStatusMapper(src.Status)))
                 .AfterMap((src, dest) =>
                 {
@@ -823,8 +822,21 @@ namespace EMCR.DRR.Managers.Intake
                 .ForMember(dest => dest.Limit, opt => opt.MapFrom(src => src.Condition != null ? src.Condition.Limit : null))
                 .ForMember(dest => dest.ConditionMet, opt => opt.MapFrom(src => src.Condition != null ? src.Condition.ConditionMet : null))
                 .ForMember(dest => dest.DateMet, opt => opt.MapFrom(src => src.Condition != null ? src.Condition.DateMet : null))
-                .ForMember(dest => dest.Actions, opt => opt.MapFrom(src => new[] { RequestActions.View, RequestActions.Edit }))
+                .ForMember(dest => dest.Actions, opt => opt.MapFrom(src => Array.Empty<RequestActions>()))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => DrrRequestStatusMapper(src.Status)))
+                .AfterMap((src, dest) =>
+                {
+                    switch (dest.Status)
+                    {
+                        case Controllers.RequestStatus.Draft:
+                        case Controllers.RequestStatus.UpdateNeeded:
+                            dest.Actions = dest.Actions.Append(RequestActions.Edit);
+                            break;
+                        default:
+                            dest.Actions = dest.Actions.Append(RequestActions.View);
+                            break;
+                    }
+                })
                 ;
 
             CreateMap<string, PartneringProponent>()
