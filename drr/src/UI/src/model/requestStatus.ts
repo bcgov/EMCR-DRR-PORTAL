@@ -10,7 +10,10 @@ export type RequestStatus = (typeof RequestStatus)[keyof typeof RequestStatus];
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const RequestStatus = {
   Draft: 'Draft',
-  Cleared: 'Cleared',
-  Requested: 'Requested',
+  Submitted: 'Submitted',
+  ReadyForApproval: 'ReadyForApproval',
+  ApprovalReview: 'ApprovalReview',
+  Approved: 'Approved',
+  TechnicalReview: 'TechnicalReview',
   UpdateNeeded: 'UpdateNeeded',
 } as const;

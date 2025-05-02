@@ -31,6 +31,7 @@ import {
   InterimReportStatus,
   PaymentCondition,
   ProgressReportStatus,
+  RequestActions,
 } from '../../../model';
 import { ROUTE_PATH } from '../../app.routes';
 import { DrifProjectContactDialogComponent } from './drif-project-contact-dialog.component';
@@ -97,9 +98,8 @@ export class DrifProjectComponent {
   conditionsDataSource = new MatTableDataSource<
     PaymentCondition & { actions?: [] }
   >([]);
-  conditionRequestsDataSource = new MatTableDataSource<
-    ConditionRequestListItem & { actions?: [] }
-  >([]);
+  conditionRequestsDataSource =
+    new MatTableDataSource<ConditionRequestListItem>([]);
 
   costProjectionsDataSource = new MatTableDataSource<CostProjectionItem>([]);
 
@@ -266,15 +266,36 @@ export class DrifProjectComponent {
       });
   }
 
-  createConditionRequest(condition: PaymentCondition) {
-    // TODO: make call to API to create condition request
+  createConditionRequest(condition: ConditionRequestListItem) {
+    this.projectService
+      .projectCreateConditionRequest(this.projectId!, {
+        conditionId: condition.conditionId,
+      })
+      .subscribe({
+        next: (res) => {
+          this.router.navigate([
+            'drif-projects',
+            this.projectId,
+            'conditions',
+            condition.conditionId,
+            'edit',
+          ]);
+        },
+        error: (err) => {
+          console.error(err);
+        },
+      });
+  }
 
-    this.router.navigate([
-      'drif-projects',
-      this.projectId,
-      'conditions',
-      condition.id,
-      'edit',
-    ]);
+  canCreateConditionRequest(condition: ConditionRequestListItem) {
+    return condition.actions?.includes(RequestActions.Create);
+  }
+
+  canEditConditionRequest(condition: ConditionRequestListItem) {
+    return condition.actions?.includes(RequestActions.Edit);
+  }
+
+  canViewConditionRequest(condition: ConditionRequestListItem) {
+    return condition.actions?.includes(RequestActions.View);
   }
 }

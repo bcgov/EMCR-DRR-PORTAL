@@ -5,10 +5,12 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type FormType = (typeof FormType)[keyof typeof FormType];
+export type RequestActions =
+  (typeof RequestActions)[keyof typeof RequestActions];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const FormType = {
-  Application: 'Application',
-  Report: 'Report',
+export const RequestActions = {
+  View: 'View',
+  Edit: 'Edit',
+  Create: 'Create',
 } as const;

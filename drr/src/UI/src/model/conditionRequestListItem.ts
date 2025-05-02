@@ -4,9 +4,11 @@
  * DRR API
  * OpenAPI spec version: 1.0.0
  */
+import type { RequestActions } from './requestActions';
 import type { RequestStatus } from './requestStatus';
 
 export interface ConditionRequestListItem {
+  actions?: RequestActions[];
   /** @nullable */
   conditionId?: string;
   /** @nullable */
@@ -19,5 +21,6 @@ export interface ConditionRequestListItem {
   id?: string;
   /** @nullable */
   limit?: number;
+  /** @nullable */
   status?: RequestStatus;
 }

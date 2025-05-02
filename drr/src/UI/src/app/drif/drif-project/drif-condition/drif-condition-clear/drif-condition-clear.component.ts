@@ -24,6 +24,7 @@ import { distinctUntilChanged, pairwise, startWith } from 'rxjs';
 import { AttachmentService } from '../../../../../api/attachment/attachment.service';
 import { ProjectService } from '../../../../../api/project/project.service';
 import {
+  ApplicationType,
   DeclarationType,
   DocumentType,
   DraftConditionRequest,
@@ -156,11 +157,13 @@ export class DrifConditionClearComponent {
 
       this.authorizedRepresentativeText = this.optionsStore.getDeclarations?.(
         DeclarationType.AuthorizedRepresentative,
-        FormType.Request,
+        FormType.Application,
+        ApplicationType.ConditionRequest,
       );
       this.accuracyOfInformationText = this.optionsStore.getDeclarations?.(
         DeclarationType.AccuracyOfInformation,
-        FormType.Request,
+        FormType.Application,
+        ApplicationType.ConditionRequest,
       );
 
       // TODO: use contion % or description from API
@@ -447,7 +450,7 @@ export class DrifConditionClearComponent {
         .attachmentUploadAttachment({
           RecordId: this.conditionId,
           RecordType: RecordType.ConditionRequest,
-          DocumentType: DocumentType.ConditionRequest,
+          DocumentType: DocumentType.ConditionApproval,
           ContentType:
             file.type === ''
               ? this.fileService.getCustomContentType(file)
@@ -460,7 +463,7 @@ export class DrifConditionClearComponent {
               name: file.name,
               comments: '',
               id: attachment.id,
-              documentType: DocumentType.ConditionRequest,
+              documentType: DocumentType.ConditionApproval,
             } as CondtionRequestAttachmentForm;
 
             this.attachmentsArray.push(

@@ -36,7 +36,6 @@ export class ConditionRequestForm {
   limit?: number;
 
   @prop()
-  @required()
   date?: string;
 
   @prop()

@@ -15,11 +15,13 @@
         [value]="conditionForm?.get('conditionRequest.limit')?.value + '%'"
       >
       </drr-summary-item>
-      <drr-summary-item
-        [label]="t('date')"
-        [rxFormControl]="conditionForm?.get('conditionRequest.date')"
-        controlType="date"
-      ></drr-summary-item>
+      @if (conditionForm?.get("conditionRequest.date")?.value) {
+        <drr-summary-item
+          [label]="t('date')"
+          [rxFormControl]="conditionForm?.get('conditionRequest.date')"
+          controlType="date"
+        ></drr-summary-item>
+      }
       <drr-summary-item
         [label]="t('description')"
         [rxFormControl]="conditionForm?.get('conditionRequest.description')"

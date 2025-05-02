@@ -17,5 +17,5 @@ export const DocumentType = {
   Invoice: 'Invoice',
   ProofOfPayment: 'ProofOfPayment',
   ForecastReport: 'ForecastReport',
-  ConditionRequest: 'ConditionRequest',
+  ConditionApproval: 'ConditionApproval',
 } as const;
