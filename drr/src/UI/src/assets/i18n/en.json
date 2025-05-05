@@ -757,6 +757,15 @@
     "author": "DMAP Team Member",
     "messageDate": "Message Date",
     "attachmentUploadText": "Upload any supporting attachments",
-    "uploadAttachment": "Add Attachment"
+    "uploadAttachment": "Add Attachment",
+    "requiredAttachments": "Required Attachments",
+    "attachmentsRequiredError": "At least one attachment is required",
+    "additionalAttachments": "Additional Attachments"
+  },
+  "requestStatus": {
+    "Draft": "Draft",
+    "Submitted": "Submitted",
+    "Approved": "Approved",
+    "UpdateNeeded": "Update Needed"
   }
 }

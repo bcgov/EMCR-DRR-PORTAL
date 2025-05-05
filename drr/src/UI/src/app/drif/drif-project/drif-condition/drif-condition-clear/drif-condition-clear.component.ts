@@ -25,6 +25,7 @@ import { AttachmentService } from '../../../../../api/attachment/attachment.serv
 import { ProjectService } from '../../../../../api/project/project.service';
 import {
   ApplicationType,
+  ConditionRequest,
   DeclarationType,
   DocumentType,
   DraftConditionRequest,
@@ -95,6 +96,7 @@ export class DrifConditionClearComponent {
 
   projectId?: string;
   requestId?: string;
+  conditionId?: string;
 
   conditionName?: string;
 
@@ -232,6 +234,7 @@ export class DrifConditionClearComponent {
             // ) as IFormGroup<ConditionDMAPMessageForm>;
 
             this.conditionName = `Request to Clear ${response.limit}% Condition`;
+            this.conditionId = response.conditionId;
 
             const conditionFormValue = new ConditionForm({
               conditionRequest: {
@@ -251,6 +254,26 @@ export class DrifConditionClearComponent {
             ) as IFormGroup<ConditionForm>;
             this.conditionForm.get('conditionRequest.name')?.disable();
             this.conditionForm.get('conditionRequest.limit')?.disable();
+
+            if (response?.attachments?.length! > 0) {
+              this.conditionForm
+                .get('conditionRequest.attachmentsAdded')
+                ?.setValue(true, { emitEvent: false });
+            }
+
+            this.conditionForm
+              .get('conditionRequest.attachments')
+              ?.valueChanges.subscribe((attachments) => {
+                if (attachments.length > 0) {
+                  this.conditionForm
+                    .get('conditionRequest.attachmentsAdded')
+                    ?.setValue(true, { emitEvent: false });
+                } else {
+                  this.conditionForm
+                    .get('conditionRequest.attachmentsAdded')
+                    ?.setValue(false, { emitEvent: false });
+                }
+              });
 
             this.setAuthorizedRepresentative();
 
@@ -342,22 +365,22 @@ export class DrifConditionClearComponent {
     this.router.navigate(['/drif-projects', this.projectId]);
   }
 
-  private getFormValue(): DraftConditionRequest {
-    const formValue = this.conditionForm?.value as ConditionForm;
+  private getFormValue(): ConditionRequest {
+    const formValue = this.conditionForm?.getRawValue() as ConditionForm;
 
-    const conditionRequestDraft: DraftConditionRequest = {
+    const conditionRequestDraft: ConditionRequest = {
       id: this.requestId,
+      conditionId: this.conditionId,
       conditionName: formValue?.conditionRequest?.name,
       limit: formValue?.conditionRequest?.limit,
-      dateMet: formValue?.conditionRequest?.date,
       explanation: formValue?.conditionRequest?.description,
+      attachments: formValue?.conditionRequest?.attachments,
       authorizedRepresentative:
         formValue?.declaration?.authorizedRepresentative,
-      attachments: formValue?.conditionRequest?.attachments,
-      // authorizedRepresentativeStatement:
-      //   claimForm.declaration.authorizedRepresentativeStatement,
-      // informationAccuracyStatement:
-      //   claimForm.declaration.informationAccuracyStatement,
+      authorizedRepresentativeStatement:
+        formValue?.declaration?.authorizedRepresentativeStatement,
+      informationAccuracyStatement:
+        formValue?.declaration?.informationAccuracyStatement,
     };
 
     return conditionRequestDraft;

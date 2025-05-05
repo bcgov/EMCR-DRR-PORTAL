@@ -142,17 +142,31 @@
                   let attachmentControl of attachmentsArray.controls;
                   let i = index
                 "
-                [title]="i == 0 ? t('attachments') : ''"
+                [title]="i == 0 ? 'Supporting Attachments' : ''"
                 [attachmentForm]="attachmentControl"
                 (removeFile)="removeFile($event)"
                 (downloadFile)="downloadFile($event)"
+                [maxCommentsLength]="50"
+                [inputType]="'input'"
               ></drr-attachment>
 
               <div style="display: flex; flex-direction: column; gap: 1rem">
                 <div>
                   <mat-label class="drr-label">
-                    {{ t("attachmentUploadText") }}
+                    {{
+                      attachmentsArray.controls.length > 0
+                        ? t("additionalAttachments")
+                        : t("requiredAttachments") + "*"
+                    }}
                   </mat-label>
+                  <div
+                    *ngIf="
+                      attachmentsArray.touched && attachmentsArray.length === 0
+                    "
+                    style="color: red"
+                  >
+                    {{ t("attachmentsRequiredError") }}
+                  </div>
                 </div>
 
                 <drr-file-upload

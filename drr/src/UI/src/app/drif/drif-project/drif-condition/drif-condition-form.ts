@@ -3,12 +3,13 @@ import {
   propArray,
   propObject,
   required,
+  requiredTrue,
 } from '@rxweb/reactive-form-validators';
 import { DocumentType } from '../../../../model';
 import { DeclarationForm } from '../../../shared/drr-declaration/drr-declaration-form';
 import { AttachmentForm } from '../../drif-fp/drif-fp-form';
 
-export class CondtionRequestAttachmentForm {
+export class CondtionRequestAttachmentForm implements AttachmentForm {
   @prop()
   @required()
   id?: string;
@@ -18,6 +19,7 @@ export class CondtionRequestAttachmentForm {
   name?: string;
 
   @prop()
+  @required()
   comments?: string;
 
   @prop()
@@ -41,6 +43,11 @@ export class ConditionRequestForm {
   @prop()
   @required()
   description?: string;
+
+  // TODO: temp fix to fail form validation if attachments are not provided
+  @prop()
+  @requiredTrue()
+  attachmentsAdded?: boolean = false;
 
   @propArray(CondtionRequestAttachmentForm)
   attachments?: CondtionRequestAttachmentForm[] = [];
