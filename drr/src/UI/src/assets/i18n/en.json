@@ -761,5 +761,11 @@
     "requiredAttachments": "Required Attachments",
     "attachmentsRequiredError": "At least one attachment is required",
     "additionalAttachments": "Additional Attachments"
+  },
+  "requestStatus": {
+    "Draft": "Draft",
+    "Submitted": "Submitted",
+    "Approved": "Approved",
+    "UpdateNeeded": "Update Needed"
   }
 }
