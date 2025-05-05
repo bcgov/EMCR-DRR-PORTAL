@@ -226,9 +226,19 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var request = mapper.Map<EMCR.DRR.Controllers.ConditionRequest>((await manager.Handle(new ConditionRequestQuery { Id = requestId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
             var now = DateTime.Now.ToString();
             request.Explanation = $"very valid explanation - {now}";
+            request.AuthorizedRepresentative = new EMCR.DRR.Controllers.ContactDetails
+            {
+                FirstName = "Joe",
+                LastName = "autotest",
+                Department = "dep",
+                Title = "title",
+                Email = "email@test.com",
+                Phone = "6041234567"
+            };
             await manager.Handle(new SaveConditionRequestCommand { Request = request, UserInfo = userInfo });
             var updatedCondition = mapper.Map<EMCR.DRR.Controllers.DraftConditionRequest>((await manager.Handle(new ConditionRequestQuery { Id = requestId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
             updatedCondition.Explanation.ShouldBe(request.Explanation);
+            updatedCondition.AuthorizedRepresentative.ShouldNotBeNull().FirstName.ShouldBe(request.AuthorizedRepresentative.FirstName);
         }
 
         [Test]
