@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, Input } from '@angular/core';
 import { FormArray } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
@@ -19,6 +20,7 @@ import { ConditionForm } from '../drif-condition-form';
     DrrSummaryItemComponent,
     TranslocoModule,
     MatInputModule,
+    MatButtonModule,
   ],
   templateUrl: './drif-condition-summary.component.html',
   styleUrl: './drif-condition-summary.component.scss',
