@@ -39,12 +39,12 @@
           *ngFor="let attachment of attachmentsArray.controls"
         >
           <drr-summary-item
-            [label]="t('attachments.name')"
+            [label]="'attachments.name' | transloco"
             [rxFormControl]="attachment.get('name')"
           >
           </drr-summary-item>
           <drr-summary-item
-            [label]="t('attachments.comments')"
+            [label]="'attachments.comments' | transloco"
             [rxFormControl]="attachment.get('comments')"
           >
           </drr-summary-item>
