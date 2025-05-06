@@ -379,8 +379,8 @@ namespace EMCR.DRR.Controllers
             try
             {
                 if (string.IsNullOrEmpty(cmd.ConditionId)) throw new ArgumentNullException(nameof(cmd.ConditionId));
-                var requestId = await intakeManager.Handle(new CreateConditionRequestCommand { ConditionId = cmd.ConditionId, ProjectId = projectId, UserInfo = GetCurrentUser() });
-                return Ok(mapper.Map<ConditionResult>(requestId));
+                var drr_id = await intakeManager.Handle(new CreateConditionRequestCommand { ConditionId = cmd.ConditionId, ProjectId = projectId, UserInfo = GetCurrentUser() });
+                return Ok(new ConditionResult { Id = drr_id });
             }
             catch (Exception e)
             {
