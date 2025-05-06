@@ -23,6 +23,7 @@ import {
   Attachment,
   ClaimStatus,
   ConditionRequestListItem,
+  ConditionResult,
   ContactDetails,
   CostProjectionItem,
   DraftDrrProject,
@@ -276,12 +277,12 @@ export class DrifProjectComponent {
         conditionId: conditionRequest.conditionId,
       })
       .subscribe({
-        next: (res) => {
+        next: (response: ConditionResult) => {
           this.router.navigate([
             'drif-projects',
             this.projectId,
             'conditions',
-            conditionRequest.id,
+            response.id,
             'edit',
           ]);
         },
