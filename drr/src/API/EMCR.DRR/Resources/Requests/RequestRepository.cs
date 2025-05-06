@@ -123,6 +123,12 @@ namespace EMCR.DRR.API.Resources.Requests
             ctx.UpdateObject(request);
             await ctx.SaveChangesAsync();
             ctx.DetachAll();
+
+            var owner = await GetDMAPIntakeTeam(ctx);
+            request = await ctx.drr_requests.Where(a => a.drr_name == cmd.Id).SingleOrDefaultAsync();
+            ctx.SetLink(request, nameof(drr_request.ownerid), owner);
+            await ctx.SaveChangesAsync();
+            ctx.DetachAll();
             return new ManageRequestCommandResult { Id = cmd.Id };
         }
 
@@ -226,6 +232,12 @@ namespace EMCR.DRR.API.Resources.Requests
                 ctx.AttachTo(nameof(DRRContext.bcgov_documenturls), doc);
                 await ctx.LoadPropertyAsync(doc, nameof(bcgov_documenturl.bcgov_DocumentType), ct);
             });
+        }
+
+        private static async Task<team?> GetDMAPIntakeTeam(DRRContext ctx)
+        {
+            var DMAPTeamName = "DMAP Intake Team";
+            return await ctx.teams.Where(su => su.name == DMAPTeamName).SingleOrDefaultAsync();
         }
     }
 }

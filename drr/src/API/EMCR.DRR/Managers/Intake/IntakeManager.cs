@@ -761,6 +761,7 @@ namespace EMCR.DRR.Managers.Intake
                 case RecordType.ProgressReport: return await DownloadProgressReportDocument(cmd, result);
                 case RecordType.Invoice: return await DownloadInvoiceDocument(cmd, result);
                 case RecordType.ForecastReport: return await DownloadForecastReportDocument(cmd, result);
+                case RecordType.ConditionRequest: return await DownloadConditionRequestDocument(cmd, result);
                 default: throw new BusinessValidationException("Unsupported Record Type");
             }
         }
@@ -781,8 +782,6 @@ namespace EMCR.DRR.Managers.Intake
         {
             var canAccess = await CanAccessApplicationFromDocumentId(cmd.Id, cmd.UserInfo.BusinessId);
             if (!canAccess) throw new ForbiddenException("Not allowed to access this application.");
-            //var recordId = (await documentRepository.Query(new DocumentQuery { Id = cmd.Id })).RecordId;
-
             var res = await s3Provider.HandleQuery(new FileQuery { Key = cmd.Id, Folder = $"{RecordType.FullProposal.ToDescriptionString()}/{documentRes.RecordId}" });
             return (FileQueryResult)res;
         }
@@ -791,8 +790,6 @@ namespace EMCR.DRR.Managers.Intake
         {
             var canAccess = await CanAccessProgressReportFromDocumentId(cmd.Id, cmd.UserInfo.BusinessId);
             if (!canAccess) throw new ForbiddenException("Not allowed to access this progress report.");
-            //var recordId = (await documentRepository.Query(new DocumentQuery { Id = cmd.Id })).RecordId;
-
             var res = await s3Provider.HandleQuery(new FileQuery { Key = cmd.Id, Folder = $"{RecordType.ProgressReport.ToDescriptionString()}/{documentRes.RecordId}" });
             return (FileQueryResult)res;
         }
@@ -801,8 +798,6 @@ namespace EMCR.DRR.Managers.Intake
         {
             var canAccess = await CanAccessInvoiceFromDocumentId(cmd.Id, cmd.UserInfo.BusinessId);
             if (!canAccess) throw new ForbiddenException("Not allowed to access this invoice.");
-            //var recordId = (await documentRepository.Query(new DocumentQuery { Id = cmd.Id })).RecordId;
-
             var res = await s3Provider.HandleQuery(new FileQuery { Key = cmd.Id, Folder = $"{RecordType.Invoice.ToDescriptionString()}/{documentRes.RecordId}" });
             return (FileQueryResult)res;
         }
@@ -811,9 +806,15 @@ namespace EMCR.DRR.Managers.Intake
         {
             var canAccess = await CanAccessForecastFromDocumentId(cmd.Id, cmd.UserInfo.BusinessId);
             if (!canAccess) throw new ForbiddenException("Not allowed to access this forecast.");
-            //var recordId = (await documentRepository.Query(new DocumentQuery { Id = cmd.Id })).RecordId;
-
             var res = await s3Provider.HandleQuery(new FileQuery { Key = cmd.Id, Folder = $"{RecordType.ForecastReport.ToDescriptionString()}/{documentRes.RecordId}" });
+            return (FileQueryResult)res;
+        }
+
+        private async Task<FileQueryResult> DownloadConditionRequestDocument(DownloadAttachment cmd, QueryDocumentCommandResult documentRes)
+        {
+            var canAccess = await CanAccessRequestFromDocumentId(cmd.Id, cmd.UserInfo.BusinessId);
+            if (!canAccess) throw new ForbiddenException("Not allowed to access this condition request.");
+            var res = await s3Provider.HandleQuery(new FileQuery { Key = cmd.Id, Folder = $"{RecordType.ConditionRequest.ToDescriptionString()}/{documentRes.RecordId}" });
             return (FileQueryResult)res;
         }
 
