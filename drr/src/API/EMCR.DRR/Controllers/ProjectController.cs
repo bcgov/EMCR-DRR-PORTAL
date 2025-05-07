@@ -51,7 +51,7 @@ namespace EMCR.DRR.Controllers
             {
                 //QueryOptions = options
                 var res = await intakeManager.Handle(new DrrProjectsQuery { BusinessId = GetCurrentBusinessId() });
-                return Ok(new ProjectResponse { Projects = mapper.Map<IEnumerable<DraftDrrProject>>(res.Items), Length = res.Length });
+                return Ok(new ProjectResponse { Projects = mapper.Map<IEnumerable<ProjectListItem>>(res.Items), Length = res.Length });
             }
             catch (Exception e)
             {
@@ -433,6 +433,16 @@ namespace EMCR.DRR.Controllers
         public IEnumerable<ProjectEvent>? Events { get; set; }
         public IEnumerable<ConditionRequestListItem>? ConditionRequests { get; set; }
         public IEnumerable<Attachment>? Attachments { get; set; }
+    }
+
+    public class ProjectListItem
+    {
+        public string? Id { get; set; }
+        public string? ProjectTitle { get; set; }
+        public decimal? FundingAmount { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+        public ProjectStatus? Status { get; set; }
     }
 
     public class CostProjectionItem
@@ -1090,7 +1100,7 @@ namespace EMCR.DRR.Controllers
 
     public class ProjectResponse
     {
-        public IEnumerable<DraftDrrProject> Projects { get; set; } = Array.Empty<DraftDrrProject>();
+        public IEnumerable<ProjectListItem> Projects { get; set; } = Array.Empty<ProjectListItem>();
         public int Length { get; set; }
     }
 

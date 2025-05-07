@@ -79,7 +79,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             //var userInfo = GetCRAFT2UserInfo();
 
             var queryRes = await manager.Handle(new DrrProjectsQuery { BusinessId = userInfo.BusinessId });
-            var projects = mapper.Map<IEnumerable<DraftDrrProject>>(queryRes.Items);
+            var projects = mapper.Map<IEnumerable<ProjectListItem>>(queryRes.Items);
             projects.Count().ShouldBeGreaterThanOrEqualTo(1);
             projects.ShouldAllBe(s => s.Status != EMCR.DRR.Controllers.ProjectStatus.NotStarted);
         }
