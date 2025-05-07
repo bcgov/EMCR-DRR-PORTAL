@@ -654,31 +654,48 @@ namespace EMCR.DRR.Managers.Intake
             bool canCreate = false;
             string description = string.Empty;
 
-            if (project.InterimReports == null || project.InterimReports.Count() == 0)
+            switch (cmd.ReportType)
             {
-                //First Interim Report
-                canCreate = true;
-                var defaultPeriod = project.ReportingScheduleType == ReportingScheduleType.Quarterly ? "2025-Q1" : project.ReportingScheduleType == ReportingScheduleType.Monthly ? "2025-Month-1" : string.Empty;
-                description = project.FirstReportPeriod ?? defaultPeriod;
-                if (string.IsNullOrEmpty(description)) throw new BusinessValidationException("Error determining report period");
-                //GetReportPeriodFromDate(project.ReportingScheduleType, project.StartDate.Value);
-            }
-            else
-            {
-                //Subsequent Interim Report
-                var lastReport = project.InterimReports.OrderByDescending(r => r.ReportDate).First();
-                if (lastReport.ReportDate == null) throw new BusinessValidationException($"Invalid Report Date for report {lastReport.Id}");
-                if (lastReport.Status == InterimReportStatus.Approved || lastReport.Status == InterimReportStatus.Skipped)
-                {
-                    canCreate = true;
-                    //description = GetNextReportPeriod(project.ReportingScheduleType, lastReport.ReportDate.Value);
-                    description = !string.IsNullOrEmpty(lastReport.ReportPeriod) ? GetNextReportPeriodFromString(project.ReportingScheduleType, lastReport.ReportPeriod) : GetNextReportPeriodFromDate(project.ReportingScheduleType, lastReport.ReportDate.Value);
-                }
-                else
-                {
-                    description = !string.IsNullOrEmpty(lastReport.ReportPeriod) ? lastReport.ReportPeriod : GetReportPeriodFromDate(project.ReportingScheduleType, lastReport.ReportDate.Value);
-                    //description = GetReportPeriod(project.ReportingScheduleType, lastReport.ReportDate.Value);
-                }
+                case ReportType.Interim:
+                    if (project.InterimReports == null || project.InterimReports.Count() == 0)
+                    {
+                        //First Interim Report
+                        canCreate = true;
+                        var defaultPeriod = project.ReportingScheduleType == ReportingScheduleType.Quarterly ? "2025-Q1" : project.ReportingScheduleType == ReportingScheduleType.Monthly ? "2025-Month-1" : string.Empty;
+                        description = project.FirstReportPeriod ?? defaultPeriod;
+                        if (string.IsNullOrEmpty(description)) throw new BusinessValidationException("Error determining report period");
+                        //GetReportPeriodFromDate(project.ReportingScheduleType, project.StartDate.Value);
+                    }
+                    else
+                    {
+                        //Subsequent Interim Report
+                        var lastReport = project.InterimReports.OrderByDescending(r => r.ReportDate).First();
+                        if (lastReport.ReportDate == null) throw new BusinessValidationException($"Invalid Report Date for report {lastReport.Id}");
+                        if (lastReport.Status == InterimReportStatus.Approved || lastReport.Status == InterimReportStatus.Skipped)
+                        {
+                            canCreate = true;
+                            //description = GetNextReportPeriod(project.ReportingScheduleType, lastReport.ReportDate.Value);
+                            description = !string.IsNullOrEmpty(lastReport.ReportPeriod) ? GetNextReportPeriodFromString(project.ReportingScheduleType, lastReport.ReportPeriod) : GetNextReportPeriodFromDate(project.ReportingScheduleType, lastReport.ReportDate.Value);
+                        }
+                        else
+                        {
+                            description = !string.IsNullOrEmpty(lastReport.ReportPeriod) ? lastReport.ReportPeriod : GetReportPeriodFromDate(project.ReportingScheduleType, lastReport.ReportDate.Value);
+                            //description = GetReportPeriod(project.ReportingScheduleType, lastReport.ReportDate.Value);
+                        }
+                    }
+                    break;
+                case ReportType.OffCycle:
+                    canCreate = false;
+                    description = "Off cycle reports are currently not supported.";
+                    break;
+                case ReportType.Final:
+                    canCreate = false;
+                    description = "Final reports are currently not supported.";
+                    break;
+                default:
+                    canCreate = false;
+                    description = "Unexpected report type";
+                    break;
             }
 
             return new ValidateCanCreateReportResult { CanCreate = canCreate, Description = description };
@@ -733,7 +750,7 @@ namespace EMCR.DRR.Managers.Intake
             var res = await s3Provider.HandleQuery(new FileStreamQuery { Key = cmd.Id, Folder = $"{RecordType.FullProposal.ToDescriptionString()}/{documentRes.RecordId}" });
             return (FileStreamQueryResult)res;
         }
-        
+
         private async Task<FileQueryResult> DownloadApplicationDocument(DownloadAttachment cmd, QueryDocumentCommandResult documentRes)
         {
             var canAccess = await CanAccessApplicationFromDocumentId(cmd.Id, cmd.UserInfo.BusinessId);
@@ -800,7 +817,7 @@ namespace EMCR.DRR.Managers.Intake
             var progressReport = (await reportRepository.Query(new ProgressReportsQuery { Id = cmd.AttachmentInfo.RecordId })).Items.SingleOrDefault();
             if (progressReport == null) throw new NotFoundException("Progress Report not found");
             if (!ProgressReportInEditableStatus(progressReport)) throw new BusinessValidationException("Not allowed to update Progress Report");
-            
+
             //if (cmd.AttachmentInfo.DocumentType != DocumentType.OtherSupportingDocument && progressReport.Attachments != null && progressReport.Attachments.Any(a => a.DocumentType == cmd.AttachmentInfo.DocumentType))
             //{
             //    throw new BusinessValidationException($"A document with type {cmd.AttachmentInfo.DocumentType.ToDescriptionString()} already exists on the progress report {cmd.AttachmentInfo.RecordId}");
@@ -934,7 +951,7 @@ namespace EMCR.DRR.Managers.Intake
         {
             return claim.Status != ClaimStatus.Submitted;
         }
-        
+
         private bool ForecastInEditableStatus(Forecast forecast)
         {
             return forecast.Status != ForecastStatus.Submitted;
