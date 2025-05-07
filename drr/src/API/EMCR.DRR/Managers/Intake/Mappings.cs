@@ -161,6 +161,9 @@ namespace EMCR.DRR.Managers.Intake
                 .ForMember(dest => dest.Permits, opt => opt.MapFrom(src => src.Permits.Select(p => p.Name)))
                 ;
 
+            CreateMap<Project, ProjectListItem>(MemberList.None)
+                ;
+
             CreateMap<DraftDrrProject, Project>(MemberList.None)
                 .ForMember(dest => dest.FirstReportPeriod, opt => opt.Ignore())
                 .ForMember(dest => dest.Requests, opt => opt.MapFrom(src => src.ConditionRequests))
