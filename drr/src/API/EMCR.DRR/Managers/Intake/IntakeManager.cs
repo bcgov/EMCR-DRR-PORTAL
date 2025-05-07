@@ -120,7 +120,7 @@ namespace EMCR.DRR.Managers.Intake
                 SubmitProjectCommand c => await Handle(c),
                 SaveProgressReportCommand c => await Handle(c),
                 SubmitProgressReportCommand c => await Handle(c),
-                CreateInterimReportCommand c => await Handle(c),
+                CreateProjectReportCommand c => await Handle(c),
                 SaveClaimCommand c => await Handle(c),
                 SubmitClaimCommand c => await Handle(c),
                 SaveForecastCommand c => await Handle(c),
@@ -625,7 +625,7 @@ namespace EMCR.DRR.Managers.Intake
             return id;
         }
 
-        public async Task<string> Handle(CreateInterimReportCommand cmd)
+        public async Task<string> Handle(CreateProjectReportCommand cmd)
         {
             var canAccess = await CanAccessProject(cmd.ProjectId, cmd.UserInfo.BusinessId);
             if (!canAccess) throw new ForbiddenException("Not allowed to access this project.");
