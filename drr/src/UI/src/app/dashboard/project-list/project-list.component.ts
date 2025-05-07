@@ -5,7 +5,7 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { RouterModule } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 import { ProjectService } from '../../../api/project/project.service';
-import { DraftDrrProject } from '../../../model';
+import { DraftDrrProject, ProjectListItem } from '../../../model';
 
 @Component({
   selector: 'drr-project-list',
@@ -23,7 +23,7 @@ import { DraftDrrProject } from '../../../model';
 export class ProjectListComponent {
   projectService = inject(ProjectService);
 
-  projects?: DraftDrrProject[] = [];
+  projects?: ProjectListItem[] = [];
   projectColumns = [
     'id',
     'projectTitle',
@@ -32,7 +32,7 @@ export class ProjectListComponent {
     'startDate',
     'endDate',
   ];
-  projectListDataSource = new MatTableDataSource<DraftDrrProject>();
+  projectListDataSource = new MatTableDataSource<ProjectListItem>();
 
   ngOnInit() {
     this.projectService.projectGet().subscribe((projects) => {
