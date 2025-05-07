@@ -245,8 +245,10 @@
   "project-list": {
     "id": "ID #",
     "projectTitle": "Project Title",
-    "startDate": "Start Date",
-    "endDate": "End Date"
+    "status": "Status",
+    "fundingAmount": "Funding Amount",
+    "startDate": "Planned Start Date",
+    "endDate": "Planned End Date"
   },
   "submissionDetails": "Submission Details for {{id}}",
   "submission-list": {

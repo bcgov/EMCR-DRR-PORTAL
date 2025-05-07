@@ -24,7 +24,14 @@ export class ProjectListComponent {
   projectService = inject(ProjectService);
 
   projects?: DraftDrrProject[] = [];
-  projectColumns = ['id', 'projectTitle', 'startDate', 'endDate'];
+  projectColumns = [
+    'id',
+    'projectTitle',
+    'status',
+    'fundingAmount',
+    'startDate',
+    'endDate',
+  ];
   projectListDataSource = new MatTableDataSource<DraftDrrProject>();
 
   ngOnInit() {
