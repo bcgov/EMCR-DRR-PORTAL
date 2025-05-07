@@ -4,9 +4,9 @@
  * DRR API
  * OpenAPI spec version: 1.0.0
  */
-import type { DraftDrrProject } from './draftDrrProject';
+import type { ProjectListItem } from './projectListItem';
 
 export interface ProjectResponse {
   length?: number;
-  projects?: DraftDrrProject[];
+  projects?: ProjectListItem[];
 }
