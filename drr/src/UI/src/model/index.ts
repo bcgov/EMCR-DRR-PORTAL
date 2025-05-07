@@ -98,6 +98,7 @@ export * from './projectClaimAllOf';
 export * from './projectClaimResult';
 export * from './projectClaimResultAllOf';
 export * from './projectEvent';
+export * from './projectListItem';
 export * from './projectProgressStatus';
 export * from './projectResponse';
 export * from './projectResult';
