@@ -286,12 +286,23 @@ namespace EMCR.DRR.Managers.Intake
 
         public async Task<ConditionsQueryResponse> Handle(ConditionRequestQuery q)
         {
+            if (!string.IsNullOrEmpty(q.Id))
+            {
+                var canAccess = await CanAccessRequest(q.Id, q.BusinessId);
+                if (!canAccess) throw new ForbiddenException("Not allowed to access this condition request.");
+            }
             if (!string.IsNullOrEmpty(q.ConditionId))
             {
                 var canAccess = await CanAccessCondition(q.ConditionId, q.BusinessId);
-                if (!canAccess) throw new ForbiddenException("Not allowed to access this forecast.");
+                if (!canAccess) throw new ForbiddenException("Not allowed to access this condition request.");
             }
+
             var res = await requestRepository.Query(new RequestsQuery { Id = q.Id, ConditionId = q.ConditionId });
+
+            if (res.Items.Any(r => r.Condition != null && !string.IsNullOrEmpty(r.Condition.ConditionName) && r.Condition.ConditionName.Equals("Final Report")))
+            {
+                throw new BusinessValidationException("Can not access Final Report condition");
+            }
 
             return new ConditionsQueryResponse { Items = mapper.Map<IEnumerable<ConditionRequest>>(res.Items), Length = res.Length };
         }
@@ -641,6 +652,11 @@ namespace EMCR.DRR.Managers.Intake
             var existingCondition = (await projectRepository.Query(new ConditionsQuery { Id = cmd.ConditionId })).Items.SingleOrDefault();
             if (existingCondition == null) throw new NotFoundException("Condition not found");
 
+            if (!string.IsNullOrEmpty(existingCondition.ConditionName) && existingCondition.ConditionName.Equals("Final Report"))
+            {
+                throw new BusinessValidationException("Can not create request for Final Report Condition");
+            }
+
             var existingRequest = (await requestRepository.Query(new RequestsQuery { ConditionId = cmd.ConditionId, ProjectId = cmd.ProjectId })).Items.SingleOrDefault();
             if (existingRequest != null) throw new BusinessValidationException($"A request already exists on project {cmd.ProjectId} for condition {cmd.ConditionId}");
 
@@ -659,6 +675,11 @@ namespace EMCR.DRR.Managers.Intake
             if (existingRequest == null) throw new NotFoundException("Condition Request not found");
             if (!RequestInEditableStatus(existingRequest)) throw new BusinessValidationException("Not allowed to update Condition Request");
 
+            if (existingRequest.Condition != null && !string.IsNullOrEmpty(existingRequest.Condition.ConditionName) && existingRequest.Condition.ConditionName.Equals("Final Report"))
+            {
+                throw new BusinessValidationException("Can not update request for Final Report Condition");
+            }
+
             var request = mapper.Map<ConditionRequest>(cmd.Request);
 
             var id = (await requestRepository.Manage(new SaveConditionRequest { Request = request })).Id;
@@ -673,6 +694,10 @@ namespace EMCR.DRR.Managers.Intake
             var existingRequest = (await requestRepository.Query(new RequestsQuery { Id = cmd.Request.Id })).Items.SingleOrDefault();
             if (existingRequest == null) throw new NotFoundException("Condition Request not found");
             if (!RequestInEditableStatus(existingRequest)) throw new BusinessValidationException("Not allowed to update Condition Request");
+            if (existingRequest.Condition != null && !string.IsNullOrEmpty(existingRequest.Condition.ConditionName) && existingRequest.Condition.ConditionName.Equals("Final Report"))
+            {
+                throw new BusinessValidationException("Can not update request for Final Report Condition");
+            }
 
             var condition = mapper.Map<ConditionRequest>(cmd.Request);
 

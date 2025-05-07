@@ -187,6 +187,7 @@ namespace EMCR.DRR.Managers.Intake
                         var uncreatedConditions = dest.Conditions.Where(c => !dest.ConditionRequests.Any(r => r.ConditionId == c.Id));
                         foreach (var c in uncreatedConditions)
                         {
+                            var actionsToAppend = !string.IsNullOrEmpty(c.ConditionName) && !c.ConditionName.Equals("Final Report") ? [RequestActions.Create] : Array.Empty<RequestActions>();
                             dest.ConditionRequests = dest.ConditionRequests.Append(new ConditionRequestListItem
                             {
                                 Id = null,
@@ -196,7 +197,7 @@ namespace EMCR.DRR.Managers.Intake
                                 DateMet = c.DateMet,
                                 Limit = c.Limit,
                                 Status = null,
-                                Actions = [RequestActions.Create]
+                                Actions = actionsToAppend
                             }).ToList();
                         }
 
@@ -829,6 +830,7 @@ namespace EMCR.DRR.Managers.Intake
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => DrrRequestStatusMapper(src.Status)))
                 .AfterMap((src, dest) =>
                 {
+                    if (!string.IsNullOrEmpty(dest.ConditionName) && dest.ConditionName.Equals("Final Report")) return;
                     switch (dest.Status)
                     {
                         case Controllers.RequestStatus.Draft:

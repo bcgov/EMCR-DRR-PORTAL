@@ -83,6 +83,7 @@ namespace EMCR.DRR.API.Resources.Requests
             var loadTasks = new List<Task>
             {
                 ctx.LoadPropertyAsync(existingRequest, nameof(drr_request.drr_ProjectConditionId)),
+                ctx.LoadPropertyAsync(existingRequest, nameof(drr_request.drr_AuthorizedRepresentativeContactId)),
                 ctx.LoadPropertyAsync(existingRequest, nameof(drr_request.drr_request_bcgov_documenturl_RequestId)),
             };
 
