@@ -66,6 +66,9 @@ namespace EMCR.DRR.API.Resources.Documents
                 case RecordType.ForecastReport:
                     recordId = document._bcgov_projectbudgetforecastid_value.ToString();
                     break;
+                case RecordType.ConditionRequest:
+                    recordId = document._drr_requestid_value.ToString();
+                    break;
                 default:
                     break;
             }
