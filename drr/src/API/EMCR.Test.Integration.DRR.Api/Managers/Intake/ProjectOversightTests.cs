@@ -97,7 +97,9 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             //var queryRes = await manager.Handle(new DrrProjectsQuery { Id = "DRIF-PRJ-1139", BusinessId = userInfo.BusinessId, QueryOptions = queryOptions });
             var projects = mapper.Map<IEnumerable<DraftDrrProject>>(queryRes.Items);
             projects.Count().ShouldBe(1);
-            projects.First().Claims.Last().ReportPeriod.ShouldNotBeNullOrEmpty();
+            var project = projects.First();
+            project.Claims.Last().ReportPeriod.ShouldNotBeNullOrEmpty();
+            project.Attachments.Count().ShouldBeGreaterThan(0);
         }
 #pragma warning restore CS8604 // Possible null reference argument.
 

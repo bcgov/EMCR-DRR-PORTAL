@@ -564,6 +564,7 @@ namespace EMCR.DRR.Resources.Applications
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.bcgov_filename))
                 .ForMember(dest => dest.DocumentType, opt => opt.MapFrom(src => IEnumEx.GetValueFromDescription<DocumentType>(src.bcgov_DocumentType != null ? src.bcgov_DocumentType.bcgov_name : DocumentType.OtherSupportingDocument.ToDescriptionString())))
                 .ForMember(dest => dest.Comments, opt => opt.MapFrom(src => src.bcgov_documentcomments))
+                .ForMember(dest => dest.CreatedOn, opt => opt.MapFrom(src => src.createdon.HasValue ? src.createdon.Value.UtcDateTime : (DateTime?)null))
             ;
         }
 
