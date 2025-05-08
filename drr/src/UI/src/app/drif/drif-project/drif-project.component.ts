@@ -35,6 +35,7 @@ import {
   RequestActions,
 } from '../../../model';
 import { ROUTE_PATH } from '../../app.routes';
+import { FileService } from '../../shared/services/file.service';
 import { DrifProjectContactDialogComponent } from './drif-project-contact-dialog.component';
 
 export enum InterimSubReportSection {
@@ -90,6 +91,7 @@ export class DrifProjectComponent {
   projectService = inject(ProjectService);
   matDialog = inject(MatDialog);
   translocoService = inject(TranslocoService);
+  fileService = inject(FileService);
 
   projectsRoute = ROUTE_PATH.PROJECTS;
 
@@ -112,6 +114,13 @@ export class DrifProjectComponent {
   pastReportsDataSource = new MatTableDataSource<InterimReport>([]);
 
   attachmentsDataSource = new MatTableDataSource<Attachment>([]);
+  attachmentsColumns = [
+    'fileName',
+    'documentType',
+    'description',
+    'uploadDate',
+    'actions',
+  ];
 
   private progressReadonlyStatuses: ProgressReportStatus[] = [
     ProgressReportStatus.Submitted,
@@ -302,5 +311,9 @@ export class DrifProjectComponent {
 
   canViewConditionRequest(condition: ConditionRequestListItem) {
     return condition.actions?.includes(RequestActions.View);
+  }
+
+  downloadAttachment(attachment: Attachment) {
+    this.fileService.downloadFile(attachment.id!);
   }
 }
