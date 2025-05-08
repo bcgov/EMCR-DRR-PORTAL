@@ -1416,19 +1416,23 @@
           <mat-label class="drr-label">{{
             t("attachments.resolutionDocument")
           }}</mat-label>
-          @if (getAttachmentByDocumentType("Resolution")) {
+          @if (getAttachmentByDocumentType("CouncilBoardResolution")) {
             <div class="summary-row attachment">
               <drr-summary-item
                 [label]="t('attachments.name')"
                 [rxFormControl]="
-                  getAttachmentByDocumentType('Resolution').get('name')
+                  getAttachmentByDocumentType('CouncilBoardResolution').get(
+                    'name'
+                  )
                 "
               >
               </drr-summary-item>
               <drr-summary-item
                 [label]="t('attachments.comments')"
                 [rxFormControl]="
-                  getAttachmentByDocumentType('Resolution').get('comments')
+                  getAttachmentByDocumentType('CouncilBoardResolution').get(
+                    'comments'
+                  )
                 "
                 controlType="textarea"
               >
@@ -1440,7 +1444,9 @@
                 color="primary"
                 (click)="
                   onDownloadFile(
-                    getAttachmentByDocumentType('Resolution').get('id')?.value
+                    getAttachmentByDocumentType('CouncilBoardResolution').get(
+                      'id'
+                    )?.value
                   )
                 "
               >

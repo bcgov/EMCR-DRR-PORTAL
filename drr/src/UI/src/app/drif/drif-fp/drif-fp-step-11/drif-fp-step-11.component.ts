@@ -68,19 +68,22 @@ export class DrifFpStep11Component {
         if (value === true) {
           attachmentsFormArray.push(
             this.formBuilder.formGroup(AttachmentForm, {
-              documentType: DocumentType.Resolution,
+              documentType: DocumentType.CouncilBoardResolution,
             }),
           );
         } else {
           const resolutionForm = attachmentsFormArray.controls.find(
-            (control) => control.value.documentType === DocumentType.Resolution,
+            (control) =>
+              control.value.documentType ===
+              DocumentType.CouncilBoardResolution,
           );
 
           if (resolutionForm && resolutionForm.value.id) {
             this.removeFile(resolutionForm.value.id);
           } else {
             const resolutionIndex = attachmentsFormArray.controls.findIndex(
-              (c) => c.value.documentType === DocumentType.Resolution,
+              (c) =>
+                c.value.documentType === DocumentType.CouncilBoardResolution,
             );
             if (resolutionIndex >= 0) {
               attachmentsFormArray.removeAt(resolutionIndex);
@@ -185,7 +188,7 @@ export class DrifFpStep11Component {
 
           // if it's a mandatory document add empty form again to enforce validation
           if (
-            documentType === DocumentType.Resolution &&
+            documentType === DocumentType.CouncilBoardResolution &&
             this.attachmentsForm.get('haveResolution')?.value === true
           ) {
             const attachmentForm = this.formBuilder.formGroup(AttachmentForm, {
