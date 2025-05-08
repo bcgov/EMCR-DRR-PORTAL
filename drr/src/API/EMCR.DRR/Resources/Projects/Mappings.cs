@@ -42,8 +42,7 @@ namespace EMCR.DRR.API.Resources.Projects
                 .ForMember(dest => dest.Forecast, opt => opt.MapFrom(src => src.drr_drr_project_drr_projectbudgetforecast_Project.Where(c => c.statecode == (int)EntityState.Active)))
                 .ForMember(dest => dest.Events, opt => opt.MapFrom(src => src.drr_drr_project_drr_projectevent_Project.Where(c => c.statecode == (int)EntityState.Active)))
                 .ForMember(dest => dest.Requests, opt => opt.MapFrom(src => src.drr_project_drr_request_ProjectId.Where(c => c.statecode == (int)EntityState.Active)))
-                //.ForMember(dest => dest.Attachments, opt => opt.MapFrom(src => src.doc))
-                .ForMember(dest => dest.Attachments, opt => opt.Ignore())
+                .ForMember(dest => dest.Attachments, opt => opt.MapFrom(src => src.bcgov_drr_project_bcgov_documenturl_Projectid))
                 ;
 
             CreateMap<InterimReport, drr_projectreport>(MemberList.None)

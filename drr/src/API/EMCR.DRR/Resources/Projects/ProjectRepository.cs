@@ -144,6 +144,7 @@ namespace EMCR.DRR.API.Resources.Projects
                 ctx.LoadPropertyAsync(project, nameof(drr_project.drr_drr_project_drr_projectevent_Project), ct),
                 ctx.LoadPropertyAsync(project, nameof(drr_project.drr_drr_project_drr_driffundingrequest_Project), ct),
                 ctx.LoadPropertyAsync(project, nameof(drr_project.drr_project_drr_request_ProjectId), ct),
+                ctx.LoadPropertyAsync(project, nameof(drr_project.bcgov_drr_project_bcgov_documenturl_Projectid), ct),
             };
 
             await Task.WhenAll(loadTasks2);
@@ -156,6 +157,7 @@ namespace EMCR.DRR.API.Resources.Projects
                 ParallelLoadProjectConditions(ctx, project, ct),
                 ParallelLoadFundingRequests(ctx, project, ct),
                 ParallelLoadRequests(ctx, project, ct),
+                ParallelLoadProjectDocumentTypes(ctx, project, ct),
                 ]);
 
             //sort lists
@@ -253,6 +255,15 @@ namespace EMCR.DRR.API.Resources.Projects
                 await ctx.LoadPropertyAsync(report, nameof(drr_projectclaim.drr_ProjectReport), ct);
                 var projectReport = project.drr_drr_project_drr_projectreport_Project.Where(pr => pr._drr_claimreport_value == report.drr_projectclaimid).SingleOrDefault();
                 if (projectReport != null) report.drr_ProjectReport = projectReport;
+            });
+        }
+
+        private static async Task ParallelLoadProjectDocumentTypes(DRRContext ctx, drr_project project, CancellationToken ct)
+        {
+            await project.bcgov_drr_project_bcgov_documenturl_Projectid.ForEachAsync(5, async doc =>
+            {
+                ctx.AttachTo(nameof(DRRContext.bcgov_documenturls), doc);
+                await ctx.LoadPropertyAsync(doc, nameof(bcgov_documenturl.bcgov_DocumentType), ct);
             });
         }
 

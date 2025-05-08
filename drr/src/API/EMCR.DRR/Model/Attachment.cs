@@ -30,6 +30,7 @@ namespace EMCR.DRR.API.Model
         public DocumentType DocumentType { get; set; } = DocumentType.OtherSupportingDocument;
         [StringLength(ApplicationValidators.COMMENTS_MAX_LENGTH)]
         public string? Comments { get; set; }
+        public DateTime? CreatedOn { get; set; }
     }
 
     public class DeleteAttachment
@@ -41,16 +42,18 @@ namespace EMCR.DRR.API.Model
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum DocumentType
     {
-        OtherSupportingDocument,
-        Resolution,
-        //DetailedCostEstimate,
-        PreliminaryDesign,
-        SitePlan,
-        ProgressReport,
-        Invoice,
-        ProofOfPayment,
+        ApprovalLetter,
+        ConditionApproval,
+        CouncilBoardResolution,
         ForecastReport,
-        ConditionApproval
+        Invoice,
+        OtherSupportingDocument,
+        PreliminaryDesign,
+        ProgressReport,
+        ProjectCompletionLetter,
+        ProofOfPayment,
+        SCA,
+        SitePlan,
     }
 
     [JsonConverter(typeof(JsonStringEnumConverter))]

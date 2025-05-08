@@ -375,30 +375,41 @@ namespace EMCR.DRR.Managers.Intake
 
     public enum DocumentType
     {
-        [Description("Other Supporting Documentation")]
-        OtherSupportingDocument,
-        [Description("Council/Board Resolution")]
-        Resolution,
-        //[Description("Detailed Cost Estimate")]
-        //DetailedCostEstimate,
-        [Description("Funding Approval")]
-        FundingApproval,
-        [Description("Preliminary Design")]
-        PreliminaryDesign,
-        [Description("Site Plan")]
-        SitePlan,
-        [Description("SME Feedback")]
-        SMEFeedback,
-        [Description("Progress Report")]
-        ProgressReport,
-        [Description("Invoice")]
-        Invoice,
-        [Description("Proof of Payment")]
-        ProofOfPayment,
-        [Description("Forecast Report")]
-        ForecastReport,
+        [Description("Approval Letter")]
+        ApprovalLetter,
+
         [Description("Condition Approval")]
         ConditionApproval,
+
+        [Description("Council/Board Resolution")]
+        CouncilBoardResolution,
+
+        [Description("Forecast Report")]
+        ForecastReport,
+
+        [Description("Invoice")]
+        Invoice,
+
+        [Description("Other Supporting Documentation")]
+        OtherSupportingDocument,
+
+        [Description("Preliminary Design")]
+        PreliminaryDesign,
+
+        [Description("Progress Report")]
+        ProgressReport,
+
+        [Description("Project Completion Letter")]
+        ProjectCompletionLetter,
+
+        [Description("Proof of Payment")]
+        ProofOfPayment,
+
+        [Description("SCA")]
+        SCA,
+
+        [Description("Site Plan")]
+        SitePlan,
     }
 
     public class Application
@@ -798,6 +809,7 @@ namespace EMCR.DRR.Managers.Intake
         public required string Name { get; set; }
         public DocumentType DocumentType { get; set; }
         public string? Comments { get; set; }
+        public DateTime? CreatedOn { get; set; }
     }
 
     public class CostProjectionItem
