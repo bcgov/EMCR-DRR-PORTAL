@@ -124,7 +124,7 @@ namespace EMCR.DRR.Controllers
         {
             try
             {
-                var id = await intakeManager.Handle(new CreateInterimReportCommand { ProjectId = projectId, ReportType = (Managers.Intake.ReportType)createReport.ReportType, UserInfo = GetCurrentUser() });
+                var id = await intakeManager.Handle(new CreateProjectReportCommand { ProjectId = projectId, ReportType = (Managers.Intake.ReportType)createReport.ReportType, UserInfo = GetCurrentUser() });
                 return Ok(new CreateReportResult { Id = id });
             }
             catch (Exception e)

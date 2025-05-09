@@ -113,6 +113,11 @@ namespace EMCR.DRR.API.Controllers
         public required S3FileStreamResult File { get; set; }
     }
 
+    //public class AttachmentStreamQueryResult
+    //{
+    //    public required S3FileStreamResult File { get; set; }
+    //}
+
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class DisableFormValueModelBindingAttribute : Attribute, IResourceFilter
     {
