@@ -32,6 +32,7 @@ import {
   InterimReportStatus,
   PaymentCondition,
   ProgressReportStatus,
+  ProjectStatus,
   RequestActions,
 } from '../../../model';
 import { ROUTE_PATH } from '../../app.routes';
@@ -318,5 +319,13 @@ export class DrifProjectComponent {
 
   downloadAttachment(attachment: Attachment) {
     this.fileService.downloadFile(attachment.id!);
+  }
+
+  canUpdateProject() {
+    return this.project?.status !== ProjectStatus.ContactUpdate;
+  }
+
+  canUpdateItem(action: string) {
+    return this.canUpdateProject() || action == 'view';
   }
 }

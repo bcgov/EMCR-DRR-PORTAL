@@ -182,6 +182,7 @@
           mat-raised-button
           color="primary"
           (click)="addInterimReport()"
+          [disabled]="!canUpdateProject()"
         >
           {{ t("startNextReport") }}
         </button>
@@ -235,6 +236,7 @@
                     mat-raised-button
                     color="primary"
                     [routerLink]="getSubReportRoute(element, action)"
+                    [disabled]="!canUpdateItem(action)"
                   >
                     {{ t(action) }}
                   </a>
@@ -324,6 +326,7 @@
                     mat-raised-button
                     color="primary"
                     (click)="createConditionRequest(conditionRequest)"
+                    [disabled]="!canUpdateProject()"
                   >
                     Request to Clear
                   </button>
@@ -342,6 +345,7 @@
                     mat-raised-button
                     color="primary"
                     [routerLink]="['conditions', conditionRequest.id, 'edit']"
+                    [disabled]="!canUpdateProject()"
                   >
                     Edit
                   </button>
