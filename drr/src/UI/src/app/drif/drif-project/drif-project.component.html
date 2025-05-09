@@ -396,7 +396,20 @@
           <ng-container matColumnDef="comments">
             <th mat-header-cell *matHeaderCellDef>Description</th>
             <td mat-cell *matCellDef="let attachment">
-              {{ attachment.comments }}
+              <div
+                style="
+                  max-width: 50rem;
+                  white-space: normal;
+                  word-wrap: break-word;
+                  overflow-wrap: anywhere;
+                  display: -webkit-box;
+                  -webkit-line-clamp: 5;
+                  -webkit-box-orient: vertical;
+                  overflow: hidden;
+                "
+              >
+                {{ attachment.comments }}
+              </div>
             </td>
           </ng-container>
           <ng-container matColumnDef="createdOn">
