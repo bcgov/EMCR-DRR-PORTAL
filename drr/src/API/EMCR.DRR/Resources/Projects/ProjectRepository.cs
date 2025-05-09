@@ -27,6 +27,18 @@ namespace EMCR.DRR.API.Resources.Projects
             return (!string.IsNullOrEmpty(existingProject.drr_ProponentName.drr_bceidguid)) && existingProject.drr_ProponentName.drr_bceidguid.Equals(businessId);
         }
 
+        public async Task<bool> CanAccessProjectFromDocumentId(string id, string businessId, bool forUpdate)
+        {
+            var readCtx = dRRContextFactory.CreateReadOnly();
+            var document = await readCtx.bcgov_documenturls.Where(a => a.bcgov_documenturlid == Guid.Parse(id)).SingleOrDefaultAsync();
+            var existingProject = await readCtx.drr_projects.Expand(a => a.drr_ProponentName).Where(a => a.drr_projectid == document._bcgov_projectid_value).SingleOrDefaultAsync();
+            if (existingProject == null) return true;
+            if (forUpdate && existingProject.statuscode == (int)ProjectStatusOptionSet.Complete) return false;
+            //readCtx.AttachTo(nameof(readCtx.drr_projects), existingProject.drr_Project);
+            //await readCtx.LoadPropertyAsync(existingProject.drr_Project, nameof(drr_project.drr_ProponentName));
+            return (!string.IsNullOrEmpty(existingProject.drr_ProponentName.drr_bceidguid)) && existingProject.drr_ProponentName.drr_bceidguid.Equals(businessId);
+        }
+
         public async Task<bool> CanAccessCondition(string id, string businessId)
         {
             var readCtx = dRRContextFactory.CreateReadOnly();
@@ -135,8 +147,12 @@ namespace EMCR.DRR.API.Resources.Projects
             //----> System.IO.IOException : Unable to read data from the transport connection: An existing connection was forcibly closed by the remote host..----> System.Net.Sockets.SocketException : An existing connection was forcibly closed by the remote host.
             //But if I load these in two steps, it works consistently...
 
+            //ctx.LoadPropertyAsync(application, nameof(drr_application.drr_application_connections1), ct),
+            ctx.AttachTo(nameof(DRRContext.drr_applications), project.drr_FullProposalApplication);
+
             var loadTasks2 = new List<Task>
             {
+                ctx.LoadPropertyAsync(project.drr_FullProposalApplication, nameof(drr_application.drr_application_connections1), ct),
                 ctx.LoadPropertyAsync(project, nameof(drr_project.drr_drr_project_drr_projectprogress_Project), ct),
                 ctx.LoadPropertyAsync(project, nameof(drr_project.drr_drr_project_drr_projectbudgetforecast_Project), ct),
                 ctx.LoadPropertyAsync(project, nameof(drr_project.drr_drr_project_drr_projectclaim_Project), ct),

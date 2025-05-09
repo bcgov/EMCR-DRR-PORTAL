@@ -8,6 +8,7 @@ namespace EMCR.DRR.API.Resources.Projects
         Task<ManageProjectCommandResult> Manage(ManageProjectCommand cmd);
         Task<ProjectQueryResult> Query(ProjectQuery query);
         Task<bool> CanAccessProject(string id, string businessId);
+        Task<bool> CanAccessProjectFromDocumentId(string id, string businessId, bool forUpdate);
 
         //Project Conditions
         Task<ConditionQueryResult> Query(ConditionQuery query);

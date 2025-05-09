@@ -178,6 +178,7 @@ namespace EMCR.DRR.Managers.Intake
                     }
                 })
                 .ReverseMap()
+                .ForMember(dest => dest.PartneringProponents, opt => opt.MapFrom(src => src.PartneringProponents != null ? src.PartneringProponents.Select(p => p.Name) : Array.Empty<string>()))
                 .ForMember(dest => dest.ConditionRequests, opt => opt.MapFrom(src => src.Requests))
                 .AfterMap((src, dest) =>
                 {

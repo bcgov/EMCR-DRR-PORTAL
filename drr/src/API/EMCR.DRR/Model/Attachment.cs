@@ -56,6 +56,7 @@ namespace EMCR.DRR.API.Model
         SitePlan,
     }
 
+    //Available record types for upload - so it might not match the intake's RecordType enum since there are additional record types we can download from
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum RecordType
     {
@@ -63,6 +64,6 @@ namespace EMCR.DRR.API.Model
         ProgressReport,
         Invoice,
         ForecastReport,
-        ConditionRequest
+        ConditionRequest,
     }
 }

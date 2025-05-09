@@ -422,7 +422,7 @@ namespace EMCR.DRR.Controllers
         public decimal? FundingAmount { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
-        public ProjectStatus? Status { get; set; }
+        public IEnumerable<string>? PartneringProponents { get; set; }
         public IEnumerable<CostProjectionItem>? CostProjections { get; set; }
         public IEnumerable<PaymentCondition>? Conditions { get; set; }
         public IEnumerable<ContactDetails>? Contacts { get; set; }
@@ -433,6 +433,7 @@ namespace EMCR.DRR.Controllers
         public IEnumerable<ProjectEvent>? Events { get; set; }
         public IEnumerable<ConditionRequestListItem>? ConditionRequests { get; set; }
         public IEnumerable<Attachment>? Attachments { get; set; }
+        public ProjectStatus? Status { get; set; }
     }
 
     public class ProjectListItem

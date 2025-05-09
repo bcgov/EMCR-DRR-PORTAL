@@ -28,12 +28,12 @@ namespace EMCR.DRR.API.Resources.Projects
                 .ForMember(dest => dest.ProgramType, opt => opt.MapFrom(src => src.drr_Program.drr_name))
                 .ForMember(dest => dest.ReportingScheduleType, opt => opt.MapFrom(src => src.drr_ReportingSchedule.drr_name))
                 .ForMember(dest => dest.FirstReportPeriod, opt => opt.MapFrom(src => src.drr_firstreportdue != null ? src.drr_firstreportdue.drr_name : string.Empty))
-                .ForMember(dest => dest.CostProjections, opt => opt.MapFrom(src => src.drr_drr_project_drr_driffundingrequest_Project.Where(c => c.statecode == (int)EntityState.Active)))
-                .ForMember(dest => dest.Conditions, opt => opt.MapFrom(src => src.drr_drr_project_drr_projectcondition_Project.Where(c => c.statecode == (int)EntityState.Active)))
                 .ForMember(dest => dest.FundingAmount, opt => opt.MapFrom(src => src.drr_fundingamount))
                 .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.drr_plannedstartdate.HasValue ? src.drr_plannedstartdate.Value.UtcDateTime : (DateTime?)null))
                 .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.drr_plannedenddate.HasValue ? src.drr_plannedenddate.Value.UtcDateTime : (DateTime?)null))
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.statuscode.HasValue ? (int?)Enum.Parse<ProjectStatus>(((ProjectStatusOptionSet)src.statuscode).ToString()) : null))
+                .ForMember(dest => dest.PartneringProponents, opt => opt.MapFrom(src => src.drr_FullProposalApplication.drr_application_connections1))
+                .ForMember(dest => dest.CostProjections, opt => opt.MapFrom(src => src.drr_drr_project_drr_driffundingrequest_Project.Where(c => c.statecode == (int)EntityState.Active)))
+                .ForMember(dest => dest.Conditions, opt => opt.MapFrom(src => src.drr_drr_project_drr_projectcondition_Project.Where(c => c.statecode == (int)EntityState.Active)))
                 //.ForMember(dest => dest.Contacts, opt => opt.MapFrom(src => src.con))
                 .ForMember(dest => dest.Contacts, opt => opt.Ignore())
                 .ForMember(dest => dest.InterimReports, opt => opt.MapFrom(src => src.drr_drr_project_drr_projectreport_Project.Where(c => c.statecode == (int)EntityState.Active)))
@@ -43,6 +43,7 @@ namespace EMCR.DRR.API.Resources.Projects
                 .ForMember(dest => dest.Events, opt => opt.MapFrom(src => src.drr_drr_project_drr_projectevent_Project.Where(c => c.statecode == (int)EntityState.Active)))
                 .ForMember(dest => dest.Requests, opt => opt.MapFrom(src => src.drr_project_drr_request_ProjectId.Where(c => c.statecode == (int)EntityState.Active)))
                 .ForMember(dest => dest.Attachments, opt => opt.MapFrom(src => src.bcgov_drr_project_bcgov_documenturl_Projectid))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.statuscode.HasValue ? (int?)Enum.Parse<ProjectStatus>(((ProjectStatusOptionSet)src.statuscode).ToString()) : null))
                 ;
 
             CreateMap<InterimReport, drr_projectreport>(MemberList.None)

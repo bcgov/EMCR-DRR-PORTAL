@@ -370,6 +370,8 @@ namespace EMCR.DRR.Managers.Intake
         ForecastReport,
         [Description("drr_request")]
         ConditionRequest,
+        [Description("drr_project")]
+        Project,
         None,
     }
 
@@ -614,7 +616,7 @@ namespace EMCR.DRR.Managers.Intake
         public decimal? FundingAmount { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
-        public ProjectStatus Status { get; set; }
+        public IEnumerable<PartneringProponent>? PartneringProponents { get; set; }
         public IEnumerable<CostProjectionItem>? CostProjections { get; set; }
         public IEnumerable<PaymentCondition>? Conditions { get; set; }
         public IEnumerable<ContactDetails>? Contacts { get; set; }
@@ -625,6 +627,7 @@ namespace EMCR.DRR.Managers.Intake
         public IEnumerable<ProjectEvent>? Events { get; set; }
         public IEnumerable<Request>? Requests { get; set; }
         public IEnumerable<BcGovDocument>? Attachments { get; set; }
+        public ProjectStatus Status { get; set; }
     }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
