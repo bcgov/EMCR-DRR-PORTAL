@@ -787,6 +787,7 @@ namespace EMCR.DRR.Managers.Intake
                 case RecordType.Invoice: return await DownloadInvoiceDocument(cmd, result);
                 case RecordType.ForecastReport: return await DownloadForecastReportDocument(cmd, result);
                 case RecordType.ConditionRequest: return await DownloadConditionRequestDocument(cmd, result);
+                case RecordType.Project: return await DownloadProjectDocument(cmd, result);
                 default: throw new BusinessValidationException("Unsupported Record Type");
             }
         }
@@ -840,6 +841,14 @@ namespace EMCR.DRR.Managers.Intake
             var canAccess = await CanAccessRequestFromDocumentId(cmd.Id, cmd.UserInfo.BusinessId);
             if (!canAccess) throw new ForbiddenException("Not allowed to access this condition request.");
             var res = await s3Provider.HandleQuery(new FileQuery { Key = cmd.Id, Folder = $"{RecordType.ConditionRequest.ToDescriptionString()}/{documentRes.RecordId}" });
+            return (FileQueryResult)res;
+        }
+        
+        private async Task<FileQueryResult> DownloadProjectDocument(DownloadAttachment cmd, QueryDocumentCommandResult documentRes)
+        {
+            var canAccess = await CanAccessProjectFromDocumentId(cmd.Id, cmd.UserInfo.BusinessId);
+            if (!canAccess) throw new ForbiddenException("Not allowed to access this condition request.");
+            var res = await s3Provider.HandleQuery(new FileQuery { Key = cmd.Id, Folder = $"{RecordType.Project.ToDescriptionString()}/{documentRes.RecordId}" });
             return (FileQueryResult)res;
         }
 
@@ -1157,6 +1166,13 @@ namespace EMCR.DRR.Managers.Intake
             if (string.IsNullOrEmpty(businessId)) throw new ArgumentNullException("Missing user's BusinessId");
             if (string.IsNullOrEmpty(id)) return true;
             return await projectRepository.CanAccessProject(id, businessId);
+        }
+
+        private async Task<bool> CanAccessProjectFromDocumentId(string? id, string? businessId, bool forUpdate = false)
+        {
+            if (string.IsNullOrEmpty(businessId)) throw new ArgumentNullException("Missing user's BusinessId");
+            if (string.IsNullOrEmpty(id)) return true;
+            return await projectRepository.CanAccessProjectFromDocumentId(id, businessId, forUpdate);
         }
 
         private async Task<bool> CanAccessReport(string? id, string? businessId)

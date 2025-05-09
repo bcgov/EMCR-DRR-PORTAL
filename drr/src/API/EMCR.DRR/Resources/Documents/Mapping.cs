@@ -23,6 +23,7 @@ namespace EMCR.DRR.API.Resources.Cases
                     else if (src._bcgov_projectexpenditure_value != null) { dest.RecordType = Managers.Intake.RecordType.Invoice; }
                     else if (src._bcgov_projectbudgetforecastid_value != null) { dest.RecordType = Managers.Intake.RecordType.ForecastReport; }
                     else if (src._drr_requestid_value != null) { dest.RecordType = Managers.Intake.RecordType.ConditionRequest; }
+                    else if (src._bcgov_projectid_value != null) { dest.RecordType = Managers.Intake.RecordType.Project; }
                     else { dest.RecordType = Managers.Intake.RecordType.None; }
                 })
                 ;

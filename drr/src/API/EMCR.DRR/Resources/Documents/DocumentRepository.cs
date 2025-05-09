@@ -69,6 +69,9 @@ namespace EMCR.DRR.API.Resources.Documents
                 case RecordType.ConditionRequest:
                     recordId = document._drr_requestid_value.ToString();
                     break;
+                case RecordType.Project:
+                    recordId = document._bcgov_projectid_value.ToString();
+                    break;
                 default:
                     break;
             }
