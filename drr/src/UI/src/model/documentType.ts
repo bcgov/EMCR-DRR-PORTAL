@@ -9,13 +9,16 @@ export type DocumentType = (typeof DocumentType)[keyof typeof DocumentType];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const DocumentType = {
-  OtherSupportingDocument: 'OtherSupportingDocument',
-  Resolution: 'Resolution',
-  PreliminaryDesign: 'PreliminaryDesign',
-  SitePlan: 'SitePlan',
-  ProgressReport: 'ProgressReport',
-  Invoice: 'Invoice',
-  ProofOfPayment: 'ProofOfPayment',
-  ForecastReport: 'ForecastReport',
+  ApprovalLetter: 'ApprovalLetter',
   ConditionApproval: 'ConditionApproval',
+  CouncilBoardResolution: 'CouncilBoardResolution',
+  ForecastReport: 'ForecastReport',
+  Invoice: 'Invoice',
+  OtherSupportingDocument: 'OtherSupportingDocument',
+  PreliminaryDesign: 'PreliminaryDesign',
+  ProgressReport: 'ProgressReport',
+  ProjectCompletionLetter: 'ProjectCompletionLetter',
+  ProofOfPayment: 'ProofOfPayment',
+  SCA: 'SCA',
+  SitePlan: 'SitePlan',
 } as const;

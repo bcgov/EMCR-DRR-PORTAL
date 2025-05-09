@@ -769,5 +769,19 @@
     "Submitted": "Submitted",
     "Approved": "Approved",
     "UpdateNeeded": "Update Needed"
+  },
+  "documentType": {
+    "ApprovalLetter": "Approval Letter",
+    "ConditionApproval": "Condition Approval",
+    "CouncilBoardResolution": "Council Board Resolution",
+    "ForecastReport": "Forecast Report",
+    "Invoice": "Invoice",
+    "OtherSupportingDocument": "Other Supporting Document",
+    "PreliminaryDesign": "Preliminary Design",
+    "ProgressReport": "Progress Report",
+    "ProjectCompletionLetter": "Project Completion Letter",
+    "ProofOfPayment": "Proof Of Payment",
+    "SCA": "SCA",
+    "SitePlan": "Site Plan"
   }
 }

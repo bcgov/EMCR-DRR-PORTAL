@@ -13,6 +13,8 @@ export interface Attachment {
    * @nullable
    */
   comments?: string;
+  /** @nullable */
+  createdOn?: string;
   documentType?: DocumentType;
   id?: string;
   name?: string;

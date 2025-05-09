@@ -52,11 +52,11 @@
   <div *ngIf="attachmentsForm.get('haveResolution')?.value === true">
     <drr-attachment
       [title]="t('resolutionDocument') + '*'"
-      [attachmentForm]="getFormByDocumentType('Resolution')"
+      [attachmentForm]="getFormByDocumentType('CouncilBoardResolution')"
       (uploadFiles)="uploadFiles($event)"
       (removeFile)="removeFile($event)"
       (downloadFile)="downloadFile($event)"
-      [documentType]="'Resolution'"
+      [documentType]="'CouncilBoardResolution'"
     ></drr-attachment>
   </div>
 

@@ -355,17 +355,21 @@ export class DrifFpViewComponent {
     if (response.haveResolution === true) {
       attachmentsArray?.push(
         this.formBuilder.formGroup(
-          new AttachmentForm({ documentType: DocumentType.Resolution }),
+          new AttachmentForm({
+            documentType: DocumentType.CouncilBoardResolution,
+          }),
         ),
         { emitEvent: false },
       );
     }
 
     response.attachments?.forEach((attachment) => {
-      if (attachment.documentType === DocumentType.Resolution) {
+      if (attachment.documentType === DocumentType.CouncilBoardResolution) {
         attachmentsArray.controls
           .find(
-            (control) => control.value.documentType === DocumentType.Resolution,
+            (control) =>
+              control.value.documentType ===
+              DocumentType.CouncilBoardResolution,
           )
           ?.patchValue(attachment, { emitEvent: false });
         return;

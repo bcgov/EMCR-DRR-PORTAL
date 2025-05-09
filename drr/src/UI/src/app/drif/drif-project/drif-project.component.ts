@@ -115,10 +115,10 @@ export class DrifProjectComponent {
 
   attachmentsDataSource = new MatTableDataSource<Attachment>([]);
   attachmentsColumns = [
-    'fileName',
+    'name',
     'documentType',
-    'description',
-    'uploadDate',
+    'comments',
+    'createdOn',
     'actions',
   ];
 
