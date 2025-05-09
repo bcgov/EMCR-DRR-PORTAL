@@ -53,6 +53,8 @@ export interface DrrProject {
   /** @nullable */
   interimReports?: InterimReport[];
   /** @nullable */
+  partneringProponents?: string[];
+  /** @nullable */
   programType?: ProgramType;
   /** @nullable */
   progressReports?: DraftProgressReport[];

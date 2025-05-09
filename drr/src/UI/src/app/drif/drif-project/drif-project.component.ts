@@ -122,6 +122,8 @@ export class DrifProjectComponent {
     'actions',
   ];
 
+  partneringProponents: string[] = [];
+
   private progressReadonlyStatuses: ProgressReportStatus[] = [
     ProgressReportStatus.Submitted,
     ProgressReportStatus.Approved,
@@ -235,6 +237,7 @@ export class DrifProjectComponent {
         );
 
         this.attachmentsDataSource.data = project.attachments!;
+        this.partneringProponents = project.partneringProponents!;
       });
   }
 

@@ -438,6 +438,22 @@
       </mat-card>
     </mat-tab>
 
+    <mat-tab label="Partnering Proponents">
+      <mat-card class="tab-mat-card">
+        <mat-card-header>
+          <mat-card-title>Partnering Proponents</mat-card-title>
+        </mat-card-header>
+        <mat-card-content style="padding-left: 2rem">
+          @if (partneringProponents.length === 0) {
+            <i>You have no partnering proponents.</i>
+          }
+          @for (proponent of partneringProponents; track proponent) {
+            <p>{{ proponent }}</p>
+          }
+        </mat-card-content>
+      </mat-card>
+    </mat-tab>
+
     <!-- <mat-tab label="Contacts">
       <mat-card class="tab-mat-card">
         <button
