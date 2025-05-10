@@ -49,12 +49,6 @@
         public FileTag? FileTag { get; set; }
     }
 
-    public class FileStreamQueryResult: StorageQueryResults
-    {
-        public required S3FileStreamResult File { get; set; }
-        public FileTag? FileTag { get; set; }
-    }
-
     public class S3File
     {
         public byte[] Content { get; set; } = [];

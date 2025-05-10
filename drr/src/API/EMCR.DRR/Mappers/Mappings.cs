@@ -48,11 +48,6 @@ namespace EMCR.DRR.API.Mappers
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.FileStream, opt => opt.MapFrom(src => new S3FileStream { File = src.File, ContentType = src.ContentType, FileName = src.File.FileName }))
                 ;
-            
-            CreateMap<FileUploadModel, Managers.Intake.AttachmentInfoStream>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore())
-                .ForMember(dest => dest.FileStream, opt => opt.MapFrom(src => new S3FileStream { File = src.File, ContentType = src.ContentType, FileName = src.File.FileName }))
-                ;
 
             CreateMap<DraftDrrProject, DrrProject>()
                 ;
