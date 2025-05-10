@@ -301,7 +301,7 @@ namespace EMCR.DRR.Managers.Intake
         public UserInfo UserInfo { get; set; }
     }
 
-    public class CreateInterimReportCommand : IntakeCommand
+    public class CreateProjectReportCommand : IntakeCommand
     {
         public string ProjectId { get; set; } = null!;
         public ReportType ReportType { get; set; }

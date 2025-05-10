@@ -128,7 +128,7 @@ namespace EMCR.DRR.Managers.Intake
                 SubmitProjectCommand c => await Handle(c),
                 SaveProgressReportCommand c => await Handle(c),
                 SubmitProgressReportCommand c => await Handle(c),
-                CreateInterimReportCommand c => await Handle(c),
+                CreateProjectReportCommand c => await Handle(c),
                 SaveClaimCommand c => await Handle(c),
                 SubmitClaimCommand c => await Handle(c),
                 SaveForecastCommand c => await Handle(c),
@@ -717,7 +717,7 @@ namespace EMCR.DRR.Managers.Intake
             return id;
         }
 
-        public async Task<string> Handle(CreateInterimReportCommand cmd)
+        public async Task<string> Handle(CreateProjectReportCommand cmd)
         {
             var canAccess = await CanAccessProject(cmd.ProjectId, cmd.UserInfo.BusinessId);
             if (!canAccess) throw new ForbiddenException("Not allowed to access this project.");
@@ -746,31 +746,48 @@ namespace EMCR.DRR.Managers.Intake
             bool canCreate = false;
             string description = string.Empty;
 
-            if (project.InterimReports == null || project.InterimReports.Count() == 0)
+            switch (cmd.ReportType)
             {
-                //First Interim Report
-                canCreate = true;
-                var defaultPeriod = project.ReportingScheduleType == ReportingScheduleType.Quarterly ? "2025-Q1" : project.ReportingScheduleType == ReportingScheduleType.Monthly ? "2025-Month-1" : string.Empty;
-                description = project.FirstReportPeriod ?? defaultPeriod;
-                if (string.IsNullOrEmpty(description)) throw new BusinessValidationException("Error determining report period");
-                //GetReportPeriodFromDate(project.ReportingScheduleType, project.StartDate.Value);
-            }
-            else
-            {
-                //Subsequent Interim Report
-                var lastReport = project.InterimReports.OrderByDescending(r => r.ReportDate).First();
-                if (lastReport.ReportDate == null) throw new BusinessValidationException($"Invalid Report Date for report {lastReport.Id}");
-                if (lastReport.Status == InterimReportStatus.Approved || lastReport.Status == InterimReportStatus.Skipped)
-                {
-                    canCreate = true;
-                    //description = GetNextReportPeriod(project.ReportingScheduleType, lastReport.ReportDate.Value);
-                    description = !string.IsNullOrEmpty(lastReport.ReportPeriod) ? GetNextReportPeriodFromString(project.ReportingScheduleType, lastReport.ReportPeriod) : GetNextReportPeriodFromDate(project.ReportingScheduleType, lastReport.ReportDate.Value);
-                }
-                else
-                {
-                    description = !string.IsNullOrEmpty(lastReport.ReportPeriod) ? lastReport.ReportPeriod : GetReportPeriodFromDate(project.ReportingScheduleType, lastReport.ReportDate.Value);
-                    //description = GetReportPeriod(project.ReportingScheduleType, lastReport.ReportDate.Value);
-                }
+                case ReportType.Interim:
+                    if (project.InterimReports == null || project.InterimReports.Count() == 0)
+                    {
+                        //First Interim Report
+                        canCreate = true;
+                        var defaultPeriod = project.ReportingScheduleType == ReportingScheduleType.Quarterly ? "2025-Q1" : project.ReportingScheduleType == ReportingScheduleType.Monthly ? "2025-Month-1" : string.Empty;
+                        description = project.FirstReportPeriod ?? defaultPeriod;
+                        if (string.IsNullOrEmpty(description)) throw new BusinessValidationException("Error determining report period");
+                        //GetReportPeriodFromDate(project.ReportingScheduleType, project.StartDate.Value);
+                    }
+                    else
+                    {
+                        //Subsequent Interim Report
+                        var lastReport = project.InterimReports.OrderByDescending(r => r.ReportDate).First();
+                        if (lastReport.ReportDate == null) throw new BusinessValidationException($"Invalid Report Date for report {lastReport.Id}");
+                        if (lastReport.Status == InterimReportStatus.Approved || lastReport.Status == InterimReportStatus.Skipped)
+                        {
+                            canCreate = true;
+                            //description = GetNextReportPeriod(project.ReportingScheduleType, lastReport.ReportDate.Value);
+                            description = !string.IsNullOrEmpty(lastReport.ReportPeriod) ? GetNextReportPeriodFromString(project.ReportingScheduleType, lastReport.ReportPeriod) : GetNextReportPeriodFromDate(project.ReportingScheduleType, lastReport.ReportDate.Value);
+                        }
+                        else
+                        {
+                            description = !string.IsNullOrEmpty(lastReport.ReportPeriod) ? lastReport.ReportPeriod : GetReportPeriodFromDate(project.ReportingScheduleType, lastReport.ReportDate.Value);
+                            //description = GetReportPeriod(project.ReportingScheduleType, lastReport.ReportDate.Value);
+                        }
+                    }
+                    break;
+                case ReportType.OffCycle:
+                    canCreate = false;
+                    description = "Off cycle reports are currently not supported.";
+                    break;
+                case ReportType.Final:
+                    canCreate = false;
+                    description = "Final reports are currently not supported.";
+                    break;
+                default:
+                    canCreate = false;
+                    description = "Unexpected report type";
+                    break;
             }
 
             return new ValidateCanCreateReportResult { CanCreate = canCreate, Description = description };

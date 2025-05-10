@@ -333,7 +333,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var project = (await manager.Handle(new DrrProjectsQuery { Id = TestProjectId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault();
             if (!project.InterimReports.Any())
             {
-                await CanCreateReport();
+                await CanCreateInterimReport();
                 project = (await manager.Handle(new DrrProjectsQuery { Id = TestProjectId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault();
             }
 
@@ -371,7 +371,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var project = (await manager.Handle(new DrrProjectsQuery { Id = TestProjectId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault();
             if (!project.InterimReports.Any() || project.InterimReports.First().ProjectClaim == null || project.InterimReports.First().ProjectClaim.Status == EMCR.DRR.Managers.Intake.ClaimStatus.Submitted)
             {
-                await CanCreateReport();
+                await CanCreateInterimReport();
                 project = (await manager.Handle(new DrrProjectsQuery { Id = TestProjectId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault();
             }
 
@@ -434,7 +434,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var project = (await manager.Handle(new DrrProjectsQuery { Id = TestProjectId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault();
             if (!project.InterimReports.Any() || project.InterimReports.First().ProjectClaim == null || project.InterimReports.First().ProjectClaim.Status == EMCR.DRR.Managers.Intake.ClaimStatus.Submitted)
             {
-                await CanCreateReport();
+                await CanCreateInterimReport();
                 project = (await manager.Handle(new DrrProjectsQuery { Id = TestProjectId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault();
             }
 
@@ -504,7 +504,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var project = (await manager.Handle(new DrrProjectsQuery { Id = TestProjectId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault();
             if (!project.InterimReports.Any() || project.InterimReports.First().Forecast == null || project.InterimReports.First().Forecast.Status == EMCR.DRR.Managers.Intake.ForecastStatus.Submitted)
             {
-                await CanCreateReport();
+                await CanCreateInterimReport();
                 project = (await manager.Handle(new DrrProjectsQuery { Id = TestProjectId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault();
             }
 
@@ -551,7 +551,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var project = (await manager.Handle(new DrrProjectsQuery { Id = TestProjectId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault();
             if (!project.InterimReports.Any() || project.InterimReports.First().Forecast == null || project.InterimReports.First().Forecast.Status == EMCR.DRR.Managers.Intake.ForecastStatus.Submitted)
             {
-                await CanCreateReport();
+                await CanCreateInterimReport();
                 project = (await manager.Handle(new DrrProjectsQuery { Id = TestProjectId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault();
             }
 
@@ -681,6 +681,51 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
         }
 
         [Test]
+        public async Task ValidateCanCreateInterimReport_ValidationTrue()
+        {
+            var userInfo = GetTestUserInfo();
+            //var userInfo = GetCRAFTUserInfo();
+
+            //await ClearAllReportsForProject(TestProjectId);
+            await AllReportsApprovedForProject(TestProjectId);
+            var queryOptions = new QueryOptions { Filter = "programType=DRIF,applicationType=FP,status=*UnderReview\\|EligiblePending" };
+            var project = (await manager.Handle(new DrrProjectsQuery { Id = TestProjectId, BusinessId = userInfo.BusinessId, QueryOptions = queryOptions })).Items.SingleOrDefault();
+            project.InterimReports.ShouldAllBe(r => r.Status == EMCR.DRR.Managers.Intake.InterimReportStatus.Approved);
+            var res = await manager.Handle(new ValidateCanCreateReportCommand { ProjectId = project.Id, ReportType = EMCR.DRR.Managers.Intake.ReportType.Interim, UserInfo = userInfo });
+            res.CanCreate.ShouldBeTrue();
+        }
+
+        [Test]
+        public async Task ValidateCanCreateFinalReport_ValidationFalse()
+        {
+            var userInfo = GetTestUserInfo();
+            //var userInfo = GetCRAFTUserInfo();
+
+            //await ClearAllReportsForProject(TestProjectId);
+            await AllReportsApprovedForProject(TestProjectId);
+            var queryOptions = new QueryOptions { Filter = "programType=DRIF,applicationType=FP,status=*UnderReview\\|EligiblePending" };
+            var project = (await manager.Handle(new DrrProjectsQuery { Id = TestProjectId, BusinessId = userInfo.BusinessId, QueryOptions = queryOptions })).Items.SingleOrDefault();
+            project.InterimReports.ShouldAllBe(r => r.Status == EMCR.DRR.Managers.Intake.InterimReportStatus.Approved);
+            var res = await manager.Handle(new ValidateCanCreateReportCommand { ProjectId = project.Id, ReportType = EMCR.DRR.Managers.Intake.ReportType.Final, UserInfo = userInfo });
+            res.CanCreate.ShouldBeFalse();
+        }
+
+        [Test]
+        public async Task ValidateCanCreateOffCycleReport_ValidationFalse()
+        {
+            var userInfo = GetTestUserInfo();
+            //var userInfo = GetCRAFTUserInfo();
+
+            //await ClearAllReportsForProject(TestProjectId);
+            await AllReportsApprovedForProject(TestProjectId);
+            var queryOptions = new QueryOptions { Filter = "programType=DRIF,applicationType=FP,status=*UnderReview\\|EligiblePending" };
+            var project = (await manager.Handle(new DrrProjectsQuery { Id = TestProjectId, BusinessId = userInfo.BusinessId, QueryOptions = queryOptions })).Items.SingleOrDefault();
+            project.InterimReports.ShouldAllBe(r => r.Status == EMCR.DRR.Managers.Intake.InterimReportStatus.Approved);
+            var res = await manager.Handle(new ValidateCanCreateReportCommand { ProjectId = project.Id, ReportType = EMCR.DRR.Managers.Intake.ReportType.OffCycle, UserInfo = userInfo });
+            res.CanCreate.ShouldBeFalse();
+        }
+
+        [Test]
         public async Task ValidateCanCreateReport_ValidationFalse()
         {
             //var userInfo = GetTestUserInfo();
@@ -698,7 +743,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
         }
 
         [Test]
-        public async Task CanCreateReport()
+        public async Task CanCreateInterimReport()
         {
             var userInfo = GetTestUserInfo();
             //var userInfo = GetCRAFTUserInfo();
@@ -708,7 +753,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var queryOptions = new QueryOptions { Filter = "programType=DRIF,applicationType=FP,status=*UnderReview\\|EligiblePending" };
             var project = (await manager.Handle(new DrrProjectsQuery { Id = TestProjectId, BusinessId = userInfo.BusinessId, QueryOptions = queryOptions })).Items.SingleOrDefault();
             project.InterimReports.ShouldAllBe(r => r.Status == EMCR.DRR.Managers.Intake.InterimReportStatus.Approved);
-            var res = await manager.Handle(new CreateInterimReportCommand { ProjectId = project.Id, ReportType = EMCR.DRR.Managers.Intake.ReportType.Interim, UserInfo = userInfo });
+            var res = await manager.Handle(new CreateProjectReportCommand { ProjectId = project.Id, ReportType = EMCR.DRR.Managers.Intake.ReportType.Interim, UserInfo = userInfo });
             project = (await manager.Handle(new DrrProjectsQuery { Id = TestProjectId, BusinessId = userInfo.BusinessId, QueryOptions = queryOptions })).Items.SingleOrDefault();
             Console.WriteLine(project.InterimReports.First().Id);
             //project.InterimReports.First().ProgressReport.ShouldNotBeNull();
