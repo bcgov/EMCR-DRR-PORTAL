@@ -322,7 +322,7 @@ export class DrifProjectComponent {
   }
 
   canUpdateProject() {
-    return this.project?.status !== ProjectStatus.ContactUpdate;
+    return this.project?.status !== ProjectStatus.Updating;
   }
 
   canUpdateItem(action: string) {

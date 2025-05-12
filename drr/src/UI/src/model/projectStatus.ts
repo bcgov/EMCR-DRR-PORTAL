@@ -12,6 +12,6 @@ export const ProjectStatus = {
   NotStarted: 'NotStarted',
   InProgress: 'InProgress',
   Complete: 'Complete',
+  Updating: 'Updating',
   Inactive: 'Inactive',
-  ContactUpdate: 'ContactUpdate',
 } as const;
