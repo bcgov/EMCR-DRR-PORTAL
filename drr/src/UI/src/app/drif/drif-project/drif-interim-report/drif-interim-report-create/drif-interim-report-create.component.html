@@ -56,7 +56,7 @@
         <div>
           <mat-label class="drr-label">{{ t("reportType") }}*</mat-label>
           <drr-radio-button
-            [rxFormControl]="getConfigurationForm().get('periodType')"
+            [rxFormControl]="interimReportForm.get('configuration.periodType')"
             [options]="periodTypeOptions"
           ></drr-radio-button>
         </div>

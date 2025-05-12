@@ -547,6 +547,7 @@
     "NotStarted": "Not Started",
     "InProgress": "In Progress",
     "Complete": "Complete",
+    "Updating": "Updating",
     "Inactive": "Inactive",
     "Approved": "Approved",
     "Rejected": "Rejected",

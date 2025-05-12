@@ -30,4 +30,8 @@ export class InterimReportForm {
 
   @prop()
   description?: string;
+
+  constructor(values: InterimReportForm) {
+    Object.assign(this, values);
+  }
 }
