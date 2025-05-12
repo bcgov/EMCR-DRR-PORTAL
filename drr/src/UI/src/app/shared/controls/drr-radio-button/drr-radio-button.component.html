@@ -6,13 +6,14 @@
     [formControl]="rxFormControl"
   >
     <mat-error
+      style="color: #f44336"
       *ngIf="rxFormControl?.touched && rxFormControl?.hasError('required')"
       >{{ t("required") }}</mat-error
     >
     @for (option of options; track $index) {
-    <mat-radio-button [value]="option.value">{{
-      option.label
-    }}</mat-radio-button>
+      <mat-radio-button [value]="option.value">{{
+        option.label
+      }}</mat-radio-button>
     }
   </mat-radio-group>
 </ng-container>

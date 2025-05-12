@@ -12,15 +12,15 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { IFormGroup, RxFormBuilder } from '@rxweb/reactive-form-validators';
 
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { ProjectService } from '../../../../../api/project/project.service';
 import { CanCreateReportResult, PeriodType } from '../../../../../model';
-import { DrrDatepickerComponent } from '../../../../shared/controls/drr-datepicker/drr-datepicker.component';
 import {
   DrrRadioButtonComponent,
   DrrRadioOption,
 } from '../../../../shared/controls/drr-radio-button/drr-radio-button.component';
-import { DrrSelectComponent } from '../../../../shared/controls/drr-select/drr-select.component';
 import {
   InterimReportConfigurationForm,
   InterimReportForm,
@@ -31,13 +31,14 @@ import {
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
     MatStepperModule,
     MatIconModule,
     MatButtonModule,
     MatInputModule,
     TranslocoModule,
-    DrrDatepickerComponent,
-    DrrSelectComponent,
     DrrRadioButtonComponent,
   ],
   templateUrl: './drif-interim-report-create.component.html',
