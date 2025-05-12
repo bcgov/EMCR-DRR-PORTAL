@@ -35,6 +35,11 @@ namespace EMCR.DRR.API.Resources.Projects
     public class ProjectsQuery : ProjectQuery
     {
         public string? Id { get; set; }
+        public string? ProgressReportId { get; set; }
+        public string? ClaimId { get; set; }
+        public string? ForecastId { get; set; }
+        public string? ConditionId { get; set; }
+        public string? RequestId { get; set; }
         public string? BusinessId { get; set; }
         public int Page { get; set; } = 0;
         public int Count { get; set; } = 0;
@@ -68,6 +73,7 @@ namespace EMCR.DRR.API.Resources.Projects
         NotStarted = 172580001,
         InProgress = 1,
         Complete = 172580000,
+        Updating = 172580002,
         Inactive = 2,
     }
 

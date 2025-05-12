@@ -440,8 +440,9 @@ namespace EMCR.DRR.Managers.Intake
             var project = mapper.Map<Project>(cmd.Project);
             project.ProponentName = cmd.UserInfo.BusinessName;
             //var id = (await projectRepository.Manage(new SaveProject { Project = project })).Id;
-            var id = Guid.NewGuid().ToString();
-            return id;
+            //var id = Guid.NewGuid().ToString();
+            //return id;
+            throw new NotImplementedException();
         }
 
         public async Task<string> Handle(SubmitProjectCommand cmd)
@@ -452,14 +453,18 @@ namespace EMCR.DRR.Managers.Intake
             project.ProponentName = cmd.UserInfo.BusinessName;
             //var id = (await projectRepository.Manage(new SaveProject { Project = project })).Id;
             //await projectRepository.Manage(new SubmitProject { Id = id });
-            var id = Guid.NewGuid().ToString();
-            return id;
+            //var id = Guid.NewGuid().ToString();
+            //return id;
+            throw new NotImplementedException();
         }
 
         public async Task<string> Handle(SaveProgressReportCommand cmd)
         {
             var canAccess = await CanAccessProgressReport(cmd.ProgressReport.Id, cmd.UserInfo.BusinessId);
             if (!canAccess) throw new ForbiddenException("Not allowed to update this progress report.");
+
+            var project = (await projectRepository.Query(new ProjectsQuery { ProgressReportId = cmd.ProgressReport.Id, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
+            if (project != null && project.Status == ProjectStatus.Updating) throw new BusinessValidationException("Project is read only");
 
             var existingProgressReport = (await reportRepository.Query(new ProgressReportsQuery { Id = cmd.ProgressReport.Id, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
             if (existingProgressReport == null) throw new NotFoundException("Progress Report not found");
@@ -479,6 +484,10 @@ namespace EMCR.DRR.Managers.Intake
         {
             var canAccess = await CanAccessProgressReport(cmd.ProgressReport.Id, cmd.UserInfo.BusinessId);
             if (!canAccess) throw new ForbiddenException("Not allowed to update this progress report.");
+
+            var project = (await projectRepository.Query(new ProjectsQuery { ProgressReportId = cmd.ProgressReport.Id, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
+            if (project != null && project.Status == ProjectStatus.Updating) throw new BusinessValidationException("Project is read only");
+
             var existingProgressReport = (await reportRepository.Query(new ProgressReportsQuery { Id = cmd.ProgressReport.Id, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
             if (existingProgressReport == null) throw new NotFoundException("Progress Report not found");
             if (!ProgressReportInEditableStatus(existingProgressReport)) throw new BusinessValidationException("Progress Report status not valid for submission");
@@ -508,6 +517,9 @@ namespace EMCR.DRR.Managers.Intake
             var canAccess = await CanAccessClaim(cmd.Claim.Id, cmd.UserInfo.BusinessId);
             if (!canAccess) throw new ForbiddenException("Not allowed to access this claim.");
 
+            var project = (await projectRepository.Query(new ProjectsQuery { ClaimId = cmd.Claim.Id, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
+            if (project != null && project.Status == ProjectStatus.Updating) throw new BusinessValidationException("Project is read only");
+
             var existingClaim = (await reportRepository.Query(new ClaimsQuery { Id = cmd.Claim.Id, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
             if (existingClaim == null) throw new NotFoundException("Claim not found");
             if (!ClaimInEditableStatus(existingClaim)) throw new BusinessValidationException("Not allowed to update Claim");
@@ -522,6 +534,9 @@ namespace EMCR.DRR.Managers.Intake
         {
             var canAccess = await CanAccessClaim(cmd.Claim.Id, cmd.UserInfo.BusinessId);
             if (!canAccess) throw new ForbiddenException("Not allowed to access this claim.");
+
+            var project = (await projectRepository.Query(new ProjectsQuery { ClaimId = cmd.Claim.Id, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
+            if (project != null && project.Status == ProjectStatus.Updating) throw new BusinessValidationException("Project is read only");
 
             var existingClaim = (await reportRepository.Query(new ClaimsQuery { Id = cmd.Claim.Id, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
             if (existingClaim == null) throw new NotFoundException("Claim not found");
@@ -567,6 +582,9 @@ namespace EMCR.DRR.Managers.Intake
             var canAccess = await CanAccessForecast(cmd.Forecast.Id, cmd.UserInfo.BusinessId);
             if (!canAccess) throw new ForbiddenException("Not allowed to access this forecast.");
 
+            var project = (await projectRepository.Query(new ProjectsQuery { ForecastId = cmd.Forecast.Id, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
+            if (project != null && project.Status == ProjectStatus.Updating) throw new BusinessValidationException("Project is read only");
+
             var existingForecast = (await reportRepository.Query(new ForecastsQuery { Id = cmd.Forecast.Id, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
             if (existingForecast == null) throw new NotFoundException("Forecast not found");
             if (!ForecastInEditableStatus(existingForecast)) throw new BusinessValidationException("Not allowed to update Forecast");
@@ -581,6 +599,10 @@ namespace EMCR.DRR.Managers.Intake
         {
             var canAccess = await CanAccessForecast(cmd.Forecast.Id, cmd.UserInfo.BusinessId);
             if (!canAccess) throw new ForbiddenException("Not allowed to access this forecast.");
+
+            var project = (await projectRepository.Query(new ProjectsQuery { ForecastId = cmd.Forecast.Id, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
+            if (project != null && project.Status == ProjectStatus.Updating) throw new BusinessValidationException("Project is read only");
+            
             var existingForecast = (await reportRepository.Query(new ForecastsQuery { Id = cmd.Forecast.Id, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
             if (existingForecast == null) throw new NotFoundException("Forecast not found");
             if (!ForecastInEditableStatus(existingForecast)) throw new BusinessValidationException("Not allowed to update Forecast");
@@ -611,6 +633,9 @@ namespace EMCR.DRR.Managers.Intake
             var canAccess = await CanAccessClaim(cmd.ClaimId, cmd.UserInfo.BusinessId);
             if (!canAccess) throw new ForbiddenException("Not allowed to access this claim.");
 
+            var project = (await projectRepository.Query(new ProjectsQuery { ClaimId = cmd.ClaimId, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
+            if (project != null && project.Status == ProjectStatus.Updating) throw new BusinessValidationException("Project is read only");
+
             var existingClaim = (await reportRepository.Query(new ClaimsQuery { Id = cmd.ClaimId, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
             if (existingClaim == null) throw new NotFoundException("Claim not found");
             if (!ClaimInEditableStatus(existingClaim)) throw new BusinessValidationException("Not allowed to update Claim");
@@ -623,6 +648,9 @@ namespace EMCR.DRR.Managers.Intake
         {
             var canAccess = await CanAccessClaim(cmd.ClaimId, cmd.UserInfo.BusinessId);
             if (!canAccess) throw new ForbiddenException("Not allowed to access this claim.");
+
+            var project = (await projectRepository.Query(new ProjectsQuery { ClaimId = cmd.ClaimId, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
+            if (project != null && project.Status == ProjectStatus.Updating) throw new BusinessValidationException("Project is read only");
 
             var existingClaim = (await reportRepository.Query(new ClaimsQuery { Id = cmd.ClaimId, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
             if (existingClaim == null) throw new NotFoundException("Claim not found");
@@ -649,6 +677,9 @@ namespace EMCR.DRR.Managers.Intake
             var canAccess = await CanAccessCondition(cmd.ConditionId, cmd.UserInfo.BusinessId);
             if (!canAccess) throw new ForbiddenException("Not allowed to access this condition.");
 
+            var project = (await projectRepository.Query(new ProjectsQuery { ConditionId = cmd.ConditionId, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
+            if (project != null && project.Status == ProjectStatus.Updating) throw new BusinessValidationException("Project is read only");
+
             var existingCondition = (await projectRepository.Query(new ConditionsQuery { Id = cmd.ConditionId })).Items.SingleOrDefault();
             if (existingCondition == null) throw new NotFoundException("Condition not found");
 
@@ -671,6 +702,9 @@ namespace EMCR.DRR.Managers.Intake
             var canAccess = await CanAccessRequest(cmd.Request.Id, cmd.UserInfo.BusinessId);
             if (!canAccess) throw new ForbiddenException("Not allowed to access this condition request.");
 
+            var project = (await projectRepository.Query(new ProjectsQuery { RequestId = cmd.Request.Id, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
+            if (project != null && project.Status == ProjectStatus.Updating) throw new BusinessValidationException("Project is read only");
+
             var existingRequest = (await requestRepository.Query(new RequestsQuery { Id = cmd.Request.Id })).Items.SingleOrDefault();
             if (existingRequest == null) throw new NotFoundException("Condition Request not found");
             if (!RequestInEditableStatus(existingRequest)) throw new BusinessValidationException("Not allowed to update Condition Request");
@@ -690,6 +724,9 @@ namespace EMCR.DRR.Managers.Intake
         {
             var canAccess = await CanAccessRequest(cmd.Request.Id, cmd.UserInfo.BusinessId);
             if (!canAccess) throw new ForbiddenException("Not allowed to access this condition request.");
+
+            var project = (await projectRepository.Query(new ProjectsQuery { RequestId = cmd.Request.Id, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
+            if (project != null && project.Status == ProjectStatus.Updating) throw new BusinessValidationException("Project is read only");
 
             var existingRequest = (await requestRepository.Query(new RequestsQuery { Id = cmd.Request.Id })).Items.SingleOrDefault();
             if (existingRequest == null) throw new NotFoundException("Condition Request not found");
@@ -721,9 +758,11 @@ namespace EMCR.DRR.Managers.Intake
         {
             var canAccess = await CanAccessProject(cmd.ProjectId, cmd.UserInfo.BusinessId);
             if (!canAccess) throw new ForbiddenException("Not allowed to access this project.");
+
             var project = (await projectRepository.Query(new ProjectsQuery { Id = cmd.ProjectId, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
             if (project == null) throw new NotFoundException("Project not found");
             if (project.StartDate == null) throw new BusinessValidationException("Invalid Report Start Date");
+            if (project.Status == ProjectStatus.Updating) throw new BusinessValidationException("Project is read only");
 
             var validationRes = await Handle(new ValidateCanCreateReportCommand { ProjectId = cmd.ProjectId, ReportType = cmd.ReportType, UserInfo = cmd.UserInfo });
             if (!validationRes.CanCreate) throw new BusinessValidationException(validationRes.Description);
@@ -737,6 +776,7 @@ namespace EMCR.DRR.Managers.Intake
         {
             var canAccess = await CanAccessProject(cmd.ProjectId, cmd.UserInfo.BusinessId);
             if (!canAccess) throw new ForbiddenException("Not allowed to access this project.");
+
             var project = (await projectRepository.Query(new ProjectsQuery { Id = cmd.ProjectId, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
             if (project == null) throw new NotFoundException("Project not found");
             if (project.StartDate == null) throw new BusinessValidationException("Invalid Project Start Date");
@@ -893,9 +933,13 @@ namespace EMCR.DRR.Managers.Intake
         {
             var canAccess = await CanAccessProgressReport(cmd.AttachmentInfo.RecordId, cmd.UserInfo.BusinessId);
             if (!canAccess) throw new ForbiddenException("Not allowed to access this progress report.");
+
             var progressReport = (await reportRepository.Query(new ProgressReportsQuery { Id = cmd.AttachmentInfo.RecordId })).Items.SingleOrDefault();
             if (progressReport == null) throw new NotFoundException("Progress Report not found");
             if (!ProgressReportInEditableStatus(progressReport)) throw new BusinessValidationException("Not allowed to update Progress Report");
+
+            var project = (await projectRepository.Query(new ProjectsQuery { ProgressReportId = cmd.AttachmentInfo.RecordId, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
+            if (project != null && project.Status == ProjectStatus.Updating) throw new BusinessValidationException("Project is read only");
 
             //if (cmd.AttachmentInfo.DocumentType != DocumentType.OtherSupportingDocument && progressReport.Attachments != null && progressReport.Attachments.Any(a => a.DocumentType == cmd.AttachmentInfo.DocumentType))
             //{
@@ -913,12 +957,16 @@ namespace EMCR.DRR.Managers.Intake
         {
             var canAccess = await CanAccessInvoiceFromDocumentId(cmd.AttachmentInfo.Id, cmd.UserInfo.BusinessId);
             if (!canAccess) throw new ForbiddenException("Not allowed to access this invoice.");
+
             var invoice = (await reportRepository.Query(new InvoicesQuery { Id = cmd.AttachmentInfo.RecordId })).Items.SingleOrDefault();
             if (invoice == null) throw new NotFoundException("Invoice not found");
 
             var existingClaim = (await reportRepository.Query(new ClaimsQuery { InvoiceId = cmd.AttachmentInfo.RecordId, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
             if (existingClaim == null) throw new NotFoundException("Claim not found");
             if (!ClaimInEditableStatus(existingClaim)) throw new BusinessValidationException("Not allowed to update Claim");
+
+            var project = (await projectRepository.Query(new ProjectsQuery { ClaimId = existingClaim.Id, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
+            if (project != null && project.Status == ProjectStatus.Updating) throw new BusinessValidationException("Project is read only");
 
             //if (!ApplicationInEditableStatus(progressReport)) throw new BusinessValidationException("Can only edit attachments when application is in Draft");
             //if (cmd.AttachmentInfo.DocumentType != DocumentType.OtherSupportingDocument && invoice.Attachments != null && invoice.Attachments.Any(a => a.DocumentType == cmd.AttachmentInfo.DocumentType))
@@ -937,9 +985,15 @@ namespace EMCR.DRR.Managers.Intake
         {
             var canAccess = await CanAccessForecastFromDocumentId(cmd.AttachmentInfo.Id, cmd.UserInfo.BusinessId);
             if (!canAccess) throw new ForbiddenException("Not allowed to access this forecast.");
+
+
             var forecast = (await reportRepository.Query(new ForecastsQuery { Id = cmd.AttachmentInfo.RecordId })).Items.SingleOrDefault();
             if (forecast == null) throw new NotFoundException("Forecast not found");
             if (!ForecastInEditableStatus(forecast)) throw new BusinessValidationException("Not allowed to update Forecast");
+
+            var project = (await projectRepository.Query(new ProjectsQuery { ForecastId = cmd.AttachmentInfo.RecordId, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
+            if (project != null && project.Status == ProjectStatus.Updating) throw new BusinessValidationException("Project is read only");
+            
             //if (!ApplicationInEditableStatus(progressReport)) throw new BusinessValidationException("Can only edit attachments when application is in Draft");
             //if (cmd.AttachmentInfo.DocumentType != DocumentType.OtherSupportingDocument && forecast.Attachments != null && forecast.Attachments.Any(a => a.DocumentType == cmd.AttachmentInfo.DocumentType))
             //{
@@ -957,8 +1011,12 @@ namespace EMCR.DRR.Managers.Intake
         {
             var canAccess = await CanAccessRequestFromDocumentId(cmd.AttachmentInfo.Id, cmd.UserInfo.BusinessId);
             if (!canAccess) throw new ForbiddenException("Not allowed to access this condition request.");
+
             var request = (await requestRepository.Query(new RequestsQuery { Id = cmd.AttachmentInfo.RecordId })).Items.SingleOrDefault();
             if (request == null) throw new NotFoundException("Condition Request not found");
+
+            var project = (await projectRepository.Query(new ProjectsQuery { RequestId = cmd.AttachmentInfo.RecordId, BusinessId = cmd.UserInfo.BusinessId })).Items.SingleOrDefault();
+            if (project != null && project.Status == ProjectStatus.Updating) throw new BusinessValidationException("Project is read only");
 
             var newDocId = Guid.NewGuid().ToString();
             await s3Provider.HandleCommand(new UploadFileStreamCommand { Key = newDocId, FileStream = cmd.AttachmentInfo.FileStream, Folder = $"{cmd.AttachmentInfo.RecordType.ToDescriptionString()}/{request.CrmId}" });

@@ -874,6 +874,9 @@ namespace EMCR.DRR.Controllers
         [Description("Complete")]
         Complete,
 
+        [Description("Updating")]
+        Updating,
+
         [Description("Inactive")]
         Inactive
     }
