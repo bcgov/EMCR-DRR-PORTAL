@@ -92,17 +92,68 @@ namespace EMCR.DRR.API.Resources.Projects
 
         private async Task<ProjectQueryResult> HandleQueryProject(ProjectsQuery query)
         {
+            if (!string.IsNullOrEmpty(query.ProgressReportId) || !string.IsNullOrEmpty(query.ClaimId) || !string.IsNullOrEmpty(query.ForecastId) || !string.IsNullOrEmpty(query.ConditionId) || !string.IsNullOrEmpty(query.RequestId))
+            {
+                return await QueryProjectBySubRecord(query);
+            }
+
             var ct = new CancellationTokenSource().Token;
             var readCtx = dRRContextFactory.CreateReadOnly();
 
             var projectsQuery = readCtx.drr_projects.Expand(a => a.drr_ProponentName)
-                .Where(a => a.statuscode != (int)ProjectStatusOptionSet.Inactive
-                && a.statuscode != (int)ProjectStatusOptionSet.NotStarted
-                && a.drr_ProponentName.drr_bceidguid == query.BusinessId);
+            .Where(a => a.statuscode != (int)ProjectStatusOptionSet.Inactive
+            && a.statuscode != (int)ProjectStatusOptionSet.NotStarted
+            && a.drr_ProponentName.drr_bceidguid == query.BusinessId);
             //drr_ProponentName.drr_bceidguid.Equals(businessId);
             if (!string.IsNullOrEmpty(query.Id)) projectsQuery = projectsQuery.Where(a => a.drr_name == query.Id);
 
             var results = (await projectsQuery.GetAllPagesAsync(ct)).ToList();
+            var length = results.Count;
+
+            results = SortAndPageResults(results, query);
+
+            if (length == 1)
+            {
+                await Parallel.ForEachAsync(results, ct, async (prj, ct) => await ParallelLoadProjectAsync(readCtx, prj, ct));
+                await ParallelLoadCases(readCtx, results);
+            }
+
+            return new ProjectQueryResult { Items = mapper.Map<IEnumerable<Project>>(results), Length = length };
+        }
+
+        private async Task<ProjectQueryResult> QueryProjectBySubRecord(ProjectsQuery query)
+        {
+            var ct = new CancellationTokenSource().Token;
+            var readCtx = dRRContextFactory.CreateReadOnly();
+
+            var results = new List<drr_project>();
+
+            if (!string.IsNullOrEmpty(query.ProgressReportId))
+            {
+                var progressReport = await readCtx.drr_projectprogresses.Expand(pr => pr.drr_Project).Where(pr => pr.drr_name == query.ProgressReportId).SingleOrDefaultAsync();
+                results.Add(progressReport.drr_Project);
+            }
+            if (!string.IsNullOrEmpty(query.ClaimId))
+            {
+                var claim = await readCtx.drr_projectclaims.Expand(pr => pr.drr_Project).Where(pr => pr.drr_name == query.ClaimId).SingleOrDefaultAsync();
+                results.Add(claim.drr_Project);
+            }
+            if (!string.IsNullOrEmpty(query.ForecastId))
+            {
+                var forecast = await readCtx.drr_projectbudgetforecasts.Expand(pr => pr.drr_Project).Where(pr => pr.drr_name == query.ForecastId).SingleOrDefaultAsync();
+                results.Add(forecast.drr_Project);
+            }
+            if (!string.IsNullOrEmpty(query.ConditionId))
+            {
+                var condition = await readCtx.drr_projectconditions.Expand(pr => pr.drr_Project).Where(pr => pr.drr_name == query.ConditionId).SingleOrDefaultAsync();
+                results.Add(condition.drr_Project);
+            }
+            if (!string.IsNullOrEmpty(query.RequestId))
+            {
+                var condition = await readCtx.drr_requests.Expand(pr => pr.drr_ProjectId).Where(pr => pr.drr_name == query.RequestId).SingleOrDefaultAsync();
+                results.Add(condition.drr_ProjectId);
+            }
+
             var length = results.Count;
 
             results = SortAndPageResults(results, query);
@@ -132,6 +183,7 @@ namespace EMCR.DRR.API.Resources.Projects
 
             var loadTasks = new List<Task>
             {
+                ctx.LoadPropertyAsync(project, nameof(drr_project.drr_ProponentName), ct),
                 ctx.LoadPropertyAsync(project, nameof(drr_project.drr_FullProposalApplication), ct),
                 ctx.LoadPropertyAsync(project, nameof(drr_project.drr_Case), ct),
                 ctx.LoadPropertyAsync(project, nameof(drr_project.drr_Program), ct),

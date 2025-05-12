@@ -1165,6 +1165,7 @@ namespace EMCR.DRR.Managers.Intake
         NotStarted,
         InProgress,
         Complete,
+        Updating,
         Inactive
     }
 

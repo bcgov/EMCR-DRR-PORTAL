@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Text;
+﻿using System.Text;
 using AutoMapper;
 using EMCR.DRR.API.Resources.Projects;
 using EMCR.DRR.API.Resources.Requests;
@@ -90,7 +89,9 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
         {
             var userInfo = GetTestUserInfo();
             //var userInfo = GetCRAFTUserInfo();
+            
             //var userInfo = GetCRAFT2UserInfo();
+            //TestProjectId = "DRIF-PRJ-1142";
 
             var queryOptions = new QueryOptions { Filter = "programType=DRIF,applicationType=FP,status=*UnderReview\\|EligiblePending" };
             var queryRes = await manager.Handle(new DrrProjectsQuery { Id = TestProjectId, BusinessId = userInfo.BusinessId, QueryOptions = queryOptions });
@@ -1030,6 +1031,19 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
 
             return progressReport;
         }
+
+        [Test]
+        public async Task SetProjectStatusToUpdating()
+        {
+            var host = Application.Host;
+            var factory = host.Services.GetRequiredService<IDRRContextFactory>();
+            var ctx = factory.Create();
+            var project = await ctx.drr_projects.Where(p => p.drr_name == "DRIF-PRJ-1052").SingleOrDefaultAsync();
+            project.statuscode = (int)ProjectStatusOptionSet.Updating;
+            ctx.UpdateObject(project);
+            await ctx.SaveChangesAsync();
+        }
+
 
         private EMCR.DRR.Controllers.ContactDetails CreateNewTestContact(string uniqueSignature, string namePrefix)
         {
