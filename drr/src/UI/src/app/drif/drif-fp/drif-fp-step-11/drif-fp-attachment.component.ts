@@ -49,13 +49,13 @@ export type CommentInputType = 'textarea' | 'input';
           }}</mat-label>
           <div class="attachment__label__actions">
             <button
-              mat-stroked-button
+              mat-raised-button
               color="primary"
               (click)="onDownloadFile()"
             >
               {{ t('download') }}
             </button>
-            <button mat-stroked-button color="warn" (click)="onRemoveFile()">
+            <button mat-raised-button color="warn" (click)="onRemoveFile()">
               {{ t('delete') }}
             </button>
           </div>

@@ -69,8 +69,17 @@ export enum DialogResponse {
     }}</mat-dialog-content>
     <mat-divider></mat-divider>
     <mat-dialog-actions class="dialog-actions">
-      <button mat-stroked-button [mat-dialog-close]="confirm">Yes</button>
-      <button mat-button [mat-dialog-close]="cancel" cdkFocusInitial>No</button>
+      <button mat-raised-button color="primary" [mat-dialog-close]="confirm">
+        Yes
+      </button>
+      <button
+        mat-raised-button
+        color="secondary"
+        [mat-dialog-close]="cancel"
+        cdkFocusInitial
+      >
+        No
+      </button>
     </mat-dialog-actions>`,
   styles: [
     `

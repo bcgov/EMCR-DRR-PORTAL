@@ -322,6 +322,11 @@ h6 {
   outline-offset: 0.125rem;
 }
 
+.mdc-button[mat-stroked-button]:hover {
+  background-color: #e6f0fa !important;
+  border-color: #003366 !important;
+}
+
 .app-stepper-container {
   margin: 1rem;
 

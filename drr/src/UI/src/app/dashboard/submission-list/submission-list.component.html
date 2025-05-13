@@ -36,7 +36,7 @@
       <div>
         <button
           *ngIf="filterApplied"
-          mat-stroked-button
+          mat-raised-button
           color="primary"
           (click)="clearFilters()"
         >
@@ -44,7 +44,7 @@
         </button>
         <button
           *ngIf="!filterApplied"
-          mat-stroked-button
+          mat-raised-button
           color="primary"
           (click)="applyFilters()"
         >
@@ -105,7 +105,7 @@
           <div style="margin-top: 1rem; display: flex; gap: 1rem">
             <button
               *ngIf="submission.actions?.includes('Edit')"
-              mat-stroked-button
+              mat-raised-button
               color="primary"
               (click)="onViewFormClick(submission, $event)"
             >
@@ -113,7 +113,7 @@
             </button>
             <button
               *ngIf="submission.actions?.includes('Delete')"
-              mat-stroked-button
+              mat-raised-button
               color="warn"
               (click)="onDeleteClick(submission, $event)"
             >
@@ -121,7 +121,7 @@
             </button>
             <button
               *ngIf="submission.actions?.includes('Withdraw')"
-              mat-stroked-button
+              mat-raised-button
               color="primary"
               (click)="onWithdrawClick(submission, $event)"
             >
@@ -249,7 +249,7 @@
             <div class="table-actions">
               <button
                 *ngIf="element.actions.includes('Edit')"
-                mat-stroked-button
+                mat-raised-button
                 color="primary"
                 (click)="onViewFormClick(element, $event)"
               >
@@ -258,7 +258,7 @@
               <button
                 style="white-space: nowrap"
                 *ngIf="element.actions.includes('Delete')"
-                mat-stroked-button
+                mat-raised-button
                 color="warn"
                 (click)="onDeleteClick(element, $event)"
               >
@@ -266,7 +266,7 @@
               </button>
               <button
                 *ngIf="element.actions.includes('Withdraw')"
-                mat-stroked-button
+                mat-raised-button
                 color="primary"
                 (click)="onWithdrawClick(element, $event)"
               >
