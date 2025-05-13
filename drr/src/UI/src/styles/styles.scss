@@ -322,6 +322,11 @@ h6 {
   outline-offset: 0.125rem;
 }
 
+.mdc-button[mat-stroked-button] {
+  border: 1px solid #003366 !important;
+  color: #003366 !important;
+}
+
 .mdc-button[mat-stroked-button]:hover {
   background-color: #e6f0fa !important;
   border-color: #003366 !important;

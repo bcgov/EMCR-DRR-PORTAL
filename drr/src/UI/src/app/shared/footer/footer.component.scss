@@ -19,24 +19,15 @@ footer mat-toolbar {
   flex-direction: row;
   list-style: none;
   flex-wrap: wrap;
+
+  li > a {
+    padding: 0.4rem 0.8rem;
+  }
 }
 
 .version-info {
   display: flex;
   flex-direction: column;
-}
-
-.link {
-  padding: 0.4rem 0.8rem;
-}
-
-a {
-  color: #333333;
-  text-decoration: none;
-}
-
-a:hover {
-  color: white;
 }
 
 .app-version {
