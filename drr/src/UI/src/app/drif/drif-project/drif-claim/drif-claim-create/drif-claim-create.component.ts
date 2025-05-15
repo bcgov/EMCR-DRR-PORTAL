@@ -583,6 +583,7 @@ export class DrifClaimCreateComponent {
           this.router.navigate(['drif-projects', this.projectId]);
         },
         error: (error) => {
+          this.toastService.close();
           this.toastService.error('Failed to submit claim');
           console.error(error);
         },
