@@ -57,7 +57,8 @@ namespace EMCR.DRR.API.Resources.Requests
         public async Task<ManageRequestCommandResult> HandleCreateConditionRequest(CreateConditionRequest cmd)
         {
             var ctx = dRRContextFactory.Create();
-            var request = new drr_request { 
+            var request = new drr_request
+            {
                 drr_requestid = Guid.NewGuid(),
                 drr_requesttype = (int)RequestTypeOptionSet.Condition,
                 statuscode = (int)RequestStatusOptionSet.DraftProponent
@@ -126,9 +127,12 @@ namespace EMCR.DRR.API.Resources.Requests
             ctx.DetachAll();
 
             var owner = await GetDMAPIntakeTeam(ctx);
-            request = await ctx.drr_requests.Where(a => a.drr_name == cmd.Id).SingleOrDefaultAsync();
-            ctx.SetLink(request, nameof(drr_request.ownerid), owner);
-            await ctx.SaveChangesAsync();
+            if (owner != null)
+            {
+                request = await ctx.drr_requests.Where(a => a.drr_name == cmd.Id).SingleOrDefaultAsync();
+                ctx.SetLink(request, nameof(drr_request.ownerid), owner);
+                await ctx.SaveChangesAsync();
+            }
             ctx.DetachAll();
             return new ManageRequestCommandResult { Id = cmd.Id };
         }

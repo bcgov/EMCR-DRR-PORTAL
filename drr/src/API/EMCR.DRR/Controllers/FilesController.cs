@@ -12,7 +12,8 @@ namespace EMCR.DRR.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    [ApiExplorerSettings(IgnoreApi = true)]
+    [Authorize(Policy = "OnlySSO")]
     public class FilesController : ControllerBase
     {
         private readonly ILogger<AttachmentController> logger;
