@@ -237,7 +237,9 @@ export class DrifProjectComponent {
             report.status === InterimReportStatus.Skipped,
         );
 
-        this.attachmentsDataSource.data = project.attachments!;
+        this.attachmentsDataSource.data = project.attachments!.sort((a, b) =>
+          a.name!.localeCompare(b.name!),
+        );
         this.partneringProponents = project.partneringProponents!;
       });
   }
