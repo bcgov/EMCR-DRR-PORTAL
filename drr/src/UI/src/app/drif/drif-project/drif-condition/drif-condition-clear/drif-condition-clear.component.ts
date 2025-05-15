@@ -425,6 +425,7 @@ export class DrifConditionClearComponent {
     this.stepper()._stateChanged();
 
     if (this.conditionForm?.invalid) {
+      this.toastService.close();
       this.toastService.error('Please fill in all required fields');
       return;
     }
@@ -445,6 +446,7 @@ export class DrifConditionClearComponent {
           this.router.navigate(['drif-projects', this.projectId]);
         },
         error: (error) => {
+          this.toastService.close();
           this.toastService.error('Condition clear request submission failed');
           console.error(error);
         },

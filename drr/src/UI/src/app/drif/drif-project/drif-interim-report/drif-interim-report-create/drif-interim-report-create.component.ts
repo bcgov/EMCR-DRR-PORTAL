@@ -131,6 +131,7 @@ export class DrifInterimReportCreateComponent {
           this.router.navigate(['drif-projects', this.projectId]);
         },
         error: (error) => {
+          this.toastService.close();
           this.toastService.error('Failed to create report');
           console.error(error);
         },
