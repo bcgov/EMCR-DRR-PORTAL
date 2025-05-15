@@ -1032,17 +1032,17 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             return progressReport;
         }
 
-        [Test]
-        public async Task SetProjectStatusToUpdating()
-        {
-            var host = Application.Host;
-            var factory = host.Services.GetRequiredService<IDRRContextFactory>();
-            var ctx = factory.Create();
-            var project = await ctx.drr_projects.Where(p => p.drr_name == "DRIF-PRJ-1052").SingleOrDefaultAsync();
-            project.statuscode = (int)ProjectStatusOptionSet.Updating;
-            ctx.UpdateObject(project);
-            await ctx.SaveChangesAsync();
-        }
+        //[Test]
+        //public async Task SetProjectStatusToUpdating()
+        //{
+        //    var host = Application.Host;
+        //    var factory = host.Services.GetRequiredService<IDRRContextFactory>();
+        //    var ctx = factory.Create();
+        //    var project = await ctx.drr_projects.Where(p => p.drr_name == "DRIF-PRJ-1052").SingleOrDefaultAsync();
+        //    project.statuscode = (int)ProjectStatusOptionSet.Updating;
+        //    ctx.UpdateObject(project);
+        //    await ctx.SaveChangesAsync();
+        //}
 
 
         private EMCR.DRR.Controllers.ContactDetails CreateNewTestContact(string uniqueSignature, string namePrefix)

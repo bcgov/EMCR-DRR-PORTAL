@@ -14,7 +14,6 @@ using EMCR.DRR.API.Utilities.TestData;
 using EMCR.DRR.Controllers;
 using EMCR.DRR.Dynamics;
 using EMCR.DRR.Managers.Intake;
-using EMCR.DRR.Resources.Applications;
 using EMCR.Utilities.Caching;
 using Medallion.Threading;
 using Medallion.Threading.Redis;
@@ -176,26 +175,25 @@ else
 services.ConfigureCache();
 services.AddDRRDynamics(builder.Configuration);
 
-var defaultScheme = "Bearer_OR_SSO";
-
 #pragma warning disable CS8601 // Possible null reference assignment.
 services.AddAuthentication(options =>
 {
-    options.DefaultScheme = defaultScheme;
-    options.DefaultChallengeScheme = defaultScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
 //For portal users
-.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+.AddJwtBearer(options =>
 {
     options.MetadataAddress = configuration.GetValue<string>("jwt:metadataAddress");
+    options.Audience = configuration.GetValue<string>("jwt:audience");
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateAudience = true,
         ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
         RequireSignedTokens = true,
         RequireAudience = true,
         RequireExpirationTime = true,
-        ValidateLifetime = true,
         ClockSkew = TimeSpan.FromSeconds(60),
         NameClaimType = ClaimTypes.Upn,
         RoleClaimType = ClaimTypes.Role,
@@ -225,19 +223,20 @@ services.AddAuthentication(options =>
     };
     options.Validate();
 })
-//For CRM service account to use our S3 integration
+//For CRM service account
 .AddJwtBearer("SSO", options =>
 {
     options.MetadataAddress = configuration.GetValue<string>("SSO:jwt:metadataAddress");
+    options.Audience = configuration.GetValue<string>("SSO:jwt:audience");
 #pragma warning restore CS8601 // Possible null reference assignment.
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateAudience = true,
         ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
         RequireSignedTokens = true,
         RequireAudience = true,
         RequireExpirationTime = true,
-        ValidateLifetime = true,
         ClockSkew = TimeSpan.FromSeconds(60),
         NameClaimType = ClaimTypes.Upn,
         RoleClaimType = ClaimTypes.Role,
@@ -246,34 +245,6 @@ services.AddAuthentication(options =>
     };
 
     configuration.GetSection("SSO:jwt").Bind(options);
-    options.Validate();
-})
-.AddPolicyScheme(defaultScheme, defaultScheme, options =>
-{
-    options.ForwardDefaultSelector = context =>
-    {
-        string? authorization = context.Request.Headers[HeaderNames.Authorization];
-
-        if (!string.IsNullOrEmpty(authorization) && authorization.StartsWith("Bearer "))
-        {
-            var token = authorization["Bearer ".Length..].Trim();
-            var jwtHandler = new JwtSecurityTokenHandler();
-
-            if (jwtHandler.CanReadToken(token))
-            {
-                JwtSecurityToken jwtToken = jwtHandler.ReadJwtToken(token);
-                var identityProviderClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "aud");
-                if (identityProviderClaim != null && identityProviderClaim.Value.Equals(configuration.GetValue<string>("SSO:jwt:audience"), StringComparison.InvariantCultureIgnoreCase))
-                {
-                    return "SSO";
-                }
-                else
-                    return JwtBearerDefaults.AuthenticationScheme;
-            }
-            return JwtBearerDefaults.AuthenticationScheme;
-        }
-        return JwtBearerDefaults.AuthenticationScheme;
-    };
     options.Validate();
 });
 
@@ -286,7 +257,9 @@ services.AddAuthorization(options =>
             .RequireClaim("user_info");
     });
     var ssoPolicyBuilder = new AuthorizationPolicyBuilder("SSO");
-    options.AddPolicy("OnlySSO", ssoPolicyBuilder.RequireAuthenticatedUser().Build());
+    options.AddPolicy("OnlySSO", ssoPolicyBuilder
+        .AddAuthenticationSchemes("SSO")
+        .RequireAuthenticatedUser().Build());
 });
 
 services.Configure<OpenApiDocumentMiddlewareSettings>(options =>
