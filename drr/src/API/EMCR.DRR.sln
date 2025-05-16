@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EMCR.DRR.Dynamics", "EMCR.D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EMCR.Utilities", "EMCR.Utilities\EMCR.Utilities.csproj", "{69B1701B-B47C-4A7F-BF80-E16F40780BAE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EMCR.Tests.Integration.DRR.Api", "EMCR.Test.Integration.DRR.Api\EMCR.Tests.Integration.DRR.Api.csproj", "{75E9ECDC-A751-482E-B16D-77091A60CB30}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EMCR.Tests.Integration.DRR", "EMCR.Test.Integration.DRR\EMCR.Tests.Integration.DRR.csproj", "{75E9ECDC-A751-482E-B16D-77091A60CB30}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{692A70A7-9C95-45AD-B97B-200ED720B824}"
 EndProject
