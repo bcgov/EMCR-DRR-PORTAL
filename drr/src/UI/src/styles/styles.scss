@@ -79,7 +79,7 @@ $bcgov-warn-palette: (
   200: #ef9a9a,
   300: #e57373,
   400: #ef5350,
-  500: #f44336,
+  500: #ce3e39,
   600: #e53935,
   700: #d32f2f,
   800: #c62828,
@@ -299,11 +299,7 @@ h6 {
 .table-actions {
   display: flex;
   flex-direction: row;
-  justify-content: flex-end;
-
-  button {
-    margin-right: 1rem;
-  }
+  gap: 1rem;
 }
 
 @media (max-width: 768px) {
