@@ -205,7 +205,7 @@ namespace EMCR.DRR.API.Utilities.TestData
 
 
             //Budget - 10
-            .RuleFor(a => a.FundingStream, f => f.Random.Enum<FundingStream>())
+            .RuleFor(a => a.FundingStream, f => originalFp != null && originalFp.FundingStream != null ? originalFp.FundingStream : f.Random.Enum<FundingStream>())
             .RuleFor(a => a.TotalProjectCost, f => originalFp != null && originalFp.TotalProjectCost != null ? originalFp.TotalProjectCost - otherFundingTotal : f.Random.Number(10, 1000) * 1000)
             .RuleFor(a => a.TotalProjectCostChangeComments, f => f.Lorem.Sentence())
             .RuleFor(a => a.TotalDrifFundingRequest, (f, a) => a.TotalProjectCost)
@@ -224,9 +224,9 @@ namespace EMCR.DRR.API.Utilities.TestData
             .RuleFor(a => a.CostEstimateClass, f => f.Random.Enum<CostEstimateClass>())
             .RuleFor(a => a.CostEstimates, (f, a) => CreateCostEstimates(f, (int)a.EligibleFundingRequest, a.FundingStream.Value))
             .RuleFor(a => a.EstimatesMatchFundingRequest, f => false)
-            .RuleFor(a => a.Contingency, (f, a) => a.FundingStream.Value == FundingStream.Stream1 ? 0 : f.Random.Int(0, 25))
-            .RuleFor(a => a.ContingencyComments, f => f.Lorem.Sentence())
             .RuleFor(a => a.TotalEligibleCosts, (f, a) => a.TotalDrifFundingRequest)
+            .RuleFor(a => a.Contingency, (f, a) => a.CostEstimates != null ? Math.Round((decimal)(a.CostEstimates.Sum(c => c.CostCategory == CostCategory.Contingency ? c.TotalCost : 0) / a.TotalDrifFundingRequest) * 100, 2) : 0)
+            .RuleFor(a => a.ContingencyComments, f => f.Lorem.Sentence())
 
 
             //Attachments - 11
@@ -381,6 +381,11 @@ namespace EMCR.DRR.API.Utilities.TestData
             for (int i = 0; i < length; i++)
             {
                 ret[i] = new Faker<CostEstimate>("en_CA").WithCostEstimateRules(amounts[i], categoryOptions);
+            }
+
+            if (stream != FundingStream.Stream1)
+            {
+                ret[0].CostCategory = CostCategory.Contingency;
             }
 
             return ret;
