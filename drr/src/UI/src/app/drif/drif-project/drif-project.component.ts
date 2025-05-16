@@ -125,22 +125,19 @@ export class DrifProjectComponent {
 
   partneringProponents: string[] = [];
 
-  private progressReadonlyStatuses: ProgressReportStatus[] = [
+  private skippedStatuses = [
+    ProgressReportStatus.Skipped,
+    ClaimStatus.Skipped,
+    ForecastStatus.Skipped,
+  ];
+
+  private readonlyStatuses: ProgressReportStatus[] = [
     ProgressReportStatus.Submitted,
     ProgressReportStatus.Approved,
-    ProgressReportStatus.Skipped,
-  ];
-
-  private claimReadonlyStatuses: ClaimStatus[] = [
     ClaimStatus.Submitted,
     ClaimStatus.Approved,
-    ClaimStatus.Skipped,
-  ];
-
-  private forecastReadonlyStatuses: ForecastStatus[] = [
     ForecastStatus.Submitted,
     ForecastStatus.Approved,
-    ForecastStatus.Skipped,
   ];
 
   ngOnInit() {
@@ -184,11 +181,7 @@ export class DrifProjectComponent {
               ),
               dueDate: report.dueDate,
               submittedDate: report.progressReport?.dateSubmitted,
-              actions: this.progressReadonlyStatuses.includes(
-                report.progressReport?.status!,
-              )
-                ? ['view']
-                : ['edit'],
+              actions: this.getSubReportActions(report.progressReport!),
             });
           }
           if (report.projectClaim) {
@@ -202,11 +195,7 @@ export class DrifProjectComponent {
               ),
               dueDate: report.dueDate,
               submittedDate: report.projectClaim?.dateSubmitted,
-              actions: this.claimReadonlyStatuses.includes(
-                report.projectClaim?.status!,
-              )
-                ? ['view']
-                : ['edit'],
+              actions: this.getSubReportActions(report.projectClaim!),
             });
           }
           if (report.forecast) {
@@ -220,11 +209,7 @@ export class DrifProjectComponent {
               ),
               dueDate: report.dueDate,
               submittedDate: report.forecast?.dateSubmitted,
-              actions: this.forecastReadonlyStatuses.includes(
-                report.forecast?.status!,
-              )
-                ? ['view']
-                : ['edit'],
+              actions: this.getSubReportActions(report.forecast!),
             });
           }
         });
@@ -242,6 +227,16 @@ export class DrifProjectComponent {
         );
         this.partneringProponents = project.partneringProponents!;
       });
+  }
+
+  getSubReportActions(subReport: InterimSubReport) {
+    if (this.skippedStatuses.includes(subReport.status as any)) {
+      return [];
+    }
+
+    return this.readonlyStatuses.includes(subReport.status as any)
+      ? ['view']
+      : ['edit'];
   }
 
   addInterimReport() {
