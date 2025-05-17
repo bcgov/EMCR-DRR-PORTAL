@@ -1,6 +1,6 @@
 <div class="drr-step-container" *transloco="let t">
   <form [formGroup]="ownershipAndAuthorizationForm">
-    <mat-label class="drr-label">{{ t("fpOwnership") }}</mat-label>
+    <h3>{{ t("fpOwnership") }}</h3>
     <drr-radio-button
       [label]="t('fpOwnershipQuestion')"
       [options]="yesNoBoolOptions"
@@ -18,7 +18,7 @@
       "
     ></drr-textarea>
 
-    <mat-label class="drr-label">{{ t("projectAuthority") }}</mat-label>
+    <h3>{{ t("projectAuthority") }}</h3>
     <drr-radio-button
       [label]="t('haveAuthorityToDevelop')"
       [options]="yesNoBoolOptions"
@@ -44,9 +44,7 @@
       "
     ></drr-textarea>
 
-    <mat-label class="drr-label">{{
-      t("authorizationOrEndorsement")
-    }}</mat-label>
+    <h3>{{ t("authorizationOrEndorsement") }}</h3>
     <mat-label>{{ t("authorizationOrEndorsementQuestion") }}</mat-label>
     <div style="padding: 1rem 0 0 1rem">
       <drr-radio-button

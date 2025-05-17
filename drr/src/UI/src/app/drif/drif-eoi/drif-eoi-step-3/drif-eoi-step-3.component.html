@@ -1,6 +1,6 @@
 <div class="drr-step-container" *transloco="let t">
   <form [formGroup]="fundingInformationForm">
-    <mat-label class="drr-label">{{ t("estimatedTotal") }}</mat-label>
+    <h3>{{ t("estimatedTotal") }}</h3>
 
     <drr-currency-input
       class="drr-single-input"
@@ -10,7 +10,7 @@
       [max]="999999999"
     ></drr-currency-input>
 
-    <mat-label class="drr-label">{{ t("fundingRequest") }}</mat-label>
+    <h3>{{ t("fundingRequest") }}</h3>
 
     <drr-currency-input
       class="drr-single-input"
@@ -20,7 +20,7 @@
       [max]="999999999"
     ></drr-currency-input>
 
-    <mat-label class="drr-label">{{ t("otherFunding") }}</mat-label>
+    <h3>{{ t("otherFunding") }}</h3>
     <drr-radio-button
       [rxFormControl]="fundingInformationForm.get('haveOtherFunding')"
     ></drr-radio-button>

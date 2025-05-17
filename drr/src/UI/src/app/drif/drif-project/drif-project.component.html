@@ -2,7 +2,11 @@
   <mat-card *ngIf="!!project">
     <mat-card-header>
       <mat-card-title-group>
-        <mat-card-title>{{ project.projectTitle }}</mat-card-title>
+        <mat-card-title>
+          <h2>
+            {{ project.projectTitle }}
+          </h2>
+        </mat-card-title>
         <button
           mat-stroked-button
           color="primary"
@@ -16,7 +20,9 @@
     <mat-card-content class="drif-project-details">
       <mat-card>
         <mat-card-header>
-          <mat-card-title>Project Details</mat-card-title>
+          <mat-card-title>
+            <h3>Project Details</h3>
+          </mat-card-title>
         </mat-card-header>
 
         <mat-card-content class="project-details-table">
@@ -80,7 +86,7 @@
       </mat-card>
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem">
         <div>
-          <h5 style="margin-left: 1rem">Conditions</h5>
+          <h3 style="margin-left: 1rem">Conditions</h3>
           <table
             mat-table
             [dataSource]="conditionsDataSource"
@@ -129,7 +135,7 @@
           </table>
         </div>
         <div>
-          <h5 style="margin-left: 1rem">Cost Projections</h5>
+          <h3 style="margin-left: 1rem">Cost Projections</h3>
           <table
             mat-table
             [dataSource]="costProjectionsDataSource"
@@ -233,7 +239,8 @@
                 <div class="table-actions">
                   <a
                     *ngFor="let action of element.actions"
-                    mat-raised-button
+                    style="min-width: 70px"
+                    mat-stroked-button
                     color="primary"
                     [routerLink]="getSubReportRoute(element, action)"
                     [disabled]="!canUpdateItem(action)"
@@ -316,9 +323,7 @@
             </td>
           </ng-container>
           <ng-container matColumnDef="actions">
-            <th mat-header-cell *matHeaderCellDef style="text-align: center">
-              Actions
-            </th>
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
             <td mat-cell *matCellDef="let conditionRequest">
               <div class="table-actions">
                 @if (canCreateConditionRequest(conditionRequest)) {
@@ -333,7 +338,8 @@
                 }
                 @if (canViewConditionRequest(conditionRequest)) {
                   <button
-                    mat-raised-button
+                    style="min-width: 70px"
+                    mat-stroked-button
                     color="primary"
                     [routerLink]="['conditions', conditionRequest.id, 'view']"
                   >
@@ -342,7 +348,8 @@
                 }
                 @if (canEditConditionRequest(conditionRequest)) {
                   <button
-                    mat-raised-button
+                    style="min-width: 70px"
+                    mat-stroked-button
                     color="primary"
                     [routerLink]="['conditions', conditionRequest.id, 'edit']"
                     [disabled]="!canUpdateProject()"
@@ -427,7 +434,7 @@
             <td mat-cell *matCellDef="let attachment">
               <div class="table-actions">
                 <button
-                  mat-raised-button
+                  mat-stroked-button
                   color="primary"
                   (click)="downloadAttachment(attachment)"
                 >

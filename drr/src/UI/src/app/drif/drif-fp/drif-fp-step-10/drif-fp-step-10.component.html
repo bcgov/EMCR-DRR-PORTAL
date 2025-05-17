@@ -1,6 +1,6 @@
 <div class="drr-step-container" *transloco="let t">
   <form [formGroup]="budgetForm">
-    <mat-label class="drr-label">Project Financial Details</mat-label>
+    <h3>Project Financial Details</h3>
     <p>
       In this section you will review the project's financial details and
       provide detailed estimates.
@@ -16,9 +16,7 @@
       updates are made, you will be asked to explain what has changed and why.
     </p>
 
-    <mat-label class="drr-label" style="margin-top: 2rem"
-      >Total Project Cost</mat-label
-    >
+    <h3 style="margin-top: 2rem">Total Project Cost</h3>
     <p>
       Below is the estimated total cost of your project based on the information
       you provided in your Expression of Interest. The total costs for your
@@ -44,9 +42,7 @@
       ></drr-textarea>
     }
 
-    <mat-label class="drr-label" style="margin-top: 2rem"
-      >DRIF Program Funding Amount</mat-label
-    >
+    <h3 style="margin-top: 2rem">DRIF Program Funding Amount</h3>
     <p>Based on your EOI, your eligible DRIF program funding amount is:</p>
     <drr-currency-input
       style="align-self: flex-start; margin-top: 1rem; width: 25rem"
@@ -56,9 +52,7 @@
     ></drr-currency-input>
 
     @if (isStrucutralProject()) {
-      <mat-label class="drr-label" style="margin-top: 2rem"
-        >Cost Estimate Class</mat-label
-      >
+      <h3 style="margin-top: 2rem">Cost Estimate Class</h3>
       <p>
         At this stage, your project should have a class A or B cost estimate.
         Set your contingency based on this. See the section below for more
@@ -107,9 +101,7 @@
       ></drr-radio-button>
     }
 
-    <mat-label class="drr-label" style="margin-top: 2rem"
-      >Detailed Cost Estimates</mat-label
-    >
+    <h3 style="margin-top: 2rem">Detailed Cost Estimates</h3>
     <p>
       Use the section below to provide a detailed breakdown of how the DRIF
       program funding amount (above) will be allocated to the eligible cost
@@ -225,9 +217,7 @@
       </button>
     </div>
 
-    <mat-label class="drr-label" style="margin-top: 2rem"
-      >Total Detailed Cost Estimate</mat-label
-    >
+    <h3 style="margin-top: 2rem">Total Detailed Cost Estimate</h3>
     <drr-currency-input
       style="align-self: flex-start; margin-top: 1rem"
       [label]="t('totalEligibleCosts')"
@@ -236,9 +226,7 @@
     >
     </drr-currency-input>
     @if (isStrucutralProject()) {
-      <mat-label class="drr-label" style="margin-top: 1rem"
-        >Total Contingency Percentage</mat-label
-      >
+      <h3 style="margin-top: 1rem">Total Contingency Percentage</h3>
       <drr-numeric-input
         style="align-self: flex-start; margin-top: 1rem"
         [label]="t('contingency')"
@@ -268,9 +256,7 @@
       ></drr-textarea>
     }
 
-    <mat-label class="drr-label" style="margin-top: 2rem"
-      >Updated Funding Request</mat-label
-    >
+    <h3 style="margin-top: 2rem">Updated Funding Request</h3>
     <p>
       Based on your Total Detailed Cost Estimate, your updated DRIF program
       funding request is:
@@ -309,9 +295,7 @@
       ></drr-textarea>
     </div>
 
-    <mat-label class="drr-label" style="margin-top: 2rem">
-      Financial Forecasting
-    </mat-label>
+    <h3 style="margin-top: 2rem">Financial Forecasting</h3>
     <p>
       Use the fields below to provide a year-over-year forecast of your Total
       Detailed Cost Estimate. Ensure that these numbers align with your Total
@@ -372,9 +356,7 @@
       </p>
     }
 
-    <mat-label class="drr-label" style="margin-top: 1rem">{{
-      t("otherFunding")
-    }}</mat-label>
+    <h3 style="margin-top: 1rem">{{ t("otherFunding") }}</h3>
     <p>Based on above, your updated Total Project Cost is:</p>
     <drr-currency-input
       style="align-self: flex-start; margin-top: 1rem; width: 25rem"
@@ -459,7 +441,7 @@
 
     <mat-divider style="margin: 2rem 0"></mat-divider>
 
-    <mat-label class="drr-label">{{ t("costConsiderations") }}</mat-label>
+    <h3>{{ t("costConsiderations") }}</h3>
     <drr-radio-button
       [label]="t('costConsiderationsApplied')"
       [rxFormControl]="budgetForm.get('costConsiderationsApplied')"
@@ -477,16 +459,14 @@
       [maxlength]="2000"
     ></drr-textarea>
 
-    <mat-label class="drr-label" style="margin-top: 1rem">{{
-      t("costEffective")
-    }}</mat-label>
+    <h3 style="margin-top: 1rem">{{ t("costEffective") }}</h3>
     <drr-textarea
       [label]="t('costEffectiveComments')"
       [rxFormControl]="budgetForm.get('costEffectiveComments')"
       [maxlength]="2000"
     ></drr-textarea>
 
-    <mat-label class="drr-label">{{ t("previousResponse") }}</mat-label>
+    <h3>{{ t("previousResponse") }}</h3>
     <drr-radio-button
       [label]="t('previousResponseQuestion')"
       [rxFormControl]="budgetForm.get('previousResponse')"

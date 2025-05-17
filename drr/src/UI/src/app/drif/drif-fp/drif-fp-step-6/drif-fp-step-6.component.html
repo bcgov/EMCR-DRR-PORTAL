@@ -1,6 +1,6 @@
 <div class="drr-step-container" *transloco="let t">
   <form [formGroup]="climateAdaptationForm">
-    <mat-label class="drr-label">{{ t("climateAdaptation") }}</mat-label>
+    <h3>{{ t("climateAdaptation") }}</h3>
     <mat-label>{{ t("incorporateFutureClimateConditions") }}*</mat-label>
     <drr-radio-button
       [rxFormControl]="
@@ -19,7 +19,7 @@
       [maxlength]="2000"
     ></drr-textarea>
 
-    <mat-label class="drr-label">{{ t("climateAssessmentTools") }}</mat-label>
+    <h3>{{ t("climateAssessmentTools") }}</h3>
     <drr-radio-button
       [label]="t('climateAssessment')"
       [rxFormControl]="climateAdaptationForm.get('climateAssessment')"

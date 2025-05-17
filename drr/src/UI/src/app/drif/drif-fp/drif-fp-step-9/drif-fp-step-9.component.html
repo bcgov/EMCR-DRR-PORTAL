@@ -1,6 +1,6 @@
 <div class="drr-step-container" *transloco="let t">
   <form [formGroup]="projectRisksForm">
-    <mat-label class="drr-label">{{ t("projectComplexity") }}</mat-label>
+    <h3>{{ t("projectComplexity") }}</h3>
     <drr-radio-button
       [label]="t('complexityRiskMitigated')"
       [rxFormControl]="projectRisksForm.get('complexityRiskMitigated')"
@@ -19,7 +19,7 @@
       [rxFormControl]="projectRisksForm.get('complexityRiskComments')"
     ></drr-textarea>
 
-    <mat-label class="drr-label">{{ t("projectReadiness") }}</mat-label>
+    <h3>{{ t("projectReadiness") }}</h3>
     <drr-radio-button
       [label]="t('readinessRiskMitigated')"
       [rxFormControl]="projectRisksForm.get('readinessRiskMitigated')"
@@ -38,7 +38,7 @@
       [rxFormControl]="projectRisksForm.get('readinessRiskComments')"
     ></drr-textarea>
 
-    <mat-label class="drr-label">{{ t("projectSensitivity") }}</mat-label>
+    <h3>{{ t("projectSensitivity") }}</h3>
     <drr-radio-button
       [label]="t('sensitivityRiskMitigated')"
       [rxFormControl]="projectRisksForm.get('sensitivityRiskMitigated')"
@@ -57,7 +57,7 @@
       [rxFormControl]="projectRisksForm.get('sensitivityRiskComments')"
     ></drr-textarea>
 
-    <mat-label class="drr-label">{{ t("capacityChallenges") }}</mat-label>
+    <h3>{{ t("capacityChallenges") }}</h3>
     <drr-radio-button
       [label]="t('capacityRiskMitigated')"
       [rxFormControl]="projectRisksForm.get('capacityRiskMitigated')"
@@ -76,7 +76,7 @@
       [rxFormControl]="projectRisksForm.get('capacityRiskComments')"
     ></drr-textarea>
 
-    <mat-label class="drr-label">{{ t("riskTransfer") }}</mat-label>
+    <h3>{{ t("riskTransfer") }}</h3>
     <drr-radio-button
       [label]="t('riskTransferMigigated')"
       [rxFormControl]="projectRisksForm.get('riskTransferMigigated')"

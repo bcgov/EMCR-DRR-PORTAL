@@ -1,5 +1,5 @@
 <div class="drr-step-container" *transloco="let t">
-  <mat-label class="drr-label">{{ t("ownershipDeclaration") }}</mat-label>
+  <h3>{{ t("ownershipDeclaration") }}</h3>
   <drr-radio-button
     [label]="t('ownershipDeclarationText')"
     [rxFormControl]="locationInformationForm.get('ownershipDeclaration')"
@@ -13,7 +13,7 @@
     [rxFormControl]="locationInformationForm.get('ownershipDescription')"
   ></drr-textarea>
 
-  <mat-label class="drr-label">{{ t("locationDescription") }}</mat-label>
+  <h3>{{ t("locationDescription") }}</h3>
   <drr-textarea
     [id]="'locationDescription'"
     [label]="t('locationDescription')"

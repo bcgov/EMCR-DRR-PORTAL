@@ -2,9 +2,15 @@
   <mat-card-header>
     <mat-card-title-group class="app-stepper-header">
       <mat-card-title>
-        {{ t("eoiFormHeader") }}
+        <h2>
+          {{ t("eoiFormHeader") }}
+        </h2>
       </mat-card-title>
-      <mat-card-subtitle> for {{ getProjectTitle() }} </mat-card-subtitle>
+      <mat-card-subtitle>
+        @if (getProjectTitle()) {
+          for {{ getProjectTitle() }}
+        }
+      </mat-card-subtitle>
       <div>
         <div class="header-actions">
           <button mat-stroked-button color="primary" (click)="goBack()">

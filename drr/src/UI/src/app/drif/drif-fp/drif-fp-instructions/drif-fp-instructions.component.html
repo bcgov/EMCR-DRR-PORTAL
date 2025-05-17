@@ -1,9 +1,11 @@
 <mat-card class="instructions-container" *transloco="let t">
   <mat-card-header>
     <mat-card-title-group>
-      <mat-card-title>{{
-        t("fpFormHeaderFor", { projectTitle: projectTitle })
-      }}</mat-card-title>
+      <mat-card-title>
+        <h2>
+          {{ t("fpFormHeaderFor", { projectTitle: projectTitle }) }}
+        </h2>
+      </mat-card-title>
       <mat-card-subtitle
         ><span> {{ t("relatedEoi") }}: </span>
         <a [routerLink]="['/eoi-submission-details', eoiId]" target="_blank">{{
