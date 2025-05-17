@@ -8,9 +8,9 @@
       >.</i
     >
   </div>
-  <mat-label class="drr-label" style="display: block; margin-top: 1rem">{{
-    t("requiredAttachments")
-  }}</mat-label>
+  <h3 style="display: block; margin-top: 1rem">
+    {{ t("requiredAttachments") }}
+  </h3>
   <div style="margin-top: 1rem">
     <i>{{ t("requiredAttachmentsText") }}</i>
   </div>
@@ -40,7 +40,7 @@
     <mat-divider class="extra-space"></mat-divider>
   </div>
 
-  <mat-label class="drr-label">{{ t("resolution") }}</mat-label>
+  <h3>{{ t("resolution") }}</h3>
   <div style="margin-top: 1rem; margin-left: 2rem">
     <p>{{ t("firstNationResolution") }}</p>
     <p>{{ t("localGovernmentResolution") }}</p>
@@ -80,9 +80,9 @@
     <div class="other-attachments-upload">
       @if (getOtherFormArrayCount() == 0) {
         <div>
-          <mat-label class="drr-label">
+          <h3>
             {{ t("otherSupportingDocumentation") }}
-          </mat-label>
+          </h3>
           <br />
           <mat-label style="display: block; margin-top: 1rem">{{
             t("supportingDocumentationOptionalText")

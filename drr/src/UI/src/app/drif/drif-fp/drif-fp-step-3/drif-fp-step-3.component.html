@@ -1,13 +1,13 @@
 <div class="drr-step-container" *transloco="let t">
   <form [formGroup]="projectAreaForm">
-    <mat-label class="drr-label">{{ t("locationDescription") }}</mat-label>
+    <h3>{{ t("locationDescription") }}</h3>
     <drr-textarea
       [label]="t('locationDescriptionAddress')"
       [rxFormControl]="projectAreaForm.get('locationDescription')"
       [maxlength]="2000"
     ></drr-textarea>
 
-    <mat-label class="drr-label">{{ t("estimatedArea") }}</mat-label>
+    <h3>{{ t("estimatedArea") }}</h3>
     <mat-label style="margin-bottom: 1rem">{{
       t("estimatedAreaText")
     }}</mat-label>
@@ -27,7 +27,7 @@
       ></drr-select>
     </div>
 
-    <mat-label class="drr-label">{{ t("relatedHazards") }}</mat-label>
+    <h3>{{ t("relatedHazards") }}</h3>
 
     <drr-select
       class="drr-single-input"
@@ -47,21 +47,21 @@
       [maxlength]="100"
     ></drr-input>
 
-    <mat-label class="drr-label">{{ t("areaDescription") }}</mat-label>
+    <h3>{{ t("areaDescription") }}</h3>
     <drr-textarea
       [label]="t('areaDescriptionText')"
       [rxFormControl]="projectAreaForm.get('areaDescription')"
       [maxlength]="2000"
     ></drr-textarea>
 
-    <mat-label class="drr-label">{{ t("communityImpact") }}</mat-label>
+    <h3>{{ t("communityImpact") }}</h3>
     <drr-textarea
       [label]="t('communityImpactText')"
       [rxFormControl]="projectAreaForm.get('communityImpact')"
       [maxlength]="2000"
     ></drr-textarea>
 
-    <mat-label class="drr-label">{{ t("estimatedPeopleImpacted") }}</mat-label>
+    <h3>{{ t("estimatedPeopleImpacted") }}</h3>
     <mat-label style="margin-bottom: 1rem">{{
       t("estimatedPeopleImpactedText")
     }}</mat-label>
@@ -72,7 +72,7 @@
       [options]="estimatedPeopleImpactedOptions"
     ></drr-select>
 
-    <mat-label class="drr-label">{{ t("infrastructureImpacted") }}</mat-label>
+    <h3>{{ t("infrastructureImpacted") }}</h3>
     <drr-radio-button
       [label]="t('isInfrastructureImpacted')"
       [rxFormControl]="projectAreaForm.get('isInfrastructureImpacted')"

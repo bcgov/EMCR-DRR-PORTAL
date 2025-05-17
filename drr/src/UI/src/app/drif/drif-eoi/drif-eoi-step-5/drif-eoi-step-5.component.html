@@ -1,6 +1,6 @@
 <div class="drr-step-container" *transloco="let t">
   <form [formGroup]="projectDetailsForm">
-    <mat-label class="drr-label">{{ t("rationaleForFunding") }}</mat-label>
+    <h3>{{ t("rationaleForFunding") }}</h3>
     <drr-textarea
       [id]="'rationaleForFunding'"
       [label]="t('rationaleForFundingText')"
@@ -9,7 +9,7 @@
       [rows]="10"
     ></drr-textarea>
 
-    <mat-label class="drr-label">{{ t("estimatedPeopleImpacted") }}</mat-label>
+    <h3>{{ t("estimatedPeopleImpacted") }}</h3>
     <div class="project-details-container">
       <drr-select
         class="drr-single-input"
@@ -19,7 +19,7 @@
         [options]="estimatedNumberOfPeopleOptions"
       ></drr-select>
 
-      <mat-label class="drr-label">{{ t("communityImpact") }} </mat-label>
+      <h3>{{ t("communityImpact") }}</h3>
 
       <drr-textarea
         [id]="'communityImpact'"
@@ -29,9 +29,7 @@
         [rows]="10"
       ></drr-textarea>
 
-      <mat-label class="drr-label"
-        >{{ t("infrastructureImpacted") }}
-      </mat-label>
+      <h3>{{ t("infrastructureImpacted") }}</h3>
 
       <drr-radio-button
         [label]="t('isInfrastructureImpacted')"
@@ -101,7 +99,7 @@
       ></drr-textarea>
     </div>
 
-    <mat-label class="drr-label">{{ t("proposedSolution") }}</mat-label>
+    <h3>{{ t("proposedSolution") }}</h3>
     <div class="project-details-container">
       <drr-textarea
         [id]="'addressRisksAndHazards'"
@@ -128,7 +126,7 @@
         [rows]="10"
       ></drr-textarea>
 
-      <mat-label class="drr-label">{{ t("rationaleForSolution") }}</mat-label>
+      <h3>{{ t("rationaleForSolution") }}</h3>
       <drr-textarea
         [id]="'rationaleForSolution'"
         [label]="t('rationaleForSolutionText')"

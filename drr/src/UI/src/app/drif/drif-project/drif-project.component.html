@@ -2,7 +2,11 @@
   <mat-card *ngIf="!!project">
     <mat-card-header>
       <mat-card-title-group>
-        <mat-card-title>{{ project.projectTitle }}</mat-card-title>
+        <mat-card-title>
+          <h2>
+            {{ project.projectTitle }}
+          </h2>
+        </mat-card-title>
         <button
           mat-stroked-button
           color="primary"
@@ -16,7 +20,9 @@
     <mat-card-content class="drif-project-details">
       <mat-card>
         <mat-card-header>
-          <mat-card-title>Project Details</mat-card-title>
+          <mat-card-title>
+            <h3>Project Details</h3>
+          </mat-card-title>
         </mat-card-header>
 
         <mat-card-content class="project-details-table">
@@ -80,7 +86,7 @@
       </mat-card>
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem">
         <div>
-          <h5 style="margin-left: 1rem">Conditions</h5>
+          <h3 style="margin-left: 1rem">Conditions</h3>
           <table
             mat-table
             [dataSource]="conditionsDataSource"
@@ -129,7 +135,7 @@
           </table>
         </div>
         <div>
-          <h5 style="margin-left: 1rem">Cost Projections</h5>
+          <h3 style="margin-left: 1rem">Cost Projections</h3>
           <table
             mat-table
             [dataSource]="costProjectionsDataSource"

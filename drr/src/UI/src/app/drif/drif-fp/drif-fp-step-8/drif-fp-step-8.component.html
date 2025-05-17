@@ -1,6 +1,6 @@
 <div class="drr-step-container" *transloco="let t">
   <form [formGroup]="projectOutcomesForm">
-    <mat-label class="drr-label">{{ t("publicUseOrBenefit") }}</mat-label>
+    <h3>{{ t("publicUseOrBenefit") }}</h3>
     <drr-radio-button
       [label]="t('publicBenefit')"
       [rxFormControl]="projectOutcomesForm.get('publicBenefit')"
@@ -11,45 +11,45 @@
       [rxFormControl]="projectOutcomesForm.get('publicBenefitComments')"
     ></drr-textarea>
 
-    <mat-label class="drr-label">{{ t("futureCostReduction") }}</mat-label>
+    <h3>{{ t("futureCostReduction") }}</h3>
     <drr-radio-button
       [label]="t('costReduction')"
       [rxFormControl]="projectOutcomesForm.get('futureCostReduction')"
     ></drr-radio-button>
-    @if (projectOutcomesForm.get('futureCostReduction')?.value === true) {
-    <drr-chip-autocomplete
-      [label]="t('costReductions')"
-      [placeholder]="t('autocompletePlaceholder')"
-      [options]="costReductionOptions"
-      [rxFormControl]="projectOutcomesForm.get('costReductions')"
-    ></drr-chip-autocomplete>
-    <drr-textarea
-      [label]="t('costReductionComments')"
-      [maxlength]="2000"
-      [rxFormControl]="projectOutcomesForm.get('costReductionComments')"
-    ></drr-textarea>
+    @if (projectOutcomesForm.get("futureCostReduction")?.value === true) {
+      <drr-chip-autocomplete
+        [label]="t('costReductions')"
+        [placeholder]="t('autocompletePlaceholder')"
+        [options]="costReductionOptions"
+        [rxFormControl]="projectOutcomesForm.get('costReductions')"
+      ></drr-chip-autocomplete>
+      <drr-textarea
+        [label]="t('costReductionComments')"
+        [maxlength]="2000"
+        [rxFormControl]="projectOutcomesForm.get('costReductionComments')"
+      ></drr-textarea>
     }
 
-    <mat-label class="drr-label">{{ t("coBenefitsTitle") }}</mat-label>
+    <h3>{{ t("coBenefitsTitle") }}</h3>
     <drr-radio-button
       [label]="t('produceCoBenefits')"
       [rxFormControl]="projectOutcomesForm.get('produceCoBenefits')"
     ></drr-radio-button>
-    @if (projectOutcomesForm.get('produceCoBenefits')?.value === true) {
-    <drr-chip-autocomplete
-      [label]="t('coBenefits')"
-      [placeholder]="t('autocompletePlaceholder')"
-      [options]="coBenefitsOptions"
-      [rxFormControl]="projectOutcomesForm.get('coBenefits')"
-    ></drr-chip-autocomplete>
-    <drr-textarea
-      [label]="t('coBenefitComments')"
-      [maxlength]="2000"
-      [rxFormControl]="projectOutcomesForm.get('coBenefitComments')"
-    ></drr-textarea>
+    @if (projectOutcomesForm.get("produceCoBenefits")?.value === true) {
+      <drr-chip-autocomplete
+        [label]="t('coBenefits')"
+        [placeholder]="t('autocompletePlaceholder')"
+        [options]="coBenefitsOptions"
+        [rxFormControl]="projectOutcomesForm.get('coBenefits')"
+      ></drr-chip-autocomplete>
+      <drr-textarea
+        [label]="t('coBenefitComments')"
+        [maxlength]="2000"
+        [rxFormControl]="projectOutcomesForm.get('coBenefitComments')"
+      ></drr-textarea>
     }
 
-    <mat-label class="drr-label">{{ t("resiliency") }}</mat-label>
+    <h3>{{ t("resiliency") }}</h3>
     <drr-chip-autocomplete
       [label]="t('increasedResiliency')"
       [placeholder]="t('autocompletePlaceholder')"

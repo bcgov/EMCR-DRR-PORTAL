@@ -1,12 +1,12 @@
 <div class="drr-step-container" *transloco="let t">
   <form [formGroup]="proponentInformationForm">
-    <mat-label class="drr-label">{{ t("proponentType") }}*</mat-label>
+    <h3>{{ t("proponentType") }}*</h3>
     <drr-radio-button
       [rxFormControl]="proponentInformationForm.get('proponentType')"
       [options]="proponentTypeOptions"
     ></drr-radio-button>
 
-    <mat-label class="drr-label">{{ t("proponentName") }}</mat-label>
+    <h3>{{ t("proponentName") }}</h3>
     <drr-input
       class="drr-single-input"
       [id]="'proponentName'"
@@ -15,8 +15,7 @@
       [maxlength]="100"
     ></drr-input>
 
-    <mat-label class="drr-label">{{ t("projectContact") }}</mat-label>
-
+    <h3>{{ t("projectContact") }}</h3>
     <div class="contacts-container">
       <drr-input
         [id]="'projectContact_firstName'"
@@ -70,9 +69,7 @@
           let i = index
         "
       >
-        <mat-label class="drr-label">{{
-          t("additionalContact") + " " + (i + 1)
-        }}</mat-label>
+        <h4>{{ t("additionalContact") + " " + (i + 1) }}</h4>
         <div class="contacts-container">
           <drr-input
             [id]="'projectContact_firstName_' + i"
@@ -116,12 +113,11 @@
 
           <button
             *ngIf="i > 0"
-            class="remove-contact-button"
-            mat-mini-fab
+            mat-raised-button
             color="warn"
             (click)="removeAdditionalContact(i)"
           >
-            <mat-icon>delete</mat-icon>
+            Delete
           </button>
         </div>
       </div>
@@ -139,9 +135,7 @@
       </button>
     </div>
 
-    <mat-label class="drr-label" style="margin-top: 20px">{{
-      t("partneringProponents")
-    }}</mat-label>
+    <h3>{{ t("partneringProponents") }}</h3>
     <div>
       <div
         class="proponent-container"

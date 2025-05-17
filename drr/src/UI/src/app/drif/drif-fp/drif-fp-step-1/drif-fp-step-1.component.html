@@ -1,7 +1,6 @@
 <div class="drr-step-container" *transloco="let t">
   <form [formGroup]="proponentAndProjectInformationForm">
-    <mat-label class="drr-label">{{ t("projectContact") }}</mat-label>
-
+    <h3>{{ t("projectContact") }}</h3>
     <div class="contacts-container">
       <drr-input
         [id]="'projectContact_firstName'"
@@ -67,9 +66,7 @@
           let i = index
         "
       >
-        <mat-label class="drr-label">{{
-          t("additionalContact") + " " + (i + 1)
-        }}</mat-label>
+        <h4>{{ t("additionalContact") + " " + (i + 1) }}</h4>
         <div class="contacts-container">
           <drr-input
             [id]="'projectContact_firstName_' + i"
@@ -136,9 +133,7 @@
       </button>
     </div>
 
-    <mat-label class="drr-label" style="margin-top: 2rem">{{
-      t("partneringProponents")
-    }}</mat-label>
+    <h3 style="margin-top: 2rem">{{ t("partneringProponents") }}</h3>
 
     <div>
       <div
@@ -174,9 +169,7 @@
       </button>
     </div>
 
-    <mat-label style="margin-top: 1rem" class="drr-label">{{
-      t("regionalProject")
-    }}</mat-label>
+    <h3>{{ t("regionalProject") }}</h3>
     <mat-label>{{ t("regionalProjectText") }}</mat-label>
     <mat-label style="margin-top: 1rem"
       >{{ t("regionalProjectQuestion") }}*</mat-label
@@ -196,7 +189,7 @@
       "
     ></drr-textarea>
 
-    <mat-label class="drr-label">{{ t("projectTitle") }}</mat-label>
+    <h3>{{ t("projectTitle") }}</h3>
     <drr-input
       style="margin-top: 0.5rem"
       class="drr-single-input"
@@ -206,7 +199,7 @@
       [maxlength]="100"
     ></drr-input>
 
-    <mat-label class="drr-label">{{ t("projectType") }}</mat-label>
+    <h3>{{ t("projectType") }}</h3>
     <drr-textarea
       [id]="'mainDeliverable'"
       [label]="t('projectTypeText')"

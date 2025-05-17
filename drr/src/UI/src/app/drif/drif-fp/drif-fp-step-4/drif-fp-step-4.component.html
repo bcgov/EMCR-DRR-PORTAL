@@ -6,9 +6,7 @@
       >
       <i style="margin-left: 1rem">{{ t("projectPlanDisclaimer") }}</i>
     </span>
-    <mat-label class="drr-label" style="margin-top: 1rem">{{
-      t("projectDates")
-    }}</mat-label>
+    <h3>{{ t("projectDates") }}</h3>
     <div class="project-dates-container">
       <drr-datepicker
         [label]="t('startDate')"
@@ -25,16 +23,14 @@
       ></drr-datepicker>
     </div>
 
-    <mat-label class="drr-label" style="margin-top: 1rem">{{
-      t("projectDescription")
-    }}</mat-label>
+    <h3>{{ t("projectDescription") }}</h3>
     <drr-textarea
       [label]="t('projectDescriptionText')"
       [maxlength]="2000"
       [rxFormControl]="projectPlanForm.get('projectDescription')"
     ></drr-textarea>
 
-    <mat-label class="drr-label">{{ t("proposedActivities") }}</mat-label>
+    <h3>{{ t("proposedActivities") }}</h3>
     <mat-label>{{ t("proposedActivitiesText") }}</mat-label>
     <span style="display: flex; align-items: center">
       <i>
@@ -98,9 +94,7 @@
         </mat-card>
       </div>
     </div>
-    <mat-label class="drr-label" style="margin-top: 2rem">{{
-      t("additionalActivities")
-    }}</mat-label>
+    <h3 style="margin-top: 2rem">{{ t("additionalActivities") }}</h3>
     <div class="proposed-activity-container">
       <div
         *ngFor="let activity of getAdditionalActivitiesArray(); let i = index"
@@ -189,9 +183,7 @@
       </button>
     </div>
 
-    <mat-label class="drr-label" style="margin-top: 1rem">{{
-      t("rationaleForSolution")
-    }}</mat-label>
+    <h3>{{ t("rationaleForSolution") }}</h3>
     <drr-chip-autocomplete
       [label]="t('rationaleForSolutionText')"
       [placeholder]="t('autocompletePlaceholder')"
@@ -204,9 +196,7 @@
       [rxFormControl]="projectPlanForm.get('howWasNeedIdentified')"
     ></drr-textarea>
 
-    <mat-label class="drr-label" style="margin-top: 1rem">{{
-      t("mitigation")
-    }}</mat-label>
+    <h3>{{ t("mitigation") }}</h3>
     <drr-textarea
       [label]="t('addressRisksAndHazards')"
       [maxlength]="2000"
@@ -214,25 +204,21 @@
     >
     </drr-textarea>
 
-    <mat-label class="drr-label" style="margin-top: 1rem">{{
-      t("disasterRiskReduction")
-    }}</mat-label>
+    <h3>{{ t("disasterRiskReduction") }}</h3>
     <drr-textarea
       [label]="t('disasterRiskUnderstanding')"
       [maxlength]="2000"
       [rxFormControl]="projectPlanForm.get('disasterRiskUnderstanding')"
     ></drr-textarea>
 
-    <mat-label class="drr-label" style="margin-top: 1rem">{{
-      t("rationaleForFunding")
-    }}</mat-label>
+    <h3>{{ t("rationaleForFunding") }}</h3>
     <drr-textarea
       [label]="t('rationaleForFundingText')"
       [maxlength]="2000"
       [rxFormControl]="projectPlanForm.get('rationaleForFunding')"
     ></drr-textarea>
 
-    <mat-label class="drr-label">{{ t("projectAlternates") }}</mat-label>
+    <h3>{{ t("projectAlternates") }}</h3>
     <drr-textarea
       [label]="t('projectAlternatesText')"
       [maxlength]="2000"

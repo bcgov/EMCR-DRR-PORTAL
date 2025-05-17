@@ -1,6 +1,6 @@
 <div class="drr-step-container" *transloco="let t">
   <form [formGroup]="permitsRegulationsAndStandardsForm">
-    <mat-label class="drr-label">{{ t("standardsAcceptable") }}</mat-label>
+    <h3>{{ t("standardsAcceptable") }}</h3>
     <mat-label>{{ t("standardsAcceptableQuestion") }}*</mat-label>
     <drr-radio-button
       [options]="standardsAcceptableOptions"
@@ -46,7 +46,7 @@
       "
     ></drr-textarea>
 
-    <mat-label class="drr-label">{{ t("professionalGuidance") }}</mat-label>
+    <h3>{{ t("professionalGuidance") }}</h3>
     <mat-label>{{ t("professionalGuidanceQuestion") }}*</mat-label>
     <drr-radio-button
       [rxFormControl]="
@@ -88,7 +88,7 @@
       "
     ></drr-textarea>
 
-    <mat-label class="drr-label">{{ t("regulations") }}</mat-label>
+    <h3>{{ t("regulations") }}</h3>
     <mat-label>{{ t("meetsRegulatoryRequirements") }}*</mat-label>
     <drr-radio-button
       [rxFormControl]="
@@ -103,7 +103,7 @@
       "
     ></drr-textarea>
 
-    <mat-label class="drr-label">{{ t("approvals") }}</mat-label>
+    <h3>{{ t("approvals") }}</h3>
     <mat-label>{{ t("meetsEligibilityRequirements") }}*</mat-label>
     <drr-radio-button
       [rxFormControl]="
@@ -117,9 +117,7 @@
           ?.value === true
       "
     >
-      <mat-label class="drr-label" style="margin-top: 2rem">{{
-        t("permits")
-      }}</mat-label>
+      <h3 style="margin-top: 2rem">{{ t("permits") }}</h3>
       <div
         class="permit-container"
         *ngFor="let permit of getPermitsFormArray().controls; let i = index"
