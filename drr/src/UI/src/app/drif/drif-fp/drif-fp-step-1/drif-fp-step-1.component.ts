@@ -1,6 +1,12 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input } from '@angular/core';
+import {
+  Component,
+  inject,
+  Input,
+  QueryList,
+  ViewChildren,
+} from '@angular/core';
 import {
   FormArray,
   FormsModule,
@@ -19,7 +25,6 @@ import { IFormGroup, RxFormBuilder } from '@rxweb/reactive-form-validators';
 import { distinctUntilChanged } from 'rxjs';
 import { DrrInputComponent } from '../../../shared/controls/drr-input/drr-input.component';
 import { DrrRadioButtonComponent } from '../../../shared/controls/drr-radio-button/drr-radio-button.component';
-import { DrrSelectComponent } from '../../../shared/controls/drr-select/drr-select.component';
 import { DrrTextareaComponent } from '../../../shared/controls/drr-textarea/drr-textarea.component';
 import { ContactDetailsForm, StringItem } from '../../drif-eoi/drif-eoi-form';
 import { ProponentAndProjectInformationForm } from '../drif-fp-form';
@@ -41,7 +46,6 @@ import { ProponentAndProjectInformationForm } from '../drif-fp-form';
     TranslocoModule,
     DrrInputComponent,
     DrrTextareaComponent,
-    DrrSelectComponent,
     DrrRadioButtonComponent,
   ],
   templateUrl: './drif-fp-step-1.component.html',
@@ -55,6 +59,12 @@ export class DrifFpStep1Component {
 
   @Input()
   proponentAndProjectInformationForm!: IFormGroup<ProponentAndProjectInformationForm>;
+
+  @ViewChildren('contactFirstNameInput')
+  contactFirstNameInput!: QueryList<DrrInputComponent>;
+
+  @ViewChildren('proponentInput')
+  proponentInput!: QueryList<DrrInputComponent>;
 
   ngOnInit() {
     this.breakpointObserver
@@ -71,12 +81,12 @@ export class DrifFpStep1Component {
           .get('partneringProponents')
           ?.patchValue(
             proponents.map((proponent) => proponent.value),
-            { emitEvent: false }
+            { emitEvent: false },
           );
       });
 
     const regionalProjectComments = this.proponentAndProjectInformationForm.get(
-      'regionalProjectComments'
+      'regionalProjectComments',
     );
     this.proponentAndProjectInformationForm
       .get('regionalProject')!
@@ -104,8 +114,19 @@ export class DrifFpStep1Component {
 
   addAdditionalContact() {
     this.getFormArray('additionalContacts').push(
-      this.formBuilder.formGroup(ContactDetailsForm)
+      this.formBuilder.formGroup(ContactDetailsForm),
     );
+
+    this.focusOnLastContact();
+  }
+
+  focusOnLastContact() {
+    setTimeout(() => {
+      const lastContactInput = this.contactFirstNameInput.last;
+      if (lastContactInput) {
+        lastContactInput.focusOnInput();
+      }
+    }, 0);
   }
 
   removeAdditionalContact(index: number) {
@@ -116,6 +137,17 @@ export class DrifFpStep1Component {
   addProponent() {
     const proponents = this.getFormArray('partneringProponentsArray');
     proponents.push(this.formBuilder.formGroup(StringItem));
+
+    this.focusOnLastProponent();
+  }
+
+  focusOnLastProponent() {
+    setTimeout(() => {
+      const lastProponentInput = this.proponentInput.last;
+      if (lastProponentInput) {
+        lastProponentInput.focusOnInput();
+      }
+    }, 0);
   }
 
   removeProponent(index: number) {
