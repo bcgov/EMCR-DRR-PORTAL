@@ -128,7 +128,7 @@ export class DrrInputComponent {
 
   changeDetector = inject(ChangeDetectorRef);
 
-  @ViewChild('drrInput') drrInput: any;
+  @ViewChild('drrInput') private drrInput: any;
 
   ngAfterViewInit() {
     this.changeDetector.detectChanges();

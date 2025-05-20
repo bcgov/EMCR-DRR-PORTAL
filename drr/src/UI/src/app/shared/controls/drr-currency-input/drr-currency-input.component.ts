@@ -203,7 +203,7 @@ export class DrrCurrencyInputComponent {
 
   @Input() allowEnabling = false;
 
-  @ViewChild('currencyInput') currencyInput: any;
+  @ViewChild('currencyInput') private currencyInput: any;
 
   ngOnInit() {
     this.breakpointObserver

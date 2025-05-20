@@ -102,7 +102,7 @@ export class DrrFundingListComponent {
     setTimeout(() => {
       const amountInput = this.amountInputs.last;
       if (amountInput) {
-        amountInput.currencyInput.nativeElement.focus();
+        amountInput.focusOnInput();
       }
     }, 0);
   }
