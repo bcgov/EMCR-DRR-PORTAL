@@ -5,6 +5,7 @@ import {
   Component,
   HostListener,
   Input,
+  ViewChild,
   inject,
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -26,6 +27,7 @@ export type InputType = 'text' | 'tel' | 'email';
       <mat-label *ngIf="!isMobile">{{ label }}</mat-label>
       <input
         id="{{ id }}"
+        #drrInput
         matInput
         [formControl]="rxFormControl"
         [maxlength]="getMaxLength"
@@ -126,6 +128,8 @@ export class DrrInputComponent {
 
   changeDetector = inject(ChangeDetectorRef);
 
+  @ViewChild('drrInput') drrInput: any;
+
   ngAfterViewInit() {
     this.changeDetector.detectChanges();
   }
@@ -187,5 +191,12 @@ export class DrrInputComponent {
 
   isEmail() {
     return this.type === 'email';
+  }
+
+  focusOnInput() {
+    const inputElement = this.drrInput.nativeElement;
+    if (inputElement) {
+      inputElement.focus();
+    }
   }
 }

@@ -72,6 +72,7 @@
         <h4>{{ t("additionalContact") + " " + (i + 1) }}</h4>
         <div class="contacts-container">
           <drr-input
+            #contactFirstNameInput
             [id]="'projectContact_firstName_' + i"
             [label]="t('firstName')"
             [rxFormControl]="projectContact.get('firstName')"
@@ -145,6 +146,7 @@
         "
       >
         <drr-input
+          #proponentInput
           class="drr-single-input"
           [id]="'proponent_' + i"
           [label]="t('partneringProponentNameText')"
