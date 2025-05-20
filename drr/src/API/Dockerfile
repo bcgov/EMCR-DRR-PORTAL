@@ -11,7 +11,7 @@ WORKDIR /src
 COPY ["EMCR.DRR/EMCR.DRR.API.csproj", "EMCR.DRR/"]
 COPY ["EMCR.DRR.Dynamics/EMCR.DRR.Dynamics.csproj", "EMCR.DRR.Dynamics/"]
 COPY ["EMCR.Utilities/EMCR.Utilities.csproj", "EMCR.Utilities/"]
-COPY ["EMCR.Test.Integration.DRR/EMCR.Tests.Integration.DRR.Api.csproj", "EMCR.Test.Integration.DRR/"]
+COPY ["EMCR.Test.Integration.DRR/EMCR.Tests.Integration.DRR.csproj", "EMCR.Test.Integration.DRR/"]
 COPY ["EMCR.DRR.sln", ".editorconfig", "./"]
 RUN dotnet restore .
 COPY . .

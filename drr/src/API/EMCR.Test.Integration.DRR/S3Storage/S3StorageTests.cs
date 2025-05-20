@@ -3,7 +3,7 @@ using EMCR.DRR.API.Services.S3;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 
-namespace EMCR.Tests.Integration.DRR.Api.S3Storage
+namespace EMCR.Tests.Integration.DRR.S3Storage
 {
     public class S3StorageTests
     {

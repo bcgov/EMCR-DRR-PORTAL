@@ -10,6 +10,10 @@ namespace EMCR.DRR.API.Services.CAS
         public static IServiceCollection AddCAS(this IServiceCollection services, IConfiguration configuration)
         {
             var options = configuration.GetSection("CAS").Get<CasConfiguration>()!;
+            if (options == null)
+            {
+                return services;
+            }
             services.Configure<CasConfiguration>(opts => configuration.GetSection("CAS").Bind(opts));
             var adfsTokenErrorHandlingPolicy = HttpPolicyExtensions.HandleTransientHttpError()
                 .CircuitBreakerAsync(
