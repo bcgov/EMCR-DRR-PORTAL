@@ -1,6 +1,12 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input } from '@angular/core';
+import {
+  Component,
+  inject,
+  Input,
+  QueryList,
+  ViewChildren,
+} from '@angular/core';
 import {
   AbstractControl,
   FormArray,
@@ -54,6 +60,9 @@ export class DrrFundingListComponent {
   @Input()
   fundingFormArray!: FormArray;
 
+  @ViewChildren('amountInput')
+  amountInputs!: QueryList<DrrCurrencyInputComponent>;
+
   ngOnInit() {
     this.breakpointObserver
       .observe('(min-width: 768px)')
@@ -64,7 +73,7 @@ export class DrrFundingListComponent {
 
   setFundingTypeDesctiption(
     event: MatSelectChange,
-    descriptionControl: AbstractControl
+    descriptionControl: AbstractControl,
   ) {
     // check if value contains FundingType.OtherGrants
     if (this.hasOtherGrants(event.value)) {
@@ -83,8 +92,19 @@ export class DrrFundingListComponent {
 
   addOtherFunding() {
     this.fundingFormArray.push(
-      this.formBuilder.formGroup(FundingInformationItemForm)
+      this.formBuilder.formGroup(FundingInformationItemForm),
     );
+
+    this.focusOnLastAmountInput();
+  }
+
+  focusOnLastAmountInput() {
+    setTimeout(() => {
+      const amountInput = this.amountInputs.last;
+      if (amountInput) {
+        amountInput.currencyInput.nativeElement.focus();
+      }
+    }, 0);
   }
 
   removeOtherSource(index: number) {

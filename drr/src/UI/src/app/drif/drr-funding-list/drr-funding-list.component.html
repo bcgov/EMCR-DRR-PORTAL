@@ -4,6 +4,7 @@
     *ngFor="let funding of fundingFormArray.controls; let i = index"
   >
     <drr-currency-input
+      #amountInput
       class="grants-input"
       [label]="t('amount')"
       [rxFormControl]="funding.get('amount')"
