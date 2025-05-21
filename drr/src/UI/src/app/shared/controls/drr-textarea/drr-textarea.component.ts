@@ -1,6 +1,12 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, Input, inject } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  Input,
+  ViewChild,
+  inject,
+} from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -14,6 +20,7 @@ import { RxFormBuilder, RxFormControl } from '@rxweb/reactive-form-validators';
     <mat-label>{{ label }}{{ getMandatoryMark() }}</mat-label>
     <mat-form-field class="drr-textarea">
       <textarea
+        #textareaInput
         id="{{ id }}"
         matInput
         [formControl]="rxFormControl"
@@ -80,6 +87,9 @@ export class DrrTextareaComponent {
     disabled ? this.rxFormControl.disable() : this.rxFormControl.enable();
   }
 
+  @ViewChild('textareaInput')
+  textareaInput!: any;
+
   ngOnInit() {
     this.breakpointObserver
       .observe('(min-width: 768px)')
@@ -105,5 +115,12 @@ export class DrrTextareaComponent {
       this.rxFormControl?.hasError('required')
       ? '*'
       : '';
+  }
+
+  focusOnInput() {
+    const inputElement = this.textareaInput.nativeElement;
+    if (inputElement) {
+      inputElement.focus();
+    }
   }
 }

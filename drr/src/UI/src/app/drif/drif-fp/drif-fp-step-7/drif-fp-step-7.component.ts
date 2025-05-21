@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input } from '@angular/core';
+import {
+  Component,
+  inject,
+  Input,
+  QueryList,
+  ViewChildren,
+} from '@angular/core';
 import {
   FormArray,
   FormsModule,
@@ -98,6 +104,8 @@ export class DrifFpStep7Component {
   ];
 
   standardsVisible = true;
+
+  @ViewChildren('permitInput') permitInputs!: QueryList<DrrTextareaComponent>;
 
   ngOnInit() {
     this.permitsRegulationsAndStandardsForm
@@ -257,6 +265,17 @@ export class DrifFpStep7Component {
   addPermit() {
     const permitsArray = this.getPermitsFormArray();
     permitsArray.push(this.formBuilder.formGroup(StringItem));
+
+    this.focusOnLastPermit();
+  }
+
+  focusOnLastPermit() {
+    setTimeout(() => {
+      const lastPermitInput = this.permitInputs.last;
+      if (lastPermitInput) {
+        lastPermitInput.focusOnInput();
+      }
+    }, 0);
   }
 
   removePermit(index: number) {

@@ -123,6 +123,7 @@
         *ngFor="let permit of getPermitsFormArray().controls; let i = index"
       >
         <drr-textarea
+          #permitInput
           style="width: 95%"
           [id]="'permit_' + i"
           [label]="t('permitLabel')"
