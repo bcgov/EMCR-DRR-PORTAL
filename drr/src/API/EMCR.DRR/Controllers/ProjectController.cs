@@ -1081,17 +1081,8 @@ namespace EMCR.DRR.Controllers
         [Description("Submitted")]
         Submitted,
 
-        [Description("Ready For Approval")]
-        ReadyForApproval,
-
-        [Description("Approval Review")]
-        ApprovalReview,
-
         [Description("Approved")]
         Approved,
-
-        [Description("Technical Review")]
-        TechnicalReview,
 
         [Description("Update Needed")]
         UpdateNeeded,

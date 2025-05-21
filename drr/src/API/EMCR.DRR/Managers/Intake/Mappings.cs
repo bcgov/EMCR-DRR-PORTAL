@@ -1291,12 +1291,6 @@ namespace EMCR.DRR.Managers.Intake
                     return RequestStatus.DraftProponent;
                 case Controllers.RequestStatus.Submitted:
                     return RequestStatus.Submitted;
-                case Controllers.RequestStatus.TechnicalReview:
-                    return RequestStatus.TechnicalReview;
-                case Controllers.RequestStatus.ReadyForApproval:
-                    return RequestStatus.ReadyForApproval;
-                case Controllers.RequestStatus.ApprovalReview:
-                    return RequestStatus.ApprovalReview;
                 case Controllers.RequestStatus.UpdateNeeded:
                     return RequestStatus.UpdateNeeded;
                 case Controllers.RequestStatus.Approved:
@@ -1312,18 +1306,18 @@ namespace EMCR.DRR.Managers.Intake
                 case RequestStatus.DraftProponent:
                 case RequestStatus.DraftStaff:
                     return Controllers.RequestStatus.Draft;
+
                 case RequestStatus.Submitted:
-                    return Controllers.RequestStatus.Submitted;
                 case RequestStatus.TechnicalReview:
-                    return Controllers.RequestStatus.TechnicalReview;
-                case RequestStatus.ReadyForApproval:
-                    return Controllers.RequestStatus.ReadyForApproval;
                 case RequestStatus.ApprovalReview:
-                    return Controllers.RequestStatus.ApprovalReview;
+                    return Controllers.RequestStatus.Submitted;
+
                 case RequestStatus.UpdateNeeded:
                     return Controllers.RequestStatus.UpdateNeeded;
+
                 case RequestStatus.Approved:
                     return Controllers.RequestStatus.Approved;
+
                 default: return Controllers.RequestStatus.Draft;
             }
 
@@ -1331,8 +1325,8 @@ namespace EMCR.DRR.Managers.Intake
             //DraftStaff,
             //Submitted,
             //TechnicalReview,
-            //ReadyForApproval,
             //ApprovalReview,
+            //ReadyForApproval,
             //UpdateNeeded,
             //Approved,
             //Inactive,
