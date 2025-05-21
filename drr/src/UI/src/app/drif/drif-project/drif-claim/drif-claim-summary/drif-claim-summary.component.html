@@ -102,7 +102,7 @@
             <button
               *ngIf="isReadOnlyView"
               style="align-self: center"
-              mat-button
+              mat-stroked-button
               color="primary"
               (click)="
                 onDownloadFile(getInvoceAttachment(invoice)?.get('id')?.value)
@@ -122,7 +122,7 @@
             <button
               *ngIf="isReadOnlyView"
               style="align-self: center"
-              mat-button
+              mat-stroked-button
               color="primary"
               (click)="
                 onDownloadFile(

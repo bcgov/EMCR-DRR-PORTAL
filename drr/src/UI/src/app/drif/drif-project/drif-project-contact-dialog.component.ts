@@ -79,7 +79,7 @@ import {
         >
           Save
         </button>
-        <button mat-button mat-dialog-close>Close</button>
+        <button mat-stroked-button mat-dialog-close>Close</button>
       </mat-dialog-actions>
     </div>
   `,
