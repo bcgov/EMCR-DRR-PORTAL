@@ -708,6 +708,7 @@
                 >
                 <mat-card-content style="display: flex; gap: 1rem">
                   <drr-input
+                    #pastEventNameInput
                     class="drr-single-input"
                     [label]="t('eventName')"
                     [rxFormControl]="pastEvent.get('details')"
@@ -769,6 +770,7 @@
                 >
                   <div style="display: flex; gap: 1rem">
                     <drr-input
+                      #futureEventNameInput
                       class="drr-single-input"
                       [label]="t('eventName')"
                       [rxFormControl]="upcomingEvent.get('details')"
