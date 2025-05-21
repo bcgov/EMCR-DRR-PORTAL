@@ -10,6 +10,4 @@ export * from './api/profile/profile.service';
 
 export * from './api/attachment/attachment.service';
 
-export * from './api/files/files.service';
-
 export * from './api/project/project.service';

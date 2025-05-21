@@ -1,6 +1,13 @@
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { CommonModule } from '@angular/common';
-import { Component, HostListener, inject, ViewChild } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  inject,
+  QueryList,
+  ViewChild,
+  ViewChildren,
+} from '@angular/core';
 import {
   AbstractControl,
   FormArray,
@@ -317,6 +324,12 @@ export class DrifProgressReportCreateComponent {
       }
     }, 1000);
   }
+
+  @ViewChildren('futureEventNameInput')
+  futureEventNameInputs!: QueryList<DrrInputComponent>;
+
+  @ViewChildren('pastEventNameInput')
+  pastEventNameInputs!: QueryList<DrrInputComponent>;
 
   ngOnInit() {
     this.route.params.subscribe((params) => {
@@ -1101,6 +1114,17 @@ export class DrifProgressReportCreateComponent {
     this.getPastEventsArray()?.push(
       this.formBuilder.formGroup(new PastEventForm({})),
     );
+
+    this.focusOnLastPastEvent();
+  }
+
+  focusOnLastPastEvent() {
+    setTimeout(() => {
+      const lastEventInput = this.pastEventNameInputs.last;
+      if (lastEventInput) {
+        lastEventInput.focusOnInput();
+      }
+    }, 0);
   }
 
   removePastEvent(index: number) {
@@ -1115,6 +1139,17 @@ export class DrifProgressReportCreateComponent {
     this.getUpcomingEventsArray()?.push(
       this.formBuilder.formGroup(new ProjectEventForm({})),
     );
+
+    this.focusOnLastFutureEvent();
+  }
+
+  focusOnLastFutureEvent() {
+    setTimeout(() => {
+      const lastEventInput = this.futureEventNameInputs.last;
+      if (lastEventInput) {
+        lastEventInput.focusOnInput();
+      }
+    }, 0);
   }
 
   removeFutureEvent(index: number) {

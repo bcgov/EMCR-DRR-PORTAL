@@ -60,7 +60,6 @@ export * from './eoiApplicationAllOf';
 export * from './estimatedNumberOfPeople';
 export * from './estimatedNumberOfPeopleFP';
 export * from './eventInformation';
-export * from './filesUploadFileBody';
 export * from './forecast';
 export * from './forecastAllOf';
 export * from './forecastItem';

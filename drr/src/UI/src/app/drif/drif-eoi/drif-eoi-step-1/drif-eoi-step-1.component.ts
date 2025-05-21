@@ -1,6 +1,12 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input } from '@angular/core';
+import {
+  Component,
+  inject,
+  Input,
+  QueryList,
+  ViewChildren,
+} from '@angular/core';
 import { FormArray, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -64,6 +70,12 @@ export class DrifEoiStep1Component {
   @Input()
   proponentInformationForm!: IFormGroup<ProponentInformationForm>;
 
+  @ViewChildren('contactFirstNameInput')
+  contactFirstNameInputs!: QueryList<DrrInputComponent>;
+
+  @ViewChildren('proponentInput')
+  proponentInputs!: QueryList<DrrInputComponent>;
+
   ngOnInit() {
     this.proponentInformationForm
       ?.get('proponentName')
@@ -92,9 +104,19 @@ export class DrifEoiStep1Component {
   }
 
   addAdditionalContact() {
-    this.getFormArray('additionalContacts').push(
-      this.formBuilder.formGroup(ContactDetailsForm),
-    );
+    const contactForm = this.formBuilder.formGroup(ContactDetailsForm);
+    this.getFormArray('additionalContacts').push(contactForm);
+
+    this.focusOnLastContact();
+  }
+
+  focusOnLastContact() {
+    setTimeout(() => {
+      const lastContactInput = this.contactFirstNameInputs.last;
+      if (lastContactInput) {
+        lastContactInput.focusOnInput();
+      }
+    }, 0);
   }
 
   removeAdditionalContact(index: number) {
@@ -105,6 +127,17 @@ export class DrifEoiStep1Component {
   addProponent() {
     const proponents = this.getFormArray('partneringProponentsArray');
     proponents.push(this.formBuilder.formGroup(StringItem));
+
+    this.focusOnLastProponent();
+  }
+
+  focusOnLastProponent() {
+    setTimeout(() => {
+      const lastProponentInput = this.proponentInputs.last;
+      if (lastProponentInput) {
+        lastProponentInput.focusOnInput();
+      }
+    }, 0);
   }
 
   removeProponent(index: number) {

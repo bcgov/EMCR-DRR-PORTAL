@@ -1,6 +1,13 @@
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { CommonModule, CurrencyPipe } from '@angular/common';
-import { Component, HostListener, inject, ViewChild } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  inject,
+  QueryList,
+  ViewChild,
+  ViewChildren,
+} from '@angular/core';
 import {
   AbstractControl,
   FormArray,
@@ -210,9 +217,8 @@ export class DrifClaimCreateComponent {
       label: this.translocoService.translate(CostCategory.Other),
     });
 
-  getInvoiceFormArray(): FormArray | undefined {
-    return this.claimForm?.get('expenditure')?.get('invoices') as FormArray;
-  }
+  @ViewChildren('invoiceNumberInput')
+  invoiceNumberInputs!: QueryList<DrrInputComponent>;
 
   ngOnInit() {
     this.route.params.subscribe((params) => {
@@ -386,6 +392,10 @@ export class DrifClaimCreateComponent {
           },
         });
     });
+  }
+
+  getInvoiceFormArray(): FormArray | undefined {
+    return this.claimForm?.get('expenditure')?.get('invoices') as FormArray;
   }
 
   setupClaimQuestionnaire(haveClaimExpenses?: boolean) {
@@ -611,11 +621,22 @@ export class DrifClaimCreateComponent {
           this.getInvoiceFormArray()?.push(
             this.formBuilder.formGroup(InvoiceForm, invoiceFormData),
           );
+
+          this.focusOnLastInvoiceNumberInput();
         },
         error: (error) => {
           console.error(error);
         },
       });
+  }
+
+  focusOnLastInvoiceNumberInput() {
+    setTimeout(() => {
+      const invoiceNumberInput = this.invoiceNumberInputs.last;
+      if (invoiceNumberInput) {
+        invoiceNumberInput.focusOnInput();
+      }
+    }, 0);
   }
 
   removeInvoice(id: string) {

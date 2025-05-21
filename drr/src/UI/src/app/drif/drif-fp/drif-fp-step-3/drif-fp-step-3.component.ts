@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input } from '@angular/core';
+import {
+  Component,
+  inject,
+  Input,
+  QueryList,
+  ViewChildren,
+} from '@angular/core';
 import {
   FormArray,
   FormsModule,
@@ -19,11 +25,11 @@ import {
   Hazards,
 } from '../../../../model';
 import { DrrInputComponent } from '../../../shared/controls/drr-input/drr-input.component';
+import { DrrNumericInputComponent } from '../../../shared/controls/drr-number-input/drr-number-input.component';
 import { DrrRadioButtonComponent } from '../../../shared/controls/drr-radio-button/drr-radio-button.component';
 import { DrrSelectComponent } from '../../../shared/controls/drr-select/drr-select.component';
 import { DrrTextareaComponent } from '../../../shared/controls/drr-textarea/drr-textarea.component';
 import { ImpactedInfrastructureForm, ProjectAreaForm } from '../drif-fp-form';
-import { DrrNumericInputComponent } from '../../../shared/controls/drr-number-input/drr-number-input.component';
 
 @UntilDestroy({ checkProperties: true })
 @Component({
@@ -60,12 +66,15 @@ export class DrifFpStep3Component {
     (value) => ({
       value,
       label: this.translocoService.translate(value),
-    })
+    }),
   );
   hazardsOptions = Object.values(Hazards).map((value) => ({
     value,
     label: this.translocoService.translate(value),
   }));
+
+  @ViewChildren('infrastructureInput')
+  infrastructureInputs!: QueryList<DrrInputComponent>;
 
   ngOnInit() {
     this.projectAreaForm
@@ -73,7 +82,7 @@ export class DrifFpStep3Component {
       ?.valueChanges.pipe(distinctUntilChanged())
       .subscribe((value) => {
         const infrastructureImpacted = this.projectAreaForm.get(
-          'infrastructureImpacted'
+          'infrastructureImpacted',
         ) as FormArray;
         if (!value) {
           infrastructureImpacted?.clear();
@@ -89,7 +98,7 @@ export class DrifFpStep3Component {
       ?.valueChanges.pipe(distinctUntilChanged())
       .subscribe((hazards) => {
         const otherHazardsDescriptionControl = this.projectAreaForm.get(
-          'otherHazardsDescription'
+          'otherHazardsDescription',
         );
         if (hazards?.includes('Other')) {
           otherHazardsDescriptionControl?.addValidators(Validators.required);
@@ -114,8 +123,19 @@ export class DrifFpStep3Component {
 
   addInfrastructureImpacted() {
     this.getInfrastructureImpacted().push(
-      this.formBuilder.formGroup(ImpactedInfrastructureForm)
+      this.formBuilder.formGroup(ImpactedInfrastructureForm),
     );
+
+    this.focusOnLastInfrastructure();
+  }
+
+  focusOnLastInfrastructure() {
+    setTimeout(() => {
+      const lastInfrastructureInput = this.infrastructureInputs.last;
+      if (lastInfrastructureInput) {
+        lastInfrastructureInput.focusOnInput();
+      }
+    }, 0);
   }
 
   removeInfrastructureImpacted(index: number) {

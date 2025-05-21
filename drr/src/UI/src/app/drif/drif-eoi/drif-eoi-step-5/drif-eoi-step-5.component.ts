@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, inject } from '@angular/core';
+import {
+  Component,
+  Input,
+  QueryList,
+  ViewChildren,
+  inject,
+} from '@angular/core';
 import { FormArray, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -48,11 +54,14 @@ export class DrifEoiStep5Component {
     (value) => ({
       value,
       label: this.translocoService.translate(value),
-    })
+    }),
   );
 
   @Input()
   projectDetailsForm!: IFormGroup<ProjectDetailsForm>;
+
+  @ViewChildren('infrastructureInput')
+  infrastructureInputs!: QueryList<DrrInputComponent>;
 
   ngOnInit() {
     this.projectDetailsForm
@@ -60,7 +69,7 @@ export class DrifEoiStep5Component {
       ?.valueChanges.pipe(distinctUntilChanged())
       .subscribe((value) => {
         const infrastructureImpacted = this.projectDetailsForm.get(
-          'infrastructureImpacted'
+          'infrastructureImpacted',
         ) as FormArray;
         if (!value) {
           infrastructureImpacted?.clear();
@@ -78,8 +87,19 @@ export class DrifEoiStep5Component {
 
   addInfrastructure() {
     this.getFormArray('infrastructureImpacted').push(
-      this.formBuilder.formGroup(InfrastructureImpactedForm)
+      this.formBuilder.formGroup(InfrastructureImpactedForm),
     );
+
+    this.focusOnLastInfrastructure();
+  }
+
+  focusOnLastInfrastructure() {
+    setTimeout(() => {
+      const lastInfrastructureInput = this.infrastructureInputs.last;
+      if (lastInfrastructureInput) {
+        lastInfrastructureInput.focusOnInput();
+      }
+    }, 0);
   }
 
   removeInfrastructure(index: number) {

@@ -1,5 +1,11 @@
 import { CommonModule, CurrencyPipe } from '@angular/common';
-import { Component, inject, Input } from '@angular/core';
+import {
+  Component,
+  inject,
+  Input,
+  QueryList,
+  ViewChildren,
+} from '@angular/core';
 import {
   FormArray,
   FormControl,
@@ -169,6 +175,8 @@ export class DrifFpStep10Component {
 
   // TODO: temp solution to overcome the issue of the total project cost not being updated
   totalProjectCostCopy = new FormControl();
+
+  @ViewChildren('taskNameInput') taskNameInputs!: QueryList<DrrInputComponent>;
 
   ngOnInit() {
     this.budgetForm
@@ -507,6 +515,17 @@ export class DrifFpStep10Component {
     newCostEstimateForm.get('id')?.setValue(uuidv4());
 
     this.getFormArray('costEstimates').push(newCostEstimateForm);
+
+    this.focusOnLastCost();
+  }
+
+  focusOnLastCost() {
+    setTimeout(() => {
+      const lastCostInput = this.taskNameInputs.last;
+      if (lastCostInput) {
+        lastCostInput.focusOnInput();
+      }
+    }, 0);
   }
 
   removeCost(id: string) {

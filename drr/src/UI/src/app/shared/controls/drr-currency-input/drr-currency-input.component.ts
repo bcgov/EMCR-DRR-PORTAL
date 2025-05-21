@@ -5,6 +5,7 @@ import {
   Component,
   HostListener,
   Input,
+  ViewChild,
   inject,
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -44,6 +45,7 @@ import { NgxMaskDirective } from 'ngx-mask';
       <mat-label *ngIf="!isMobile && label">{{ label }}</mat-label>
       <input
         id="{{ id }}"
+        #currencyInput
         matInput
         [formControl]="rxFormControl"
         required="{{ isRequired() }}"
@@ -198,7 +200,10 @@ export class DrrCurrencyInputComponent {
     'maxValueError',
     { max: this.currency.transform(this.MAX_ALLOWED_VALUE) },
   );
+
   @Input() allowEnabling = false;
+
+  @ViewChild('currencyInput') private currencyInput: any;
 
   ngOnInit() {
     this.breakpointObserver
@@ -272,5 +277,12 @@ export class DrrCurrencyInputComponent {
 
   hasMaxValueError() {
     return this.rxFormControl.value > this.MAX_ALLOWED_VALUE;
+  }
+
+  focusOnInput() {
+    const inputElement = this.currencyInput.nativeElement;
+    if (inputElement) {
+      inputElement.focus();
+    }
   }
 }

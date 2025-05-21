@@ -135,12 +135,13 @@
         "
       >
         <mat-card style="margin-top: 1rem">
-          <mat-card-header>
-            <mat-card-subtitle>Task {{ i + 1 }}</mat-card-subtitle>
-          </mat-card-header>
+          <mat-card-header
+            ><b> Task {{ i + 1 }} </b></mat-card-header
+          >
           <mat-card-content>
             <div class="row">
               <drr-input
+                #taskNameInput
                 class="drr-single-input"
                 label="Task Name"
                 [rxFormControl]="cost.get('taskName')"
