@@ -657,6 +657,13 @@ export class DrifClaimCreateComponent {
       });
   }
 
+  getMaxProponentClaimAmount(invoice: AbstractControl) {
+    const maxClaimAmount =
+      invoice.get('grossAmount')?.value - invoice.get('totalGST')?.value;
+
+    return maxClaimAmount > 0 ? maxClaimAmount : 0;
+  }
+
   getEarliestInvoiceDate() {
     return this.getInvoiceFormArray()?.controls.reduce(
       (earliestDate: Date | null, control) => {

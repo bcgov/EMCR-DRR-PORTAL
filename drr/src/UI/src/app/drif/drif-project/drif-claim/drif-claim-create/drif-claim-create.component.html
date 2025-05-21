@@ -239,7 +239,7 @@
                         class="drr-single-input"
                         [label]="t('claimAmount')"
                         [rxFormControl]="invoice.get('claimAmount')"
-                        [max]="invoice.get('grossAmount')?.value"
+                        [max]="getMaxProponentClaimAmount(invoice)"
                         [maxValueCustomErrorMessage]="t('claimAmountError')"
                         [value]="invoice.get('grossAmount')?.value"
                       ></drr-currency-input>
