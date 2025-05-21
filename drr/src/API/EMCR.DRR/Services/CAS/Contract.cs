@@ -9,13 +9,13 @@ namespace EMCR.DRR.API.Services.CAS
     {
         Task<string> CreateTokenAsync(CancellationToken ct);
 
-        Task<InvoiceResponse> CreateInvoiceAsync(Invoice invoice, CancellationToken ct);
-
-        Task<GetInvoiceResponse> GetInvoiceAsync(GetInvoiceRequest getRequest, CancellationToken ct);
-
         Task<GetSupplierResponse?> GetSupplierAsync(GetSupplierRequest getRequest, CancellationToken ct);
 
         Task<CreateSupplierResponse> CreateSupplierAsync(CreateSupplierRequest supplier, CancellationToken ct);
+
+        Task<GetInvoiceResponse> GetInvoiceAsync(GetInvoiceRequest getRequest, CancellationToken ct);
+
+        Task<InvoiceResponse> CreateInvoiceAsync(Invoice invoice, CancellationToken ct);
     }
 
     public class Invoice

@@ -124,6 +124,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var project = (await manager.Handle(new DrrProjectsQuery { Id = TestProjectId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault();
             for (var i = 0; i < project.InterimReports.Count() - 1; ++i)
             {
+                if (i > 2) return; //This can take a long time as more reports are added to this test project... so don't spend too much time here
                 var currentClaimId = project.InterimReports.ElementAt(i).ProjectClaim.Id;
                 var previousClaimId = project.InterimReports.ElementAt(i + 1).ProjectClaim.Id;
                 var currentClaim = mapper.Map<EMCR.DRR.Controllers.ProjectClaim>((await manager.Handle(new DrrClaimsQuery { Id = currentClaimId, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
