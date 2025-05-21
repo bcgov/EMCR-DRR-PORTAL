@@ -710,7 +710,7 @@
     "taxRebate": "Tax Rebate Amount",
     "taxRebateError": "Tax Rebate Amount must be less than Gross Invoice Amount",
     "claimAmount": "Proponent Claim Amount",
-    "claimAmountError": "Claim Amount must be less than Gross Invoice Amount",
+    "claimAmountError": "You cannot claim more than the gross invoice amount minus the GST",
     "totalPST": "Total PST Paid",
     "totalPSTError": "Total PST Paid must be less than Gross Invoice Amount",
     "totalGST": "Total GST Paid",
