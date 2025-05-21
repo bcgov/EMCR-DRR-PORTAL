@@ -439,9 +439,7 @@ export class DrifConditionClearComponent {
       .subscribe({
         next: () => {
           this.toastService.close();
-          this.toastService.success(
-            'Condition clear request submitted successfully',
-          );
+          this.toastService.success('Request submitted successfully.');
 
           this.router.navigate(['drif-projects', this.projectId]);
         },
