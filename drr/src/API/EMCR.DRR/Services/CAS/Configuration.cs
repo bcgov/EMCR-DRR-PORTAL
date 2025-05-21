@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection.Extensions;
+﻿using EMCR.DRR.API.Resources.Payments;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using Polly;
 using Polly.Extensions.Http;
@@ -12,6 +13,7 @@ namespace EMCR.DRR.API.Services.CAS
             var options = configuration.GetSection("CAS").Get<CasConfiguration>()!;
             if (options == null)
             {
+                Console.WriteLine("Skipping CAS");
                 return services;
             }
             services.Configure<CasConfiguration>(opts => configuration.GetSection("CAS").Bind(opts));
@@ -40,6 +42,8 @@ namespace EMCR.DRR.API.Services.CAS
  ;
 
             services.TryAddTransient<IWebProxy, WebProxy>();
+            services.TryAddTransient<ICasGateway, CasGateway>();
+            services.TryAddTransient<ICasSystemConfigurationProvider, CasSystemConfigurationProvider>();
 
             return services;
         }

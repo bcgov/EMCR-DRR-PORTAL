@@ -51,16 +51,6 @@ namespace EMCR.DRR.API.Services.CAS
 
         private async Task<string> GetToken(CancellationToken ct) => await cache.GetOrSet("cas_token", () => CreateTokenAsync(ct), TimeSpan.FromMinutes(5), ct) ?? null!;
 
-        public async Task<InvoiceResponse> CreateInvoiceAsync(Invoice invoice, CancellationToken ct)
-        {
-            var request = new HttpRequestMessage(HttpMethod.Post, "cfs/apinvoice/");
-            request.Headers.Authorization = AuthenticationHeaderValue.Parse($"Bearer {await GetToken(ct)}");
-            request.Content = JsonContent.Create(invoice, options: jsonSerializerOptions);
-            var response = await httpClient.SendAsync(request, ct);
-
-            return await response.Content.ReadFromJsonAsync<InvoiceResponse>(jsonSerializerOptions, ct) ?? null!;
-        }
-
         public async Task<GetSupplierResponse?> GetSupplierAsync(GetSupplierRequest getRequest, CancellationToken ct)
         {
             if (string.IsNullOrWhiteSpace(getRequest.PostalCode)) throw new ArgumentNullException(nameof(getRequest.PostalCode));
@@ -115,6 +105,16 @@ namespace EMCR.DRR.API.Services.CAS
             var response = await httpClient.SendAsync(request, ct);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<GetInvoiceResponse>(jsonSerializerOptions, ct) ?? new GetInvoiceResponse();
+        }
+
+        public async Task<InvoiceResponse> CreateInvoiceAsync(Invoice invoice, CancellationToken ct)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post, "cfs/apinvoice/");
+            request.Headers.Authorization = AuthenticationHeaderValue.Parse($"Bearer {await GetToken(ct)}");
+            request.Content = JsonContent.Create(invoice, options: jsonSerializerOptions);
+            var response = await httpClient.SendAsync(request, ct);
+
+            return await response.Content.ReadFromJsonAsync<InvoiceResponse>(jsonSerializerOptions, ct) ?? null!;
         }
     }
 }
