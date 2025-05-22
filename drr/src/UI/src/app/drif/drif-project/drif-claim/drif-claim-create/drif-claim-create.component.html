@@ -200,6 +200,19 @@
                         [options]="costCategoryOptions"
                       ></drr-select>
                     </div>
+                    @if (
+                      hasIntroducedNewCostCategory(
+                        invoice.get("costCategory")?.value
+                      )
+                    ) {
+                      <drr-alert [type]="'warning'" style="margin-bottom: 1rem">
+                        <p>
+                          You did not use this category in your original
+                          estimates. Please explain why you are now using this
+                          category in the comments field below.
+                        </p>
+                      </drr-alert>
+                    }
                     <drr-textarea
                       [label]="t('description')"
                       [rxFormControl]="invoice.get('description')"
@@ -405,7 +418,7 @@
               [rxFormControl]="
                 claimForm.get('expenditure')?.get('claimComment')
               "
-              [maxlength]="500"
+              [maxlength]="2000"
             >
             </drr-textarea>
 
