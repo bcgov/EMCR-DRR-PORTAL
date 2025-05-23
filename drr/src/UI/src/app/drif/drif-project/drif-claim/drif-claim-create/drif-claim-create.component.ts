@@ -399,22 +399,12 @@ export class DrifClaimCreateComponent {
   }
 
   setupClaimQuestionnaire(haveClaimExpenses?: boolean) {
-    const claimCommentControl = this.claimForm?.get('expenditure.claimComment');
-    if (haveClaimExpenses === false) {
-      claimCommentControl?.setValidators([Validators.required]);
-    }
+    this.checkClaimCommentRequired();
 
     this.claimForm
       ?.get('expenditure.haveClaimExpenses')
       ?.valueChanges.subscribe((value) => {
-        value
-          ? [
-              claimCommentControl?.clearValidators(),
-              claimCommentControl?.reset(),
-            ]
-          : claimCommentControl?.setValidators([Validators.required]);
-
-        claimCommentControl?.updateValueAndValidity();
+        this.checkClaimCommentRequired();
       });
   }
 
@@ -956,5 +946,47 @@ export class DrifClaimCreateComponent {
       this.claimForm?.get('expenditure.haveClaimExpenses')?.value === true &&
       this.getInvoiceFormArray()?.length! === 0
     );
+  }
+
+  hasIntroducedNewCostCategory(costCategory: CostCategory) {
+    const hasIntroducedNewCategory =
+      costCategory &&
+      !this.previousClaimSummaryItems.some(
+        (claim) => claim.costCategory === costCategory,
+      );
+
+    this.checkClaimCommentRequired();
+
+    return hasIntroducedNewCategory;
+  }
+
+  checkClaimCommentRequired() {
+    const currentClaimCategoties = this.getInvoiceFormArray()?.controls.map(
+      (control) => {
+        return control.get('costCategory')?.value;
+      },
+    );
+
+    const hasIntroducedNewCategory = currentClaimCategoties?.some(
+      (category) =>
+        category &&
+        !this.previousClaimSummaryItems.some(
+          (claim) => claim.costCategory === category,
+        ),
+    );
+
+    const claimCommentControl = this.claimForm?.get('expenditure.claimComment');
+
+    const haveClaimExpenses = this.claimForm?.get(
+      'expenditure.haveClaimExpenses',
+    )?.value;
+
+    if (hasIntroducedNewCategory || !haveClaimExpenses) {
+      claimCommentControl?.setValidators([Validators.required]);
+      claimCommentControl?.updateValueAndValidity();
+    } else {
+      claimCommentControl?.clearValidators();
+      claimCommentControl?.updateValueAndValidity();
+    }
   }
 }
