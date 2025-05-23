@@ -257,6 +257,28 @@
                         [value]="invoice.get('grossAmount')?.value"
                       ></drr-currency-input>
                     </div>
+                    @if (
+                      hasMaxTotalPSTError(invoice) &&
+                      hasMaxTotalGSTError(invoice)
+                    ) {
+                      <drr-alert [type]="'warning'">
+                        <p>
+                          <i>PST</i> and <i>GST</i> exceed 7% and 5% of the
+                          gross amount respectively.
+                        </p>
+                      </drr-alert>
+                    } @else {
+                      @if (hasMaxTotalPSTError(invoice)) {
+                        <drr-alert [type]="'warning'">
+                          <p><i>PST</i> exceeds 7% of the gross amount.</p>
+                        </drr-alert>
+                      }
+                      @if (hasMaxTotalGSTError(invoice)) {
+                        <drr-alert [type]="'warning'">
+                          <p><i>GST</i> exceeds 5% of the gross amount.</p>
+                        </drr-alert>
+                      }
+                    }
                     <div
                       style="
                         display: flex;

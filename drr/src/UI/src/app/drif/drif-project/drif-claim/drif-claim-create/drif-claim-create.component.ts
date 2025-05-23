@@ -654,6 +654,22 @@ export class DrifClaimCreateComponent {
     return maxClaimAmount > 0 ? maxClaimAmount : 0;
   }
 
+  hasMaxTotalPSTError(invoice: AbstractControl) {
+    const grossAmount = invoice.get('grossAmount')?.value;
+    const totalPST = invoice.get('totalPST')?.value;
+    const maxPST = grossAmount ? grossAmount * 0.07 : 0;
+
+    return totalPST > maxPST;
+  }
+
+  hasMaxTotalGSTError(invoice: AbstractControl) {
+    const grossAmount = invoice.get('grossAmount')?.value;
+    const totalGST = invoice.get('totalGST')?.value;
+    const maxGST = grossAmount ? grossAmount * 0.05 : 0;
+
+    return totalGST > maxGST;
+  }
+
   getEarliestInvoiceDate() {
     return this.getInvoiceFormArray()?.controls.reduce(
       (earliestDate: Date | null, control) => {
