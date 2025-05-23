@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, isDevMode } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { RouterModule } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { VersionService } from '../../../api/version/version.service';
@@ -11,7 +12,7 @@ import { ConfigurationStore } from '../../store/configuration.store';
 @Component({
   selector: 'drr-footer',
   standalone: true,
-  imports: [CommonModule, MatToolbarModule, TranslocoModule],
+  imports: [CommonModule, MatToolbarModule, TranslocoModule, RouterModule],
   templateUrl: './footer.component.html',
   styleUrl: './footer.component.scss',
 })
@@ -40,6 +41,4 @@ export class FooterComponent {
       this.versions = version;
     });
   }
-
-  openVersionsModal() {}
 }
