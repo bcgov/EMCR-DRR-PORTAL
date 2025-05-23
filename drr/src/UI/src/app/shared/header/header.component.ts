@@ -5,10 +5,9 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { ROUTE_PATH } from '../../app.routes';
 import { AuthService } from '../../core/auth/auth.service';
 import { ProfileStore } from '../../store/profile.store';
 
@@ -24,6 +23,7 @@ import { ProfileStore } from '../../store/profile.store';
     TranslocoModule,
     MatButtonModule,
     MatIconModule,
+    RouterModule,
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
@@ -33,10 +33,6 @@ export class HeaderComponent {
   router = inject(Router);
   profileStore = inject(ProfileStore);
   authService = inject(AuthService);
-
-  homeClick() {
-    this.router.navigate([ROUTE_PATH.SUBMISSIONS]);
-  }
 
   signOut() {
     this.authService.logout();

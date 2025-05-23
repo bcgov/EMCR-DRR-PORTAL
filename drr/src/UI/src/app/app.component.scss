@@ -10,6 +10,8 @@
 .main-content {
   flex: 1;
   position: relative;
+  display: flex;
+  flex-direction: column;
 
   background-color: mat.m2-get-color-from-palette($bcgov-primary-palette, 50);
 }

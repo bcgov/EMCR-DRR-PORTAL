@@ -2,6 +2,14 @@
   <drr-header></drr-header>
 
   <main class="main-content">
+    @if (showHomeButton()) {
+      <a
+        style="margin: 1rem 0 0 1rem; align-self: flex-start"
+        [routerLink]="['/']"
+      >
+        Portal Homepage
+      </a>
+    }
     <ngx-spinner name="loadingSpinner" type="ball-scale-multiple"></ngx-spinner>
     <router-outlet />
   </main>
