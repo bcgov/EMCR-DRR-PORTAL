@@ -11,9 +11,6 @@ export type RequestStatus = (typeof RequestStatus)[keyof typeof RequestStatus];
 export const RequestStatus = {
   Draft: 'Draft',
   Submitted: 'Submitted',
-  ReadyForApproval: 'ReadyForApproval',
-  ApprovalReview: 'ApprovalReview',
   Approved: 'Approved',
-  TechnicalReview: 'TechnicalReview',
   UpdateNeeded: 'UpdateNeeded',
 } as const;

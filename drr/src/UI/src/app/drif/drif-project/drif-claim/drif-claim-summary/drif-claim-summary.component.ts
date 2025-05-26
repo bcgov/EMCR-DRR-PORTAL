@@ -34,6 +34,7 @@ export class DrifClaimSummaryComponent {
 
   @Input() claimForm?: IFormGroup<ClaimForm>;
   @Input() isReadOnlyView = true;
+  @Input() showEarnedInterestControls!: boolean;
 
   getInvoiceFormArray(): FormArray {
     return this.claimForm?.get('expenditure.invoices') as FormArray;

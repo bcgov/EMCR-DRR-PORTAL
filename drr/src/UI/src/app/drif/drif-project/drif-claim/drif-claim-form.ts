@@ -94,6 +94,9 @@ export class InvoiceForm implements Invoice {
 
 export class ExpenditureForm {
   @prop()
+  upFrontPaymentInterest?: number;
+
+  @prop()
   @required()
   haveClaimExpenses?: boolean;
 

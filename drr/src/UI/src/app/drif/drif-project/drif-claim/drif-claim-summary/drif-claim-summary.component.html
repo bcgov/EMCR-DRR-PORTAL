@@ -17,6 +17,15 @@
         [rxFormControl]="claimForm?.get('expenditure.haveClaimExpenses')"
         controlType="radio"
       ></drr-summary-item>
+
+      @if (showEarnedInterestControls) {
+        <drr-summary-item
+          [label]="t('upFrontPaymentInterest')"
+          [rxFormControl]="claimForm?.get('expenditure.upFrontPaymentInterest')"
+          controlType="currency"
+        ></drr-summary-item>
+      }
+
       <mat-label class="drr-label">Invoices</mat-label>
       <div
         class="invoice-summary-row"

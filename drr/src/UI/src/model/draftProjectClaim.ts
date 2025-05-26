@@ -54,4 +54,6 @@ export interface DraftProjectClaim {
   totalClaimed?: number;
   /** @nullable */
   totalProjectAmount?: number;
+  /** @nullable */
+  upFrontPaymentInterest?: number;
 }

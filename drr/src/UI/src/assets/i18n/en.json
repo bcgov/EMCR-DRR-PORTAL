@@ -728,7 +728,8 @@
     "totalClaimed": "Total Claimed Amount",
     "totalProjectAmount": "Total DRIF Funding Amount",
     "fileName": "File Name",
-    "fileSize": "File Size"
+    "fileSize": "File Size",
+    "upFrontPaymentInterest": "Interest Earned on Up-Front Payment"
   },
   "forecast": {
     "step1": "Instructions",
