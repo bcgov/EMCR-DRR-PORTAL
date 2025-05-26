@@ -987,11 +987,10 @@ namespace EMCR.DRR.Managers.Intake
             if (claim.Project != null && claim.Project.Claims != null)
             {
                 var previousClaims = claim.Project.Claims.Where(c => c.ReportDate < claim.ReportDate).ToList();
-                var allInvoices = previousClaims.Where(c => c.Id != claim.Id).SelectMany(c => c.Invoices ?? Enumerable.Empty<Invoice>()).ToList();
+                var previousInvoices = previousClaims.Where(c => c.Id != claim.Id).SelectMany(c => c.Invoices ?? Enumerable.Empty<Invoice>()).ToList();
                 foreach (CostCategory category in Enum.GetValues(typeof(CostCategory)))
                 {
-
-                    var categoryInvoices = allInvoices.Where(i => i.CostCategory == category).ToList();
+                    var categoryInvoices = previousInvoices.Where(i => i.CostCategory == category).ToList();
                     var categoryTotal = categoryInvoices.Select(i => i.ClaimAmount).Sum();
 
                     var categoryEstimates = claim.Project.FullProposal?.CostEstimates?.Where(est => est.CostCategory == category).ToList() ?? [];

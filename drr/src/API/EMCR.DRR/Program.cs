@@ -7,6 +7,7 @@ using System.Text.Json.Serialization;
 using AutoMapper;
 using EMCR.DRR.API.Model;
 using EMCR.DRR.API.Services;
+using EMCR.DRR.API.Services.Background;
 using EMCR.DRR.API.Services.CAS;
 using EMCR.DRR.API.Services.S3;
 using EMCR.DRR.API.Utilities.Converters;
@@ -104,6 +105,7 @@ services.AddIntakeManager();
 services.AddRepositories();
 services.AddS3Storage(configuration);
 services.AddCAS(configuration);
+services.AddBackgroundTasks(configuration);
 services.AddTransient<IUserService, UserService>();
 services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
