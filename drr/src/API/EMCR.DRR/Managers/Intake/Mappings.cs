@@ -1176,6 +1176,7 @@ namespace EMCR.DRR.Managers.Intake
                 case ClaimStatus.DraftStaff:
                     return Controllers.ClaimStatus.Draft;
                 case ClaimStatus.Submitted:
+                case ClaimStatus.TechnicalReview:
                     return Controllers.ClaimStatus.Submitted;
                 case ClaimStatus.UpdateNeeded:
                     return Controllers.ClaimStatus.UpdateNeeded;

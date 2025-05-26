@@ -448,7 +448,7 @@ namespace EMCR.DRR.Controllers
         [CurrencyNotNegativeForSubmission(typeof(FpApplication))]
         //For Submission - must match Updated DRIF program funding request on step 10
         public decimal? TotalEligibleCosts { get; set; }
-        
+
 
         //Attachments - 11
         public bool? HaveResolution { get; set; }
@@ -666,53 +666,65 @@ namespace EMCR.DRR.Controllers
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum CostCategory
     {
+        [Description("Approvals/Permitting")]
+        ApprovalsPermitting,
+
+        [Description("Assessment")]
+        Assessment,
+
+        [Description("Bylaw & Land Use Planning")]
+        BylawLandUsePlanning,
+
+        [Description("Communications")]
+        Communications,
+
+        [Description("Construction Materials/Equipment/Personnel")]
+        ConstructionMaterials,
+
+        [Description("Contingency")]
+        Contingency,
+
+        [Description("Design")]
+        Design,
+
+        [Description("First Nations Engagement")]
+        FirstNationsEngagement,
+
+        [Description("Incremental Staffing")]
+        IncrementalStaffing,
+
+        [Description("Land Acquisition/Property Purchase")]
+        LandAcquisition,
+
+        [Description("Mapping")]
+        Mapping,
+
+        [Description("Mitigation Planning")]
+        MitigationPlanning,
+
+        [Description("Neighbouring Jurisdictions and Other Impacted or Affected Parties Engagement")]
+        NeighbouringJurisdictions,
+
+        [Description("Other")]
+        Other,
+
         [Description("Project Administration (up to 10%)")]
         ProjectAdministration,
 
         [Description("Project Planning")]
         ProjectPlanning,
-        
-        [Description("Design")]
-        Design,
-
-        [Description("Assessment")]
-        Assessment,
-
-        [Description("Mapping")]
-        Mapping,
-
-        [Description("Construction Materials/Equipment/Personnel")]
-        ConstructionMaterials,
-
-        [Description("First Nations Engagement")]
-        FirstNationsEngagement,
-
-        [Description("Neighbouring Jurisdictions and Other Impacted or Affected Parties Engagement")]
-        NeighbouringJurisdictions,
 
         [Description("Proponent Community(ies) Engagement and Public Education")]
         ProponentCommunities,
 
-        [Description("Incremental Staffing")]
-        IncrementalStaffing,
-
         [Description("Short Term Interest")]
         ShortTermInterest,
 
-        [Description("Land Acquisition/Property Purchase")]
-        LandAcquisition,
+        [Description("Temporary Mitigation Solution")]
+        TemporaryMitigationSolution,
 
-        [Description("Communications")]
-        Communications,
-
-        [Description("Approvals/Permitting")]
-        ApprovalsPermitting,
-
-        [Description("Contingency")]
-        Contingency,
-
-        [Description("Other")]
-        Other,
+        [Description("Training")]
+        Training,
     }
 
     [JsonConverter(typeof(JsonStringEnumConverter))]

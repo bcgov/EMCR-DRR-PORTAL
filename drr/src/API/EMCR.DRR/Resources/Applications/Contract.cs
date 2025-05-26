@@ -207,22 +207,26 @@ namespace EMCR.DRR.Resources.Applications
 
     public enum CostCategoryOptionSet
     {
+        ApprovalsPermitting = 172580010,
+        Assessment = 172580002,
+        BylawLandUsePlanning = 172580018,
+        Communications = 172580006,
+        ConstructionMaterials = 172580004,
+        Contingency = 172580011,
+        Design = 172580001,
+        FirstNationsEngagement = 172580005,
+        IncrementalStaffing = 172580007,
+        LandAcquisition = 172580009,
+        Mapping = 172580003,
+        MitigationPlanning = 172580019,
+        NeighbouringJurisdictions = 172580014,
+        Other = 172580012,
         ProjectAdministration = 172580000,
         ProjectPlanning = 172580013,
-        Design = 172580001,
-        Assessment = 172580002,
-        Mapping = 172580003,
-        ConstructionMaterials = 172580004,
-        FirstNationsEngagement = 172580005,
-        NeighbouringJurisdictions = 172580014,
         ProponentCommunities = 172580015,
-        IncrementalStaffing = 172580007,
         ShortTermInterest = 172580008,
-        LandAcquisition = 172580009,
-        Communications = 172580006,
-        ApprovalsPermitting = 172580010,
-        Contingency = 172580011,
-        Other = 172580012,
+        TemporaryMitigationSolution = 172580017,
+        Training = 172580016,
     }
 
     public enum ResourceCategoryOptionSet

@@ -98,6 +98,8 @@ namespace EMCR.DRR.API.Resources.Projects
         DraftProponent = 1,
         DraftStaff = 172580004,
         Submitted = 172580001,
+        TechnicalReview = 172580006,
+        QRReview = 172580007,
         UpdateNeeded = 172580002,
         Approved = 172580003,
         Skipped = 172580005,
