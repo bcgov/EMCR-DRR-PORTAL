@@ -372,3 +372,45 @@ h6 {
 a {
   color: #255a90;
 }
+
+::ng-deep {
+  // Highlight the border for invalid outlined text fields
+  .mdc-text-field--outlined.mdc-text-field--invalid:not(
+      .mdc-text-field--disabled
+    )
+    .mdc-notched-outline,
+  .mdc-text-field--outlined.mdc-text-field--invalid:not(
+      .mdc-text-field--disabled
+    )
+    .mdc-notched-outline__leading,
+  .mdc-text-field--outlined.mdc-text-field--invalid:not(
+      .mdc-text-field--disabled
+    )
+    .mdc-notched-outline__trailing,
+  .mdc-text-field--outlined.mdc-text-field--invalid:not(
+      .mdc-text-field--disabled
+    )
+    .mdc-notched-outline__notch {
+    border-color: #ce3e39 !important;
+    border-width: 3px !important;
+  }
+
+  .mdc-text-field--outlined.mdc-text-field--invalid:not(
+      .mdc-text-field--disabled
+    )
+    .mdc-notched-outline__notch {
+    border-left: 1px solid transparent !important;
+  }
+
+  // Change label color for invalid state
+  .mdc-text-field--invalid .mdc-floating-label {
+    color: #ce3e39 !important;
+    font-weight: bold;
+  }
+
+  // Change error message color for invalid state
+  .mat-mdc-form-field.mat-mdc-form-field-invalid .mat-mdc-form-field-error {
+    color: #ce3e39 !important;
+    font-weight: bold;
+  }
+}
