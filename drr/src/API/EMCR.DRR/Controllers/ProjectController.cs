@@ -583,9 +583,9 @@ namespace EMCR.DRR.Controllers
 
     public class PreviousClaim
     {
-        public CostCategory? CostCategory { get; set; }
-        public decimal? TotalForProject { get; set; }
-        public decimal? OriginalEstimate { get; set; }
+        public CostCategory? CostCategory { get; set; } //Current Category
+        public decimal? TotalForProject { get; set; } //TotalFromPreviousClaims
+        public decimal? OriginalEstimate { get; set; } //TotalCostEstimatesFromFP
     }
 
     public class Invoice
