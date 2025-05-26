@@ -349,6 +349,10 @@
   "IntermediateQualifiedProfessional": "Intermediate Qualified Professional",
   "SeniorQualifiedProfessional": "Senior Qualified Professional",
   "PrincipalQualifiedProfessional": "Principal Qualified Professional",
+  "BylawLandUsePlanning": "Bylaw & Land Use Planning",
+  "MitigationPlanning": "Mitigation Planning",
+  "TemporaryMitigationSolution": "Temporary Mitigation Solution",
+  "Training": "Training",
 
   "ProjectSupport": "Project Support",
   "Equipment": "Equipment",
