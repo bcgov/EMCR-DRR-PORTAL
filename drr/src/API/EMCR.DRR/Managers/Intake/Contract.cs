@@ -879,6 +879,7 @@ namespace EMCR.DRR.Managers.Intake
         public DateTime? PlannedEndDate { get; set; }
         public InterimProjectType? ProjectType { get; set; }
         public bool? HaveClaimExpenses { get; set; }
+        public decimal? UpFrontPaymentInterest { get; set; }
         public IEnumerable<Invoice>? Invoices { get; set; }
         public string? ClaimComment { get; set; }
         public ContactDetails? AuthorizedRepresentative { get; set; }
@@ -1105,22 +1106,26 @@ namespace EMCR.DRR.Managers.Intake
 
     public enum CostCategory
     {
+        ApprovalsPermitting,
+        Assessment,
+        BylawLandUsePlanning,
+        Communications,
+        ConstructionMaterials,
+        Contingency,
+        Design,
+        FirstNationsEngagement,
+        IncrementalStaffing,
+        LandAcquisition,
+        Mapping,
+        MitigationPlanning,
+        NeighbouringJurisdictions,
+        Other,
         ProjectAdministration,
         ProjectPlanning,
-        Design,
-        Assessment,
-        Mapping,
-        ConstructionMaterials,
-        FirstNationsEngagement,
-        NeighbouringJurisdictions,
         ProponentCommunities,
-        IncrementalStaffing,
         ShortTermInterest,
-        LandAcquisition,
-        Communications,
-        ApprovalsPermitting,
-        Contingency,
-        Other,
+        TemporaryMitigationSolution,
+        Training,
     }
 
 
@@ -1281,6 +1286,8 @@ namespace EMCR.DRR.Managers.Intake
         DraftStaff,
         DraftProponent,
         Submitted,
+        TechnicalReview,
+        QRReview,
         UpdateNeeded,
         Approved,
         Skipped,

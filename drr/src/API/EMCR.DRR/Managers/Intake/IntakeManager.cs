@@ -570,6 +570,7 @@ namespace EMCR.DRR.Managers.Intake
 #pragma warning restore CS8629 // Nullable value type may be null.
             if (claim.Invoices != null && claim.Invoices.Any(i => i.PaymentDate == null)) throw new BusinessValidationException("PaymentDate is required");
             if (claim.Invoices != null && claim.Invoices.Any(i => i.CostCategory == null)) throw new BusinessValidationException("Cost Category is required");
+            if (existingClaim.ReportPeriod != null && (existingClaim.ReportPeriod.Contains("Q2") || existingClaim.ReportPeriod.Contains("Q4")) && claim.UpFrontPaymentInterest == null) throw new BusinessValidationException("UpFrontPaymentInterest is required for Q2/Q4.");
 
             claim.AuthorizedRepresentative.BCeId = cmd.UserInfo.UserId;
             var id = (await reportRepository.Manage(new SaveClaim { Claim = claim })).Id;

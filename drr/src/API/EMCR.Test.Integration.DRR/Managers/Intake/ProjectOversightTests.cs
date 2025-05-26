@@ -422,9 +422,11 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             }
 
             updatedClaim.Invoices = invoices;
+            updatedClaim.UpFrontPaymentInterest = 120;
             await manager.Handle(new SaveClaimCommand { Claim = mapper.Map<EMCR.DRR.Controllers.ProjectClaim>(updatedClaim), UserInfo = userInfo });
             var twiceUpdatedClaim = mapper.Map<DraftProjectClaim>((await manager.Handle(new DrrClaimsQuery { Id = updatedClaim.Id, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
             twiceUpdatedClaim.Invoices.Count().ShouldBe(updatedClaim.Invoices.Count());
+            twiceUpdatedClaim.UpFrontPaymentInterest.ShouldBe(updatedClaim.UpFrontPaymentInterest);
         }
 
         [Test]
@@ -488,6 +490,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var claimToSubmit = mapper.Map<EMCR.DRR.Controllers.ProjectClaim>(updatedClaim);
             claimToSubmit.AuthorizedRepresentativeStatement = true;
             claimToSubmit.InformationAccuracyStatement = true;
+            claimToSubmit.UpFrontPaymentInterest = 50;
             await manager.Handle(new SubmitClaimCommand { Claim = claimToSubmit, UserInfo = userInfo });
             var submittedClaim = mapper.Map<EMCR.DRR.Controllers.ProjectClaim>((await manager.Handle(new DrrClaimsQuery { Id = updatedClaim.Id, BusinessId = userInfo.BusinessId })).Items.SingleOrDefault());
             submittedClaim.Invoices.Count().ShouldBe(updatedClaim.Invoices.Count());
