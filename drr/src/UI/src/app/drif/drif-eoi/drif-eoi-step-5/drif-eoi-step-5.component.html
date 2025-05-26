@@ -57,11 +57,12 @@
           ></drr-input>
           <button
             *ngIf="i > 0"
-            mat-mini-fab
+            mat-raised-button
             color="warn"
             (click)="removeInfrastructure(i)"
           >
             <mat-icon>delete</mat-icon>
+            {{ t("delete") }}
           </button>
         </div>
 

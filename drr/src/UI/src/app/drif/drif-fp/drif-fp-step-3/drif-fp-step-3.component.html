@@ -103,12 +103,13 @@
 
         <button
           *ngIf="i > 0"
-          mat-mini-fab
+          mat-raised-button
           color="warn"
           (click)="removeInfrastructureImpacted(i)"
           type="button"
         >
           <mat-icon>delete</mat-icon>
+          {{ t("delete") }}
         </button>
       </div>
 

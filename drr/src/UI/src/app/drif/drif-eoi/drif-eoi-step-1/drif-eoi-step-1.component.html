@@ -153,8 +153,9 @@
           [rxFormControl]="proponent.get('value')"
           [maxlength]="100"
         ></drr-input>
-        <button mat-mini-fab color="warn" (click)="removeProponent(i)">
+        <button mat-raised-button color="warn" (click)="removeProponent(i)">
           <mat-icon>delete</mat-icon>
+          {{ t("delete") }}
         </button>
       </div>
 

@@ -41,8 +41,9 @@
         </button>
         <mat-divider style="width: 100%; margin: 1rem 0"></mat-divider>
       } @else {
-        <button mat-mini-fab color="warn" (click)="removeOtherSource(i)">
+        <button mat-raised-button color="warn" (click)="removeOtherSource(i)">
           <mat-icon>delete</mat-icon>
+          {{ t("delete") }}
         </button>
       }
     }
