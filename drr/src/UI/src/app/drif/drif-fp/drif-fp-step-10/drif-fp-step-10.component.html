@@ -322,8 +322,9 @@
           [max]="999999999"
         ></drr-currency-input>
         @if (i > 0) {
-          <button mat-mini-fab color="warn" (click)="removeYear(i)">
+          <button mat-raised-button color="warn" (click)="removeYear(i)">
             <mat-icon>delete</mat-icon>
+            {{ t("delete") }}
           </button>
         }
       </div>

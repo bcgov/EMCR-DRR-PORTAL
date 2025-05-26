@@ -134,11 +134,12 @@
         <button
           style="align-self: center"
           *ngIf="i > 0"
-          mat-mini-fab
+          mat-raised-button
           color="warn"
           (click)="removePermit(i)"
         >
           <mat-icon>delete</mat-icon>
+          {{ t("delete") }}
         </button>
       </div>
 
