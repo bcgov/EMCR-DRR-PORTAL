@@ -30,6 +30,9 @@ import { RxFormBuilder, RxFormControl } from '@rxweb/reactive-form-validators';
       <mat-hint *ngIf="maxlength" align="end"
         >{{ getCount() }} / {{ maxlength }}</mat-hint
       >
+      <mat-error *ngIf="rxFormControl.hasError('required')">
+        Field is required
+      </mat-error>
     </mat-form-field>
   `,
   styles: [

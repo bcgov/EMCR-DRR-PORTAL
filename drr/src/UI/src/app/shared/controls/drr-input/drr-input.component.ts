@@ -48,6 +48,9 @@ export type InputType = 'text' | 'tel' | 'email';
       <mat-error *ngIf="rxFormControl.hasError('email')">{{
         t('emailError')
       }}</mat-error>
+      <mat-error *ngIf="rxFormControl.hasError('required')">
+        Field is required
+      </mat-error>
     </mat-form-field>
   `,
   styles: [

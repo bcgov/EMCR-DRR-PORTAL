@@ -35,8 +35,66 @@ import { map, Observable, startWith } from 'rxjs';
     MatAutocompleteModule,
     AsyncPipe,
   ],
-  templateUrl: './drr-chip-autocomplete.component.html',
-  styleUrl: './drr-chip-autocomplete.component.scss',
+  template: `
+    <ng-container>
+      <mat-form-field style="width: 100%">
+        <mat-label>{{ label }}</mat-label>
+        <mat-chip-grid
+          #chipGrid
+          [formControl]="rxFormControl"
+          required="{{ isRequired() }}"
+        >
+          @for (option of rxFormControl.value; track $index) {
+            <mat-chip-row (removed)="removeOption($index)">
+              {{ option }}
+              <button matChipRemove [attr.aria-label]="'remove ' + option">
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip-row>
+          }
+        </mat-chip-grid>
+        <input
+          placeholder="{{ placeholder }}"
+          #currentInput
+          [formControl]="currentInputControl"
+          [maxlength]="maxlength"
+          (focus)="onFocus()"
+          (blur)="onBlur()"
+          [matChipInputFor]="chipGrid"
+          [matAutocomplete]="auto"
+          [ariaMultiLine]="true"
+          [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+          (matChipInputTokenEnd)="addOption($event)"
+        />
+        <mat-hint *ngIf="maxlength && isFocused" align="end"
+          >{{ getCount() }} / {{ maxlength }}</mat-hint
+        >
+        <mat-autocomplete
+          #auto="matAutocomplete"
+          (optionSelected)="optionSelected($event)"
+        >
+          @for (option of filteredOptions | async; track option) {
+            <mat-option [value]="option">{{ option }}</mat-option>
+          }
+        </mat-autocomplete>
+        <mat-error *ngIf="rxFormControl.hasError('required')">
+          Field is required
+        </mat-error>
+      </mat-form-field>
+    </ng-container>
+  `,
+  styles: [
+    `
+      :host ::ng-deep .mat-mdc-standard-chip .mdc-evolution-chip__cell--primary,
+      :host
+        ::ng-deep
+        .mat-mdc-standard-chip
+        .mdc-evolution-chip__action--primary,
+      :host ::ng-deep .mat-mdc-standard-chip .mat-mdc-chip-action-label {
+        overflow: hidden;
+      }
+    `,
+  ],
 })
 export class DrrChipAutocompleteComponent {
   formBuilder = inject(RxFormBuilder);
@@ -103,8 +161,8 @@ export class DrrChipAutocompleteComponent {
     this.filteredOptions = this.currentInputControl.valueChanges.pipe(
       startWith(null),
       map((option: string | null) =>
-        option ? this._filter(option) : this.options!.slice()
-      )
+        option ? this._filter(option) : this.options!.slice(),
+      ),
     );
   }
 
@@ -153,7 +211,7 @@ export class DrrChipAutocompleteComponent {
     const filterValue = value.toLowerCase();
 
     const results = this.options!.filter((option) =>
-      option.toLowerCase().includes(filterValue)
+      option.toLowerCase().includes(filterValue),
     );
 
     if (results.length === 0) {

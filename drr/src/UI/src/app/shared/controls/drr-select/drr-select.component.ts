@@ -25,8 +25,33 @@ export interface DrrSelectOption {
     MatSelectModule,
     TranslocoModule,
   ],
-  templateUrl: './drr-select.component.html',
-  styleUrl: './drr-select.component.scss',
+  template: `
+    <mat-label *ngIf="isMobile">{{ label }}{{ getMandatoryMark() }}</mat-label>
+    <mat-form-field *transloco="let t" class="drr-select">
+      <mat-label *ngIf="!isMobile">{{ label }}</mat-label>
+      <mat-select
+        id="{{ id }}"
+        required="{{ isRequired() }}"
+        [formControl]="rxFormControl"
+        multiple="{{ isMultiple }}"
+        (selectionChange)="onSelectionChange($event)"
+      >
+        @for (option of options; track option.value) {
+          <mat-option [value]="option.value">{{ option.label }}</mat-option>
+        }
+      </mat-select>
+      <mat-error *ngIf="rxFormControl.hasError('required')">
+        Field is required
+      </mat-error>
+    </mat-form-field>
+  `,
+  styles: [
+    `
+      .drr-select {
+        width: 100%;
+      }
+    `,
+  ],
   providers: [RxFormBuilder],
 })
 export class DrrSelectComponent {

@@ -202,20 +202,7 @@ export class DrifClaimCreateComponent {
   plannedEndDate!: Date;
   projectType!: InterimProjectType;
 
-  costCategoryOptions: DrrSelectOption[] = Object.keys(CostCategory)
-    .filter(
-      (value) =>
-        value !== CostCategory.Contingency && value !== CostCategory.Other,
-    )
-    .map((value) => ({
-      value,
-      label: this.translocoService.translate(value),
-    }))
-    .sort((a, b) => a.label.localeCompare(b.label))
-    .concat({
-      value: CostCategory.Other,
-      label: this.translocoService.translate(CostCategory.Other),
-    });
+  costCategoryOptions: DrrSelectOption[] = [];
 
   @ViewChildren('invoiceNumberInput')
   invoiceNumberInputs!: QueryList<DrrInputComponent>;
@@ -299,6 +286,22 @@ export class DrifClaimCreateComponent {
             this.plannedStartDate = new Date(claim.plannedStartDate!);
             this.plannedEndDate = new Date(claim.plannedEndDate!);
             this.projectType = claim.projectType!;
+
+            this.costCategoryOptions = Object.keys(CostCategory)
+              .filter(
+                (value) =>
+                  value !== CostCategory.Contingency &&
+                  value !== CostCategory.Other,
+              )
+              .map((value) => ({
+                value,
+                label: this.translocoService.translate(value),
+              }))
+              .sort((a, b) => a.label.localeCompare(b.label))
+              .concat({
+                value: CostCategory.Other,
+                label: this.translocoService.translate(CostCategory.Other),
+              });
 
             if (this.projectType === InterimProjectType.Stream1) {
               this.costCategoryOptions = this.costCategoryOptions.filter(

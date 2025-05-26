@@ -22,8 +22,62 @@ import { RxFormBuilder, RxFormControl } from '@rxweb/reactive-form-validators';
     MatDatepickerModule,
     TranslocoModule,
   ],
-  templateUrl: './drr-datepicker.component.html',
-  styleUrl: './drr-datepicker.component.scss',
+  template: `
+    <mat-label *ngIf="isMobile">{{ label }}{{ getMandatoryMark() }}</mat-label>
+    <mat-form-field class="drr-datepicker" *transloco="let t">
+      <mat-label *ngIf="!isMobile">{{ label }}</mat-label>
+      <input
+        [id]="id"
+        required="{{ isRequired() }}"
+        matInput
+        [matDatepicker]="date_picker"
+        [formControl]="rxFormControl"
+        [min]="min"
+        [max]="max"
+      />
+      <mat-hint>YYYY-MM-DD</mat-hint>
+      <mat-error *ngIf="rxFormControl.hasError('matDatepickerMin')">{{
+        minErrorLabel
+      }}</mat-error>
+      <mat-error *ngIf="rxFormControl.hasError('matDatepickerMax')">{{
+        maxErrorLabel
+      }}</mat-error>
+      <mat-error *ngIf="rxFormControl.hasError('required')">
+        Field is required
+      </mat-error>
+      <mat-error *ngIf="rxFormControl.hasError('matDatepickerParse')">{{
+        t('matDatepickerParseError')
+      }}</mat-error>
+      <mat-datepicker-toggle
+        matIconSuffix
+        [for]="date_picker"
+      ></mat-datepicker-toggle>
+      <mat-datepicker #date_picker></mat-datepicker>
+    </mat-form-field>
+  `,
+  styles: [
+    `
+      .drr-datepicker {
+        width: 100%;
+      }
+
+      :host {
+        .drr-datepicker
+          ::ng-deep
+          .mdc-text-field--outlined.mdc-text-field--disabled
+          .mdc-text-field__input {
+          color: var(--mdc-outlined-text-field-input-text-color);
+        }
+
+        ::ng-deep .mdc-text-field--outlined.mdc-text-field--disabled {
+          .mdc-floating-label,
+          .mdc-floating-label--float-above {
+            color: var(--mdc-outlined-text-field-label-text-color);
+          }
+        }
+      }
+    `,
+  ],
 })
 export class DrrDatepickerComponent {
   formBuilder = inject(RxFormBuilder);

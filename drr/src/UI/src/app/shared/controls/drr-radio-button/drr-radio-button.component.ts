@@ -24,8 +24,28 @@ export class DrrRadioOption {
     ReactiveFormsModule,
     TranslocoModule,
   ],
-  templateUrl: './drr-radio-button.component.html',
-  styleUrl: './drr-radio-button.component.scss',
+  template: `
+    <ng-container *transloco="let t">
+      <mat-label *ngIf="label">{{ label }}{{ getMandatoryMark() }}</mat-label>
+      <mat-radio-group
+        class="drr-radio-group"
+        aria-label="Select an option"
+        [formControl]="rxFormControl"
+      >
+        <mat-error
+          style="color: #f44336"
+          *ngIf="rxFormControl?.touched && rxFormControl?.hasError('required')"
+          >{{ t('required') }}</mat-error
+        >
+        @for (option of options; track $index) {
+          <mat-radio-button [value]="option.value">{{
+            option.label
+          }}</mat-radio-button>
+        }
+      </mat-radio-group>
+    </ng-container>
+  `,
+  styles: [``],
 })
 export class DrrRadioButtonComponent {
   formBuilder = inject(RxFormBuilder);
