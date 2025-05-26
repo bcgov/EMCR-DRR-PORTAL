@@ -79,6 +79,9 @@ import { NgxMaskDirective } from 'ngx-mask';
       <mat-error *ngIf="rxFormControl.hasError('minNumber')">{{
         t('minValueError', { min: min | currency: '' : 'symbol' : '1.0-0' })
       }}</mat-error>
+      <mat-error *ngIf="rxFormControl.hasError('required')">
+        Field is required
+      </mat-error>
       <mat-hint *ngIf="hasMaxValueError()" class="max-number-error">
         {{ maxValueCustomErrorMessage }}
       </mat-hint>

@@ -57,6 +57,9 @@ export type NumericInputType = 'integer' | 'decimal' | 'percentage';
         "
         >{{ t('percentageMaxValueError') }}</mat-error
       >
+      <mat-error *ngIf="rxFormControl.hasError('required')">
+        Field is required
+      </mat-error>
       <mat-hint *ngIf="hasMaxValueError()" class="max-number-error">
         The value is too large.
       </mat-hint>
