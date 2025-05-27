@@ -1,8 +1,8 @@
 <div class="drr-step-container" *transloco="let t">
   <form [formGroup]="permitsRegulationsAndStandardsForm">
     <h3>{{ t("standardsAcceptable") }}</h3>
-    <mat-label>{{ t("standardsAcceptableQuestion") }}*</mat-label>
     <drr-radio-button
+      [label]="t('standardsAcceptableQuestion')"
       [options]="standardsAcceptableOptions"
       [rxFormControl]="
         permitsRegulationsAndStandardsForm.get('standardsAcceptable')
@@ -47,8 +47,8 @@
     ></drr-textarea>
 
     <h3>{{ t("professionalGuidance") }}</h3>
-    <mat-label>{{ t("professionalGuidanceQuestion") }}*</mat-label>
     <drr-radio-button
+      [label]="t('professionalGuidanceQuestion')"
       [rxFormControl]="
         permitsRegulationsAndStandardsForm.get('professionalGuidance')
       "
@@ -89,8 +89,8 @@
     ></drr-textarea>
 
     <h3>{{ t("regulations") }}</h3>
-    <mat-label>{{ t("meetsRegulatoryRequirements") }}*</mat-label>
     <drr-radio-button
+      [label]="t('meetsRegulatoryRequirements')"
       [rxFormControl]="
         permitsRegulationsAndStandardsForm.get('meetsRegulatoryRequirements')
       "
@@ -104,8 +104,8 @@
     ></drr-textarea>
 
     <h3>{{ t("approvals") }}</h3>
-    <mat-label>{{ t("meetsEligibilityRequirements") }}*</mat-label>
     <drr-radio-button
+      [label]="t('meetsEligibilityRequirements')"
       [rxFormControl]="
         permitsRegulationsAndStandardsForm.get('meetsEligibilityRequirements')
       "

@@ -1,7 +1,8 @@
 <div class="drr-step-container" *transloco="let t">
   <form [formGroup]="proponentInformationForm">
-    <h3>{{ t("proponentType") }}*</h3>
+    <h3>{{ t("proponentType") }}</h3>
     <drr-radio-button
+      [label]="t('proponentType')"
       [rxFormControl]="proponentInformationForm.get('proponentType')"
       [options]="proponentTypeOptions"
     ></drr-radio-button>

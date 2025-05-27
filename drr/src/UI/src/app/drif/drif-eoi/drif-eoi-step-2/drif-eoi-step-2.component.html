@@ -1,7 +1,8 @@
 <div class="drr-step-container" *transloco="let t">
   <form [formGroup]="projectInformationForm">
-    <h3>{{ t("fundingStream") }}*</h3>
+    <h3>{{ t("fundingStream") }}</h3>
     <drr-radio-button
+      [label]="t('fundingStream')"
       [rxFormControl]="projectInformationForm.get('fundingStream')"
       [options]="fundingStreamOptions"
     ></drr-radio-button>
@@ -24,8 +25,9 @@
       [maxlength]="100"
     ></drr-input>
 
-    <h3>{{ t("stream") }}*</h3>
+    <h3>{{ t("stream") }}</h3>
     <drr-radio-button
+      [label]="t('stream')"
       [rxFormControl]="projectInformationForm.get('stream')"
       [options]="streamOptions"
     ></drr-radio-button>

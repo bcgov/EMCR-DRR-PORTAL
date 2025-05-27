@@ -1,8 +1,8 @@
 <div class="drr-step-container" *transloco="let t">
   <form [formGroup]="climateAdaptationForm">
     <h3>{{ t("climateAdaptation") }}</h3>
-    <mat-label>{{ t("incorporateFutureClimateConditions") }}*</mat-label>
     <drr-radio-button
+      [label]="t('incorporateFutureClimateConditions')"
       [rxFormControl]="
         climateAdaptationForm.get('incorporateFutureClimateConditions')
       "
