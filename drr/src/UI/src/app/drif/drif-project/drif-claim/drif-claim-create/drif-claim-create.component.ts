@@ -201,6 +201,7 @@ export class DrifClaimCreateComponent {
   plannedStartDate!: Date;
   plannedEndDate!: Date;
   projectType!: InterimProjectType;
+  reportingPeriod?: string;
 
   costCategoryOptions: DrrSelectOption[] = [];
 
@@ -286,6 +287,7 @@ export class DrifClaimCreateComponent {
             this.plannedStartDate = new Date(claim.plannedStartDate!);
             this.plannedEndDate = new Date(claim.plannedEndDate!);
             this.projectType = claim.projectType!;
+            this.reportingPeriod = claim.reportPeriod;
 
             this.costCategoryOptions = Object.keys(CostCategory)
               .filter(
@@ -319,6 +321,7 @@ export class DrifClaimCreateComponent {
                 invoices: claim.invoices,
                 totalClaimed: claim.totalClaimed,
                 totalProjectAmount: claim.totalProjectAmount,
+                upFrontPaymentInterest: claim.upFrontPaymentInterest,
               },
               declaration: {
                 authorizedRepresentativeStatement: false,
@@ -363,6 +366,8 @@ export class DrifClaimCreateComponent {
             ) as IFormGroup<ClaimForm>;
 
             this.setupClaimQuestionnaire(claim.haveClaimExpenses);
+
+            this.configureInterestControls();
 
             this.claimForm
               ?.get('expenditure.totalClaimed')
@@ -502,6 +507,7 @@ export class DrifClaimCreateComponent {
       claimComment: claimForm.expenditure.claimComment,
       authorizedRepresentative: claimForm.declaration.authorizedRepresentative,
       totalClaimed: claimForm.expenditure.totalClaimed,
+      upFrontPaymentInterest: claimForm.expenditure.upFrontPaymentInterest,
       authorizedRepresentativeStatement:
         claimForm.declaration.authorizedRepresentativeStatement,
       informationAccuracyStatement:
@@ -1007,5 +1013,30 @@ export class DrifClaimCreateComponent {
       claimCommentControl?.clearValidators();
       claimCommentControl?.updateValueAndValidity();
     }
+  }
+
+  showEarnedInterestControls() {
+    const q2 = 'Q2';
+    const q4 = 'Q4';
+
+    if (!this.reportingPeriod) {
+      return false;
+    }
+
+    return (
+      this.reportingPeriod.includes(q2) || this.reportingPeriod.includes(q4)
+    );
+  }
+
+  configureInterestControls() {
+    const upFrontPaymentInterestControl = this.claimForm?.get(
+      'expenditure.upFrontPaymentInterest',
+    );
+    if (this.showEarnedInterestControls()) {
+      upFrontPaymentInterestControl?.setValidators([Validators.required]);
+    } else {
+      upFrontPaymentInterestControl?.clearValidators();
+    }
+    upFrontPaymentInterestControl?.updateValueAndValidity();
   }
 }

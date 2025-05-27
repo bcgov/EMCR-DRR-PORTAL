@@ -100,6 +100,7 @@
         </div>
       </mat-step>
       <mat-step
+        style="display: flex; flex-direction: column; gap: 1rem"
         [label]="t('step2')"
         [stepControl]="claimForm?.get('expenditure')!"
         [errorMessage]="'stepError' | transloco"
@@ -110,12 +111,10 @@
               display: flex;
               flex-direction: column;
               gap: 1rem;
-              padding: 1rem;
+              padding-bottom: 1rem;
             "
           >
-            <mat-label class="drr-label">{{
-              t("haveClaimExpensesTitle")
-            }}</mat-label>
+            <h3>{{ t("haveClaimExpensesTitle") }}</h3>
             <drr-radio-button
               [label]="t('haveClaimExpenses')"
               [rxFormControl]="claimForm.get('expenditure.haveClaimExpenses')"
@@ -133,6 +132,40 @@
               </i>
             }
           </div>
+          @if (showEarnedInterestControls()) {
+            <div
+              style="
+                display: flex;
+                flex-direction: column;
+                padding-bottom: 2rem;
+              "
+            >
+              <h3>Interest Earned on Up-front Payments</h3>
+              <p>
+                If you have earned interest on the up-front payment, enter the
+                amount earned to date. You are only required provide an updated
+                value in Q2 and Q4.
+              </p>
+              <drr-currency-input
+                style="width: 30rem"
+                [label]="t('upFrontPaymentInterest')"
+                [rxFormControl]="
+                  claimForm.get('expenditure.upFrontPaymentInterest')
+                "
+                [allowNegativeNumbers]="true"
+              ></drr-currency-input>
+              <p>
+                <i>
+                  Note that cost overruns are the responsibility of the
+                  proponent. You are expected to spend interest on overruns
+                  before asking for an increase in funding, and you are expected
+                  to remit any remaining interest earned to the Province at the
+                  end of the project. Further, you must be prepared to explain
+                  how the interest amount was calculated upon request.
+                </i>
+              </p>
+            </div>
+          }
           <div
             style="
               display: flex;
@@ -254,7 +287,6 @@
                         [rxFormControl]="invoice.get('claimAmount')"
                         [max]="getMaxProponentClaimAmount(invoice)"
                         [maxValueCustomErrorMessage]="t('claimAmountError')"
-                        [value]="invoice.get('grossAmount')?.value"
                       ></drr-currency-input>
                     </div>
                     @if (
@@ -621,6 +653,7 @@
           <drif-claim-summary
             [claimForm]="claimForm!"
             [isReadOnlyView]="false"
+            [showEarnedInterestControls]="showEarnedInterestControls()"
           ></drif-claim-summary>
 
           <drr-auth-rep

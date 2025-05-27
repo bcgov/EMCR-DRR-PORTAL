@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
+import { Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
@@ -33,6 +34,7 @@ export class DrifClaimViewComponent {
   claimId?: string;
 
   reportName?: string;
+  reportingPeriod?: string;
 
   claimForm?: IFormGroup<ClaimForm>;
 
@@ -53,8 +55,7 @@ export class DrifClaimViewComponent {
         .subscribe({
           next: (claim: DraftProjectClaim) => {
             this.reportName = `${claim.reportPeriod} Claim`;
-
-            // this.projectType = claim.projectType!;
+            this.reportingPeriod = claim.reportPeriod;
 
             const formData = new ClaimForm({
               expenditure: {
@@ -63,6 +64,7 @@ export class DrifClaimViewComponent {
                 invoices: claim.invoices,
                 totalClaimed: claim.totalClaimed,
                 totalProjectAmount: claim.totalProjectAmount,
+                upFrontPaymentInterest: claim.upFrontPaymentInterest,
               },
               declaration: {
                 authorizedRepresentativeStatement: false,
@@ -76,6 +78,8 @@ export class DrifClaimViewComponent {
               formData,
             ) as IFormGroup<ClaimForm>;
 
+            this.configureInterestControls();
+
             resolve();
           },
           error: (error) => {
@@ -87,5 +91,28 @@ export class DrifClaimViewComponent {
 
   goBack() {
     this.router.navigate(['drif-projects', this.projectId]);
+  }
+
+  configureInterestControls() {
+    if (this.showEarnedInterestControls()) {
+      const upFrontPaymentInterestControl = this.claimForm?.get(
+        'expenditure.upFrontPaymentInterest',
+      );
+      upFrontPaymentInterestControl?.setValidators([Validators.required]);
+      upFrontPaymentInterestControl?.updateValueAndValidity();
+    }
+  }
+
+  showEarnedInterestControls() {
+    const q2 = 'Q2';
+    const q4 = 'Q4';
+
+    if (!this.reportingPeriod) {
+      return false;
+    }
+
+    return (
+      this.reportingPeriod.includes(q2) || this.reportingPeriod.includes(q4)
+    );
   }
 }

@@ -4,5 +4,7 @@
 
     <button mat-stroked-button color="primary" (click)="goBack()">Back</button>
   </div>
-  <drif-claim-summary [claimForm]="claimForm"></drif-claim-summary>
+  <drif-claim-summary [claimForm]="claimForm"
+    [showEarnedInterestControls]="showEarnedInterestControls()"
+  ></drif-claim-summary>
 </div>
