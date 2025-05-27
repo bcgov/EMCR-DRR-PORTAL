@@ -287,7 +287,6 @@
                         [rxFormControl]="invoice.get('claimAmount')"
                         [max]="getMaxProponentClaimAmount(invoice)"
                         [maxValueCustomErrorMessage]="t('claimAmountError')"
-                        [value]="invoice.get('grossAmount')?.value"
                       ></drr-currency-input>
                     </div>
                     @if (
