@@ -17,7 +17,12 @@ import { RxFormBuilder, RxFormControl } from '@rxweb/reactive-form-validators';
 @Component({
   selector: 'drr-textarea',
   template: `
-    <mat-label>{{ label }}{{ getMandatoryMark() }}</mat-label>
+    <mat-label
+      [style]="
+        hasRequiredError() ? { color: '#ce3e39', 'font-weight': 'bold' } : {}
+      "
+      >{{ label }}{{ getMandatoryMark() }}</mat-label
+    >
     <mat-form-field class="drr-textarea">
       <textarea
         #textareaInput
@@ -125,5 +130,13 @@ export class DrrTextareaComponent {
     if (inputElement) {
       inputElement.focus();
     }
+  }
+
+  hasRequiredError(): boolean {
+    return (
+      this.rxFormControl.hasError('required') &&
+      !this.rxFormControl.disabled &&
+      this.rxFormControl.touched
+    );
   }
 }
