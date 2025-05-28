@@ -22,9 +22,11 @@ export type InputType = 'text' | 'tel' | 'email';
 @Component({
   selector: 'drr-input',
   template: `
-    <mat-label *ngIf="isMobile">{{ label }}{{ getMandatoryMark() }}</mat-label>
+    <mat-label [class]="hasRequiredError() ? 'drr-label--error' : ''"
+      >{{ label }}{{ getMandatoryMark() }}</mat-label
+    >
     <mat-form-field class="drr-input" *transloco="let t">
-      <mat-label *ngIf="!isMobile">{{ label }}</mat-label>
+      <!-- <mat-label *ngIf="!isMobile">{{ label }}</mat-label> -->
       <input
         id="{{ id }}"
         #drrInput
@@ -201,5 +203,13 @@ export class DrrInputComponent {
     if (inputElement) {
       inputElement.focus();
     }
+  }
+
+  hasRequiredError(): boolean {
+    return (
+      this.rxFormControl.hasError('required') &&
+      !this.rxFormControl.disabled &&
+      this.rxFormControl.touched
+    );
   }
 }

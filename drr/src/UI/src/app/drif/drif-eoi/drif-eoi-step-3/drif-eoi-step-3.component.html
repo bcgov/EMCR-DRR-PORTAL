@@ -1,7 +1,6 @@
 <div class="drr-step-container" *transloco="let t">
-  <form [formGroup]="fundingInformationForm">
+  <div>
     <h3>{{ t("estimatedTotal") }}</h3>
-
     <drr-currency-input
       class="drr-single-input"
       [id]="'estimatedTotal'"
@@ -9,9 +8,10 @@
       [rxFormControl]="fundingInformationForm.get('estimatedTotal')"
       [max]="999999999"
     ></drr-currency-input>
+  </div>
 
+  <div>
     <h3>{{ t("fundingRequest") }}</h3>
-
     <drr-currency-input
       class="drr-single-input"
       [id]="'fundingRequest'"
@@ -19,7 +19,9 @@
       [rxFormControl]="fundingInformationForm.get('fundingRequest')"
       [max]="999999999"
     ></drr-currency-input>
+  </div>
 
+  <div>
     <h3>{{ t("otherFunding") }}</h3>
     <drr-radio-button
       [label]="t('haveOtherFunding')"
@@ -67,5 +69,5 @@
         [rxFormControl]="fundingInformationForm.get('intendToSecureFunding')"
       ></drr-textarea>
     </div>
-  </form>
+  </div>
 </div>

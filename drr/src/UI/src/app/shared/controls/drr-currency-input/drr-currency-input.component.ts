@@ -38,11 +38,11 @@ import { NgxMaskDirective } from 'ngx-mask';
     MatIconModule,
   ],
   providers: [CurrencyPipe],
-  template: `<mat-label *ngIf="isMobile"
+  template: `
+    <mat-label [class]="hasRequiredError() ? 'drr-label--error' : ''"
       >{{ label }}{{ getMandatoryMark() }}</mat-label
     >
     <mat-form-field class="drr-currency-input" *transloco="let t">
-      <mat-label *ngIf="!isMobile && label">{{ label }}</mat-label>
       <input
         id="{{ id }}"
         #currencyInput
@@ -85,7 +85,8 @@ import { NgxMaskDirective } from 'ngx-mask';
       <mat-hint *ngIf="hasMaxValueError()" class="max-number-error">
         {{ maxValueCustomErrorMessage }}
       </mat-hint>
-    </mat-form-field> `,
+    </mat-form-field>
+  `,
   styles: `
     .drr-currency-input {
       width: 100%;
@@ -287,5 +288,13 @@ export class DrrCurrencyInputComponent {
     if (inputElement) {
       inputElement.focus();
     }
+  }
+
+  hasRequiredError(): boolean {
+    return (
+      this.rxFormControl.hasError('required') &&
+      !this.rxFormControl.disabled &&
+      this.rxFormControl.touched
+    );
   }
 }

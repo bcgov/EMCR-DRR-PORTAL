@@ -23,9 +23,10 @@ import { RxFormBuilder, RxFormControl } from '@rxweb/reactive-form-validators';
     TranslocoModule,
   ],
   template: `
-    <mat-label *ngIf="isMobile">{{ label }}{{ getMandatoryMark() }}</mat-label>
+    <mat-label [class]="hasRequiredError() ? 'drr-label--error' : ''"
+      >{{ label }}{{ getMandatoryMark() }}</mat-label
+    >
     <mat-form-field class="drr-datepicker" *transloco="let t">
-      <mat-label *ngIf="!isMobile">{{ label }}</mat-label>
       <input
         [id]="id"
         required="{{ isRequired() }}"
@@ -43,7 +44,7 @@ import { RxFormBuilder, RxFormControl } from '@rxweb/reactive-form-validators';
         maxErrorLabel
       }}</mat-error>
       <mat-error *ngIf="rxFormControl.hasError('required')">
-        Field is required
+        Date is required
       </mat-error>
       <mat-error *ngIf="rxFormControl.hasError('matDatepickerParse')">{{
         t('matDatepickerParseError')
@@ -122,5 +123,13 @@ export class DrrDatepickerComponent {
     return this.isMobile
       ? false
       : !!this.rxFormControl?.validator?.({})?.required;
+  }
+
+  hasRequiredError(): boolean {
+    return (
+      this.rxFormControl.hasError('required') &&
+      !this.rxFormControl.disabled &&
+      this.rxFormControl.touched
+    );
   }
 }

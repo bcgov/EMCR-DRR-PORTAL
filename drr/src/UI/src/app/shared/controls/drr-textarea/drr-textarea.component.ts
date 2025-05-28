@@ -17,10 +17,7 @@ import { RxFormBuilder, RxFormControl } from '@rxweb/reactive-form-validators';
 @Component({
   selector: 'drr-textarea',
   template: `
-    <mat-label
-      [style]="
-        hasRequiredError() ? { color: '#ce3e39', 'font-weight': 'bold' } : {}
-      "
+    <mat-label [class]="hasRequiredError() ? 'drr-label--error' : ''"
       >{{ label }}{{ getMandatoryMark() }}</mat-label
     >
     <mat-form-field class="drr-textarea">

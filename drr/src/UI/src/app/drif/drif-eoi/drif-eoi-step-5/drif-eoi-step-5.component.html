@@ -1,5 +1,5 @@
 <div class="drr-step-container" *transloco="let t">
-  <form [formGroup]="projectDetailsForm">
+  <div>
     <h3>{{ t("rationaleForFunding") }}</h3>
     <drr-textarea
       [id]="'rationaleForFunding'"
@@ -8,134 +8,134 @@
       [rxFormControl]="projectDetailsForm.get('rationaleForFunding')"
       [rows]="10"
     ></drr-textarea>
+  </div>
 
+  <div style="width: 50%">
     <h3>{{ t("estimatedPeopleImpacted") }}</h3>
-    <div class="project-details-container">
-      <drr-select
-        class="drr-single-input"
-        [id]="'estimatedPeopleImpacted'"
-        [label]="t('estimatedPeopleImpacted')"
-        [rxFormControl]="projectDetailsForm.get('estimatedPeopleImpacted')"
-        [options]="estimatedNumberOfPeopleOptions"
-      ></drr-select>
 
-      <h3>{{ t("communityImpact") }}</h3>
+    <drr-select
+      [id]="'estimatedPeopleImpacted'"
+      [label]="t('estimatedPeopleImpacted')"
+      [rxFormControl]="projectDetailsForm.get('estimatedPeopleImpacted')"
+      [options]="estimatedNumberOfPeopleOptions"
+    ></drr-select>
+  </div>
 
-      <drr-textarea
-        [id]="'communityImpact'"
-        [label]="t('communityImpactText')"
-        [maxlength]="2000"
-        [rxFormControl]="projectDetailsForm.get('communityImpact')"
-        [rows]="10"
-      ></drr-textarea>
+  <div>
+    <h3>{{ t("communityImpact") }}</h3>
+    <drr-textarea
+      [id]="'communityImpact'"
+      [label]="t('communityImpactText')"
+      [maxlength]="2000"
+      [rxFormControl]="projectDetailsForm.get('communityImpact')"
+      [rows]="10"
+    ></drr-textarea>
+  </div>
+  <div>
+    <h3>{{ t("infrastructureImpacted") }}</h3>
+    <drr-radio-button
+      [label]="t('isInfrastructureImpacted')"
+      [rxFormControl]="projectDetailsForm.get('isInfrastructureImpacted')"
+    ></drr-radio-button>
 
-      <h3>{{ t("infrastructureImpacted") }}</h3>
+    <div>
+      <div
+        class="infrastructure-container"
+        *ngFor="
+          let control of getFormArray('infrastructureImpacted').controls;
+          let i = index
+        "
+      >
+        <drr-input
+          #infrastructureInput
+          [label]="t('infrastructure')"
+          [rxFormControl]="control.get('infrastructure')"
+          [maxlength]="40"
+        ></drr-input>
 
-      <drr-radio-button
-        [label]="t('isInfrastructureImpacted')"
-        [rxFormControl]="projectDetailsForm.get('isInfrastructureImpacted')"
-      ></drr-radio-button>
-      <div>
-        <div
-          class="infrastructure-container"
-          *ngFor="
-            let control of getFormArray('infrastructureImpacted').controls;
-            let i = index
-          "
-        >
-          <drr-input
-            #infrastructureInput
-            [label]="t('infrastructure')"
-            [rxFormControl]="control.get('infrastructure')"
-            [maxlength]="40"
-          ></drr-input>
-
-          <drr-input
-            [label]="t('impact')"
-            [rxFormControl]="control.get('impact')"
-            [maxlength]="40"
-          ></drr-input>
-          <button
-            *ngIf="i > 0"
-            mat-raised-button
-            color="warn"
-            (click)="removeInfrastructure(i)"
-          >
-            <mat-icon>delete</mat-icon>
-            {{ t("delete") }}
-          </button>
-        </div>
-
+        <drr-input
+          [label]="t('impact')"
+          [rxFormControl]="control.get('impact')"
+          [maxlength]="40"
+        ></drr-input>
         <button
-          *ngIf="
-            projectDetailsForm.get('isInfrastructureImpacted')?.value === true
-          "
-          id="addInfrastructure"
-          mat-stroked-button
-          type="button"
-          color="primary"
-          (click)="addInfrastructure()"
+          *ngIf="i > 0"
+          mat-raised-button
+          color="warn"
+          (click)="removeInfrastructure(i)"
         >
-          <mat-icon>add</mat-icon>
-          {{ t("addInfrastructure") }}
+          <mat-icon>delete</mat-icon>
+          {{ t("delete") }}
         </button>
       </div>
 
-      <drr-textarea
-        [id]="'disasterRiskUnderstanding'"
-        style="margin-top: 8px"
-        [label]="t('disasterRiskUnderstanding')"
-        [maxlength]="2000"
-        [rxFormControl]="projectDetailsForm.get('disasterRiskUnderstanding')"
-        [rows]="10"
-      ></drr-textarea>
-
-      <drr-textarea
-        [id]="'additionalBackgroundInformation'"
-        [label]="t('additionalBackgroundInformation')"
-        [maxlength]="2000"
-        [rxFormControl]="
-          projectDetailsForm.get('additionalBackgroundInformation')
+      <button
+        *ngIf="
+          projectDetailsForm.get('isInfrastructureImpacted')?.value === true
         "
-        [rows]="10"
-      ></drr-textarea>
+        id="addInfrastructure"
+        mat-stroked-button
+        type="button"
+        color="primary"
+        (click)="addInfrastructure()"
+      >
+        <mat-icon>add</mat-icon>
+        {{ t("addInfrastructure") }}
+      </button>
     </div>
+  </div>
 
+  <drr-textarea
+    [id]="'disasterRiskUnderstanding'"
+    style="margin-top: 8px"
+    [label]="t('disasterRiskUnderstanding')"
+    [maxlength]="2000"
+    [rxFormControl]="projectDetailsForm.get('disasterRiskUnderstanding')"
+    [rows]="10"
+  ></drr-textarea>
+
+  <drr-textarea
+    [id]="'additionalBackgroundInformation'"
+    [label]="t('additionalBackgroundInformation')"
+    [maxlength]="2000"
+    [rxFormControl]="projectDetailsForm.get('additionalBackgroundInformation')"
+    [rows]="10"
+  ></drr-textarea>
+
+  <div>
     <h3>{{ t("proposedSolution") }}</h3>
-    <div class="project-details-container">
-      <drr-textarea
-        [id]="'addressRisksAndHazards'"
-        [label]="t('addressRisksAndHazards')"
-        [maxlength]="2000"
-        [rxFormControl]="projectDetailsForm.get('addressRisksAndHazards')"
-        [rows]="10"
-      ></drr-textarea>
+    <drr-textarea
+      [id]="'addressRisksAndHazards'"
+      [label]="t('addressRisksAndHazards')"
+      [maxlength]="2000"
+      [rxFormControl]="projectDetailsForm.get('addressRisksAndHazards')"
+      [rows]="10"
+    ></drr-textarea>
+  </div>
 
-      <drr-textarea
-        [label]="t('drifProgramGoalAlignment')"
-        [maxlength]="2000"
-        [rxFormControl]="projectDetailsForm.get('projectDescription')"
-        [rows]="10"
-      ></drr-textarea>
+  <drr-textarea
+    [label]="t('drifProgramGoalAlignment')"
+    [maxlength]="2000"
+    [rxFormControl]="projectDetailsForm.get('projectDescription')"
+    [rows]="10"
+  ></drr-textarea>
 
-      <drr-textarea
-        [id]="'additionalSolutionInformation'"
-        [label]="t('additionalSolutionInformation')"
-        [maxlength]="2000"
-        [rxFormControl]="
-          projectDetailsForm.get('additionalSolutionInformation')
-        "
-        [rows]="10"
-      ></drr-textarea>
+  <drr-textarea
+    [id]="'additionalSolutionInformation'"
+    [label]="t('additionalSolutionInformation')"
+    [maxlength]="2000"
+    [rxFormControl]="projectDetailsForm.get('additionalSolutionInformation')"
+    [rows]="10"
+  ></drr-textarea>
 
-      <h3>{{ t("rationaleForSolution") }}</h3>
-      <drr-textarea
-        [id]="'rationaleForSolution'"
-        [label]="t('rationaleForSolutionText')"
-        [maxlength]="2000"
-        [rxFormControl]="projectDetailsForm.get('rationaleForSolution')"
-        [rows]="10"
-      ></drr-textarea>
-    </div>
-  </form>
+  <div>
+    <h3>{{ t("rationaleForSolution") }}</h3>
+    <drr-textarea
+      [id]="'rationaleForSolution'"
+      [label]="t('rationaleForSolutionText')"
+      [maxlength]="2000"
+      [rxFormControl]="projectDetailsForm.get('rationaleForSolution')"
+      [rows]="10"
+    ></drr-textarea>
+  </div>
 </div>

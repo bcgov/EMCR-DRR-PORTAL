@@ -26,9 +26,10 @@ export interface DrrSelectOption {
     TranslocoModule,
   ],
   template: `
-    <mat-label *ngIf="isMobile">{{ label }}{{ getMandatoryMark() }}</mat-label>
+    <mat-label [class]="hasRequiredError() ? 'drr-label--error' : ''"
+      >{{ label }}{{ getMandatoryMark() }}</mat-label
+    >
     <mat-form-field *transloco="let t" class="drr-select">
-      <mat-label *ngIf="!isMobile">{{ label }}</mat-label>
       <mat-select
         id="{{ id }}"
         required="{{ isRequired() }}"
@@ -41,7 +42,7 @@ export interface DrrSelectOption {
         }
       </mat-select>
       <mat-error *ngIf="rxFormControl.hasError('required')">
-        Field is required
+        Selection is required
       </mat-error>
     </mat-form-field>
   `,
@@ -97,6 +98,14 @@ export class DrrSelectComponent {
     return (
       !!this.rxFormControl?.validator?.({})?.required ||
       !!this.rxFormControl?.validator?.({})?.minLength
+    );
+  }
+
+  hasRequiredError(): boolean {
+    return (
+      this.rxFormControl.hasError('required') &&
+      !this.rxFormControl.disabled &&
+      this.rxFormControl.touched
     );
   }
 }

@@ -269,12 +269,8 @@ h6 {
 .drr-step-container {
   display: flex;
   flex-direction: column;
-  margin: 20px 20px;
-
-  & form {
-    display: flex;
-    flex-direction: column;
-  }
+  margin: 1rem;
+  gap: 2rem;
 }
 
 .drr-stepper-action {
@@ -294,6 +290,11 @@ h6 {
 .drr-single-input {
   width: 50vw;
   margin-top: 8px;
+}
+
+.drr-label--error {
+  color: #ce3e39;
+  font-weight: bold;
 }
 
 .table-actions {

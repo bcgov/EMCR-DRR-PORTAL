@@ -1,23 +1,29 @@
 <div class="drr-step-container" *transloco="let t">
-  <h3>{{ t("ownershipDeclaration") }}</h3>
-  <drr-radio-button
-    [label]="t('ownershipDeclarationText')"
-    [rxFormControl]="locationInformationForm.get('ownershipDeclaration')"
-  ></drr-radio-button>
+  <div>
+    <h3>{{ t("ownershipDeclaration") }}</h3>
+    <drr-radio-button
+      [label]="t('ownershipDeclarationText')"
+      [rxFormControl]="locationInformationForm.get('ownershipDeclaration')"
+    ></drr-radio-button>
 
-  <drr-textarea
-    *ngIf="locationInformationForm.get('ownershipDeclaration')?.value === false"
-    [id]="'ownershipDescription'"
-    [label]="t('ownershipDescription')"
-    [maxlength]="2000"
-    [rxFormControl]="locationInformationForm.get('ownershipDescription')"
-  ></drr-textarea>
+    <drr-textarea
+      *ngIf="
+        locationInformationForm.get('ownershipDeclaration')?.value === false
+      "
+      [id]="'ownershipDescription'"
+      [label]="t('ownershipDescription')"
+      [maxlength]="2000"
+      [rxFormControl]="locationInformationForm.get('ownershipDescription')"
+    ></drr-textarea>
+  </div>
 
-  <h3>{{ t("locationDescription") }}</h3>
-  <drr-textarea
-    [id]="'locationDescription'"
-    [label]="t('locationDescription')"
-    [maxlength]="2000"
-    [rxFormControl]="locationInformationForm.get('locationDescription')"
-  ></drr-textarea>
+  <div>
+    <h3>{{ t("locationDescription") }}</h3>
+    <drr-textarea
+      [id]="'locationDescription'"
+      [label]="t('locationDescription')"
+      [maxlength]="2000"
+      [rxFormControl]="locationInformationForm.get('locationDescription')"
+    ></drr-textarea>
+  </div>
 </div>
