@@ -254,6 +254,7 @@ export class EOIApplicationComponent {
 
           this.initStep1(response);
           this.initStep3(response);
+          this.initStep4(response);
           this.initStep5(response);
 
           this.eoiApplicationForm.markAsPristine();
@@ -359,6 +360,19 @@ export class EOIApplicationComponent {
         emitEvent: false,
       });
     });
+  }
+
+  initStep4(response: DraftEoiApplication) {
+    const ownershipDescription = this.eoiApplicationForm.get(
+      'locationInformation.ownershipDescription',
+    );
+
+    if (response.ownershipDeclaration === false) {
+      ownershipDescription?.setValidators([Validators.required]);
+      ownershipDescription?.updateValueAndValidity({
+        emitEvent: false,
+      });
+    }
   }
 
   initStep5(response: DraftEoiApplication) {

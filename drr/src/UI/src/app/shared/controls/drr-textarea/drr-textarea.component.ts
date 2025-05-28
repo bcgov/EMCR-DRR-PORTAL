@@ -133,7 +133,7 @@ export class DrrTextareaComponent {
     return (
       this.rxFormControl.hasError('required') &&
       !this.rxFormControl.disabled &&
-      this.rxFormControl.touched
+      (this.rxFormControl.touched || this.rxFormControl.invalid)
     );
   }
 }
