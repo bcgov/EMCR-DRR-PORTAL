@@ -1,5 +1,5 @@
 <div class="drr-step-container" *transloco="let t">
-  <form [formGroup]="projectEngagementForm">
+  <div>
     <h3>{{ t("engagedWithFirstNations") }}</h3>
     <mat-label>{{ t("engagedWithFirstNationsText") }}</mat-label>
     <drr-radio-button
@@ -16,7 +16,9 @@
       "
       [maxlength]="2000"
     ></drr-textarea>
+  </div>
 
+  <div>
     <h3>{{ t("otherEngagement") }}</h3>
     <drr-radio-button
       style="margin-top: 1rem"
@@ -35,12 +37,14 @@
       [rxFormControl]="projectEngagementForm.get('otherEngagementComments')"
       [maxlength]="2000"
     ></drr-textarea>
+  </div>
 
+  <div>
     <h3>{{ t("collaboration") }}</h3>
     <drr-textarea
       [label]="t('collaborationComments')"
       [rxFormControl]="projectEngagementForm.get('collaborationComments')"
       [maxlength]="2000"
     ></drr-textarea>
-  </form>
+  </div>
 </div>

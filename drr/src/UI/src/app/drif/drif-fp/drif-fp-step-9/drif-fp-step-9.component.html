@@ -1,5 +1,5 @@
 <div class="drr-step-container" *transloco="let t">
-  <form [formGroup]="projectRisksForm">
+  <div>
     <h3>{{ t("projectComplexity") }}</h3>
     <drr-radio-button
       [label]="t('complexityRiskMitigated')"
@@ -18,7 +18,9 @@
       [maxlength]="2000"
       [rxFormControl]="projectRisksForm.get('complexityRiskComments')"
     ></drr-textarea>
+  </div>
 
+  <div>
     <h3>{{ t("projectReadiness") }}</h3>
     <drr-radio-button
       [label]="t('readinessRiskMitigated')"
@@ -37,7 +39,9 @@
       [maxlength]="2000"
       [rxFormControl]="projectRisksForm.get('readinessRiskComments')"
     ></drr-textarea>
+  </div>
 
+  <div>
     <h3>{{ t("projectSensitivity") }}</h3>
     <drr-radio-button
       [label]="t('sensitivityRiskMitigated')"
@@ -56,7 +60,9 @@
       [maxlength]="2000"
       [rxFormControl]="projectRisksForm.get('sensitivityRiskComments')"
     ></drr-textarea>
+  </div>
 
+  <div>
     <h3>{{ t("capacityChallenges") }}</h3>
     <drr-radio-button
       [label]="t('capacityRiskMitigated')"
@@ -75,7 +81,9 @@
       [maxlength]="2000"
       [rxFormControl]="projectRisksForm.get('capacityRiskComments')"
     ></drr-textarea>
+  </div>
 
+  <div>
     <h3>{{ t("riskTransfer") }}</h3>
     <drr-radio-button
       [label]="t('riskTransferMigigated')"
@@ -97,5 +105,5 @@
       [maxlength]="2000"
       [rxFormControl]="projectRisksForm.get('increasedOrTransferredComments')"
     ></drr-textarea>
-  </form>
+  </div>
 </div>

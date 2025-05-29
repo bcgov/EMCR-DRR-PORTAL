@@ -21,49 +21,50 @@ export type NumericInputType = 'integer' | 'decimal' | 'percentage';
 @Component({
   selector: 'drr-numeric-input',
   template: `
-    <mat-label *ngIf="isMobile">{{ label }}{{ getMandatoryMark() }}</mat-label>
-    <mat-form-field class="drr-input" *transloco="let t">
-      <mat-label *ngIf="!isMobile">{{ label }}</mat-label>
-      <input
-        id="{{ id }}"
-        matInput
-        [formControl]="rxFormControl"
-        [maxlength]="maxlength ?? null"
-        required="{{ isRequired() }}"
-        type="text"
-        [min]="min"
-        [max]="max"
-        (focus)="onFocus()"
-        (blur)="onBlur()"
-        [mask]="getMask()"
-        [decimalMarker]="'.'"
-        [thousandSeparator]="''"
-        [ngStyle]="{
-          'text-align': numericType === 'percentage' ? 'right' : 'left',
-        }"
-      />
-      @if (this.numericType === 'percentage') {
-        <span matTextSuffix>%&nbsp;</span>
-      }
-      <mat-hint *ngIf="maxlength && isFocused" align="end"
-        >{{ getCount() }} / {{ maxlength }}</mat-hint
-      >
-      @if (getCount() > maxlength!) {
-        <mat-error>{{ t('maxLengthError') }}</mat-error>
-      }
-      <mat-error
-        *ngIf="
-          numericType === 'percentage' && rxFormControl.hasError('maxNumber')
-        "
-        >{{ t('percentageMaxValueError') }}</mat-error
-      >
-      <mat-error *ngIf="rxFormControl.hasError('required')">
-        Field is required
-      </mat-error>
-      <mat-hint *ngIf="hasMaxValueError()" class="max-number-error">
-        The value is too large.
-      </mat-hint>
-    </mat-form-field>
+    <div>
+      <mat-label>{{ label }}{{ getMandatoryMark() }}</mat-label>
+      <mat-form-field class="drr-input" *transloco="let t">
+        <input
+          id="{{ id }}"
+          matInput
+          [formControl]="rxFormControl"
+          [maxlength]="maxlength ?? null"
+          required="{{ isRequired() }}"
+          type="text"
+          [min]="min"
+          [max]="max"
+          (focus)="onFocus()"
+          (blur)="onBlur()"
+          [mask]="getMask()"
+          [decimalMarker]="'.'"
+          [thousandSeparator]="''"
+          [ngStyle]="{
+            'text-align': numericType === 'percentage' ? 'right' : 'left',
+          }"
+        />
+        @if (this.numericType === 'percentage') {
+          <span matTextSuffix>%&nbsp;</span>
+        }
+        <mat-hint *ngIf="maxlength && isFocused" align="end"
+          >{{ getCount() }} / {{ maxlength }}</mat-hint
+        >
+        @if (getCount() > maxlength!) {
+          <mat-error>{{ t('maxLengthError') }}</mat-error>
+        }
+        <mat-error
+          *ngIf="
+            numericType === 'percentage' && rxFormControl.hasError('maxNumber')
+          "
+          >{{ t('percentageMaxValueError') }}</mat-error
+        >
+        <mat-error *ngIf="rxFormControl.hasError('required')">
+          Field is required
+        </mat-error>
+        <mat-hint *ngIf="hasMaxValueError()" class="max-number-error">
+          The value is too large.
+        </mat-hint>
+      </mat-form-field>
+    </div>
   `,
   styles: [
     `

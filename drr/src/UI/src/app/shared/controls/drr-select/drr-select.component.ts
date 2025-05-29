@@ -52,6 +52,7 @@ export interface DrrSelectOption {
     `
       .drr-select {
         width: 100%;
+        padding-bottom: 1rem;
       }
     `,
   ],

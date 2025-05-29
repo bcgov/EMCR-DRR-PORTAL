@@ -1,11 +1,12 @@
 <div class="drr-step-container" *transloco="let t">
-  <form [formGroup]="projectPlanForm">
-    <span style="display: flex; align-items: center">
-      <mat-icon style="font-size: 1.5rem" [inline]="true" color="primary"
-        >info</mat-icon
-      >
-      <i style="margin-left: 1rem">{{ t("projectPlanDisclaimer") }}</i>
-    </span>
+  <span style="display: flex; align-items: center">
+    <mat-icon style="font-size: 1.5rem" [inline]="true" color="primary"
+      >info</mat-icon
+    >
+    <i style="margin-left: 1rem">{{ t("projectPlanDisclaimer") }}</i>
+  </span>
+
+  <div>
     <h3>{{ t("projectDates") }}</h3>
     <div class="project-dates-container">
       <drr-datepicker
@@ -22,14 +23,18 @@
         [minErrorLabel]="t('minEndDateAfterError')"
       ></drr-datepicker>
     </div>
+  </div>
 
+  <div>
     <h3>{{ t("projectDescription") }}</h3>
     <drr-textarea
       [label]="t('projectDescriptionText')"
       [maxlength]="2000"
       [rxFormControl]="projectPlanForm.get('projectDescription')"
     ></drr-textarea>
+  </div>
 
+  <div>
     <h3>{{ t("proposedActivities") }}</h3>
     <mat-label>{{ t("proposedActivitiesText") }}</mat-label>
     <span style="display: flex; align-items: center">
@@ -94,6 +99,9 @@
         </mat-card>
       </div>
     </div>
+  </div>
+
+  <div>
     <h3 style="margin-top: 2rem">{{ t("additionalActivities") }}</h3>
     <div class="proposed-activity-container">
       <div
@@ -182,7 +190,9 @@
         {{ t("addActivity") }}
       </button>
     </div>
+  </div>
 
+  <div>
     <h3>{{ t("rationaleForSolution") }}</h3>
     <drr-chip-autocomplete
       [label]="t('rationaleForSolutionText')"
@@ -195,7 +205,9 @@
       [maxlength]="2000"
       [rxFormControl]="projectPlanForm.get('howWasNeedIdentified')"
     ></drr-textarea>
+  </div>
 
+  <div>
     <h3>{{ t("mitigation") }}</h3>
     <drr-textarea
       [label]="t('addressRisksAndHazards')"
@@ -203,26 +215,32 @@
       [rxFormControl]="projectPlanForm.get('addressRisksAndHazards')"
     >
     </drr-textarea>
+  </div>
 
+  <div>
     <h3>{{ t("disasterRiskReduction") }}</h3>
     <drr-textarea
       [label]="t('disasterRiskUnderstanding')"
       [maxlength]="2000"
       [rxFormControl]="projectPlanForm.get('disasterRiskUnderstanding')"
     ></drr-textarea>
+  </div>
 
+  <div>
     <h3>{{ t("rationaleForFunding") }}</h3>
     <drr-textarea
       [label]="t('rationaleForFundingText')"
       [maxlength]="2000"
       [rxFormControl]="projectPlanForm.get('rationaleForFunding')"
     ></drr-textarea>
+  </div>
 
+  <div>
     <h3>{{ t("projectAlternates") }}</h3>
     <drr-textarea
       [label]="t('projectAlternatesText')"
       [maxlength]="2000"
       [rxFormControl]="projectPlanForm.get('projectAlternateOptions')"
     ></drr-textarea>
-  </form>
+  </div>
 </div>

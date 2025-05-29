@@ -1,17 +1,21 @@
 <div class="drr-step-container" *transloco="let t">
-  <form [formGroup]="projectAreaForm">
+  <div>
     <h3>{{ t("locationDescription") }}</h3>
     <drr-textarea
       [label]="t('locationDescriptionAddress')"
       [rxFormControl]="projectAreaForm.get('locationDescription')"
       [maxlength]="2000"
     ></drr-textarea>
+  </div>
 
+  <div>
     <h3>{{ t("estimatedArea") }}</h3>
     <mat-label style="margin-bottom: 1rem">{{
       t("estimatedAreaText")
     }}</mat-label>
-    <div style="display: flex; flex-direction: row; gap: 1rem">
+    <div
+      style="display: flex; flex-direction: row; gap: 1rem; margin-top: 1rem"
+    >
       <drr-numeric-input
         style="width: 25vw"
         [label]="t('area')"
@@ -26,7 +30,9 @@
         [options]="unitOptions"
       ></drr-select>
     </div>
+  </div>
 
+  <div style="width: 50%">
     <h3>{{ t("relatedHazards") }}</h3>
 
     <drr-select
@@ -46,32 +52,39 @@
       [rxFormControl]="projectAreaForm.get('otherHazardsDescription')"
       [maxlength]="100"
     ></drr-input>
+  </div>
 
+  <div>
     <h3>{{ t("areaDescription") }}</h3>
     <drr-textarea
       [label]="t('areaDescriptionText')"
       [rxFormControl]="projectAreaForm.get('areaDescription')"
       [maxlength]="2000"
     ></drr-textarea>
+  </div>
 
+  <div>
     <h3>{{ t("communityImpact") }}</h3>
     <drr-textarea
       [label]="t('communityImpactText')"
       [rxFormControl]="projectAreaForm.get('communityImpact')"
       [maxlength]="2000"
     ></drr-textarea>
+  </div>
 
+  <div style="width: 50%">
     <h3>{{ t("estimatedPeopleImpacted") }}</h3>
     <mat-label style="margin-bottom: 1rem">{{
       t("estimatedPeopleImpactedText")
     }}</mat-label>
     <drr-select
-      class="drr-single-input"
       [label]="t('estimatedPeopleImpacted')"
       [rxFormControl]="projectAreaForm.get('estimatedPeopleImpactedFP')"
       [options]="estimatedPeopleImpactedOptions"
     ></drr-select>
+  </div>
 
+  <div>
     <h3>{{ t("infrastructureImpacted") }}</h3>
     <drr-radio-button
       [label]="t('isInfrastructureImpacted')"
@@ -123,5 +136,5 @@
         {{ t("addInfrastructure") }}
       </button>
     </div>
-  </form>
+  </div>
 </div>
