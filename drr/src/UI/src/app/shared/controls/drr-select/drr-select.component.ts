@@ -26,25 +26,27 @@ export interface DrrSelectOption {
     TranslocoModule,
   ],
   template: `
-    <mat-label [class]="hasRequiredError() ? 'drr-label--error' : ''"
-      >{{ label }}{{ getMandatoryMark() }}</mat-label
-    >
-    <mat-form-field *transloco="let t" class="drr-select">
-      <mat-select
-        id="{{ id }}"
-        required="{{ isRequired() }}"
-        [formControl]="rxFormControl"
-        multiple="{{ isMultiple }}"
-        (selectionChange)="onSelectionChange($event)"
+    <div class="drr-input-container">
+      <mat-label [class]="hasRequiredError() ? 'drr-label--error' : ''"
+        >{{ label }}{{ getMandatoryMark() }}</mat-label
       >
-        @for (option of options; track option.value) {
-          <mat-option [value]="option.value">{{ option.label }}</mat-option>
-        }
-      </mat-select>
-      <mat-error *ngIf="rxFormControl.hasError('required')">
-        Selection is required
-      </mat-error>
-    </mat-form-field>
+      <mat-form-field *transloco="let t" class="drr-select">
+        <mat-select
+          id="{{ id }}"
+          required="{{ isRequired() }}"
+          [formControl]="rxFormControl"
+          multiple="{{ isMultiple }}"
+          (selectionChange)="onSelectionChange($event)"
+        >
+          @for (option of options; track option.value) {
+            <mat-option [value]="option.value">{{ option.label }}</mat-option>
+          }
+        </mat-select>
+        <mat-error *ngIf="rxFormControl.hasError('required')">
+          Selection is required
+        </mat-error>
+      </mat-form-field>
+    </div>
   `,
   styles: [
     `
@@ -104,8 +106,9 @@ export class DrrSelectComponent {
   hasRequiredError(): boolean {
     return (
       this.rxFormControl.hasError('required') &&
-      !this.rxFormControl.disabled &&
-      (this.rxFormControl.touched || this.rxFormControl.invalid)
+      this.rxFormControl.touched &&
+      this.rxFormControl.invalid &&
+      !this.rxFormControl.disabled
     );
   }
 }

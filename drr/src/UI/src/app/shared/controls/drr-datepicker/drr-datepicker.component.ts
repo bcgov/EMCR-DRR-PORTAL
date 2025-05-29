@@ -23,38 +23,40 @@ import { RxFormBuilder, RxFormControl } from '@rxweb/reactive-form-validators';
     TranslocoModule,
   ],
   template: `
-    <mat-label [class]="hasRequiredError() ? 'drr-label--error' : ''"
-      >{{ label }}{{ getMandatoryMark() }}</mat-label
-    >
-    <mat-form-field class="drr-datepicker" *transloco="let t">
-      <input
-        [id]="id"
-        required="{{ isRequired() }}"
-        matInput
-        [matDatepicker]="date_picker"
-        [formControl]="rxFormControl"
-        [min]="min"
-        [max]="max"
-      />
-      <mat-hint>YYYY-MM-DD</mat-hint>
-      <mat-error *ngIf="rxFormControl.hasError('matDatepickerMin')">{{
-        minErrorLabel
-      }}</mat-error>
-      <mat-error *ngIf="rxFormControl.hasError('matDatepickerMax')">{{
-        maxErrorLabel
-      }}</mat-error>
-      <mat-error *ngIf="rxFormControl.hasError('required')">
-        Date is required
-      </mat-error>
-      <mat-error *ngIf="rxFormControl.hasError('matDatepickerParse')">{{
-        t('matDatepickerParseError')
-      }}</mat-error>
-      <mat-datepicker-toggle
-        matIconSuffix
-        [for]="date_picker"
-      ></mat-datepicker-toggle>
-      <mat-datepicker #date_picker></mat-datepicker>
-    </mat-form-field>
+    <div class="drr-input-container">
+      <mat-label [class]="hasRequiredError() ? 'drr-label--error' : ''"
+        >{{ label }}{{ getMandatoryMark() }}</mat-label
+      >
+      <mat-form-field class="drr-datepicker" *transloco="let t">
+        <input
+          [id]="id"
+          required="{{ isRequired() }}"
+          matInput
+          [matDatepicker]="date_picker"
+          [formControl]="rxFormControl"
+          [min]="min"
+          [max]="max"
+        />
+        <mat-hint>YYYY-MM-DD</mat-hint>
+        <mat-error *ngIf="rxFormControl.hasError('matDatepickerMin')">{{
+          minErrorLabel
+        }}</mat-error>
+        <mat-error *ngIf="rxFormControl.hasError('matDatepickerMax')">{{
+          maxErrorLabel
+        }}</mat-error>
+        <mat-error *ngIf="rxFormControl.hasError('required')">
+          Date is required
+        </mat-error>
+        <mat-error *ngIf="rxFormControl.hasError('matDatepickerParse')">{{
+          t('matDatepickerParseError')
+        }}</mat-error>
+        <mat-datepicker-toggle
+          matIconSuffix
+          [for]="date_picker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #date_picker></mat-datepicker>
+      </mat-form-field>
+    </div>
   `,
   styles: [
     `
@@ -128,8 +130,9 @@ export class DrrDatepickerComponent {
   hasRequiredError(): boolean {
     return (
       this.rxFormControl.hasError('required') &&
-      !this.rxFormControl.disabled &&
-      (this.rxFormControl.touched || this.rxFormControl.invalid)
+      this.rxFormControl.touched &&
+      this.rxFormControl.invalid &&
+      !this.rxFormControl.disabled
     );
   }
 }

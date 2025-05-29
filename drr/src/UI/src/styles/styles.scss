@@ -287,6 +287,12 @@ h6 {
   margin-top: 20px;
 }
 
+.drr-input-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
 .drr-single-input {
   width: 50vw;
   margin-top: 8px;

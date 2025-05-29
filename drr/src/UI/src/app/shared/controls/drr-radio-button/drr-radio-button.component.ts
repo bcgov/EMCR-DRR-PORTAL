@@ -25,7 +25,7 @@ export class DrrRadioOption {
     TranslocoModule,
   ],
   template: `
-    <ng-container *transloco="let t">
+    <div class="drr-input-container" *transloco="let t">
       <div class="drr-radio-button">
         <mat-label
           *ngIf="label"
@@ -49,7 +49,7 @@ export class DrrRadioOption {
           }
         </mat-radio-group>
       </div>
-    </ng-container>
+    </div>
   `,
   styles: [``],
 })
@@ -89,8 +89,9 @@ export class DrrRadioButtonComponent {
   hasRequiredError(): boolean {
     return (
       this.rxFormControl.hasError('required') &&
-      !this.rxFormControl.disabled &&
-      (this.rxFormControl.touched || this.rxFormControl.invalid)
+      this.rxFormControl.touched &&
+      this.rxFormControl.invalid &&
+      !this.rxFormControl.disabled
     );
   }
 }

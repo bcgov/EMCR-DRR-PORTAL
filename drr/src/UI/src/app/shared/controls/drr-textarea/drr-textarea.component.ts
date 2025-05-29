@@ -17,25 +17,27 @@ import { RxFormBuilder, RxFormControl } from '@rxweb/reactive-form-validators';
 @Component({
   selector: 'drr-textarea',
   template: `
-    <mat-label [class]="hasRequiredError() ? 'drr-label--error' : ''"
-      >{{ label }}{{ getMandatoryMark() }}</mat-label
-    >
-    <mat-form-field class="drr-textarea">
-      <textarea
-        #textareaInput
-        id="{{ id }}"
-        matInput
-        [formControl]="rxFormControl"
-        [maxlength]="maxlength"
-        [rows]="rows"
-      ></textarea>
-      <mat-hint *ngIf="maxlength" align="end"
-        >{{ getCount() }} / {{ maxlength }}</mat-hint
+    <div class="drr-input-container">
+      <mat-label [class]="hasRequiredError() ? 'drr-label--error' : ''"
+        >{{ label }}{{ getMandatoryMark() }}</mat-label
       >
-      <mat-error *ngIf="rxFormControl.hasError('required')">
-        Field is required
-      </mat-error>
-    </mat-form-field>
+      <mat-form-field class="drr-textarea">
+        <textarea
+          #textareaInput
+          id="{{ id }}"
+          matInput
+          [formControl]="rxFormControl"
+          [maxlength]="maxlength"
+          [rows]="rows"
+        ></textarea>
+        <mat-hint *ngIf="maxlength" align="end"
+          >{{ getCount() }} / {{ maxlength }}</mat-hint
+        >
+        <mat-error *ngIf="rxFormControl.hasError('required')">
+          Field is required
+        </mat-error>
+      </mat-form-field>
+    </div>
   `,
   styles: [
     `
@@ -132,8 +134,9 @@ export class DrrTextareaComponent {
   hasRequiredError(): boolean {
     return (
       this.rxFormControl.hasError('required') &&
-      !this.rxFormControl.disabled &&
-      (this.rxFormControl.touched || this.rxFormControl.invalid)
+      this.rxFormControl.touched &&
+      this.rxFormControl.invalid &&
+      !this.rxFormControl.disabled
     );
   }
 }

@@ -36,7 +36,7 @@ import { map, Observable, startWith } from 'rxjs';
     AsyncPipe,
   ],
   template: `
-    <ng-container>
+    <div class="drr-input-container">
       <mat-label [class]="hasRequiredError() ? 'drr-label--error' : ''"
         >{{ label }}{{ getMandatoryMark() }}</mat-label
       >
@@ -83,7 +83,7 @@ import { map, Observable, startWith } from 'rxjs';
           Field is required
         </mat-error>
       </mat-form-field>
-    </ng-container>
+    </div>
   `,
   styles: [
     `
@@ -236,8 +236,9 @@ export class DrrChipAutocompleteComponent {
   hasRequiredError(): boolean {
     return (
       this.rxFormControl.hasError('required') &&
-      !this.rxFormControl.disabled &&
-      (this.rxFormControl.touched || this.rxFormControl.invalid)
+      this.rxFormControl.touched &&
+      this.rxFormControl.invalid &&
+      !this.rxFormControl.disabled
     );
   }
 }
