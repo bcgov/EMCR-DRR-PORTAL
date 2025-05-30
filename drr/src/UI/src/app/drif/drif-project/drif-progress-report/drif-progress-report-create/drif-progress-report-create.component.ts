@@ -267,10 +267,7 @@ export class DrifProgressReportCreateComponent {
     }),
   );
 
-  projectProgressOptions = Object.keys(ProjectProgressStatus).map((key) => ({
-    label: this.translocoService.translate(`projectProgress.${key}`),
-    value: key,
-  }));
+  projectProgressOptions: DrrSelectOption[] = [];
 
   delayReasonOptions: DrrSelectOption[] = Object.values(Delay).map((value) => ({
     label: this.translocoService.translate(`delayReason.${value}`),
@@ -336,6 +333,17 @@ export class DrifProgressReportCreateComponent {
       this.projectId = params['projectId'];
       this.reportId = params['reportId'];
       this.progressReportId = params['progressReportId'];
+
+      this.translocoService
+        .selectTranslateObject('projectProgress')
+        .subscribe((translations) => {
+          this.projectProgressOptions = Object.keys(ProjectProgressStatus).map(
+            (key) => ({
+              label: translations[`${key}`] || key,
+              value: key,
+            }),
+          );
+        });
 
       this.authorizedRepresentativeText = this.optionsStore.getDeclarations?.(
         DeclarationType.AuthorizedRepresentative,
