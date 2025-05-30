@@ -56,7 +56,7 @@
       <mat-step
         [label]="t('steps.fp.step1')"
         [stepControl]="getFormGroup('proponentAndProjectInformation')"
-        [errorMessage]="t('stepError')"
+        [errorMessage]="'stepError' | transloco"        
       >
         <drif-fp-step-1
           [proponentAndProjectInformationForm]="
@@ -79,7 +79,7 @@
       <mat-step
         [label]="t('steps.fp.step2')"
         [stepControl]="getFormGroup('ownershipAndAuthorization')"
-        [errorMessage]="t('stepError')"
+        [errorMessage]="'stepError' | transloco"
       >
         <drif-fp-step-2
           [ownershipAndAuthorizationForm]="
@@ -105,7 +105,7 @@
       <mat-step
         [label]="t('steps.fp.step3')"
         [stepControl]="getFormGroup('projectArea')"
-        [errorMessage]="t('stepError')"
+        [errorMessage]="'stepError' | transloco"
       >
         <drif-fp-step-3
           [projectAreaForm]="getFormGroup('projectArea')"
@@ -129,7 +129,7 @@
       <mat-step
         [label]="t('steps.fp.step4')"
         [stepControl]="getFormGroup('projectPlan')"
-        [errorMessage]="t('stepError')"
+        [errorMessage]="'stepError' | transloco"
       >
         <drif-fp-step-4
           [projectPlanForm]="getFormGroup('projectPlan')"
@@ -154,7 +154,7 @@
       <mat-step
         [label]="t('steps.fp.step5')"
         [stepControl]="getFormGroup('projectEngagement')"
-        [errorMessage]="t('stepError')"
+        [errorMessage]="'stepError' | transloco"
       >
         <drif-fp-step-5
           [projectEngagementForm]="getFormGroup('projectEngagement')"
@@ -178,7 +178,7 @@
       <mat-step
         [label]="t('steps.fp.step6')"
         [stepControl]="getFormGroup('climateAdaptation')"
-        [errorMessage]="t('stepError')"
+        [errorMessage]="'stepError' | transloco"
       >
         <drif-fp-step-6
           [climateAdaptationForm]="getFormGroup('climateAdaptation')"
@@ -202,7 +202,7 @@
       <mat-step
         [label]="t('steps.fp.step7')"
         [stepControl]="getFormGroup('permitsRegulationsAndStandards')"
-        [errorMessage]="t('stepError')"
+        [errorMessage]="'stepError' | transloco"
       >
         <drif-fp-step-7
           [permitsRegulationsAndStandardsForm]="
@@ -228,7 +228,7 @@
       <mat-step
         [label]="t('steps.fp.step8')"
         [stepControl]="getFormGroup('projectOutcomes')"
-        [errorMessage]="t('stepError')"
+        [errorMessage]="'stepError' | transloco"
       >
         <drif-fp-step-8
           [projectOutcomesForm]="getFormGroup('projectOutcomes')"
@@ -252,7 +252,7 @@
       <mat-step
         [label]="t('steps.fp.step9')"
         [stepControl]="getFormGroup('projectRisks')"
-        [errorMessage]="t('stepError')"
+        [errorMessage]="'stepError' | transloco"
       >
         <drif-fp-step-9
           [projectRisksForm]="getFormGroup('projectRisks')"
@@ -301,7 +301,7 @@
       <mat-step
         [label]="t('steps.fp.step11')"
         [stepControl]="getFormGroup('attachments')"
-        [errorMessage]="t('stepError')"
+        [errorMessage]="'stepError' | transloco"
       >
         <drif-fp-step-11
           [attachmentsForm]="getFormGroup('attachments')"
@@ -326,7 +326,7 @@
       <mat-step
         [label]="t('steps.fp.step12')"
         [stepControl]="getFormGroup('declaration')"
-        [errorMessage]="t('stepError')"
+        [errorMessage]="'stepError' | transloco"
       >
         <drif-fp-step-12
           [fullProposalForm]="fullProposalForm"

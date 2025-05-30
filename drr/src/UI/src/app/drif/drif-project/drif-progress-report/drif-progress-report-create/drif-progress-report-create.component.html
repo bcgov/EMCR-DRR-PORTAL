@@ -83,7 +83,7 @@
       <mat-step
         [label]="t('projectWorkplan')"
         [stepControl]="workplanForm"
-        [errorMessage]="t('stepError')"
+        [errorMessage]="'stepError' | transloco"
       >
         <div class="drr-step-container">
           <div>
@@ -675,7 +675,7 @@
       <mat-step
         [label]="t('eventInformation')"
         [stepControl]="eventInformationForm"
-        [errorMessage]="t('stepError')"
+        [errorMessage]="'stepError' | transloco"
       >
         <div class="drr-step-container">
           <div>
@@ -885,7 +885,7 @@
       <mat-step
         label="Attachments"
         [stepControl]="progressReportForm.get('attachments')!"
-        [errorMessage]="t('stepError')"
+        [errorMessage]="'stepError' | transloco"
       >
         <div class="attachments-container">
           <drr-attachment
@@ -932,7 +932,7 @@
       <mat-step
         label="Review & Declaration"
         [stepControl]="progressReportForm.get('declaration')!"
-        [errorMessage]="t('stepError')"
+        [errorMessage]="'stepError' | transloco"
       >
         <div>
           <drif-progress-report-summary
