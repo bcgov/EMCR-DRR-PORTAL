@@ -1,20 +1,24 @@
 <div class="drr-step-container" *transloco="let t">
-  <form [formGroup]="projectInformationForm">
-    <h3>{{ t("fundingStream") }}*</h3>
+  <div>
+    <h3>{{ t("fundingStream") }}</h3>
     <drr-radio-button
+      [label]="t('fundingStream')"
       [rxFormControl]="projectInformationForm.get('fundingStream')"
       [options]="fundingStreamOptions"
     ></drr-radio-button>
+  </div>
 
+  <div style="width: 50%">
     <h3>{{ t("projectTitle") }}</h3>
     <drr-input
-      class="drr-single-input"
       [id]="'projectTitle'"
       [label]="t('projectTitle')"
       [rxFormControl]="projectInformationForm.get('projectTitle')"
       [maxlength]="100"
     ></drr-input>
+  </div>
 
+  <div style="width: 50%">
     <h3>{{ t("scopeStatement") }}</h3>
     <drr-input
       class="drr-single-input"
@@ -23,15 +27,19 @@
       [rxFormControl]="projectInformationForm.get('scopeStatement')"
       [maxlength]="100"
     ></drr-input>
+  </div>
 
-    <h3>{{ t("stream") }}*</h3>
+  <div>
+    <h3>{{ t("stream") }}</h3>
     <drr-radio-button
+      [label]="t('stream')"
       [rxFormControl]="projectInformationForm.get('stream')"
       [options]="streamOptions"
     ></drr-radio-button>
+  </div>
 
-    <h3>{{ t("relatedHazards") }}</h3>
-
+  <div style="width: 50%">
+    <h3>{{ t("relatedHazardsSummary") }}</h3>
     <drr-select
       class="drr-single-input"
       [id]="'relatedHazards'"
@@ -49,7 +57,9 @@
       [rxFormControl]="projectInformationForm.get('otherHazardsDescription')"
       [maxlength]="100"
     ></drr-input>
+  </div>
 
+  <div>
     <h3>{{ t("projectDates") }}</h3>
     <div class="project-dates-container">
       <drr-datepicker
@@ -68,5 +78,5 @@
         [minErrorLabel]="t('minEndDateAfterError')"
       ></drr-datepicker>
     </div>
-  </form>
+  </div>
 </div>

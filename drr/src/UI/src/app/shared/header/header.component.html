@@ -17,7 +17,12 @@
         <p style="color: white">
           {{ profileStore.organization() }}
         </p>
-        <button style="margin-left: 1rem" mat-raised-button (click)="signOut()">
+        <button
+          style="margin-left: 1rem; background-color: white; color: black"
+          mat-stroked-button
+          color="primary"
+          (click)="signOut()"
+        >
           Sign out
         </button>
       </ng-container>

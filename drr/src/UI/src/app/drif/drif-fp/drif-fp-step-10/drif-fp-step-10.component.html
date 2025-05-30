@@ -1,5 +1,5 @@
 <div class="drr-step-container" *transloco="let t">
-  <form [formGroup]="budgetForm">
+  <div>
     <h3>Project Financial Details</h3>
     <p>
       In this section you will review the project's financial details and
@@ -15,8 +15,10 @@
       your project or more precise cost estimates, and may require updating. If
       updates are made, you will be asked to explain what has changed and why.
     </p>
+  </div>
 
-    <h3 style="margin-top: 2rem">Total Project Cost</h3>
+  <div style="display: flex; flex-direction: column">
+    <h3>Total Project Cost</h3>
     <p>
       Below is the estimated total cost of your project based on the information
       you provided in your Expression of Interest. The total costs for your
@@ -26,7 +28,7 @@
     </p>
     <mat-label>Based on your EOI, your Total Project Cost is:</mat-label>
     <drr-currency-input
-      style="align-self: flex-start; margin-top: 1rem; width: 25rem"
+      style="margin-top: 1rem; width: 25rem"
       [label]="t('totalProjectCost')"
       [rxFormControl]="budgetForm.get('totalProjectCost')"
       [disabled]="true"
@@ -41,8 +43,10 @@
         [rxFormControl]="budgetForm.get('totalProjectCostChangeComments')"
       ></drr-textarea>
     }
+  </div>
 
-    <h3 style="margin-top: 2rem">DRIF Program Funding Amount</h3>
+  <div>
+    <h3>DRIF Program Funding Amount</h3>
     <p>Based on your EOI, your eligible DRIF program funding amount is:</p>
     <drr-currency-input
       style="align-self: flex-start; margin-top: 1rem; width: 25rem"
@@ -50,9 +54,11 @@
       [rxFormControl]="budgetForm.get('eligibleFundingRequest')"
       [disabled]="true"
     ></drr-currency-input>
+  </div>
 
-    @if (isStrucutralProject()) {
-      <h3 style="margin-top: 2rem">Cost Estimate Class</h3>
+  @if (isStrucutralProject()) {
+    <div>
+      <h3>Cost Estimate Class</h3>
       <p>
         At this stage, your project should have a class A or B cost estimate.
         Set your contingency based on this. See the section below for more
@@ -99,9 +105,11 @@
         [rxFormControl]="budgetForm.get('costEstimateClass')"
         [options]="costEstimateClassOptions"
       ></drr-radio-button>
-    }
+    </div>
+  }
 
-    <h3 style="margin-top: 2rem">Detailed Cost Estimates</h3>
+  <div>
+    <h3>Detailed Cost Estimates</h3>
     <p>
       Use the section below to provide a detailed breakdown of how the DRIF
       program funding amount (above) will be allocated to the eligible cost
@@ -217,8 +225,10 @@
         Add Additional Task
       </button>
     </div>
+  </div>
 
-    <h3 style="margin-top: 2rem">Total Detailed Cost Estimate</h3>
+  <div>
+    <h3>Total Detailed Cost Estimate</h3>
     <drr-currency-input
       style="align-self: flex-start; margin-top: 1rem"
       [label]="t('totalEligibleCosts')"
@@ -256,8 +266,10 @@
         [rxFormControl]="budgetForm.get('contingencyComments')"
       ></drr-textarea>
     }
+  </div>
 
-    <h3 style="margin-top: 2rem">Updated Funding Request</h3>
+  <div>
+    <h3>Updated Funding Request</h3>
     <p>
       Based on your Total Detailed Cost Estimate, your updated DRIF program
       funding request is:
@@ -295,8 +307,10 @@
         [rxFormControl]="budgetForm.get('discrepancyComment')"
       ></drr-textarea>
     </div>
+  </div>
 
-    <h3 style="margin-top: 2rem">Financial Forecasting</h3>
+  <div>
+    <h3>Financial Forecasting</h3>
     <p>
       Use the fields below to provide a year-over-year forecast of your Total
       Detailed Cost Estimate. Ensure that these numbers align with your Total
@@ -340,28 +354,30 @@
         {{ t("addYear") }}
       </button>
     </div>
+  </div>
 
-    <drr-currency-input
-      style="margin-top: 2rem"
-      [label]="t('totalDrifFundingRequest')"
-      [rxFormControl]="budgetForm.get('totalDrifFundingRequest')"
-      [disabled]="true"
-    ></drr-currency-input>
+  <drr-currency-input
+    style="margin-top: 2rem"
+    [label]="t('totalDrifFundingRequest')"
+    [rxFormControl]="budgetForm.get('totalDrifFundingRequest')"
+    [disabled]="true"
+  ></drr-currency-input>
 
-    @if (showForecastingDiscrepancy()) {
-      <p style="color: red; display: flex; align-items: center; gap: 1rem">
-        <mat-icon>error</mat-icon>
-        <i>
-          Your Total Forecast amount differs from the Total Detailed Cost
-          Estimate. Please adjust your Financial Forecast numbers to match.
-        </i>
-      </p>
-    }
+  @if (showForecastingDiscrepancy()) {
+    <p style="color: red; display: flex; align-items: center; gap: 1rem">
+      <mat-icon>error</mat-icon>
+      <i>
+        Your Total Forecast amount differs from the Total Detailed Cost
+        Estimate. Please adjust your Financial Forecast numbers to match.
+      </i>
+    </p>
+  }
 
-    <h3 style="margin-top: 1rem">{{ t("otherFunding") }}</h3>
+  <div style="display: flex; flex-direction: column">
+    <h3>{{ t("otherFunding") }}</h3>
     <p>Based on above, your updated Total Project Cost is:</p>
     <drr-currency-input
-      style="align-self: flex-start; margin-top: 1rem; width: 25rem"
+      style="align-self: flex-start; width: 25rem"
       [label]="t('totalProjectCost')"
       [rxFormControl]="totalProjectCostCopy"
       [disabled]="true"
@@ -372,7 +388,7 @@
       is:
     </p>
     <drr-currency-input
-      style="align-self: flex-start; margin-top: 1rem; width: 25rem"
+      style="align-self: flex-start; width: 25rem"
       [label]="t('totalEligibleCosts')"
       [rxFormControl]="budgetForm.get('totalEligibleCosts')"
       [disabled]="true"
@@ -383,7 +399,7 @@
       funding request has increased):
     </p>
     <drr-currency-input
-      style="align-self: flex-start; margin-top: 1rem; width: 25rem"
+      style="align-self: flex-start; width: 25rem"
       [label]="getEstimatedUnfundedAmountLabel()"
       [rxFormControl]="budgetForm.get('estimatedUnfundedAmountAbs')"
       [disabled]="true"
@@ -440,9 +456,9 @@
       [maxlength]="2000"
       [rxFormControl]="budgetForm.get('intendToSecureFunding')"
     ></drr-textarea>
+  </div>
 
-    <mat-divider style="margin: 2rem 0"></mat-divider>
-
+  <div>
     <h3>{{ t("costConsiderations") }}</h3>
     <drr-radio-button
       [label]="t('costConsiderationsApplied')"
@@ -460,14 +476,18 @@
       [rxFormControl]="budgetForm.get('costConsiderationsComments')"
       [maxlength]="2000"
     ></drr-textarea>
+  </div>
 
-    <h3 style="margin-top: 1rem">{{ t("costEffective") }}</h3>
+  <div>
+    <h3>{{ t("costEffective") }}</h3>
     <drr-textarea
       [label]="t('costEffectiveComments')"
       [rxFormControl]="budgetForm.get('costEffectiveComments')"
       [maxlength]="2000"
     ></drr-textarea>
+  </div>
 
+  <div>
     <h3>{{ t("previousResponse") }}</h3>
     <drr-radio-button
       [label]="t('previousResponseQuestion')"
@@ -488,5 +508,5 @@
       [rxFormControl]="budgetForm.get('previousResponseComments')"
       [maxlength]="2000"
     ></drr-textarea>
-  </form>
+  </div>
 </div>

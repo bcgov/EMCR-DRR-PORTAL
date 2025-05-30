@@ -22,36 +22,40 @@ export type InputType = 'text' | 'tel' | 'email';
 @Component({
   selector: 'drr-input',
   template: `
-    <mat-label *ngIf="isMobile">{{ label }}{{ getMandatoryMark() }}</mat-label>
-    <mat-form-field class="drr-input" *transloco="let t">
-      <mat-label *ngIf="!isMobile">{{ label }}</mat-label>
-      <input
-        id="{{ id }}"
-        #drrInput
-        matInput
-        [formControl]="rxFormControl"
-        [maxlength]="getMaxLength"
-        required="{{ isRequired() }}"
-        [type]="type"
-        (focus)="onFocus()"
-        (blur)="onBlur()"
-        [mask]="getMask()"
-        [decimalMarker]="'.'"
-        [thousandSeparator]="''"
-      />
-      <mat-hint *ngIf="isEmail() && !rxFormControl.value" align="start">{{
-        t('emailExample')
-      }}</mat-hint>
-      <mat-hint *ngIf="maxlength && isFocused" align="end"
-        >{{ getCount() }} / {{ maxlength }}</mat-hint
+    <div class="drr-input-container">
+      <mat-label [class]="hasRequiredError() ? 'drr-label--error' : ''"
+        >{{ label }}{{ getMandatoryMark() }}</mat-label
       >
-      <mat-error *ngIf="rxFormControl.hasError('email')">{{
-        t('emailError')
-      }}</mat-error>
-      <mat-error *ngIf="rxFormControl.hasError('required')">
-        Field is required
-      </mat-error>
-    </mat-form-field>
+      <mat-form-field class="drr-input" *transloco="let t">
+        <!-- <mat-label *ngIf="!isMobile">{{ label }}</mat-label> -->
+        <input
+          id="{{ id }}"
+          #drrInput
+          matInput
+          [formControl]="rxFormControl"
+          [maxlength]="getMaxLength"
+          required="{{ isRequired() }}"
+          [type]="type"
+          (focus)="onFocus()"
+          (blur)="onBlur()"
+          [mask]="getMask()"
+          [decimalMarker]="'.'"
+          [thousandSeparator]="''"
+        />
+        <mat-hint *ngIf="isEmail() && !rxFormControl.value" align="start">{{
+          t('emailExample')
+        }}</mat-hint>
+        <mat-hint *ngIf="maxlength && isFocused" align="end"
+          >{{ getCount() }} / {{ maxlength }}</mat-hint
+        >
+        <mat-error *ngIf="rxFormControl.hasError('email')">{{
+          t('emailError')
+        }}</mat-error>
+        <mat-error *ngIf="rxFormControl.hasError('required')">
+          Field is required
+        </mat-error>
+      </mat-form-field>
+    </div>
   `,
   styles: [
     `
@@ -201,5 +205,14 @@ export class DrrInputComponent {
     if (inputElement) {
       inputElement.focus();
     }
+  }
+
+  hasRequiredError(): boolean {
+    return (
+      this.rxFormControl.hasError('required') &&
+      this.rxFormControl.touched &&
+      this.rxFormControl.invalid &&
+      !this.rxFormControl.disabled
+    );
   }
 }

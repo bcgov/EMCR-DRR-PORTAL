@@ -38,54 +38,57 @@ import { NgxMaskDirective } from 'ngx-mask';
     MatIconModule,
   ],
   providers: [CurrencyPipe],
-  template: `<mat-label *ngIf="isMobile"
-      >{{ label }}{{ getMandatoryMark() }}</mat-label
-    >
-    <mat-form-field class="drr-currency-input" *transloco="let t">
-      <mat-label *ngIf="!isMobile && label">{{ label }}</mat-label>
-      <input
-        id="{{ id }}"
-        #currencyInput
-        matInput
-        [formControl]="rxFormControl"
-        required="{{ isRequired() }}"
-        [min]="min"
-        [max]="max"
-        (focus)="onFocus()"
-        (blur)="onBlur()"
-        [mask]="'separator.2'"
-        [decimalMarker]="'.'"
-        [thousandSeparator]="','"
-        [allowNegativeNumbers]="allowNegativeNumbers"
-      />
-      @if (rxFormControl.disabled && allowEnabling) {
-        <button
-          style="margin-right: 0.5rem"
-          matSuffix
-          mat-icon-button
-          aria-label="edit"
-          (click)="enableInput()"
-        >
-          <mat-icon>edit</mat-icon>
-        </button>
-      }
-      <span matTextPrefix>$&nbsp;</span>
-      <mat-hint *ngIf="max && isFocused" align="end"
-        >Max: {{ max | currency: '' : 'symbol' : '1.0-0' }}</mat-hint
+  template: `
+    <div class="drr-input-container">
+      <mat-label [class]="hasRequiredError() ? 'drr-label--error' : ''"
+        >{{ label }}{{ getMandatoryMark() }}</mat-label
       >
-      <mat-error *ngIf="rxFormControl.hasError('max')">{{
-        maxValueCustomErrorMessage
-      }}</mat-error>
-      <mat-error *ngIf="rxFormControl.hasError('minNumber')">{{
-        t('minValueError', { min: min | currency: '' : 'symbol' : '1.0-0' })
-      }}</mat-error>
-      <mat-error *ngIf="rxFormControl.hasError('required')">
-        Field is required
-      </mat-error>
-      <mat-hint *ngIf="hasMaxValueError()" class="max-number-error">
-        {{ maxValueCustomErrorMessage }}
-      </mat-hint>
-    </mat-form-field> `,
+      <mat-form-field class="drr-currency-input" *transloco="let t">
+        <input
+          id="{{ id }}"
+          #currencyInput
+          matInput
+          [formControl]="rxFormControl"
+          required="{{ isRequired() }}"
+          [min]="min"
+          [max]="max"
+          (focus)="onFocus()"
+          (blur)="onBlur()"
+          [mask]="'separator.2'"
+          [decimalMarker]="'.'"
+          [thousandSeparator]="','"
+          [allowNegativeNumbers]="allowNegativeNumbers"
+        />
+        @if (rxFormControl.disabled && allowEnabling) {
+          <button
+            style="margin-right: 0.5rem"
+            matSuffix
+            mat-icon-button
+            aria-label="edit"
+            (click)="enableInput()"
+          >
+            <mat-icon>edit</mat-icon>
+          </button>
+        }
+        <span matTextPrefix>$&nbsp;</span>
+        <mat-hint *ngIf="max && isFocused" align="end"
+          >Max: {{ max | currency: '' : 'symbol' : '1.0-0' }}</mat-hint
+        >
+        <mat-error *ngIf="rxFormControl.hasError('max')">{{
+          maxValueCustomErrorMessage
+        }}</mat-error>
+        <mat-error *ngIf="rxFormControl.hasError('minNumber')">{{
+          t('minValueError', { min: min | currency: '' : 'symbol' : '1.0-0' })
+        }}</mat-error>
+        <mat-error *ngIf="rxFormControl.hasError('required')">
+          Field is required
+        </mat-error>
+        <mat-hint *ngIf="hasMaxValueError()" class="max-number-error">
+          {{ maxValueCustomErrorMessage }}
+        </mat-hint>
+      </mat-form-field>
+    </div>
+  `,
   styles: `
     .drr-currency-input {
       width: 100%;
@@ -287,5 +290,14 @@ export class DrrCurrencyInputComponent {
     if (inputElement) {
       inputElement.focus();
     }
+  }
+
+  hasRequiredError(): boolean {
+    return (
+      this.rxFormControl.hasError('required') &&
+      this.rxFormControl.touched &&
+      this.rxFormControl.invalid &&
+      !this.rxFormControl.disabled
+    );
   }
 }

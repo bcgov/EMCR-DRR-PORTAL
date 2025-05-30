@@ -1,8 +1,8 @@
 <div class="drr-step-container" *transloco="let t">
-  <form [formGroup]="permitsRegulationsAndStandardsForm">
+  <div>
     <h3>{{ t("standardsAcceptable") }}</h3>
-    <mat-label>{{ t("standardsAcceptableQuestion") }}*</mat-label>
     <drr-radio-button
+      [label]="t('standardsAcceptableQuestion')"
       [options]="standardsAcceptableOptions"
       [rxFormControl]="
         permitsRegulationsAndStandardsForm.get('standardsAcceptable')
@@ -17,25 +17,30 @@
         t("standardsAcceptableError")
       }}</mat-error>
 
-      <div formArrayName="standards">
-        <div
-          *ngFor="let control of getStandardsInfoArrayControls(); let i = index"
-          [formGroupName]="i"
-        >
-          <mat-checkbox
-            style="margin-bottom: 1rem"
-            formControlName="isCategorySelected"
-            >{{ control.value.category }}</mat-checkbox
+      <form [formGroup]="permitsRegulationsAndStandardsForm">
+        <div formArrayName="standards">
+          <div
+            *ngFor="
+              let control of getStandardsInfoArrayControls();
+              let i = index
+            "
+            [formGroupName]="i"
           >
+            <mat-checkbox
+              style="margin-bottom: 1rem"
+              formControlName="isCategorySelected"
+              >{{ control.value.category }}</mat-checkbox
+            >
 
-          <drr-chip-autocomplete
-            [label]="control.value.category + ' standards'"
-            [placeholder]="t('autocompletePlaceholder')"
-            [options]="getStandardsOptions(control.value.category)"
-            [rxFormControl]="control.get('standards')"
-          ></drr-chip-autocomplete>
+            <drr-chip-autocomplete
+              [label]="control.value.category + ' standards'"
+              [placeholder]="t('autocompletePlaceholder')"
+              [options]="getStandardsOptions(control.value.category)"
+              [rxFormControl]="control.get('standards')"
+            ></drr-chip-autocomplete>
+          </div>
         </div>
-      </div>
+      </form>
     }
 
     <drr-textarea
@@ -45,10 +50,12 @@
         permitsRegulationsAndStandardsForm.get('standardsComments')
       "
     ></drr-textarea>
+  </div>
 
+  <div>
     <h3>{{ t("professionalGuidance") }}</h3>
-    <mat-label>{{ t("professionalGuidanceQuestion") }}*</mat-label>
     <drr-radio-button
+      [label]="t('professionalGuidanceQuestion')"
       [rxFormControl]="
         permitsRegulationsAndStandardsForm.get('professionalGuidance')
       "
@@ -87,10 +94,12 @@
         permitsRegulationsAndStandardsForm.get('knowledgeHolders')
       "
     ></drr-textarea>
+  </div>
 
+  <div>
     <h3>{{ t("regulations") }}</h3>
-    <mat-label>{{ t("meetsRegulatoryRequirements") }}*</mat-label>
     <drr-radio-button
+      [label]="t('meetsRegulatoryRequirements')"
       [rxFormControl]="
         permitsRegulationsAndStandardsForm.get('meetsRegulatoryRequirements')
       "
@@ -102,67 +111,69 @@
         permitsRegulationsAndStandardsForm.get('meetsRegulatoryComments')
       "
     ></drr-textarea>
+  </div>
 
+  <div>
     <h3>{{ t("approvals") }}</h3>
-    <mat-label>{{ t("meetsEligibilityRequirements") }}*</mat-label>
     <drr-radio-button
+      [label]="t('meetsEligibilityRequirements')"
       [rxFormControl]="
         permitsRegulationsAndStandardsForm.get('meetsEligibilityRequirements')
       "
     ></drr-radio-button>
+  </div>
 
+  <div
+    *ngIf="
+      permitsRegulationsAndStandardsForm.get('meetsEligibilityRequirements')
+        ?.value === true
+    "
+  >
+    <h3>{{ t("permits") }}</h3>
     <div
-      *ngIf="
-        permitsRegulationsAndStandardsForm.get('meetsEligibilityRequirements')
-          ?.value === true
-      "
+      class="permit-container"
+      *ngFor="let permit of getPermitsFormArray().controls; let i = index"
     >
-      <h3 style="margin-top: 2rem">{{ t("permits") }}</h3>
-      <div
-        class="permit-container"
-        *ngFor="let permit of getPermitsFormArray().controls; let i = index"
-      >
-        <drr-textarea
-          #permitInput
-          style="width: 95%"
-          [id]="'permit_' + i"
-          [label]="t('permitLabel')"
-          [rxFormControl]="permit.get('value')"
-          [maxlength]="200"
-          [rows]="2"
-        ></drr-textarea>
-        <button
-          style="align-self: center"
-          *ngIf="i > 0"
-          mat-raised-button
-          color="warn"
-          (click)="removePermit(i)"
-        >
-          <mat-icon>delete</mat-icon>
-          {{ t("delete") }}
-        </button>
-      </div>
-
+      <drr-textarea
+        #permitInput
+        style="width: 90%"
+        [id]="'permit_' + i"
+        [label]="t('permitLabel')"
+        [rxFormControl]="permit.get('value')"
+        [maxlength]="200"
+        [rows]="2"
+      ></drr-textarea>
       <button
-        style="margin-top: 1rem"
-        [style.padding]="isMobile ? '24px 16px' : ''"
-        mat-stroked-button
-        type="button"
-        color="primary"
-        (click)="addPermit()"
+        style="align-self: center"
+        *ngIf="i > 0"
+        mat-raised-button
+        color="warn"
+        (click)="removePermit(i)"
       >
-        <mat-icon>add</mat-icon>
-        {{ t("addPermit") }}
+        <mat-icon>delete</mat-icon>
+        {{ t("delete") }}
       </button>
     </div>
 
-    <drr-textarea
+    <button
       style="margin-top: 1rem"
-      [label]="t('meetsEligibilityComments')"
-      [maxlength]="2000"
-      [rxFormControl]="
-        permitsRegulationsAndStandardsForm.get('meetsEligibilityComments')
-      "
-    ></drr-textarea>
-  </form>
+      [style.padding]="isMobile ? '24px 16px' : ''"
+      mat-stroked-button
+      type="button"
+      color="primary"
+      (click)="addPermit()"
+    >
+      <mat-icon>add</mat-icon>
+      {{ t("addPermit") }}
+    </button>
+  </div>
+
+  <drr-textarea
+    style="margin-top: 1rem"
+    [label]="t('meetsEligibilityComments')"
+    [maxlength]="2000"
+    [rxFormControl]="
+      permitsRegulationsAndStandardsForm.get('meetsEligibilityComments')
+    "
+  ></drr-textarea>
 </div>

@@ -1,5 +1,5 @@
 <div class="drr-step-container" *transloco="let t">
-  <form [formGroup]="otherSupportingInformationForm">
+  <div>
     <h3>{{ t("climateAdaptation") }}</h3>
     <drr-textarea
       [id]="'climateAdaptation'"
@@ -8,6 +8,9 @@
       [rxFormControl]="otherSupportingInformationForm.get('climateAdaptation')"
       [rows]="10"
     ></drr-textarea>
+  </div>
+
+  <div>
     <h3>{{ t("otherInformation") }}</h3>
     <drr-textarea
       [id]="'otherInformation'"
@@ -16,5 +19,5 @@
       [rxFormControl]="otherSupportingInformationForm.get('otherInformation')"
       [rows]="10"
     ></drr-textarea>
-  </form>
+  </div>
 </div>

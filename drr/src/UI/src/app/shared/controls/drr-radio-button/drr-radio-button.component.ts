@@ -25,25 +25,31 @@ export class DrrRadioOption {
     TranslocoModule,
   ],
   template: `
-    <ng-container *transloco="let t">
-      <mat-label *ngIf="label">{{ label }}{{ getMandatoryMark() }}</mat-label>
-      <mat-radio-group
-        class="drr-radio-group"
-        aria-label="Select an option"
-        [formControl]="rxFormControl"
-      >
-        <mat-error
-          style="color: #f44336"
-          *ngIf="rxFormControl?.touched && rxFormControl?.hasError('required')"
-          >{{ t('required') }}</mat-error
+    <div class="drr-input-container" *transloco="let t">
+      <div class="drr-radio-button">
+        <mat-label
+          *ngIf="label"
+          [class]="hasRequiredError() ? 'drr-label--error' : ''"
+          >{{ label }}{{ getMandatoryMark() }}</mat-label
         >
-        @for (option of options; track $index) {
-          <mat-radio-button [value]="option.value">{{
-            option.label
-          }}</mat-radio-button>
-        }
-      </mat-radio-group>
-    </ng-container>
+        <mat-error
+          style="color: #f44336; font-size: 12px;"
+          *ngIf="hasRequiredError()"
+          >Selection is required</mat-error
+        >
+        <mat-radio-group
+          class="drr-radio-group"
+          aria-label="Select an option"
+          [formControl]="rxFormControl"
+        >
+          @for (option of options; track $index) {
+            <mat-radio-button [value]="option.value">{{
+              option.label
+            }}</mat-radio-button>
+          }
+        </mat-radio-group>
+      </div>
+    </div>
   `,
   styles: [``],
 })
@@ -78,5 +84,14 @@ export class DrrRadioButtonComponent {
 
   getMandatoryMark() {
     return !!this.rxFormControl?.validator?.({})?.required ? '*' : '';
+  }
+
+  hasRequiredError(): boolean {
+    return (
+      this.rxFormControl.hasError('required') &&
+      this.rxFormControl.touched &&
+      this.rxFormControl.invalid &&
+      !this.rxFormControl.disabled
+    );
   }
 }

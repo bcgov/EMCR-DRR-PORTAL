@@ -1,5 +1,5 @@
 <div class="drr-step-container" *transloco="let t">
-  <form [formGroup]="proponentAndProjectInformationForm">
+  <div>
     <h3>{{ t("projectContact") }}</h3>
     <div class="contacts-container">
       <drr-input
@@ -59,84 +59,85 @@
         [type]="'email'"
       ></drr-input>
     </div>
-    <div>
-      <div
-        *ngFor="
-          let projectContact of getFormArray('additionalContacts').controls;
-          let i = index
-        "
-      >
-        <h4>{{ t("additionalContact") + " " + (i + 1) }}</h4>
-        <div class="contacts-container">
-          <drr-input
-            #contactFirstNameInput
-            [id]="'projectContact_firstName_' + i"
-            [label]="t('firstName')"
-            [rxFormControl]="projectContact.get('firstName')"
-            [maxlength]="40"
-          ></drr-input>
-          <drr-input
-            [id]="'projectContact_lastName_' + i"
-            [label]="t('lastName')"
-            [rxFormControl]="projectContact.get('lastName')"
-            [maxlength]="40"
-          ></drr-input>
-          <drr-input
-            [id]="'projectContact_title_' + i"
-            [label]="t('title')"
-            [rxFormControl]="projectContact.get('title')"
-            [maxlength]="100"
-          ></drr-input>
-          <drr-input
-            [id]="'projectContact_department_' + i"
-            [label]="t('department')"
-            [rxFormControl]="projectContact.get('department')"
-            [maxlength]="40"
-          ></drr-input>
-          <drr-input
-            [id]="'projectContact_phone_' + i"
-            [label]="t('phone')"
-            [rxFormControl]="projectContact.get('phone')"
-            [maxlength]="10"
-            [type]="'tel'"
-          ></drr-input>
-          <drr-input
-            class="project-contact-email"
-            [id]="'projectContact_email_' + i"
-            [label]="t('email')"
-            [rxFormControl]="projectContact.get('email')"
-            [maxlength]="100"
-            [type]="'email'"
-          ></drr-input>
+  </div>
+  <div>
+    <div
+      *ngFor="
+        let projectContact of getFormArray('additionalContacts').controls;
+        let i = index
+      "
+    >
+      <h4>{{ t("additionalContact") + " " + (i + 1) }}</h4>
+      <div class="contacts-container">
+        <drr-input
+          #contactFirstNameInput
+          [id]="'projectContact_firstName_' + i"
+          [label]="t('firstName')"
+          [rxFormControl]="projectContact.get('firstName')"
+          [maxlength]="40"
+        ></drr-input>
+        <drr-input
+          [id]="'projectContact_lastName_' + i"
+          [label]="t('lastName')"
+          [rxFormControl]="projectContact.get('lastName')"
+          [maxlength]="40"
+        ></drr-input>
+        <drr-input
+          [id]="'projectContact_title_' + i"
+          [label]="t('title')"
+          [rxFormControl]="projectContact.get('title')"
+          [maxlength]="100"
+        ></drr-input>
+        <drr-input
+          [id]="'projectContact_department_' + i"
+          [label]="t('department')"
+          [rxFormControl]="projectContact.get('department')"
+          [maxlength]="40"
+        ></drr-input>
+        <drr-input
+          [id]="'projectContact_phone_' + i"
+          [label]="t('phone')"
+          [rxFormControl]="projectContact.get('phone')"
+          [maxlength]="10"
+          [type]="'tel'"
+        ></drr-input>
+        <drr-input
+          class="project-contact-email"
+          [id]="'projectContact_email_' + i"
+          [label]="t('email')"
+          [rxFormControl]="projectContact.get('email')"
+          [maxlength]="100"
+          [type]="'email'"
+        ></drr-input>
 
-          <button
-            *ngIf="i > 0"
-            class="remove-contact-button"
-            mat-raised-button
-            color="warn"
-            (click)="removeAdditionalContact(i)"
-          >
-            <mat-icon>delete</mat-icon>
-            {{ t("delete") }}
-          </button>
-        </div>
+        <button
+          *ngIf="i > 0"
+          class="remove-contact-button"
+          mat-raised-button
+          color="warn"
+          (click)="removeAdditionalContact(i)"
+        >
+          <mat-icon>delete</mat-icon>
+          {{ t("delete") }}
+        </button>
       </div>
-
-      <button
-        *ngIf="getFormArray('additionalContacts').length < 2"
-        id="addProjectContact"
-        mat-stroked-button
-        type="button"
-        color="primary"
-        (click)="addAdditionalContact()"
-      >
-        <mat-icon>add</mat-icon>
-        {{ t("addAdditionalContact") }}
-      </button>
     </div>
 
-    <h3 style="margin-top: 2rem">{{ t("partneringProponents") }}</h3>
+    <button
+      *ngIf="getFormArray('additionalContacts').length < 2"
+      id="addProjectContact"
+      mat-stroked-button
+      type="button"
+      color="primary"
+      (click)="addAdditionalContact()"
+    >
+      <mat-icon>add</mat-icon>
+      {{ t("addAdditionalContact") }}
+    </button>
+  </div>
 
+  <div>
+    <h3>{{ t("partneringProponents") }}</h3>
     <div>
       <div
         class="proponent-container"
@@ -172,13 +173,14 @@
         {{ t("addProponent") }}
       </button>
     </div>
+  </div>
 
+  <div>
     <h3>{{ t("regionalProject") }}</h3>
     <mat-label>{{ t("regionalProjectText") }}</mat-label>
-    <mat-label style="margin-top: 1rem"
-      >{{ t("regionalProjectQuestion") }}*</mat-label
-    >
     <drr-radio-button
+      style="margin-top: 0.5rem"
+      [label]="t('regionalProjectQuestion')"
       [rxFormControl]="
         proponentAndProjectInformationForm.get('regionalProject')
       "
@@ -192,7 +194,9 @@
         proponentAndProjectInformationForm.get('regionalProjectComments')
       "
     ></drr-textarea>
+  </div>
 
+  <div style="width: 75%">
     <h3>{{ t("projectTitle") }}</h3>
     <drr-input
       style="margin-top: 0.5rem"
@@ -202,7 +206,9 @@
       [rxFormControl]="proponentAndProjectInformationForm.get('projectTitle')"
       [maxlength]="100"
     ></drr-input>
+  </div>
 
+  <div>
     <h3>{{ t("projectType") }}</h3>
     <drr-textarea
       [id]="'mainDeliverable'"
@@ -212,5 +218,5 @@
         proponentAndProjectInformationForm.get('mainDeliverable')
       "
     ></drr-textarea>
-  </form>
+  </div>
 </div>

@@ -1,5 +1,5 @@
 <div class="drr-step-container" *transloco="let t">
-  <form [formGroup]="engagementPlanForm">
+  <div>
     <h3>{{ t("engagementProposal") }}</h3>
     <drr-textarea
       [id]="'firstNationsEngagement'"
@@ -8,23 +8,21 @@
       [rxFormControl]="engagementPlanForm.get('firstNationsEngagement')"
       [rows]="10"
     ></drr-textarea>
+  </div>
 
-    <drr-textarea
-      [id]="'neighbourEngagement'"
-      [label]="t('neighbourEngagement')"
-      [maxlength]="2000"
-      [rxFormControl]="engagementPlanForm.get('neighbourEngagement')"
-      [rows]="10"
-    ></drr-textarea>
+  <drr-textarea
+    [id]="'neighbourEngagement'"
+    [label]="t('neighbourEngagement')"
+    [maxlength]="2000"
+    [rxFormControl]="engagementPlanForm.get('neighbourEngagement')"
+    [rows]="10"
+  ></drr-textarea>
 
-    <drr-textarea
-      [id]="'additionalEngagementInformation'"
-      [label]="t('additionalEngagementInformation')"
-      [maxlength]="2000"
-      [rxFormControl]="
-        engagementPlanForm.get('additionalEngagementInformation')
-      "
-      [rows]="10"
-    ></drr-textarea>
-  </form>
+  <drr-textarea
+    [id]="'additionalEngagementInformation'"
+    [label]="t('additionalEngagementInformation')"
+    [maxlength]="2000"
+    [rxFormControl]="engagementPlanForm.get('additionalEngagementInformation')"
+    [rows]="10"
+  ></drr-textarea>
 </div>
