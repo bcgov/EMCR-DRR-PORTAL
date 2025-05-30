@@ -1,7 +1,9 @@
 <mat-card class="app-stepper-container" *transloco="let t; read: 'claim'">
   <mat-card-header>
     <mat-card-title-group class="app-stepper-header">
-      <mat-card-title> {{ reportName }} </mat-card-title>
+      <mat-card-title>
+        <h2>{{ reportName }}</h2>
+      </mat-card-title>
       <div>
         <div class="header-actions">
           <button mat-stroked-button color="primary" (click)="goBack()">
@@ -477,7 +479,7 @@
             <mat-divider style="margin: 2rem 0"></mat-divider>
 
             <div>
-              <h5>Summary of Current Claim</h5>
+              <h3>Summary of Current Claim</h3>
               <table class="claim-summary-table">
                 <tr>
                   <td>Earliest Invoice</td>
@@ -517,7 +519,7 @@
             </div>
 
             <div>
-              <h5>Summary of Costs for All Claims</h5>
+              <h3>Summary of Costs for All Claims</h3>
               <mat-table
                 style="margin-top: 1rem"
                 [dataSource]="claimSummaryItemsDataSource"
