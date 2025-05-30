@@ -83,7 +83,7 @@ export class DrrRadioButtonComponent {
   }
 
   getMandatoryMark() {
-    return !!this.rxFormControl?.validator?.({})?.required ? '*' : '';
+    return !!this.rxFormControl?.validator?.({})?.required ? ' (required)' : '';
   }
 
   hasRequiredError(): boolean {
