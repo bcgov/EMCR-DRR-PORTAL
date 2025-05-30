@@ -147,7 +147,7 @@ export class DrrInputComponent {
   }
 
   getMandatoryMark() {
-    return !!this.rxFormControl?.validator?.({})?.required ? '*' : '';
+    return !!this.rxFormControl?.validator?.({})?.required ? ' (required)' : '';
   }
 
   isRequired(): boolean {

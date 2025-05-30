@@ -120,7 +120,7 @@ export class DrrTextareaComponent {
   getMandatoryMark() {
     return !!this.rxFormControl?.validator?.({})?.required ||
       this.rxFormControl?.hasError('required')
-      ? '*'
+      ? ' (required)'
       : '';
   }
 

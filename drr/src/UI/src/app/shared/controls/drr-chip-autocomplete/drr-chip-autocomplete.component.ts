@@ -230,7 +230,7 @@ export class DrrChipAutocompleteComponent {
   }
 
   getMandatoryMark() {
-    return !!this.rxFormControl?.validator?.({})?.required ? '*' : '';
+    return !!this.rxFormControl?.validator?.({})?.required ? ' (required)' : '';
   }
 
   hasRequiredError(): boolean {
