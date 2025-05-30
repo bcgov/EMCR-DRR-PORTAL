@@ -2,7 +2,7 @@
   <mat-card-header>
     <mat-card-title-group class="app-stepper-header">
       <mat-card-title>
-        {{ reportName }}
+        <h2>{{ reportName }}</h2>
       </mat-card-title>
       <div>
         <div class="header-actions">
@@ -117,9 +117,9 @@
           </table>
 
           <div class="total-conrol">
-            <mat-label class="drr-label">
+            <h3>
               {{ t("totalProjectedExpenditureLabel") }}
-            </mat-label>
+            </h3>
             <drr-currency-input
               [label]="t('totalProjectedExpenditure')"
               [rxFormControl]="
@@ -129,18 +129,18 @@
           </div>
 
           <div class="total-conrol">
-            <mat-label class="drr-label">
+            <h3>
               {{ t("originalForecast") }}
-            </mat-label>
+            </h3>
             <drr-currency-input
               [label]="t('originalForecast')"
               [rxFormControl]="budgetForecastForm.get('originalForecast')"
             ></drr-currency-input>
           </div>
           <div class="total-conrol">
-            <mat-label class="drr-label">
+            <h3>
               {{ t("variance") }}
-            </mat-label>
+            </h3>
             <drr-currency-input
               [label]="t('variance')"
               [rxFormControl]="budgetForecastForm.get('variance')"
@@ -185,9 +185,9 @@
 
           <div style="display: flex; flex-direction: column; gap: 1rem">
             <div>
-              <mat-label class="drr-label">
+              <h3>
                 {{ t("attachmentUploadText") }}
-              </mat-label>
+              </h3>
             </div>
 
             <drr-file-upload
