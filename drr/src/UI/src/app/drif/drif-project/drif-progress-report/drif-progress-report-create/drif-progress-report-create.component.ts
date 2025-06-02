@@ -213,30 +213,9 @@ export class DrifProgressReportCreateComponent {
     })),
   ];
 
-  optionalActivityStatusOptions: DrrSelectOption[] = Object.values(
-    WorkplanStatus,
-  )
-    .filter(
-      (s) => s !== WorkplanStatus.NotAwarded && s !== WorkplanStatus.Awarded,
-    )
-    .map((value) => ({
-      label: this.translocoService.translate(`workplanStatus.${value}`),
-      value,
-    }));
-
-  necessaryActivityStatusOptions: DrrRadioOption[] =
-    this.optionalActivityStatusOptions.filter(
-      (option) => option.value !== WorkplanStatus.NoLongerNeeded,
-    );
-
-  milestoneStatusOptions: DrrSelectOption[] = Object.values(WorkplanStatus)
-    .filter(
-      (s) => s === WorkplanStatus.NotAwarded || s === WorkplanStatus.Awarded,
-    )
-    .map((value) => ({
-      label: this.translocoService.translate(`workplanStatus.${value}`),
-      value,
-    }));
+  optionalActivityStatusOptions: DrrSelectOption[] = [];
+  necessaryActivityStatusOptions: DrrRadioOption[] = [];
+  milestoneStatusOptions: DrrSelectOption[] = [];
 
   yesNoRadioOptions: DrrRadioOption[] = [
     {
@@ -343,6 +322,31 @@ export class DrifProgressReportCreateComponent {
               value: key,
             }),
           );
+
+          this.optionalActivityStatusOptions = Object.values(WorkplanStatus)
+            .filter(
+              (s) =>
+                s !== WorkplanStatus.NotAwarded && s !== WorkplanStatus.Awarded,
+            )
+            .map((value) => ({
+              label: this.translocoService.translate(`workplanStatus.${value}`),
+              value,
+            }));
+
+          this.necessaryActivityStatusOptions =
+            this.optionalActivityStatusOptions.filter(
+              (option) => option.value !== WorkplanStatus.NoLongerNeeded,
+            );
+
+          this.milestoneStatusOptions = Object.values(WorkplanStatus)
+            .filter(
+              (s) =>
+                s === WorkplanStatus.NotAwarded || s === WorkplanStatus.Awarded,
+            )
+            .map((value) => ({
+              label: this.translocoService.translate(`workplanStatus.${value}`),
+              value,
+            }));
         });
 
       this.authorizedRepresentativeText = this.optionsStore.getDeclarations?.(
