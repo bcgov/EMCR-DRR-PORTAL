@@ -44,22 +44,30 @@
       #stepper
     >
       <mat-step [label]="t('step1')">
-        <div>
-          <p>
-            This form captures your year-over-year budget forecast for the
-            project.
-          </p>
-          <p>
-            If this is your first time completing the forecast, you will be able
-            to update the original forecast from your full proposal. Otherwise,
-            you will update the forecast from your last forecast report.
-          </p>
-          <p>
-            You will also need to enter your total claim amount for this
-            reporting period. Because of this, you may want to complete your
-            claim first.
-          </p>
-        </div>
+        <mat-card>
+          <mat-card-header>
+            <h3>{{ t("step1") }}</h3>
+          </mat-card-header>
+          <mat-card-content>
+            <div style="margin-left: 1rem">
+              <p>
+                This form captures your year-over-year budget forecast for the
+                project.
+              </p>
+              <p>
+                If this is your first time completing the forecast, you will be
+                able to update the original forecast from your full proposal.
+                Otherwise, you will update the forecast from your last forecast
+                report.
+              </p>
+              <p>
+                You will also need to enter your total claim amount for this
+                reporting period. Because of this, you may want to complete your
+                claim first.
+              </p>
+            </div>
+          </mat-card-content>
+        </mat-card>
         <div class="drr-stepper-action">
           <button mat-flat-button color="primary" matStepperNext type="button">
             {{ "next" | transloco }}
@@ -67,94 +75,103 @@
         </div>
       </mat-step>
       <mat-step [label]="t('step2')" [stepControl]="budgetForecastForm">
-        <div style="display: flex; flex-direction: column; gap: 1rem">
-          <!-- TODO: hide columns, disable inputs -->
-          <table class="forecast-table">
-            <tr>
-              <th>Fiscal Year</th>
-              <th>Forecast</th>
-              <th>Total Projected Expenditure <br />for the fiscal year*</th>
-              <!-- <th>Claims Paid to date</th>
+        <mat-card>
+          <mat-card-header>
+            <h3>{{ t("step2") }}</h3>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="drr-step-container">
+              <!-- TODO: hide columns, disable inputs -->
+              <table class="forecast-table">
+                <tr>
+                  <th>Fiscal Year</th>
+                  <th>Forecast</th>
+                  <th>
+                    Total Projected Expenditure <br />for the fiscal year*
+                  </th>
+                  <!-- <th>Claims Paid to date</th>
             <th>Claims Submitted Not Paid</th> -->
-              <th>Claims on this report*</th>
-              <!-- <th>
+                  <th>Claims on this report*</th>
+                  <!-- <th>
               Remaining Claims <br />
               for the fiscal year
             </th> -->
-            </tr>
-            <tr
-              *ngFor="
-                let yearForecast of getYearForecastFormArray().controls;
-                let i = index
-              "
-            >
-              <td>{{ yearForecast.get("fiscalYear")?.value }}</td>
-              <td>
-                {{ yearForecast.get("forecastAmount")?.value | currency }}
-              </td>
-              <td style="padding-top: 1rem">
-                <drr-currency-input
-                  [rxFormControl]="
-                    yearForecast.get('totalProjectedExpenditure')
+                </tr>
+                <tr
+                  *ngFor="
+                    let yearForecast of getYearForecastFormArray().controls;
+                    let i = index
                   "
-                ></drr-currency-input>
-              </td>
-              <!-- <td>
+                >
+                  <td>{{ yearForecast.get("fiscalYear")?.value }}</td>
+                  <td>
+                    {{ yearForecast.get("forecastAmount")?.value | currency }}
+                  </td>
+                  <td style="padding-top: 1rem">
+                    <drr-currency-input
+                      [rxFormControl]="
+                        yearForecast.get('totalProjectedExpenditure')
+                      "
+                    ></drr-currency-input>
+                  </td>
+                  <!-- <td>
               {{ yearForecast.get("claimsPaidToDate")?.value | currency }}
             </td>
             <td>
               {{ yearForecast.get("claimsSubmittedNotPaid")?.value | currency }}
             </td> -->
-              <td style="padding-top: 1rem">
-                <drr-currency-input
-                  [rxFormControl]="yearForecast.get('claimsOnThisReport')"
-                ></drr-currency-input>
-              </td>
-              <!-- <td>
+                  <td style="padding-top: 1rem">
+                    <drr-currency-input
+                      [rxFormControl]="yearForecast.get('claimsOnThisReport')"
+                    ></drr-currency-input>
+                  </td>
+                  <!-- <td>
               {{ yearForecast.get("remainingClaims")?.value | currency }}
             </td> -->
-            </tr>
-          </table>
+                </tr>
+              </table>
 
-          <div class="total-conrol">
-            <h3>
-              {{ t("totalProjectedExpenditureLabel") }}
-            </h3>
-            <drr-currency-input
-              [label]="t('totalProjectedExpenditure')"
-              [rxFormControl]="
-                budgetForecastForm.get('totalProjectedExpenditure')
-              "
-            ></drr-currency-input>
-          </div>
+              <div class="total-conrol">
+                <h3>
+                  {{ t("totalProjectedExpenditureLabel") }}
+                </h3>
+                <drr-currency-input
+                  [label]="t('totalProjectedExpenditure')"
+                  [rxFormControl]="
+                    budgetForecastForm.get('totalProjectedExpenditure')
+                  "
+                ></drr-currency-input>
+              </div>
 
-          <div class="total-conrol">
-            <h3>
-              {{ t("originalForecast") }}
-            </h3>
-            <drr-currency-input
-              [label]="t('originalForecast')"
-              [rxFormControl]="budgetForecastForm.get('originalForecast')"
-            ></drr-currency-input>
-          </div>
-          <div class="total-conrol">
-            <h3>
-              {{ t("variance") }}
-            </h3>
-            <drr-currency-input
-              [label]="t('variance')"
-              [rxFormControl]="budgetForecastForm.get('variance')"
-              [allowNegativeNumbers]="true"
-            ></drr-currency-input>
-          </div>
-          @if (budgetForecastForm.get("variance")?.value != 0) {
-            <drr-textarea
-              [label]="t('varianceComment')"
-              [rxFormControl]="budgetForecastForm.get('varianceComment')"
-              [maxlength]="2000"
-            ></drr-textarea>
-          }
-        </div>
+              <div class="total-conrol">
+                <h3>
+                  {{ t("originalForecast") }}
+                </h3>
+                <drr-currency-input
+                  [label]="t('originalForecast')"
+                  [rxFormControl]="budgetForecastForm.get('originalForecast')"
+                ></drr-currency-input>
+              </div>
+              <div class="total-conrol">
+                <h3>
+                  {{ t("variance") }}
+                </h3>
+                <drr-currency-input
+                  [label]="t('variance')"
+                  [rxFormControl]="budgetForecastForm.get('variance')"
+                  [allowNegativeNumbers]="true"
+                ></drr-currency-input>
+              </div>
+              @if (budgetForecastForm.get("variance")?.value != 0) {
+                <drr-textarea
+                  [label]="t('varianceComment')"
+                  [rxFormControl]="budgetForecastForm.get('varianceComment')"
+                  [maxlength]="2000"
+                ></drr-textarea>
+              }
+            </div>
+          </mat-card-content>
+        </mat-card>
         <div class="drr-stepper-actions">
           <button mat-stroked-button color="primary" matStepperPrevious>
             {{ "back" | transloco }}
@@ -169,33 +186,40 @@
         [stepControl]="attachmentsForm"
         [errorMessage]="'stepError' | transloco"
       >
-        <div class="attachments-container">
-          <drr-attachment
-            *ngFor="
-              let attachmentControl of attachmentsArray.controls;
-              let i = index
-            "
-            [title]="i == 0 ? t('attachments') : ''"
-            [attachmentForm]="attachmentControl"
-            (removeFile)="removeFile($event)"
-            (downloadFile)="downloadFile($event)"
-            [maxCommentsLength]="50"
-            [inputType]="'input'"
-          ></drr-attachment>
+        <mat-card>
+          <mat-card-header>
+            <h3>{{ t("step3") }}</h3>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="drr-step-container">
+              <drr-attachment
+                *ngFor="
+                  let attachmentControl of attachmentsArray.controls;
+                  let i = index
+                "
+                [title]="i == 0 ? t('attachments') : ''"
+                [attachmentForm]="attachmentControl"
+                (removeFile)="removeFile($event)"
+                (downloadFile)="downloadFile($event)"
+                [maxCommentsLength]="50"
+                [inputType]="'input'"
+              ></drr-attachment>
 
-          <div style="display: flex; flex-direction: column; gap: 1rem">
-            <div>
-              <h3>
-                {{ t("attachmentUploadText") }}
-              </h3>
+              <div style="display: flex; flex-direction: column; gap: 1rem">
+                <div>
+                  <h3>
+                    {{ t("attachmentUploadText") }}
+                  </h3>
+                </div>
+
+                <drr-file-upload
+                  (filesSelected)="uploadFiles($event)"
+                  [attachButtonLabel]="t('uploadAttachment')"
+                ></drr-file-upload>
+              </div>
             </div>
-
-            <drr-file-upload
-              (filesSelected)="uploadFiles($event)"
-              [attachButtonLabel]="t('uploadAttachment')"
-            ></drr-file-upload>
-          </div>
-        </div>
+          </mat-card-content>
+        </mat-card>
         <div class="drr-stepper-actions">
           <button mat-stroked-button color="primary" matStepperPrevious>
             Back
