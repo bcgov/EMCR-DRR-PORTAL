@@ -166,36 +166,12 @@ export class DrifProgressReportCreateComponent {
   authorizedRepresentativeText?: string;
   accuracyOfInformationText?: string;
 
-  private commonActivityOptions: DrrSelectOption[] = Object.values(ActivityType)
-    .filter(
-      (activity) =>
-        activity === ActivityType.Administration ||
-        activity === ActivityType.ProjectPlanning ||
-        activity === ActivityType.Assessment ||
-        activity === ActivityType.Mapping ||
-        activity === ActivityType.LandAcquisition ||
-        activity === ActivityType.ApprovalsPermitting ||
-        activity === ActivityType.Communications ||
-        activity === ActivityType.AffectedPartiesEngagement ||
-        activity === ActivityType.CommunityEngagement,
-    )
-    .map((activity) => ({
-      value: activity,
-      label: this.translocoService.translate(`activityType.${activity}`),
-    }));
-
+  private commonActivityOptions: DrrSelectOption[] = [];
   private nonStructuralActivities: ActivityType[] = [
     ActivityType.Project,
     ActivityType.FirstNationsEngagement,
   ];
-  private nonStructuralActivityOptions: DrrSelectOption[] = [
-    ...this.commonActivityOptions,
-    ...this.nonStructuralActivities.map((activity) => ({
-      value: activity,
-      label: this.translocoService.translate(`activityType.${activity}`),
-    })),
-  ];
-
+  private nonStructuralActivityOptions: DrrSelectOption[] = [];
   private structuralActivities: ActivityType[] = [
     ActivityType.Project,
     ActivityType.FirstNationsEngagement,
@@ -205,38 +181,11 @@ export class DrifProgressReportCreateComponent {
     ActivityType.ConstructionContractAward,
     ActivityType.PermitToConstruct,
   ];
-  private structuralActivityOptions: DrrSelectOption[] = [
-    ...this.commonActivityOptions,
-    ...this.structuralActivities.map((activity) => ({
-      value: activity,
-      label: this.translocoService.translate(`activityType.${activity}`),
-    })),
-  ];
+  private structuralActivityOptions: DrrSelectOption[] = [];
 
-  optionalActivityStatusOptions: DrrSelectOption[] = Object.values(
-    WorkplanStatus,
-  )
-    .filter(
-      (s) => s !== WorkplanStatus.NotAwarded && s !== WorkplanStatus.Awarded,
-    )
-    .map((value) => ({
-      label: this.translocoService.translate(`workplanStatus.${value}`),
-      value,
-    }));
-
-  necessaryActivityStatusOptions: DrrRadioOption[] =
-    this.optionalActivityStatusOptions.filter(
-      (option) => option.value !== WorkplanStatus.NoLongerNeeded,
-    );
-
-  milestoneStatusOptions: DrrSelectOption[] = Object.values(WorkplanStatus)
-    .filter(
-      (s) => s === WorkplanStatus.NotAwarded || s === WorkplanStatus.Awarded,
-    )
-    .map((value) => ({
-      label: this.translocoService.translate(`workplanStatus.${value}`),
-      value,
-    }));
+  optionalActivityStatusOptions: DrrSelectOption[] = [];
+  necessaryActivityStatusOptions: DrrRadioOption[] = [];
+  milestoneStatusOptions: DrrSelectOption[] = [];
 
   yesNoRadioOptions: DrrRadioOption[] = [
     {
@@ -269,17 +218,9 @@ export class DrifProgressReportCreateComponent {
 
   projectProgressOptions: DrrSelectOption[] = [];
 
-  delayReasonOptions: DrrSelectOption[] = Object.values(Delay).map((value) => ({
-    label: this.translocoService.translate(`delayReason.${value}`),
-    value,
-  }));
+  delayReasonOptions: DrrSelectOption[] = [];
 
-  signageTypeOptions: DrrSelectOption[] = Object.values(SignageType).map(
-    (value) => ({
-      label: this.translocoService.translate(`signageType.${value}`),
-      value,
-    }),
-  );
+  signageTypeOptions: DrrSelectOption[] = [];
 
   get workplanForm(): IFormGroup<WorkplanForm> {
     return this.progressReportForm.get('workplan') as IFormGroup<WorkplanForm>;
@@ -337,12 +278,87 @@ export class DrifProgressReportCreateComponent {
       this.translocoService
         .selectTranslateObject('projectProgress')
         .subscribe((translations) => {
+          this.commonActivityOptions = Object.values(ActivityType)
+            .filter(
+              (activity) =>
+                activity === ActivityType.Administration ||
+                activity === ActivityType.ProjectPlanning ||
+                activity === ActivityType.Assessment ||
+                activity === ActivityType.Mapping ||
+                activity === ActivityType.LandAcquisition ||
+                activity === ActivityType.ApprovalsPermitting ||
+                activity === ActivityType.Communications ||
+                activity === ActivityType.AffectedPartiesEngagement ||
+                activity === ActivityType.CommunityEngagement,
+            )
+            .map((activity) => ({
+              value: activity,
+              label: this.translocoService.translate(
+                `activityType.${activity}`,
+              ),
+            }));
+
+          this.nonStructuralActivityOptions = [
+            ...this.commonActivityOptions,
+            ...this.nonStructuralActivities.map((activity) => ({
+              value: activity,
+              label: this.translocoService.translate(
+                `activityType.${activity}`,
+              ),
+            })),
+          ];
+
+          this.structuralActivityOptions = [
+            ...this.commonActivityOptions,
+            ...this.structuralActivities.map((activity) => ({
+              value: activity,
+              label: this.translocoService.translate(
+                `activityType.${activity}`,
+              ),
+            })),
+          ];
+
           this.projectProgressOptions = Object.keys(ProjectProgressStatus).map(
             (key) => ({
               label: translations[`${key}`] || key,
               value: key,
             }),
           );
+
+          this.optionalActivityStatusOptions = Object.values(WorkplanStatus)
+            .filter(
+              (s) =>
+                s !== WorkplanStatus.NotAwarded && s !== WorkplanStatus.Awarded,
+            )
+            .map((value) => ({
+              label: this.translocoService.translate(`workplanStatus.${value}`),
+              value,
+            }));
+
+          this.necessaryActivityStatusOptions =
+            this.optionalActivityStatusOptions.filter(
+              (option) => option.value !== WorkplanStatus.NoLongerNeeded,
+            );
+
+          this.milestoneStatusOptions = Object.values(WorkplanStatus)
+            .filter(
+              (s) =>
+                s === WorkplanStatus.NotAwarded || s === WorkplanStatus.Awarded,
+            )
+            .map((value) => ({
+              label: this.translocoService.translate(`workplanStatus.${value}`),
+              value,
+            }));
+
+          this.delayReasonOptions = Object.values(Delay).map((value) => ({
+            label: this.translocoService.translate(`delayReason.${value}`),
+            value,
+          }));
+
+          this.signageTypeOptions = Object.values(SignageType).map((value) => ({
+            label: this.translocoService.translate(`signageType.${value}`),
+            value,
+          }));
         });
 
       this.authorizedRepresentativeText = this.optionsStore.getDeclarations?.(
