@@ -53,9 +53,17 @@
         [stepControl]="getFormGroup('proponentInformation')"
         [errorMessage]="'stepError' | transloco"
       >
-        <drif-eoi-step-1
-          [proponentInformationForm]="getFormGroup('proponentInformation')"
-        ></drif-eoi-step-1>
+        <mat-card>
+          <mat-card-header>
+            <h3>{{ t("steps.eoi.step1") }}</h3>
+          </mat-card-header>
+
+          <mat-card-content>
+            <drif-eoi-step-1
+              [proponentInformationForm]="getFormGroup('proponentInformation')"
+            ></drif-eoi-step-1>
+          </mat-card-content>
+        </mat-card>
         <div class="drr-stepper-action">
           <button
             id="next1"
@@ -73,9 +81,17 @@
         [stepControl]="getFormGroup('projectInformation')"
         [errorMessage]="'stepError' | transloco"
       >
-        <drif-eoi-step-2
-          [projectInformationForm]="getFormGroup('projectInformation')"
-        ></drif-eoi-step-2>
+        <mat-card>
+          <mat-card-header>
+            <h3>{{ t("steps.eoi.step2") }}</h3>
+          </mat-card-header>
+
+          <mat-card-content>
+            <drif-eoi-step-2
+              [projectInformationForm]="getFormGroup('projectInformation')"
+            ></drif-eoi-step-2>
+          </mat-card-content>
+        </mat-card>
         <div class="drr-stepper-actions">
           <button mat-stroked-button color="primary" matStepperPrevious>
             {{ t("back") }}
@@ -98,9 +114,17 @@
           t(onlyExceessFundingInvalid() ? 'excessFundingError' : 'stepError')
         "
       >
-        <drif-eoi-step-3
-          [fundingInformationForm]="getFormGroup('fundingInformation')"
-        ></drif-eoi-step-3>
+        <mat-card>
+          <mat-card-header>
+            <h3>{{ t("steps.eoi.step3") }}</h3>
+          </mat-card-header>
+
+          <mat-card-content>
+            <drif-eoi-step-3
+              [fundingInformationForm]="getFormGroup('fundingInformation')"
+            ></drif-eoi-step-3>
+          </mat-card-content>
+        </mat-card>
         <div class="drr-stepper-actions">
           <button mat-stroked-button color="primary" matStepperPrevious>
             {{ t("back") }}
@@ -121,9 +145,17 @@
         [stepControl]="getFormGroup('locationInformation')"
         [errorMessage]="'stepError' | transloco"
       >
-        <drif-eoi-step-4
-          [locationInformationForm]="getFormGroup('locationInformation')"
-        ></drif-eoi-step-4>
+        <mat-card>
+          <mat-card-header>
+            <h3>{{ t("steps.eoi.step4") }}</h3>
+          </mat-card-header>
+
+          <mat-card-content>
+            <drif-eoi-step-4
+              [locationInformationForm]="getFormGroup('locationInformation')"
+            ></drif-eoi-step-4>
+          </mat-card-content>
+        </mat-card>
         <div class="drr-stepper-actions">
           <button mat-stroked-button color="primary" matStepperPrevious>
             {{ t("back") }}
@@ -144,9 +176,17 @@
         [stepControl]="getFormGroup('projectDetails')"
         [errorMessage]="'stepError' | transloco"
       >
-        <drif-eoi-step-5
-          [projectDetailsForm]="getFormGroup('projectDetails')"
-        ></drif-eoi-step-5>
+        <mat-card>
+          <mat-card-header>
+            <h3>{{ t("steps.eoi.step5") }}</h3>
+          </mat-card-header>
+
+          <mat-card-content>
+            <drif-eoi-step-5
+              [projectDetailsForm]="getFormGroup('projectDetails')"
+            ></drif-eoi-step-5>
+          </mat-card-content>
+        </mat-card>
         <div class="drr-stepper-actions">
           <button mat-stroked-button color="primary" matStepperPrevious>
             {{ t("back") }}
@@ -167,9 +207,17 @@
         [stepControl]="getFormGroup('engagementPlan')"
         [errorMessage]="'stepError' | transloco"
       >
-        <drif-eoi-step-6
-          [engagementPlanForm]="getFormGroup('engagementPlan')"
-        ></drif-eoi-step-6>
+        <mat-card>
+          <mat-card-header>
+            <h3>{{ t("steps.eoi.step6") }}</h3>
+          </mat-card-header>
+
+          <mat-card-content>
+            <drif-eoi-step-6
+              [engagementPlanForm]="getFormGroup('engagementPlan')"
+            ></drif-eoi-step-6>
+          </mat-card-content>
+        </mat-card>
         <div class="drr-stepper-actions">
           <button mat-stroked-button color="primary" matStepperPrevious>
             {{ t("back") }}
@@ -190,11 +238,18 @@
         [stepControl]="getFormGroup('otherSupportingInformation')"
         [errorMessage]="'stepError' | transloco"
       >
-        <drif-eoi-step-7
-          [otherSupportingInformationForm]="
-            getFormGroup('otherSupportingInformation')
-          "
-        ></drif-eoi-step-7>
+        <mat-card>
+          <mat-card-header>
+            <h3>{{ t("steps.eoi.step7") }}</h3>
+          </mat-card-header>
+          <mat-card-content>
+            <drif-eoi-step-7
+              [otherSupportingInformationForm]="
+                getFormGroup('otherSupportingInformation')
+              "
+            ></drif-eoi-step-7>
+          </mat-card-content>
+        </mat-card>
         <div class="drr-stepper-actions">
           <button mat-stroked-button color="primary" matStepperPrevious>
             {{ t("back") }}

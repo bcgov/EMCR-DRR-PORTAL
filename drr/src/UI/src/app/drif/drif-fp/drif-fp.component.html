@@ -56,13 +56,20 @@
       <mat-step
         [label]="t('steps.fp.step1')"
         [stepControl]="getFormGroup('proponentAndProjectInformation')"
-        [errorMessage]="'stepError' | transloco"        
+        [errorMessage]="'stepError' | transloco"
       >
-        <drif-fp-step-1
-          [proponentAndProjectInformationForm]="
-            getFormGroup('proponentAndProjectInformation')
-          "
-        ></drif-fp-step-1>
+        <mat-card>
+          <mat-card-header>
+            <h3>{{ t("steps.fp.step1") }}</h3>
+          </mat-card-header>
+          <mat-card-content>
+            <drif-fp-step-1
+              [proponentAndProjectInformationForm]="
+                getFormGroup('proponentAndProjectInformation')
+              "
+            ></drif-fp-step-1>
+          </mat-card-content>
+        </mat-card>
         <div class="drr-stepper-action">
           <button
             id="next1"
@@ -81,11 +88,18 @@
         [stepControl]="getFormGroup('ownershipAndAuthorization')"
         [errorMessage]="'stepError' | transloco"
       >
-        <drif-fp-step-2
-          [ownershipAndAuthorizationForm]="
-            getFormGroup('ownershipAndAuthorization')
-          "
-        ></drif-fp-step-2>
+        <mat-card>
+          <mat-card-header>
+            <h3>{{ t("steps.fp.step2") }}</h3>
+          </mat-card-header>
+          <mat-card-content>
+            <drif-fp-step-2
+              [ownershipAndAuthorizationForm]="
+                getFormGroup('ownershipAndAuthorization')
+              "
+            ></drif-fp-step-2>
+          </mat-card-content>
+        </mat-card>
         <div class="drr-stepper-actions">
           <button mat-stroked-button color="primary" matStepperPrevious>
             {{ t("back") }}
@@ -107,9 +121,16 @@
         [stepControl]="getFormGroup('projectArea')"
         [errorMessage]="'stepError' | transloco"
       >
-        <drif-fp-step-3
-          [projectAreaForm]="getFormGroup('projectArea')"
-        ></drif-fp-step-3>
+        <mat-card>
+          <mat-card-header>
+            <h3>{{ t("steps.fp.step3") }}</h3>
+          </mat-card-header>
+          <mat-card-content>
+            <drif-fp-step-3
+              [projectAreaForm]="getFormGroup('projectArea')"
+            ></drif-fp-step-3>
+          </mat-card-content>
+        </mat-card>
         <div class="drr-stepper-actions">
           <button mat-stroked-button color="primary" matStepperPrevious>
             {{ t("back") }}
@@ -131,10 +152,17 @@
         [stepControl]="getFormGroup('projectPlan')"
         [errorMessage]="'stepError' | transloco"
       >
-        <drif-fp-step-4
-          [projectPlanForm]="getFormGroup('projectPlan')"
-          [fundingStream]="fullProposalForm.get('fundingStream')?.value"
-        ></drif-fp-step-4>
+        <mat-card>
+          <mat-card-header>
+            <h3>{{ t("steps.fp.step4") }}</h3>
+          </mat-card-header>
+          <mat-card-content>
+            <drif-fp-step-4
+              [projectPlanForm]="getFormGroup('projectPlan')"
+              [fundingStream]="fullProposalForm.get('fundingStream')?.value"
+            ></drif-fp-step-4>
+          </mat-card-content>
+        </mat-card>
         <div class="drr-stepper-actions">
           <button mat-stroked-button color="primary" matStepperPrevious>
             {{ t("back") }}
@@ -156,9 +184,16 @@
         [stepControl]="getFormGroup('projectEngagement')"
         [errorMessage]="'stepError' | transloco"
       >
-        <drif-fp-step-5
-          [projectEngagementForm]="getFormGroup('projectEngagement')"
-        ></drif-fp-step-5>
+        <mat-card>
+          <mat-card-header>
+            <h3>{{ t("steps.fp.step5") }}</h3>
+          </mat-card-header>
+          <mat-card-content>
+            <drif-fp-step-5
+              [projectEngagementForm]="getFormGroup('projectEngagement')"
+            ></drif-fp-step-5>
+          </mat-card-content>
+        </mat-card>
         <div class="drr-stepper-actions">
           <button mat-stroked-button color="primary" matStepperPrevious>
             {{ t("back") }}
@@ -180,9 +215,16 @@
         [stepControl]="getFormGroup('climateAdaptation')"
         [errorMessage]="'stepError' | transloco"
       >
-        <drif-fp-step-6
-          [climateAdaptationForm]="getFormGroup('climateAdaptation')"
-        ></drif-fp-step-6>
+        <mat-card>
+          <mat-card-header>
+            <h3>{{ t("steps.fp.step6") }}</h3>
+          </mat-card-header>
+          <mat-card-content>
+            <drif-fp-step-6
+              [climateAdaptationForm]="getFormGroup('climateAdaptation')"
+            ></drif-fp-step-6>
+          </mat-card-content>
+        </mat-card>
         <div class="drr-stepper-actions">
           <button mat-stroked-button color="primary" matStepperPrevious>
             {{ t("back") }}
@@ -204,11 +246,18 @@
         [stepControl]="getFormGroup('permitsRegulationsAndStandards')"
         [errorMessage]="'stepError' | transloco"
       >
-        <drif-fp-step-7
-          [permitsRegulationsAndStandardsForm]="
-            getFormGroup('permitsRegulationsAndStandards')
-          "
-        ></drif-fp-step-7>
+        <mat-card>
+          <mat-card-header>
+            <h3>{{ t("steps.fp.step7") }}</h3>
+          </mat-card-header>
+          <mat-card-content>
+            <drif-fp-step-7
+              [permitsRegulationsAndStandardsForm]="
+                getFormGroup('permitsRegulationsAndStandards')
+              "
+            ></drif-fp-step-7>
+          </mat-card-content>
+        </mat-card>
         <div class="drr-stepper-actions">
           <button mat-stroked-button color="primary" matStepperPrevious>
             {{ t("back") }}
@@ -230,9 +279,16 @@
         [stepControl]="getFormGroup('projectOutcomes')"
         [errorMessage]="'stepError' | transloco"
       >
-        <drif-fp-step-8
-          [projectOutcomesForm]="getFormGroup('projectOutcomes')"
-        ></drif-fp-step-8>
+        <mat-card>
+          <mat-card-header>
+            <h3>{{ t("steps.fp.step8") }}</h3>
+          </mat-card-header>
+          <mat-card-content>
+            <drif-fp-step-8
+              [projectOutcomesForm]="getFormGroup('projectOutcomes')"
+            ></drif-fp-step-8>
+          </mat-card-content>
+        </mat-card>
         <div class="drr-stepper-actions">
           <button mat-stroked-button color="primary" matStepperPrevious>
             {{ t("back") }}
@@ -254,9 +310,16 @@
         [stepControl]="getFormGroup('projectRisks')"
         [errorMessage]="'stepError' | transloco"
       >
-        <drif-fp-step-9
-          [projectRisksForm]="getFormGroup('projectRisks')"
-        ></drif-fp-step-9>
+        <mat-card>
+          <mat-card-header>
+            <h3>{{ t("steps.fp.step9") }}</h3>
+          </mat-card-header>
+          <mat-card-content>
+            <drif-fp-step-9
+              [projectRisksForm]="getFormGroup('projectRisks')"
+            ></drif-fp-step-9>
+          </mat-card-content>
+        </mat-card>
         <div class="drr-stepper-actions">
           <button mat-stroked-button color="primary" matStepperPrevious>
             {{ t("back") }}
@@ -278,10 +341,17 @@
         [stepControl]="getFormGroup('budget')"
         [errorMessage]="t(getBudgetStepErrorMessageKey())"
       >
-        <drif-fp-step-10
-          [budgetForm]="getFormGroup('budget')"
-          [fundingStream]="fullProposalForm.get('fundingStream')?.value"
-        ></drif-fp-step-10>
+        <mat-card>
+          <mat-card-header>
+            <h3>{{ t("steps.fp.step10") }}</h3>
+          </mat-card-header>
+          <mat-card-content>
+            <drif-fp-step-10
+              [budgetForm]="getFormGroup('budget')"
+              [fundingStream]="fullProposalForm.get('fundingStream')?.value"
+            ></drif-fp-step-10>
+          </mat-card-content>
+        </mat-card>
         <div class="drr-stepper-actions">
           <button mat-stroked-button color="primary" matStepperPrevious>
             {{ t("back") }}
@@ -303,10 +373,17 @@
         [stepControl]="getFormGroup('attachments')"
         [errorMessage]="'stepError' | transloco"
       >
-        <drif-fp-step-11
-          [attachmentsForm]="getFormGroup('attachments')"
-          [applicationId]="id!"
-        ></drif-fp-step-11>
+        <mat-card>
+          <mat-card-header>
+            <h3>{{ t("steps.fp.step11") }}</h3>
+          </mat-card-header>
+          <mat-card-content>
+            <drif-fp-step-11
+              [attachmentsForm]="getFormGroup('attachments')"
+              [applicationId]="id!"
+            ></drif-fp-step-11>
+          </mat-card-content>
+        </mat-card>
         <div class="drr-stepper-actions">
           <button mat-stroked-button color="primary" matStepperPrevious>
             {{ t("back") }}

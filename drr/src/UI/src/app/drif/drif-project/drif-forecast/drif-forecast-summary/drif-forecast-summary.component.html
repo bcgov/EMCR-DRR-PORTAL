@@ -1,14 +1,18 @@
 <div class="summary-container" *transloco="let t; read: 'forecast'">
   <mat-card>
     <mat-card-header>
-      <mat-card-title>{{ t("step1") }}</mat-card-title>
+      <mat-card-title
+        ><h3>{{ t("step1") }}</h3></mat-card-title
+      >
       <mat-card-subtitle>Step 1</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content> </mat-card-content>
   </mat-card>
   <mat-card>
     <mat-card-header>
-      <mat-card-title>Budget Forecast Report</mat-card-title>
+      <mat-card-title
+        ><h3>{{ t("step2") }}</h3></mat-card-title
+      >
       <mat-card-subtitle>Step 2</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content class="summary-card-content">
@@ -96,7 +100,9 @@
   </mat-card>
   <mat-card>
     <mat-card-header>
-      <mat-card-title> {{ t("step3") }} </mat-card-title>
+      <mat-card-title
+        ><h3>{{ t("step3") }}</h3></mat-card-title
+      >
       <mat-card-subtitle>Step 3</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content class="summary-card-content">
@@ -132,7 +138,9 @@
   </mat-card>
   <mat-card *ngIf="isReadOnlyView">
     <mat-card-header>
-      <mat-card-title> {{ t("step4") }} </mat-card-title>
+      <mat-card-title
+        ><h3>{{ t("step4") }}</h3></mat-card-title
+      >
       <mat-card-subtitle>Step 4</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content class="summary-card-content">
