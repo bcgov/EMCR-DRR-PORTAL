@@ -99,18 +99,20 @@
           <mat-card-content>
             <div class="drr-step-container">
               <div>
-                <h4>Project Progress</h4>
-                <drr-select
-                  [label]="t('projectProgress')"
-                  [rxFormControl]="workplanForm.get('projectProgress')"
-                  [options]="projectProgressOptions"
-                >
-                </drr-select>
+                <div style="width: 50rem">
+                  <h4>Project Progress</h4>
+                  <drr-select
+                    [label]="t('projectProgress')"
+                    [rxFormControl]="workplanForm.get('projectProgress')"
+                    [options]="projectProgressOptions"
+                  >
+                  </drr-select>
+                </div>
 
                 @if (isProjectDelayed()) {
                   <div style="display: flex; gap: 1rem">
                     <drr-select
-                      class="drr-single-input"
+                      style="width: 50rem"
                       [label]="t('delayReason')"
                       [rxFormControl]="workplanForm.get('delayReason')"
                       [options]="delayReasonOptions"
@@ -547,13 +549,7 @@
                           </mat-card-title-group>
                         </mat-card-header>
                         <mat-card-content>
-                          <div
-                            style="
-                              display: flex;
-                              gap: 1rem;
-                              align-items: flex-end;
-                            "
-                          >
+                          <div style="display: flex; gap: 1rem">
                             <drr-radio-button
                               class="drr-single-input"
                               [label]="t('beenApproved')"
