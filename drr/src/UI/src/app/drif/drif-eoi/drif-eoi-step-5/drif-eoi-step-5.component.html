@@ -1,6 +1,6 @@
 <div class="drr-step-container" *transloco="let t">
   <div>
-    <h3>{{ t("rationaleForFunding") }}</h3>
+    <h4>{{ t("rationaleForFunding") }}</h4>
     <drr-textarea
       [id]="'rationaleForFunding'"
       [label]="t('rationaleForFundingText')"
@@ -11,7 +11,7 @@
   </div>
 
   <div style="width: 50%">
-    <h3>{{ t("estimatedPeopleImpacted") }}</h3>
+    <h4>{{ t("estimatedPeopleImpacted") }}</h4>
 
     <drr-select
       [id]="'estimatedPeopleImpacted'"
@@ -22,7 +22,7 @@
   </div>
 
   <div>
-    <h3>{{ t("communityImpact") }}</h3>
+    <h4>{{ t("communityImpact") }}</h4>
     <drr-textarea
       [id]="'communityImpact'"
       [label]="t('communityImpactText')"
@@ -32,7 +32,7 @@
     ></drr-textarea>
   </div>
   <div>
-    <h3>{{ t("infrastructureImpacted") }}</h3>
+    <h4>{{ t("infrastructureImpacted") }}</h4>
     <drr-radio-button
       [label]="t('isInfrastructureImpacted')"
       [rxFormControl]="projectDetailsForm.get('isInfrastructureImpacted')"
@@ -103,7 +103,7 @@
   ></drr-textarea>
 
   <div>
-    <h3>{{ t("proposedSolution") }}</h3>
+    <h4>{{ t("proposedSolution") }}</h4>
     <drr-textarea
       [id]="'addressRisksAndHazards'"
       [label]="t('addressRisksAndHazards')"
@@ -129,7 +129,7 @@
   ></drr-textarea>
 
   <div>
-    <h3>{{ t("rationaleForSolution") }}</h3>
+    <h4>{{ t("rationaleForSolution") }}</h4>
     <drr-textarea
       [id]="'rationaleForSolution'"
       [label]="t('rationaleForSolutionText')"

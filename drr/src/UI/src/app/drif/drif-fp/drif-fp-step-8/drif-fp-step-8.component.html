@@ -1,6 +1,6 @@
 <div class="drr-step-container" *transloco="let t">
   <div>
-    <h3>{{ t("publicUseOrBenefit") }}</h3>
+    <h4>{{ t("publicUseOrBenefit") }}</h4>
     <drr-radio-button
       [label]="t('publicBenefit')"
       [rxFormControl]="projectOutcomesForm.get('publicBenefit')"
@@ -13,7 +13,7 @@
   </div>
 
   <div>
-    <h3>{{ t("futureCostReduction") }}</h3>
+    <h4>{{ t("futureCostReduction") }}</h4>
     <drr-radio-button
       [label]="t('costReduction')"
       [rxFormControl]="projectOutcomesForm.get('futureCostReduction')"
@@ -34,7 +34,7 @@
   </div>
 
   <div>
-    <h3>{{ t("coBenefitsTitle") }}</h3>
+    <h4>{{ t("coBenefitsTitle") }}</h4>
     <drr-radio-button
       [label]="t('produceCoBenefits')"
       [rxFormControl]="projectOutcomesForm.get('produceCoBenefits')"
@@ -55,7 +55,7 @@
   </div>
 
   <div>
-    <h3>{{ t("resiliency") }}</h3>
+    <h4>{{ t("resiliency") }}</h4>
     <drr-chip-autocomplete
       [label]="t('increasedResiliency')"
       [placeholder]="t('autocompletePlaceholder')"

@@ -1,6 +1,6 @@
 <div class="drr-step-container" *transloco="let t">
   <div style="width: 50%">
-    <h3>{{ t("estimatedTotal") }}</h3>
+    <h4>{{ t("estimatedTotal") }}</h4>
     <drr-currency-input
       class="drr-single-input"
       [id]="'estimatedTotal'"
@@ -11,7 +11,7 @@
   </div>
 
   <div style="width: 50%">
-    <h3>{{ t("fundingRequest") }}</h3>
+    <h4>{{ t("fundingRequest") }}</h4>
     <drr-currency-input
       class="drr-single-input"
       [id]="'fundingRequest'"
@@ -22,7 +22,7 @@
   </div>
 
   <div>
-    <h3>{{ t("otherFunding") }}</h3>
+    <h4>{{ t("otherFunding") }}</h4>
     <drr-radio-button
       [label]="t('haveOtherFunding')"
       [rxFormControl]="fundingInformationForm.get('haveOtherFunding')"

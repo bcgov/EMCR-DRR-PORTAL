@@ -99,7 +99,7 @@
           <mat-card-content>
             <div class="drr-step-container">
               <div>
-                <h3>Project Progress</h3>
+                <h4>Project Progress</h4>
                 <drr-select
                   [label]="t('projectProgress')"
                   [rxFormControl]="workplanForm.get('projectProgress')"
@@ -146,7 +146,7 @@
               </div>
 
               <div class="workplan-item">
-                <h3>{{ t("projectCompletionPercentage") }}</h3>
+                <h4>{{ t("projectCompletionPercentage") }}</h4>
                 <drr-numeric-input
                   style="align-self: flex-start"
                   label="Percentage"
@@ -159,9 +159,9 @@
 
               @if (isStructuralProject()) {
                 <div class="workplan-item">
-                  <h3>
+                  <h4>
                     {{ t("constructionCompletionPercentage") }}
-                  </h3>
+                  </h4>
                   <drr-numeric-input
                     style="align-self: flex-start"
                     label="Percentage"
@@ -174,7 +174,7 @@
               }
 
               <div>
-                <h3>Key Activities</h3>
+                <h4>Key Activities</h4>
                 <div
                   *ngFor="
                     let preDefinedActivity of getPreDefinedActivitiesArray();
@@ -627,9 +627,9 @@
                 "
               >
                 <div class="workplan-item">
-                  <h3>
+                  <h4>
                     {{ t("mediaAnnouncement") }}
-                  </h3>
+                  </h4>
                   <drr-radio-button
                     class="drr-single-input"
                     label="Please select below"
@@ -655,7 +655,7 @@
                 </div>
               </div>
               <div class="workplan-item">
-                <h3>Outstanding Issues</h3>
+                <h4>Outstanding Issues</h4>
                 <drr-radio-button
                   class="drr-single-input"
                   [label]="t('outstandingIssues')"
@@ -673,7 +673,7 @@
                 }
               </div>
               <div class="workplan-item">
-                <h3>Changes to Funding Sources</h3>
+                <h4>Changes to Funding Sources</h4>
                 <drr-radio-button
                   class="drr-single-input"
                   [label]="t('fundingSourcesChanged')"
@@ -724,7 +724,7 @@
           <mat-card-content>
             <div class="drr-step-container">
               <div>
-                <h3>Past Project Events</h3>
+                <h4>Past Project Events</h4>
                 <drr-radio-button
                   class="drr-single-input"
                   [label]="t('eventsOccurredSinceLastReport')"
@@ -790,7 +790,7 @@
               </div>
 
               <div>
-                <h3>Upcoming Project Events</h3>
+                <h4>Upcoming Project Events</h4>
                 <drr-radio-button
                   class="drr-single-input"
                   [label]="t('anyUpcomingEvents')"
@@ -944,7 +944,7 @@
       >
         <mat-card>
           <mat-card-header>
-            <h3>Attachments</h3>
+            <h4>Attachments</h4>
           </mat-card-header>
 
           <mat-card-content>
@@ -964,9 +964,9 @@
 
               <div style="display: flex; flex-direction: column; gap: 1rem">
                 <div>
-                  <h3>
+                  <h4>
                     {{ t("attachmentUploadText") }}
-                  </h3>
+                  </h4>
                 </div>
 
                 <drr-file-upload

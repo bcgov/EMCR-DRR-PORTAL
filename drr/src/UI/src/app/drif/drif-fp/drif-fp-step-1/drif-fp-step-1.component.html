@@ -1,6 +1,6 @@
 <div class="drr-step-container" *transloco="let t">
   <div>
-    <h3>{{ t("projectContact") }}</h3>
+    <h4>{{ t("projectContact") }}</h4>
     <div class="contacts-container">
       <drr-input
         [id]="'projectContact_firstName'"
@@ -67,7 +67,7 @@
         let i = index
       "
     >
-      <h3>{{ t("additionalContact") + " " + (i + 1) }}</h3>
+      <h4>{{ t("additionalContact") + " " + (i + 1) }}</h4>
       <div class="contacts-container">
         <drr-input
           #contactFirstNameInput
@@ -137,7 +137,7 @@
   </div>
 
   <div>
-    <h3>{{ t("partneringProponents") }}</h3>
+    <h4>{{ t("partneringProponents") }}</h4>
     <div>
       <div
         class="proponent-container"
@@ -176,7 +176,7 @@
   </div>
 
   <div>
-    <h3>{{ t("regionalProject") }}</h3>
+    <h4>{{ t("regionalProject") }}</h4>
     <mat-label>{{ t("regionalProjectText") }}</mat-label>
     <drr-radio-button
       style="margin-top: 0.5rem"
@@ -197,7 +197,7 @@
   </div>
 
   <div style="width: 75%">
-    <h3>{{ t("projectTitle") }}</h3>
+    <h4>{{ t("projectTitle") }}</h4>
     <drr-input
       style="margin-top: 0.5rem"
       class="drr-single-input"
@@ -209,7 +209,7 @@
   </div>
 
   <div>
-    <h3>{{ t("projectType") }}</h3>
+    <h4>{{ t("projectType") }}</h4>
     <drr-textarea
       [id]="'mainDeliverable'"
       [label]="t('projectTypeText')"
