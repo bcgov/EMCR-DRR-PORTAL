@@ -1,6 +1,6 @@
 <div class="drr-step-container" *transloco="let t">
   <div>
-    <h3>{{ t("fundingStream") }}</h3>
+    <h4>{{ t("fundingStream") }}</h4>
     <drr-radio-button
       [label]="t('fundingStream')"
       [rxFormControl]="projectInformationForm.get('fundingStream')"
@@ -9,7 +9,7 @@
   </div>
 
   <div style="width: 50%">
-    <h3>{{ t("projectTitle") }}</h3>
+    <h4>{{ t("projectTitle") }}</h4>
     <drr-input
       [id]="'projectTitle'"
       [label]="t('projectTitle')"
@@ -19,7 +19,7 @@
   </div>
 
   <div style="width: 50%">
-    <h3>{{ t("scopeStatement") }}</h3>
+    <h4>{{ t("scopeStatement") }}</h4>
     <drr-input
       class="drr-single-input"
       [id]="'scopeStatement'"
@@ -30,7 +30,7 @@
   </div>
 
   <div>
-    <h3>{{ t("stream") }}</h3>
+    <h4>{{ t("stream") }}</h4>
     <drr-radio-button
       [label]="t('stream')"
       [rxFormControl]="projectInformationForm.get('stream')"
@@ -39,7 +39,7 @@
   </div>
 
   <div style="width: 50%">
-    <h3>{{ t("relatedHazardsSummary") }}</h3>
+    <h4>{{ t("relatedHazardsSummary") }}</h4>
     <drr-select
       class="drr-single-input"
       [id]="'relatedHazards'"
@@ -60,7 +60,7 @@
   </div>
 
   <div>
-    <h3>{{ t("projectDates") }}</h3>
+    <h4>{{ t("projectDates") }}</h4>
     <div class="project-dates-container">
       <drr-datepicker
         [id]="'startDate'"

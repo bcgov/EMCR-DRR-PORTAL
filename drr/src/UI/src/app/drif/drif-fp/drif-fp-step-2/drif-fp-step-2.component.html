@@ -1,6 +1,6 @@
 <div class="drr-step-container" *transloco="let t">
   <div>
-    <h3>{{ t("fpOwnership") }}</h3>
+    <h4>{{ t("fpOwnership") }}</h4>
     <drr-radio-button
       [label]="t('fpOwnershipQuestion')"
       [options]="yesNoBoolOptions"
@@ -20,7 +20,7 @@
   </div>
 
   <div>
-    <h3>{{ t("projectAuthority") }}</h3>
+    <h4>{{ t("projectAuthority") }}</h4>
     <drr-radio-button
       [label]="t('haveAuthorityToDevelop')"
       [options]="yesNoBoolOptions"
@@ -48,7 +48,7 @@
   </div>
 
   <div>
-    <h3>{{ t("authorizationOrEndorsement") }}</h3>
+    <h4>{{ t("authorizationOrEndorsement") }}</h4>
     <mat-label>{{ t("authorizationOrEndorsementQuestion") }}</mat-label>
     <div style="padding: 1rem 0 0 1rem">
       <drr-radio-button

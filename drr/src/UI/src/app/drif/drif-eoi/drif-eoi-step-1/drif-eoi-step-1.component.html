@@ -1,6 +1,6 @@
 <div class="drr-step-container" *transloco="let t">
   <div>
-    <h3>{{ t("proponentType") }}</h3>
+    <h4>{{ t("proponentType") }}</h4>
     <drr-radio-button
       [label]="t('proponentType')"
       [rxFormControl]="proponentInformationForm.get('proponentType')"
@@ -9,7 +9,7 @@
   </div>
 
   <div style="display: flex; flex-direction: column">
-    <h3>{{ t("proponentName") }}</h3>
+    <h4>{{ t("proponentName") }}</h4>
     <drr-input
       style="width: 50%"
       [id]="'proponentName'"
@@ -20,7 +20,7 @@
   </div>
 
   <div>
-    <h3>{{ t("projectContact") }}</h3>
+    <h4>{{ t("projectContact") }}</h4>
     <div class="contacts-container">
       <drr-input
         [id]="'projectContact_firstName'"
@@ -76,7 +76,7 @@
         let i = index
       "
     >
-      <h3>{{ t("additionalContact") + " " + (i + 1) }}</h3>
+      <h4>{{ t("additionalContact") + " " + (i + 1) }}</h4>
       <div class="contacts-container">
         <drr-input
           #contactFirstNameInput
@@ -146,7 +146,7 @@
   </div>
 
   <div>
-    <h3>{{ t("partneringProponents") }}</h3>
+    <h4>{{ t("partneringProponents") }}</h4>
     <div>
       <div
         class="proponent-container"

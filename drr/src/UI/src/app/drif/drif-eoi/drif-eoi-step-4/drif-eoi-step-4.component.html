@@ -1,6 +1,6 @@
 <div class="drr-step-container" *transloco="let t">
   <div>
-    <h3>{{ t("ownershipDeclaration") }}</h3>
+    <h4>{{ t("ownershipDeclaration") }}</h4>
     <drr-radio-button
       [label]="t('ownershipDeclarationText')"
       [rxFormControl]="locationInformationForm.get('ownershipDeclaration')"
@@ -18,7 +18,7 @@
   </div>
 
   <div>
-    <h3>{{ t("locationDescription") }}</h3>
+    <h4>{{ t("locationDescription") }}</h4>
     <drr-textarea
       [id]="'locationDescription'"
       [label]="t('locationDescription')"

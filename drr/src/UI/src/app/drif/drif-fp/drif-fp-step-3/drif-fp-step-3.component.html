@@ -1,6 +1,6 @@
 <div class="drr-step-container" *transloco="let t">
   <div>
-    <h3>{{ t("locationDescription") }}</h3>
+    <h4>{{ t("locationDescription") }}</h4>
     <drr-textarea
       [label]="t('locationDescriptionAddress')"
       [rxFormControl]="projectAreaForm.get('locationDescription')"
@@ -9,7 +9,7 @@
   </div>
 
   <div>
-    <h3>{{ t("estimatedArea") }}</h3>
+    <h4>{{ t("estimatedArea") }}</h4>
     <mat-label style="margin-bottom: 1rem">{{
       t("estimatedAreaText")
     }}</mat-label>
@@ -33,7 +33,7 @@
   </div>
 
   <div style="width: 50%">
-    <h3>{{ t("relatedHazards") }}</h3>
+    <h4>{{ t("relatedHazards") }}</h4>
 
     <drr-select
       class="drr-single-input"
@@ -55,7 +55,7 @@
   </div>
 
   <div>
-    <h3>{{ t("areaDescription") }}</h3>
+    <h4>{{ t("areaDescription") }}</h4>
     <drr-textarea
       [label]="t('areaDescriptionText')"
       [rxFormControl]="projectAreaForm.get('areaDescription')"
@@ -64,7 +64,7 @@
   </div>
 
   <div>
-    <h3>{{ t("communityImpact") }}</h3>
+    <h4>{{ t("communityImpact") }}</h4>
     <drr-textarea
       [label]="t('communityImpactText')"
       [rxFormControl]="projectAreaForm.get('communityImpact')"
@@ -73,7 +73,7 @@
   </div>
 
   <div style="width: 50%">
-    <h3>{{ t("estimatedPeopleImpacted") }}</h3>
+    <h4>{{ t("estimatedPeopleImpacted") }}</h4>
     <mat-label style="margin-bottom: 1rem">{{
       t("estimatedPeopleImpactedText")
     }}</mat-label>
@@ -85,7 +85,7 @@
   </div>
 
   <div>
-    <h3>{{ t("infrastructureImpacted") }}</h3>
+    <h4>{{ t("infrastructureImpacted") }}</h4>
     <drr-radio-button
       [label]="t('isInfrastructureImpacted')"
       [rxFormControl]="projectAreaForm.get('isInfrastructureImpacted')"

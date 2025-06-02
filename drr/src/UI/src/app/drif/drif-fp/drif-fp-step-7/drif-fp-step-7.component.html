@@ -1,6 +1,6 @@
 <div class="drr-step-container" *transloco="let t">
   <div>
-    <h3>{{ t("standardsAcceptable") }}</h3>
+    <h4>{{ t("standardsAcceptable") }}</h4>
     <drr-radio-button
       [label]="t('standardsAcceptableQuestion')"
       [options]="standardsAcceptableOptions"
@@ -53,7 +53,7 @@
   </div>
 
   <div>
-    <h3>{{ t("professionalGuidance") }}</h3>
+    <h4>{{ t("professionalGuidance") }}</h4>
     <drr-radio-button
       [label]="t('professionalGuidanceQuestion')"
       [rxFormControl]="
@@ -97,7 +97,7 @@
   </div>
 
   <div>
-    <h3>{{ t("regulations") }}</h3>
+    <h4>{{ t("regulations") }}</h4>
     <drr-radio-button
       [label]="t('meetsRegulatoryRequirements')"
       [rxFormControl]="
@@ -114,7 +114,7 @@
   </div>
 
   <div>
-    <h3>{{ t("approvals") }}</h3>
+    <h4>{{ t("approvals") }}</h4>
     <drr-radio-button
       [label]="t('meetsEligibilityRequirements')"
       [rxFormControl]="
@@ -129,7 +129,7 @@
         ?.value === true
     "
   >
-    <h3>{{ t("permits") }}</h3>
+    <h4>{{ t("permits") }}</h4>
     <div
       class="permit-container"
       *ngFor="let permit of getPermitsFormArray().controls; let i = index"

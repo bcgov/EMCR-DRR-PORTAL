@@ -1,6 +1,6 @@
 <div class="drr-step-container" *transloco="let t">
   <div>
-    <h3>Project Financial Details</h3>
+    <h4>Project Financial Details</h4>
     <p>
       In this section you will review the project's financial details and
       provide detailed estimates.
@@ -18,7 +18,7 @@
   </div>
 
   <div style="display: flex; flex-direction: column">
-    <h3>Total Project Cost</h3>
+    <h4>Total Project Cost</h4>
     <p>
       Below is the estimated total cost of your project based on the information
       you provided in your Expression of Interest. The total costs for your
@@ -46,7 +46,7 @@
   </div>
 
   <div>
-    <h3>DRIF Program Funding Amount</h3>
+    <h4>DRIF Program Funding Amount</h4>
     <p>Based on your EOI, your eligible DRIF program funding amount is:</p>
     <drr-currency-input
       style="align-self: flex-start; margin-top: 1rem; width: 25rem"
@@ -58,7 +58,7 @@
 
   @if (isStrucutralProject()) {
     <div>
-      <h3>Cost Estimate Class</h3>
+      <h4>Cost Estimate Class</h4>
       <p>
         At this stage, your project should have a class A or B cost estimate.
         Set your contingency based on this. See the section below for more
@@ -109,7 +109,7 @@
   }
 
   <div>
-    <h3>Detailed Cost Estimates</h3>
+    <h4>Detailed Cost Estimates</h4>
     <p>
       Use the section below to provide a detailed breakdown of how the DRIF
       program funding amount (above) will be allocated to the eligible cost
@@ -228,7 +228,7 @@
   </div>
 
   <div>
-    <h3>Total Detailed Cost Estimate</h3>
+    <h4>Total Detailed Cost Estimate</h4>
     <drr-currency-input
       style="align-self: flex-start; margin-top: 1rem"
       [label]="t('totalEligibleCosts')"
@@ -269,7 +269,7 @@
   </div>
 
   <div>
-    <h3>Updated Funding Request</h3>
+    <h4>Updated Funding Request</h4>
     <p>
       Based on your Total Detailed Cost Estimate, your updated DRIF program
       funding request is:
@@ -310,7 +310,7 @@
   </div>
 
   <div>
-    <h3>Financial Forecasting</h3>
+    <h4>Financial Forecasting</h4>
     <p>
       Use the fields below to provide a year-over-year forecast of your Total
       Detailed Cost Estimate. Ensure that these numbers align with your Total
@@ -374,7 +374,7 @@
   }
 
   <div style="display: flex; flex-direction: column">
-    <h3>{{ t("otherFunding") }}</h3>
+    <h4>{{ t("otherFunding") }}</h4>
     <p>Based on above, your updated Total Project Cost is:</p>
     <drr-currency-input
       style="align-self: flex-start; width: 25rem"
@@ -459,7 +459,7 @@
   </div>
 
   <div>
-    <h3>{{ t("costConsiderations") }}</h3>
+    <h4>{{ t("costConsiderations") }}</h4>
     <drr-radio-button
       [label]="t('costConsiderationsApplied')"
       [rxFormControl]="budgetForm.get('costConsiderationsApplied')"
@@ -479,7 +479,7 @@
   </div>
 
   <div>
-    <h3>{{ t("costEffective") }}</h3>
+    <h4>{{ t("costEffective") }}</h4>
     <drr-textarea
       [label]="t('costEffectiveComments')"
       [rxFormControl]="budgetForm.get('costEffectiveComments')"
@@ -488,7 +488,7 @@
   </div>
 
   <div>
-    <h3>{{ t("previousResponse") }}</h3>
+    <h4>{{ t("previousResponse") }}</h4>
     <drr-radio-button
       [label]="t('previousResponseQuestion')"
       [rxFormControl]="budgetForm.get('previousResponse')"

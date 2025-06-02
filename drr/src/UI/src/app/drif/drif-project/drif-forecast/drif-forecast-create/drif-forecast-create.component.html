@@ -132,9 +132,9 @@
               </table>
 
               <div class="total-conrol">
-                <h3>
+                <h4>
                   {{ t("totalProjectedExpenditureLabel") }}
-                </h3>
+                </h4>
                 <drr-currency-input
                   [label]="t('totalProjectedExpenditure')"
                   [rxFormControl]="
@@ -144,18 +144,18 @@
               </div>
 
               <div class="total-conrol">
-                <h3>
+                <h4>
                   {{ t("originalForecast") }}
-                </h3>
+                </h4>
                 <drr-currency-input
                   [label]="t('originalForecast')"
                   [rxFormControl]="budgetForecastForm.get('originalForecast')"
                 ></drr-currency-input>
               </div>
               <div class="total-conrol">
-                <h3>
+                <h4>
                   {{ t("variance") }}
-                </h3>
+                </h4>
                 <drr-currency-input
                   [label]="t('variance')"
                   [rxFormControl]="budgetForecastForm.get('variance')"
@@ -207,9 +207,9 @@
 
               <div style="display: flex; flex-direction: column; gap: 1rem">
                 <div>
-                  <h3>
+                  <h4>
                     {{ t("attachmentUploadText") }}
-                  </h3>
+                  </h4>
                 </div>
 
                 <drr-file-upload
