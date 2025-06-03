@@ -155,6 +155,7 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
             var claim = claims.SingleOrDefault();
             //claim.Invoices.Count().ShouldBeGreaterThan(0);
             claim.ProjectType.ShouldNotBeNull();
+            claim.IsUpfrontPaymentProject.ShouldBe(false);
             claim.TotalProjectAmount.ShouldNotBeNull();
             //claim.TotalClaimed.ShouldNotBeNull();
         }

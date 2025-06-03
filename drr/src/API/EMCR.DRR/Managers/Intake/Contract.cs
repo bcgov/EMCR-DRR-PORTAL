@@ -879,6 +879,7 @@ namespace EMCR.DRR.Managers.Intake
         public DateTime? PlannedEndDate { get; set; }
         public InterimProjectType? ProjectType { get; set; }
         public bool? HaveClaimExpenses { get; set; }
+        public bool? IsUpfrontPaymentProject { get; set; }
         public decimal? UpFrontPaymentInterest { get; set; }
         public IEnumerable<Invoice>? Invoices { get; set; }
         public string? ClaimComment { get; set; }

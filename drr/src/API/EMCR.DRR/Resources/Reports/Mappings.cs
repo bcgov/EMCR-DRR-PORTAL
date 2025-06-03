@@ -56,6 +56,7 @@ namespace EMCR.DRR.API.Resources.Reports
                 .ForMember(dest => dest.DateApproved, opt => opt.MapFrom(src => src.drr_dateapproved.HasValue ? src.drr_dateapproved.Value.UtcDateTime : (DateTime?)null))
                 .ForMember(dest => dest.ClaimComment, opt => opt.MapFrom(src => src.drr_claimcomment))
                 .ForMember(dest => dest.HaveClaimExpenses, opt => opt.MapFrom(src => src.drr_isclaimtoreport))
+                .ForMember(dest => dest.IsUpfrontPaymentProject, opt => opt.MapFrom(src => src.drr_ProjectReport != null ? src.drr_Project.drr_upfrontpayment == (int)DRRTwoOptions.Yes : (bool?)null))
                 .ForMember(dest => dest.UpFrontPaymentInterest, opt => opt.MapFrom(src => src.drr_interestearned))
                 .ForMember(dest => dest.Invoices, opt => opt.MapFrom(src => src.drr_drr_projectclaim_drr_projectexpenditure_Claim.Where(c => c.statecode == (int)EntityState.Active)))
                 .ForMember(dest => dest.Project, opt => opt.MapFrom(src => src.drr_Project))
