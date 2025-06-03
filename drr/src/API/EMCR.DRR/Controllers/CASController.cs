@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using EMCR.DRR.API.Resources.Payments;
 using EMCR.DRR.API.Services;
 using EMCR.DRR.API.Services.CAS;
 using Microsoft.AspNetCore.Authorization;
@@ -15,24 +16,54 @@ namespace EMCR.DRR.API.Controllers
         private readonly ILogger<CASController> logger;
         private readonly IMapper mapper;
         private readonly ErrorParser errorParser;
-        private readonly IWebProxy casClient;
+        private readonly ICasGateway casGateway;
         //TODO - update client to use gateway instead
 
-        public CASController(ILogger<CASController> logger, IMapper mapper, IWebProxy casClient)
+        public CASController(ILogger<CASController> logger, IMapper mapper, ICasGateway casGateway)
         {
             this.logger = logger;
             this.mapper = mapper;
             this.errorParser = new ErrorParser();
-            this.casClient = casClient;
+            this.casGateway = casGateway;
         }
 
-        [HttpGet("supplier")]
-        public async Task<ActionResult<GetSupplierResponse>> GetSupplier([FromBody] GetSupplierRequest supplierRequest)
+        [HttpGet("supplier/{supplierNumber}")]
+        public async Task<ActionResult<GetSupplierResponse>> GetSupplierByNumber(string supplierNumber)
         {
             try
             {
                 var ct = new CancellationTokenSource().Token;
-                var res = await casClient.GetSupplierAsync(supplierRequest, ct);
+                var res = await casGateway.GetSupplier(supplierNumber, null, ct);
+                return Ok(res);
+            }
+            catch (Exception e)
+            {
+                return errorParser.Parse(e, logger);
+            }
+        }
+
+        [HttpGet("supplier/{supplierNumber}/site/{siteCode}")]
+        public async Task<ActionResult<GetSupplierResponse>> GetSupplierByNumberAndCode(string supplierNumber, string siteCode)
+        {
+            try
+            {
+                var ct = new CancellationTokenSource().Token;
+                var res = await casGateway.GetSupplier(supplierNumber, siteCode, ct);
+                return Ok(res);
+            }
+            catch (Exception e)
+            {
+                return errorParser.Parse(e, logger);
+            }
+        }
+
+        [HttpGet("supplierbyname/{supplierName}/{postalCode}")]
+        public async Task<ActionResult<GetSupplierResponse>> GetSupplierByName(string supplierName, string postalCode)
+        {
+            try
+            {
+                var ct = new CancellationTokenSource().Token;
+                var res = await casGateway.GetSupplierByName(supplierName, postalCode, ct);
                 return Ok(res);
             }
             catch (Exception e)
@@ -47,8 +78,10 @@ namespace EMCR.DRR.API.Controllers
             try
             {
                 var ct = new CancellationTokenSource().Token;
-                var res = await casClient.CreateSupplierAsync(supplierRequest, ct);
-                return Ok(res);
+                //var res = await casGateway.QueryInvoice(supplierRequest, ct);
+                await Task.CompletedTask;
+                return Ok();
+                //return Ok(res);
             }
             catch (Exception e)
             {
@@ -57,13 +90,14 @@ namespace EMCR.DRR.API.Controllers
         }
 
         [HttpGet("invoice")]
-        public async Task<ActionResult<GetInvoiceResponse>> GetInvoice([FromBody] GetInvoiceRequest invoiceRequest)
+        public async Task<ActionResult<GetInvoiceResponse>> GetInvoice([FromQuery] InvoicesQuery options)
         {
             try
             {
                 var ct = new CancellationTokenSource().Token;
-                var res = await casClient.GetInvoiceAsync(invoiceRequest, ct);
-                return Ok(res);
+                var res = await casGateway.QueryInvoice(options.InvoiceNumber, options.SupplierNumber, options.SupplierSiteCode, ct);
+                await Task.CompletedTask;
+                return Ok();
             }
             catch (Exception e)
             {
@@ -77,8 +111,9 @@ namespace EMCR.DRR.API.Controllers
             try
             {
                 var ct = new CancellationTokenSource().Token;
-                var res = await casClient.CreateInvoiceAsync(invoice, ct);
-                return Ok(res);
+                //var res = await casGateway.CreateInvoiceAsync(invoice, ct);
+                await Task.CompletedTask;
+                return Ok();
             }
             catch (Exception e)
             {
@@ -94,12 +129,12 @@ namespace EMCR.DRR.API.Controllers
     //    public string PostalCode { get; set; } = null!;
     //}
 
-    //public class InvoicesQuery
-    //{
-    //    public DateTime? StatusChangedFrom { get; set; }
-    //    public DateTime? StatusChangedTo { get; set; }
-    //    public string? Status { get; set; }
-    //}
+    public class InvoicesQuery
+    {
+        public string? InvoiceNumber { get; set; }
+        public string? SupplierNumber { get; set; }
+        public string? SupplierSiteCode { get; set; }
+    }
 
     //public class InvoiceQuery
     //{

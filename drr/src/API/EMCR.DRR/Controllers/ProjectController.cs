@@ -561,6 +561,7 @@ namespace EMCR.DRR.Controllers
         public DateTime? DateApproved { get; set; }
         public DateTime? DateSubmitted { get; set; }
         public bool? HaveClaimExpenses { get; set; }
+        public bool? IsUpfrontPaymentProject { get; set; }
         public decimal? UpFrontPaymentInterest { get; set; }
         public IEnumerable<Invoice>? Invoices { get; set; }
         [StringLength(500)]

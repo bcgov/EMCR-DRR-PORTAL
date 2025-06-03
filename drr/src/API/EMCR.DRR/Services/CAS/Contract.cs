@@ -10,6 +10,7 @@ namespace EMCR.DRR.API.Services.CAS
         Task<string> CreateTokenAsync(CancellationToken ct);
 
         Task<GetSupplierResponse?> GetSupplierAsync(GetSupplierRequest getRequest, CancellationToken ct);
+        Task<GetSupplierResponse?> GetSupplierByNameAsync(GetSupplierByNameRequest getRequest, CancellationToken ct);
 
         Task<CreateSupplierResponse> CreateSupplierAsync(CreateSupplierRequest supplier, CancellationToken ct);
 
@@ -26,11 +27,11 @@ namespace EMCR.DRR.API.Services.CAS
         public DateTime InvoiceDate { get; set; }
         public string InvoiceNumber { get; set; } = null!;
         public decimal InvoiceAmount { get; set; }
-        public string PayGroup { get; set; } = null!;
         public DateTime DateInvoiceReceived { get; set; }
         public DateTime? DateGoodsReceived { get; set; }
         public string RemittanceCode { get; set; } = "01";
         public string SpecialHandling { get; set; } = "N";
+        public string PayGroup { get; set; } = null!;
         public string NameLine1 { get; set; } = null!;
         public string? NameLine2 { get; set; }
         public string? AddressLine1 { get; set; }
@@ -40,7 +41,6 @@ namespace EMCR.DRR.API.Services.CAS
         public string? Country { get; set; }
         public string? Province { get; set; }
         public string? PostalCode { get; set; }
-        public string? EftAdviceFlag { get; set; }
         public string? QualifiedReceiver { get; set; }
         public string Terms { get; set; } = "Immediate";
         public string PayAloneFlag { get; set; } = "Y";
@@ -49,11 +49,14 @@ namespace EMCR.DRR.API.Services.CAS
         public string RemittanceMessage2 { get; set; } = null!;
         public string? RemittanceMessage3 { get; set; }
         public DateTime GlDate { get; set; }
-        public string InvoiceBatchName { get; set; } = null!;
         public string CurrencyCode { get; set; } = "CAD";
+        public string InvoiceBatchName { get; set; } = null!;
+
+        public string? EftAdviceFlag { get; set; }
         public string? InteracEmail { get; set; }
         public string? InteracMobileCountryCode { get; set; }
         public string? InteracMobileNumber { get; set; }
+
         public InvoiceLineDetail[] InvoiceLineDetails { get; set; } = Array.Empty<InvoiceLineDetail>();
     }
 
@@ -61,15 +64,16 @@ namespace EMCR.DRR.API.Services.CAS
     {
         public int InvoiceLineNumber { get; set; }
         public string InvoiceLineType { get; set; } = "Item";
-        public string LineCode { get; set; } = "DR";
         public decimal InvoiceLineAmount { get; set; }
+        public string LineCode { get; set; } = "DR";
         public string DefaultDistributionAccount { get; set; } = null!;
         public string? Description { get; set; }
-        public string? TaxClassificationCode { get; set; }
         public string? DistributionSupplier { get; set; }
         public string? Info1 { get; set; }
         public string? Info2 { get; set; }
         public string? Info3 { get; set; }
+
+        public string? TaxClassificationCode { get; set; }
     }
 
     public class InvoiceResponse
@@ -84,6 +88,12 @@ namespace EMCR.DRR.API.Services.CAS
     }
 
     public class GetSupplierRequest
+    {
+        public string SupplierNumber { get; set; } = null!;
+        public string? SiteCode { get; set; } = null!;
+    }
+
+    public class GetSupplierByNameRequest
     {
         public string SupplierName { get; set; } = null!;
         public string PostalCode { get; set; } = null!;
