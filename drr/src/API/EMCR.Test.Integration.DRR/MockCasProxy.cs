@@ -34,8 +34,21 @@ namespace EMCR.Tests.Integration.DRR
 
         public async Task<GetSupplierResponse?> GetSupplierAsync(GetSupplierRequest getRequest, CancellationToken ct)
         {
-            if (string.IsNullOrWhiteSpace(getRequest.PostalCode)) throw new ArgumentNullException(nameof(getRequest.PostalCode));
+            if (string.IsNullOrWhiteSpace(getRequest.SupplierNumber)) throw new ArgumentNullException(nameof(getRequest.SupplierNumber));
+            ////if (string.IsNullOrWhiteSpace(getRequest.SupplierName)) throw new ArgumentNullException(nameof(getRequest.SupplierName));
+
+            var supplier = mapper.Map<GetSupplierResponse>(Suppliers.FirstOrDefault(s => s.Value.Suppliernumber.Equals(getRequest.SupplierNumber, StringComparison.OrdinalIgnoreCase)).Value);
+            if (supplier != null && !string.IsNullOrWhiteSpace(getRequest.SiteCode))
+            {
+                supplier.SupplierAddress = supplier.SupplierAddress.Where(a => a.Suppliersitecode != null && a.Suppliersitecode.Equals(getRequest.SiteCode, StringComparison.OrdinalIgnoreCase)).ToArray();
+            }
+            return await Task.FromResult(supplier);
+        }
+
+        public async Task<GetSupplierResponse?> GetSupplierByNameAsync(GetSupplierByNameRequest getRequest, CancellationToken ct)
+        {
             if (string.IsNullOrWhiteSpace(getRequest.SupplierName)) throw new ArgumentNullException(nameof(getRequest.SupplierName));
+            if (string.IsNullOrWhiteSpace(getRequest.PostalCode)) throw new ArgumentNullException(nameof(getRequest.PostalCode));
 
             var supplier = mapper.Map<GetSupplierResponse>(Suppliers.FirstOrDefault(s => s.Value.Suppliername.Equals(getRequest.SupplierName, StringComparison.OrdinalIgnoreCase)).Value);
             if (supplier != null)

@@ -61,7 +61,7 @@ namespace EMCR.Tests.Integration.DRR.CAS
         [Test]
         public async Task GetSupplier_New_NotFound()
         {
-            var response = await client.GetSupplierAsync(new GetSupplierRequest { PostalCode = "V1V1V1", SupplierName = "NOTEXIST, SUPPLIER" }, CancellationToken.None);
+            var response = await client.GetSupplierByNameAsync(new GetSupplierByNameRequest { PostalCode = "V1V1V1", SupplierName = "NOTEXIST, SUPPLIER" }, CancellationToken.None);
             response.ShouldBeNull();
         }
 
@@ -94,7 +94,7 @@ namespace EMCR.Tests.Integration.DRR.CAS
             createResponse.SupplierNumber.ShouldNotBeNullOrEmpty();
             createResponse.SupplierSiteCode.ShouldNotBeNullOrEmpty();
 
-            var getResponse = await client.GetSupplierAsync(new GetSupplierRequest { PostalCode = postalCode, SupplierName = name }, CancellationToken.None);
+            var getResponse = await client.GetSupplierByNameAsync(new GetSupplierByNameRequest { PostalCode = postalCode, SupplierName = name }, CancellationToken.None);
             getResponse.ShouldNotBeNull();
             getResponse.Suppliernumber.ShouldBe(createResponse.SupplierNumber);
             getResponse.SupplierAddress.ShouldHaveSingleItem().Suppliersitecode.ShouldBe(createResponse.SupplierSiteCode.StripCasSiteNumberBrackets());
@@ -114,7 +114,7 @@ namespace EMCR.Tests.Integration.DRR.CAS
 
             var name = Formatters.ToCasSupplierName("autotest-dev-first", "autotest-dev-last");
             var postalCode = "V8Z 7X9".ToCasPostalCode();
-            var response = await client.GetSupplierAsync(new GetSupplierRequest { PostalCode = postalCode, SupplierName = name }, CancellationToken.None);
+            var response = await client.GetSupplierByNameAsync(new GetSupplierByNameRequest { PostalCode = postalCode, SupplierName = name }, CancellationToken.None);
 
             response.ShouldNotBeNull();
             response.Suppliernumber.ShouldBe("2005363");
@@ -135,7 +135,7 @@ namespace EMCR.Tests.Integration.DRR.CAS
 
             var name = Formatters.ToCasSupplierName("autotest-dev-first", "autotest-dev-last");
             var postalCode = "V8Z 7X8".ToCasPostalCode();
-            var response = await client.GetSupplierAsync(new GetSupplierRequest { PostalCode = postalCode, SupplierName = name }, CancellationToken.None);
+            var response = await client.GetSupplierByNameAsync(new GetSupplierByNameRequest { PostalCode = postalCode, SupplierName = name }, CancellationToken.None);
 
             response.ShouldNotBeNull();
             response.Suppliernumber.ShouldBe("2005363");

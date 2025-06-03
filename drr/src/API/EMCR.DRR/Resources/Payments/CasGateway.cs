@@ -5,7 +5,8 @@ namespace EMCR.DRR.API.Resources.Payments
 {
     public interface ICasGateway
     {
-        public Task<(string SupplierNumber, string SiteCode)?> GetSupplier(string firstName, string lastName, string postalCode, CancellationToken ct);
+        public Task<(string SupplierNumber, string SiteCode)?> GetSupplier(string supplierNumber, string? siteCode, CancellationToken ct);
+        public Task<(string SupplierNumber, string SiteCode)?> GetSupplierByName(string supplierName, string postalCode, CancellationToken ct);
 
         //public Task<(string SupplierNumber, string SiteCode)> CreateSupplier(contact contact, CancellationToken ct);
 
@@ -38,16 +39,28 @@ namespace EMCR.DRR.API.Resources.Payments
             this.casSystemConfigurationProvider = casSystemConfigurationProvider;
         }
 
-        public async Task<(string SupplierNumber, string SiteCode)?> GetSupplier(string firstName, string lastName, string postalCode, CancellationToken ct)
+        public async Task<(string SupplierNumber, string SiteCode)?> GetSupplier(string supplierNumber, string? siteCode, CancellationToken ct)
         {
-            if (string.IsNullOrEmpty(firstName)) throw new ArgumentNullException(nameof(firstName));
-            if (string.IsNullOrEmpty(lastName)) throw new ArgumentNullException(nameof(lastName));
-            if (string.IsNullOrEmpty(postalCode)) throw new ArgumentNullException(nameof(postalCode));
+            if (string.IsNullOrEmpty(supplierNumber)) throw new ArgumentNullException(nameof(supplierNumber));
 
             var response = await casWebProxy.GetSupplierAsync(new GetSupplierRequest
             {
+                SupplierNumber = supplierNumber,
+                SiteCode = siteCode
+            }, ct);
+            if (response == null || !response.SupplierAddress.Any()) return null;
+            return (SupplierNumber: response.Suppliernumber, SiteCode: response.SupplierAddress.First().Suppliersitecode.StripCasSiteNumberBrackets());
+        }
+
+        public async Task<(string SupplierNumber, string SiteCode)?> GetSupplierByName(string supplierName, string postalCode, CancellationToken ct)
+        {
+            if (string.IsNullOrEmpty(supplierName)) throw new ArgumentNullException(nameof(supplierName));
+            if (string.IsNullOrEmpty(postalCode)) throw new ArgumentNullException(nameof(postalCode));
+
+            var response = await casWebProxy.GetSupplierByNameAsync(new GetSupplierByNameRequest
+            {
                 PostalCode = postalCode.ToCasPostalCode(),
-                SupplierName = Formatters.ToCasSupplierName(firstName, lastName)
+                SupplierName = supplierName
             }, ct);
             if (response == null || !response.SupplierAddress.Any()) return null;
             return (SupplierNumber: response.Suppliernumber, SiteCode: response.SupplierAddress.First().Suppliersitecode.StripCasSiteNumberBrackets());

@@ -53,8 +53,23 @@ namespace EMCR.DRR.API.Services.CAS
 
         public async Task<GetSupplierResponse?> GetSupplierAsync(GetSupplierRequest getRequest, CancellationToken ct)
         {
-            if (string.IsNullOrWhiteSpace(getRequest.PostalCode)) throw new ArgumentNullException(nameof(getRequest.PostalCode));
+            if (string.IsNullOrWhiteSpace(getRequest.SupplierNumber)) throw new ArgumentNullException(nameof(getRequest.SupplierNumber));
+
+            var url = $"cfs/supplier/{getRequest.SupplierNumber}";
+
+            if (!string.IsNullOrEmpty(getRequest.SiteCode)) url += $"site/{getRequest.SiteCode}";
+
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
+            request.Headers.Authorization = AuthenticationHeaderValue.Parse($"Bearer {await GetToken(ct)}");
+            var response = await httpClient.SendAsync(request, ct);
+            if (response.StatusCode != System.Net.HttpStatusCode.OK) return null;
+            return await response.Content.ReadFromJsonAsync<GetSupplierResponse>(jsonSerializerOptions, ct) ?? null!;
+        }
+
+        public async Task<GetSupplierResponse?> GetSupplierByNameAsync(GetSupplierByNameRequest getRequest, CancellationToken ct)
+        {
             if (string.IsNullOrWhiteSpace(getRequest.SupplierName)) throw new ArgumentNullException(nameof(getRequest.SupplierName));
+            if (string.IsNullOrWhiteSpace(getRequest.PostalCode)) throw new ArgumentNullException(nameof(getRequest.PostalCode));
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"cfs/supplierbyname/{getRequest.SupplierName}/{getRequest.PostalCode}");
             request.Headers.Authorization = AuthenticationHeaderValue.Parse($"Bearer {await GetToken(ct)}");
