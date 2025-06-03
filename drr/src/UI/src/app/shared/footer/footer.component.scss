@@ -22,6 +22,15 @@ footer mat-toolbar {
 
   li > a {
     padding: 0.4rem 0.8rem;
+    text-decoration: none;
+  }
+  li > a:active {
+    text-decoration: underline;
+    outline: none;
+  }
+  li > a:focus {
+    outline: none;
+    border: none;
   }
 }
 

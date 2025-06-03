@@ -325,6 +325,14 @@ h6 {
   outline-offset: 0.125rem;
 }
 
+a:focus,
+a:active {
+    outline: 2px solid #2e5dd7 !important;
+  outline-offset: 0.125rem;
+  text-decoration: none;
+  border-radius: 0.25rem;
+}
+
 .mdc-button[mat-stroked-button] {
   border: 1px solid #353433 !important;
   color: #353433 !important;
