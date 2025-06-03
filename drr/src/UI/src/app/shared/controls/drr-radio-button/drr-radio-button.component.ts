@@ -51,7 +51,14 @@ export class DrrRadioOption {
       </div>
     </div>
   `,
-  styles: [``],
+  styles: [
+    `
+      .drr-radio-button {
+        display: flex;
+        flex-direction: column;
+      }
+    `,
+  ],
 })
 export class DrrRadioButtonComponent {
   formBuilder = inject(RxFormBuilder);
