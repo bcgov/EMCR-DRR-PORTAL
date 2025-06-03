@@ -334,6 +334,13 @@ h6 {
   background-color: #e6f0fa !important;
 }
 
+.mdc-button:disabled {
+  background-color: #edebe9 !important;
+  color: #9f9d9c !important;
+  cursor: not-allowed !important;
+  border: none !important;
+}
+
 .mat-mdc-raised-button.mat-warn:hover {
   background-color: #a2312d !important;
 }
