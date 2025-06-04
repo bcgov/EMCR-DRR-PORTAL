@@ -202,6 +202,7 @@ export class DrifClaimCreateComponent {
   plannedEndDate!: Date;
   projectType!: InterimProjectType;
   reportingPeriod?: string;
+  isUpfrontPaymentProject = false;
 
   costCategoryOptions: DrrSelectOption[] = [];
 
@@ -288,6 +289,8 @@ export class DrifClaimCreateComponent {
             this.plannedEndDate = new Date(claim.plannedEndDate!);
             this.projectType = claim.projectType!;
             this.reportingPeriod = claim.reportPeriod;
+            this.isUpfrontPaymentProject =
+              claim.isUpfrontPaymentProject || false;
 
             this.costCategoryOptions = Object.keys(CostCategory)
               .filter(
@@ -1018,6 +1021,10 @@ export class DrifClaimCreateComponent {
   showEarnedInterestControls() {
     const q2 = 'Q2';
     const q4 = 'Q4';
+
+    if (!this.isUpfrontPaymentProject) {
+      return false;
+    }
 
     if (!this.reportingPeriod) {
       return false;
