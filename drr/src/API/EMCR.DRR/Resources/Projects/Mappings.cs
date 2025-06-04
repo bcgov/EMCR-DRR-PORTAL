@@ -42,7 +42,7 @@ namespace EMCR.DRR.API.Resources.Projects
                 .ForMember(dest => dest.Forecast, opt => opt.MapFrom(src => src.drr_drr_project_drr_projectbudgetforecast_Project.Where(c => c.statecode == (int)EntityState.Active)))
                 .ForMember(dest => dest.Events, opt => opt.MapFrom(src => src.drr_drr_project_drr_projectevent_Project.Where(c => c.statecode == (int)EntityState.Active)))
                 .ForMember(dest => dest.Requests, opt => opt.MapFrom(src => src.drr_project_drr_request_ProjectId.Where(c => c.statecode == (int)EntityState.Active)))
-                .ForMember(dest => dest.Attachments, opt => opt.MapFrom(src => src.bcgov_drr_project_bcgov_documenturl_Projectid))
+                .ForMember(dest => dest.Attachments, opt => opt.MapFrom(src => src.bcgov_drr_project_bcgov_documenturl_Projectid.Where(c => c.statecode == (int)EntityState.Active)))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.statuscode.HasValue ? (int?)Enum.Parse<ProjectStatus>(((ProjectStatusOptionSet)src.statuscode).ToString()) : null))
                 ;
 

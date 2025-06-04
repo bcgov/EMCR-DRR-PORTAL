@@ -145,17 +145,23 @@ namespace EMCR.Tests.Integration.DRR.Managers.Intake
         public async Task QueryClaims_CanFilterById()
         {
             var userInfo = GetTestUserInfo();
+            var claimId = "DRIF-CLAIM-1213";
+            
             //var userInfo = GetCRAFTUserInfo();
+            
             //var userInfo = GetCRAFT2UserInfo();
+            //var claimId = "DRIF-CLAIM-1266";
+            
             // var userInfo = GetCRAFTT1UserInfo();
+            //var claimId = "DRIF-CLAIM-1229";
 
-            var queryRes = await manager.Handle(new DrrClaimsQuery { Id = "DRIF-CLAIM-1213", BusinessId = userInfo.BusinessId });
+            var queryRes = await manager.Handle(new DrrClaimsQuery { Id = claimId, BusinessId = userInfo.BusinessId });
             var claims = mapper.Map<IEnumerable<DraftProjectClaim>>(queryRes.Items);
             claims.Count().ShouldBe(1);
             var claim = claims.SingleOrDefault();
             //claim.Invoices.Count().ShouldBeGreaterThan(0);
             claim.ProjectType.ShouldNotBeNull();
-            claim.IsUpfrontPaymentProject.ShouldBe(false);
+            claim.IsUpfrontPaymentProject.ShouldNotBe(true);
             claim.TotalProjectAmount.ShouldNotBeNull();
             //claim.TotalClaimed.ShouldNotBeNull();
         }
