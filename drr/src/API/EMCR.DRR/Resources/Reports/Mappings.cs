@@ -116,7 +116,7 @@ namespace EMCR.DRR.API.Resources.Reports
             CreateMap<ProjectApplication, drr_application>(MemberList.None)
                 .ReverseMap()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.drr_name))
-                .ForMember(dest => dest.CostEstimates, opt => opt.MapFrom(src => src.drr_drr_application_drr_detailedcostestimate_Application))
+                .ForMember(dest => dest.CostEstimates, opt => opt.MapFrom(src => src.drr_drr_application_drr_detailedcostestimate_Application.Where(c => c.statecode == (int)EntityState.Active)))
             ;
 
             CreateMap<ProgressReportDetails, drr_projectprogress>(MemberList.None)
@@ -161,7 +161,7 @@ namespace EMCR.DRR.API.Resources.Reports
                 .ForMember(dest => dest.DateSubmitted, opt => opt.MapFrom(src => src.drr_datesubmitted.HasValue ? src.drr_datesubmitted.Value.UtcDateTime : (DateTime?)null))
                 .ForMember(dest => dest.DueDate, opt => opt.MapFrom(src => src.drr_duedate.HasValue ? src.drr_duedate.Value.UtcDateTime : (DateTime?)null))
                 .ForMember(dest => dest.ProjectType, opt => opt.MapFrom(src => src.drr_Project != null && src.drr_Project.drr_projecttype.HasValue ? (int?)Enum.Parse<InterimProjectType>(((FundingStreamOptionSet)src.drr_Project.drr_projecttype).ToString()) : null))
-                .ForPath(dest => dest.Workplan.WorkplanActivities, opt => opt.MapFrom(src => src.drr_drr_projectprogress_drr_projectworkplanactivity_ProjectProgressReport))
+                .ForPath(dest => dest.Workplan.WorkplanActivities, opt => opt.MapFrom(src => src.drr_drr_projectprogress_drr_projectworkplanactivity_ProjectProgressReport.Where(c => c.statecode == (int)EntityState.Active)))
                 .ForPath(dest => dest.Workplan.ProjectProgress, opt => opt.MapFrom(src => src.drr_projectprogress1.HasValue ? (int?)Enum.Parse<ProjectProgress>(((ProjectProgressOptionSet)src.drr_projectprogress1).ToString()) : null))
                 .ForPath(dest => dest.Workplan.AheadOfScheduleComments, opt => opt.MapFrom(src => src.drr_commentsaheadofschedule))
                 .ForPath(dest => dest.Workplan.DelayReason, opt => opt.MapFrom(src => src.drr_reasonfordelay.HasValue ? (int?)Enum.Parse<DelayReason>(((DelayReasonOptionSet)src.drr_reasonfordelay).ToString()) : null))
