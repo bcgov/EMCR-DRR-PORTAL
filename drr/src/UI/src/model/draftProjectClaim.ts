@@ -35,6 +35,8 @@ export interface DraftProjectClaim {
   /** @nullable */
   invoices?: Invoice[];
   /** @nullable */
+  isUpfrontPaymentProject?: boolean;
+  /** @nullable */
   plannedEndDate?: string;
   /** @nullable */
   plannedStartDate?: string;

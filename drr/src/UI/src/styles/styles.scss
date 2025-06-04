@@ -325,14 +325,28 @@ h6 {
   outline-offset: 0.125rem;
 }
 
+a:focus,
+a:active {
+    outline: 2px solid #2e5dd7 !important;
+  outline-offset: 0.125rem;
+  text-decoration: none;
+  border-radius: 0.25rem;
+}
+
 .mdc-button[mat-stroked-button] {
-  border: 1px solid #003366 !important;
-  color: #003366 !important;
+  border: 1px solid #353433 !important;
+  color: #353433 !important;
 }
 
 .mdc-button[mat-stroked-button]:hover {
   background-color: #e6f0fa !important;
-  border-color: #003366 !important;
+}
+
+.mdc-button:disabled {
+  background-color: #edebe9 !important;
+  color: #9f9d9c !important;
+  cursor: not-allowed !important;
+  border: none !important;
 }
 
 .mat-mdc-raised-button.mat-warn:hover {

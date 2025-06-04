@@ -1,154 +1,140 @@
-<div class="app-stepper-container" *transloco="let t">
-  <div class="app-stepper-header">
-    <div style="flex: 1">
-      <h5 style="font-size: 1.2rem; margin-bottom: 0.5rem">
-        {{ t("startReport") }}
-      </h5>
-      <!-- <span>
-        {{ t("project") }}: {{ project?.name }} ({{ project?.id }})
-      </span> -->
-    </div>
-    <div>
+<mat-card class="app-stepper-container" *transloco="let t">
+  <mat-card-header>
+    <mat-card-title-group class="app-stepper-header">
+      <mat-card-title>
+        <h2>
+          {{ t("startReport") }}
+        </h2>
+      </mat-card-title>
+
       <div class="header-actions">
         <button mat-stroked-button color="primary" (click)="goBack()">
           Cancel
         </button>
       </div>
-      <!-- <div class="save-info">
-        <div style="display: flex; flex-direction: row; gap: 1rem">
-          <i *ngIf="autoSaveCountdown <= 30 && autoSaveCountdown > 0"
-            >Saving in {{ autoSaveCountdown }}
-            {{ autoSaveCountdown === 1 ? "second" : "seconds" }}...
-          </i>
-          <i
-            *ngIf="
-              lastSavedAt && (autoSaveCountdown === 0 || autoSaveCountdown > 30)
-            "
-            >Saved at {{ lastSavedAt | date : "mediumTime" }}</i
-          >
-        </div>
-      </div> -->
-    </div>
-  </div>
-  <mat-stepper
-    class="app-stepper"
-    [linear]="true"
-    labelPosition="bottom"
-    (selectionChange)="stepperSelectionChange($event)"
-    [orientation]="stepperOrientation"
-    #stepper
-  >
-    <mat-step
-      label="Select Report"
-      [stepControl]="getConfigurationForm()"
-      [optional]="false"
+    </mat-card-title-group>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-stepper
+      class="app-stepper"
+      [linear]="true"
+      labelPosition="bottom"
+      (selectionChange)="stepperSelectionChange($event)"
+      [orientation]="stepperOrientation"
+      #stepper
     >
-      <div style="display: flex; flex-direction: column; gap: 1rem">
-        <div>
-          <p>Select the type of report you want to start below.</p>
-          <p>
-            Choose an interim report for your regular reporting, such as monthly
-            or quarterly reports. Choose an off-cycle report to submit a claim
-            between your regular reports. Choose the final report to submit your
-            closing report for the project.
-          </p>
-        </div>
-        <div>
-          <mat-label class="drr-label">{{ t("reportType") }}*</mat-label>
+      <mat-step
+        label="Select Report"
+        [stepControl]="getConfigurationForm()"
+        [optional]="false"
+      >
+        <div style="display: flex; flex-direction: column; gap: 1rem">
+          <div>
+            <p>Select the type of report you want to start below.</p>
+            <p>
+              Choose an interim report for your regular reporting, such as
+              monthly or quarterly reports. Choose an off-cycle report to submit
+              a claim between your regular reports. Choose the final report to
+              submit your closing report for the project.
+            </p>
+          </div>
+
           <drr-radio-button
             [label]="t('reportType')"
             [rxFormControl]="interimReportForm.get('configuration.periodType')"
             [options]="periodTypeOptions"
           ></drr-radio-button>
         </div>
-      </div>
-      <div class="drr-stepper-action">
-        <button
-          id="next1"
-          mat-flat-button
-          color="primary"
-          matStepperNext
-          type="button"
-          (click)="onNext1()"
-        >
-          {{ t("next") }}
-        </button>
-      </div>
-    </mat-step>
-    <mat-step [label]="getStep2Label()">
-      <div style="display: flex; flex-direction: column; gap: 1rem">
-        <ng-container
-          [ngSwitch]="interimReportForm.get('configuration.periodType')?.value"
-        >
-          <div *ngSwitchCase="'Interim'">
-            @if (canCreateReportResult?.canCreate) {
+        <div class="drr-stepper-action">
+          <button
+            id="next1"
+            mat-flat-button
+            color="primary"
+            matStepperNext
+            type="button"
+            (click)="onNext1()"
+          >
+            {{ t("next") }}
+          </button>
+        </div>
+      </mat-step>
+      <mat-step [label]="getStep2Label()">
+        <div style="display: flex; flex-direction: column; gap: 1rem">
+          <ng-container
+            [ngSwitch]="
+              interimReportForm.get('configuration.periodType')?.value
+            "
+          >
+            <div *ngSwitchCase="'Interim'">
+              @if (canCreateReportResult?.canCreate) {
+                <p>
+                  This will create the
+                  {{ canCreateReportResult?.description }} interim report. Do
+                  you want to continue?
+                </p>
+              } @else {
+                <p>
+                  You cannot create a new interim report until your previous
+                  report has been approved by the DMAP team.
+                </p>
+              }
+            </div>
+            <div *ngSwitchCase="'OffCycle'">
+              <mat-label class="drr-label"
+                >You're about to create an off-cycle report</mat-label
+              >
               <p>
-                This will create the
-                {{ canCreateReportResult?.description }} interim report. Do you
-                want to continue?
+                <i>
+                  To request an off-cycle report, contact the DMAP team directly
+                  at
+                  <a href="mailto:EMCR.DRIFprogram@gov.bc.ca"
+                    >EMCR.DRIFprogram&#64;gov.bc.ca</a
+                  >. Include an explanation of why you need to submit an
+                  off-cycle report and the the time period you want the
+                  off-cycle report to cover.
+                </i>
               </p>
-            } @else {
+            </div>
+            <div *ngSwitchCase="'Final'">
+              <mat-label class="drr-label"
+                >You're about to create a final report</mat-label
+              >
               <p>
-                You cannot create a new interim report until your previous
-                report has been approved by the DMAP team.
+                <i>
+                  Final reports are not available at this time. They will become
+                  available in a future update.
+                </i>
               </p>
-            }
-          </div>
-          <div *ngSwitchCase="'OffCycle'">
-            <mat-label class="drr-label"
-              >You're about to create an off-cycle report</mat-label
-            >
-            <p>
-              <i>
-                To request an off-cycle report, contact the DMAP team directly
-                at
-                <a href="mailto:EMCR.DRIFprogram@gov.bc.ca"
-                  >EMCR.DRIFprogram&#64;gov.bc.ca</a
-                >. Include an explanation of why you need to submit an off-cycle
-                report and the the time period you want the off-cycle report to
-                cover.
-              </i>
-            </p>
-          </div>
-          <div *ngSwitchCase="'Final'">
-            <mat-label class="drr-label"
-              >You're about to create a final report</mat-label
-            >
-            <p>
-              <i>
-                Final reports are not available at this time. They will become
-                available in a future update.
-              </i>
-            </p>
-          </div>
-          <div *ngSwitchCase="'Skip'">
-            <mat-label class="drr-label"
-              >You're about to skip the interim report</mat-label
-            >
-            <p>
-              <i>
-                You've chosen to skip the report creation. This means that you
-                will not be able to submit a report for this period.
-              </i>
-            </p>
-          </div>
-        </ng-container>
-      </div>
-      <div class="drr-stepper-actions">
-        <button mat-stroked-button color="primary" matStepperPrevious>
-          {{ t("back") }}
-        </button>
-        <button
-          id="next2"
-          mat-flat-button
-          color="primary"
-          matStepperNext
-          type="button"
-          (click)="createReport()"
-        >
-          {{ canCreateReportResult?.canCreate ? "Ok" : t("close") }}
-        </button>
-      </div></mat-step
-    >
-  </mat-stepper>
-</div>
+            </div>
+            <div *ngSwitchCase="'Skip'">
+              <mat-label class="drr-label"
+                >You're about to skip the interim report</mat-label
+              >
+              <p>
+                <i>
+                  You've chosen to skip the report creation. This means that you
+                  will not be able to submit a report for this period.
+                </i>
+              </p>
+            </div>
+          </ng-container>
+        </div>
+        <div class="drr-stepper-actions">
+          <button mat-stroked-button color="primary" matStepperPrevious>
+            {{ t("back") }}
+          </button>
+          <button
+            id="next2"
+            mat-flat-button
+            color="primary"
+            matStepperNext
+            type="button"
+            (click)="createReport()"
+          >
+            {{ canCreateReportResult?.canCreate ? "Ok" : t("close") }}
+          </button>
+        </div></mat-step
+      >
+    </mat-stepper>
+  </mat-card-content>
+</mat-card>

@@ -13,6 +13,7 @@ import { IFormGroup, RxFormBuilder } from '@rxweb/reactive-form-validators';
 
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { ProjectService } from '../../../../../api/project/project.service';
@@ -38,6 +39,7 @@ import {
     MatIconModule,
     MatButtonModule,
     MatInputModule,
+    MatCardModule,
     TranslocoModule,
     DrrRadioButtonComponent,
   ],
@@ -62,26 +64,28 @@ export class DrifInterimReportCreateComponent {
     InterimReportForm,
   ) as IFormGroup<InterimReportForm>;
 
-  periodTypeOptions: DrrRadioOption[] = [
-    {
-      value: PeriodType.Interim,
-      label: this.translocoService.translate(
-        `periodType.${PeriodType.Interim}`,
-      ),
-    },
-    {
-      value: PeriodType.OffCycle,
-      label: this.translocoService.translate(
-        `periodType.${PeriodType.OffCycle}`,
-      ),
-    },
-    {
-      value: PeriodType.Final,
-      label: this.translocoService.translate(`periodType.${PeriodType.Final}`),
-    },
-  ];
+  periodTypeOptions: DrrRadioOption[] = [];
 
   ngOnInit() {
+    this.translocoService
+      .selectTranslateObject('periodType')
+      .subscribe((options) => {
+        this.periodTypeOptions = [
+          {
+            value: PeriodType.Interim,
+            label: options[PeriodType.Interim],
+          },
+          {
+            value: PeriodType.OffCycle,
+            label: options[PeriodType.OffCycle],
+          },
+          {
+            value: PeriodType.Final,
+            label: options[PeriodType.Final],
+          },
+        ];
+      });
+
     this.route.params.subscribe((params) => {
       this.projectId = params['projectId'];
     });

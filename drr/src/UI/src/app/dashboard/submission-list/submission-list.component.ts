@@ -73,7 +73,7 @@ export enum DialogResponse {
         Yes
       </button>
       <button
-        mat-raised-button
+        mat-stroked-button
         color="secondary"
         [mat-dialog-close]="cancel"
         cdkFocusInitial
