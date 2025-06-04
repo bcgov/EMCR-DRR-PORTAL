@@ -7,10 +7,8 @@
   </mat-label>
   <div style="display: flex; flex-direction: column">
     <mat-label> {{ authorizedRepresentativeText }} *</mat-label>
-    <mat-checkbox formControlName="authorizedRepresentativeStatement">
-      {{ "agree" | transloco }}
-    </mat-checkbox>
     <mat-error
+      style="font-size: 12px"
       *ngIf="
         declarationForm?.get('authorizedRepresentativeStatement')?.touched &&
         declarationForm
@@ -19,6 +17,9 @@
       "
       >{{ "required" | transloco }}</mat-error
     >
+    <mat-checkbox formControlName="authorizedRepresentativeStatement">
+      {{ "agree" | transloco }}
+    </mat-checkbox>
   </div>
 
   <mat-label class="drr-label">{{
@@ -26,10 +27,8 @@
   }}</mat-label>
   <div style="display: flex; flex-direction: column">
     <mat-label> {{ accuracyOfInformationText }} *</mat-label>
-    <mat-checkbox formControlName="informationAccuracyStatement">
-      {{ "agree" | transloco }}
-    </mat-checkbox>
     <mat-error
+      style="font-size: 12px"
       *ngIf="
         declarationForm?.get('informationAccuracyStatement')?.touched &&
         declarationForm
@@ -38,5 +37,8 @@
       "
       >{{ "required" | transloco }}</mat-error
     >
+    <mat-checkbox formControlName="informationAccuracyStatement">
+      {{ "agree" | transloco }}
+    </mat-checkbox>
   </div>
 </form>
