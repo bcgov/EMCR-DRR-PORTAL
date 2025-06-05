@@ -1019,20 +1019,21 @@ export class DrifClaimCreateComponent {
   }
 
   showEarnedInterestControls() {
-    const q2 = 'Q2';
-    const q4 = 'Q4';
+    return this.isUpfrontPaymentProject;
+    // if (!this.isUpfrontPaymentProject) {
+    //   return false;
+    // }
 
-    if (!this.isUpfrontPaymentProject) {
-      return false;
-    }
+    // const q2 = 'Q2';
+    // const q4 = 'Q4';
 
-    if (!this.reportingPeriod) {
-      return false;
-    }
+    // if (!this.reportingPeriod) {
+    //   return false;
+    // }
 
-    return (
-      this.reportingPeriod.includes(q2) || this.reportingPeriod.includes(q4)
-    );
+    // return (
+    //   this.reportingPeriod.includes(q2) || this.reportingPeriod.includes(q4)
+    // );
   }
 
   configureInterestControls() {
